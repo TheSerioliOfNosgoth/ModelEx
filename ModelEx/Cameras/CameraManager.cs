@@ -24,6 +24,7 @@ namespace ModelEx
         #region Constructor
         private CameraManager()
         {
+            frameCamera = new Camera();
             OrbitPanCamera ocp = new OrbitPanCamera();
             OrbitCamera oc = new OrbitCamera();
             EgoCamera ec = new EgoCamera();
@@ -38,6 +39,7 @@ namespace ModelEx
 
         List<Camera> cameras = new List<Camera>();
 
+        public Camera frameCamera;
         public Camera currentCamera;
         int currentIndex;
 
@@ -45,15 +47,7 @@ namespace ModelEx
         {
             get
             {
-                if (currentCamera is EgoCamera)
-                {
-                    return ((EgoCamera)currentCamera).ViewPerspective;
-                }
-                else
-                {
-                    return currentCamera.ViewPerspective;
-                }
-
+                return currentCamera.ViewPerspective;
             }
         }
 
@@ -69,14 +63,7 @@ namespace ModelEx
         {
             get
             {
-                if (currentCamera is EgoCamera)
-                {
-                    return ((EgoCamera)currentCamera).View;
-                }
-                else
-                {
-                    return currentCamera.View;
-                }
+                return currentCamera.View;
             }
         }
 
@@ -104,6 +91,18 @@ namespace ModelEx
             }
 
             return currentCamera.ToString();
+        }
+
+        public void UpdateFrameCamera()
+        {
+            Matrix m = currentCamera.ViewPerspective;
+            m = currentCamera.ViewPerspective;
+            m = currentCamera.ViewPerspective;
+            m = currentCamera.ViewPerspective;
+            m = currentCamera.ViewPerspective;
+            m = currentCamera.ViewPerspective;
+            m = currentCamera.ViewPerspective;
+            frameCamera.CopyFromOther(currentCamera);
         }
     }
 }

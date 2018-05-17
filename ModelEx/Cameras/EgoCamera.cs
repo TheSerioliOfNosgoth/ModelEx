@@ -36,7 +36,7 @@ namespace ModelEx
             pitchVal = (float)System.Math.Asin(dir.Y);
         }
 
-        new public Matrix ViewPerspective
+        public override Matrix ViewPerspective
         {
             get
             {

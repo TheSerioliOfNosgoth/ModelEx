@@ -76,6 +76,8 @@ namespace ModelEx
                 dm.context.ClearDepthStencilView(dm.depthStencil, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
                 dm.context.ClearRenderTargetView(dm.renderTarget, new Color4(Color.Gray));
 
+                CameraManager.Instance.UpdateFrameCamera();
+
                 Scene.Instance.Render();
 
                 // syncInterval can be 0

@@ -41,16 +41,16 @@ namespace ModelEx
 
         public override void ApplyTransform(Matrix transform)
         {
-            Matrix ViewPerspective = CameraManager.Instance.ViewPerspective;
+            Matrix ViewPerspective = CameraManager.Instance.frameCamera.ViewPerspective;
             Matrix WorldViewPerspective = transform * ViewPerspective;
-            Vector3 viewDir = CameraManager.Instance.currentCamera.eye - CameraManager.Instance.currentCamera.target;
+            Vector3 viewDir = CameraManager.Instance.frameCamera.eye - CameraManager.Instance.frameCamera.target;
 
             effect.World.SetMatrix(transform);
             //ewu.World.SetMatrix(Matrix.Scaling(-1, 1, 1) *  this.transform);
-            effect.View.SetMatrix(CameraManager.Instance.View);
-            effect.Projection.SetMatrix(CameraManager.Instance.currentCamera.Perspective);
+            effect.View.SetMatrix(CameraManager.Instance.frameCamera.View);
+            effect.Projection.SetMatrix(CameraManager.Instance.frameCamera.Perspective);
 
-            effect.CameraPosition.Set(CameraManager.Instance.currentCamera.eye);
+            effect.CameraPosition.Set(CameraManager.Instance.frameCamera.eye);
             effect.LightDirection.Set(viewDir);
         }
 

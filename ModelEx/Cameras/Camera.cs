@@ -4,7 +4,7 @@ using SlimDX;
 
 namespace ModelEx
 {
-    public abstract class Camera
+    public class Camera
     {
         public Vector3 eye;
         public Vector3 target;
@@ -14,7 +14,7 @@ namespace ModelEx
         public Matrix perspective = Matrix.Identity;
         public Matrix viewPerspective = Matrix.Identity;
 
-        public Matrix View
+        public virtual Matrix View
         {
             get { return view; }
         }
@@ -32,12 +32,12 @@ namespace ModelEx
             view = Matrix.LookAtLH(eye, target, up);
         }
 
-        public Matrix Perspective
+        public virtual Matrix Perspective
         {
             get { return perspective; }
         }
 
-        public Matrix ViewPerspective
+        public virtual Matrix ViewPerspective
         {
             get { return view * perspective; }
         }
@@ -55,13 +55,13 @@ namespace ModelEx
         public int startY = 0;
         public int deltaY = 0;
 
-        public abstract void MouseUp(object sender, MouseEventArgs e);
-        public abstract void MouseDown(object sender, MouseEventArgs e);
-        public abstract void MouseMove(object sender, MouseEventArgs e);
-        public abstract void MouseWheel(object sender, MouseEventArgs e);
+        public virtual void MouseUp(object sender, MouseEventArgs e) { }
+        public virtual void MouseDown(object sender, MouseEventArgs e) { }
+        public virtual void MouseMove(object sender, MouseEventArgs e) { }
+        public virtual void MouseWheel(object sender, MouseEventArgs e) { }
 
-        public abstract void KeyPress(object sender, KeyPressEventArgs e);
-        public abstract void KeyDown(object sender, KeyEventArgs e);
-        public abstract void KeyUp(object sender, KeyEventArgs e);
+        public virtual void KeyPress(object sender, KeyPressEventArgs e) { }
+        public virtual void KeyDown(object sender, KeyEventArgs e) { }
+        public virtual void KeyUp(object sender, KeyEventArgs e) { }
     }
 }
