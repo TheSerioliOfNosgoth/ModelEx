@@ -21,7 +21,6 @@ namespace ModelEx
         }
         #endregion
 
-        #region Constructor
         private CameraManager()
         {
             frameCamera = new Camera();
@@ -35,12 +34,11 @@ namespace ModelEx
             currentIndex = 0;
             currentCamera = cameras[currentIndex];
         }
-        #endregion
 
-        List<Camera> cameras = new List<Camera>();
+        List<DynamicCamera> cameras = new List<DynamicCamera>();
 
         public Camera frameCamera;
-        public Camera currentCamera;
+        public DynamicCamera currentCamera;
         int currentIndex;
 
         public Matrix ViewPerspective
@@ -95,13 +93,7 @@ namespace ModelEx
 
         public void UpdateFrameCamera()
         {
-            Matrix m = currentCamera.ViewPerspective;
-            m = currentCamera.ViewPerspective;
-            m = currentCamera.ViewPerspective;
-            m = currentCamera.ViewPerspective;
-            m = currentCamera.ViewPerspective;
-            m = currentCamera.ViewPerspective;
-            m = currentCamera.ViewPerspective;
+            currentCamera.Update();
             frameCamera.CopyFromOther(currentCamera);
         }
     }

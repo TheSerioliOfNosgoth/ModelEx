@@ -6,9 +6,10 @@ using SlimDX.DXGI;
 
 namespace ModelEx
 {
-    public class OrbitPanCamera : Camera
+    public class OrbitPanCamera : DynamicCamera
     {
-        #region Constructor
+        float maxZoom = 3.0f;
+
         public OrbitPanCamera()
         {
             eye = new Vector3(4, 2, 0);
@@ -18,7 +19,6 @@ namespace ModelEx
             view = Matrix.LookAtLH(eye, target, up);
             perspective = Matrix.PerspectiveFovLH((float)Math.PI / 4, 1.0f, 0.1f, 1000.0f);
         }
-        #endregion
 
         public void RotateY(int value)
         {
@@ -63,6 +63,7 @@ namespace ModelEx
             {
                 scaleFactor = 0.05f;
             }
+
             Vector3 viewDir = target - eye;
             Vector3 orhto = Vector3.Cross(viewDir, up);
             orhto.Normalize();
@@ -86,6 +87,7 @@ namespace ModelEx
             {
                 scaleFactor = 0.05f;
             }
+
             Vector3 viewDir = target - eye;
             scaleFactor = scaleFactor * (float)Math.Sqrt(viewDir.Length()) * 0.5f;
             viewDir.Y = 0.0f;
@@ -98,7 +100,6 @@ namespace ModelEx
             SetView(eye, target, up);
         }
 
-        float maxZoom = 3.0f;
         public void Zoom(int value)
         {
             Vector3 viewDir = eye - target;
@@ -187,6 +188,10 @@ namespace ModelEx
         public override void KeyUp(object sender, KeyEventArgs e)
         {
 
+        }
+
+        public override void Update()
+        {
         }
     }
 }

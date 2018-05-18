@@ -6,9 +6,10 @@ using SlimDX.DXGI;
 
 namespace ModelEx
 {
-    public class OrbitCamera : Camera
+    public class OrbitCamera : DynamicCamera
     {
-        #region Constructor
+        float maxZoom = 3.0f;
+
         public OrbitCamera()
         {
             eye = new Vector3(4, 2, 0);
@@ -18,7 +19,6 @@ namespace ModelEx
             view = Matrix.LookAtLH(eye, target, up);
             perspective = Matrix.PerspectiveFovLH((float)Math.PI / 4, 1.0f, 0.1f, 1000.0f);
         }
-        #endregion
 
         public void RotateY(int value)
         {
@@ -48,7 +48,6 @@ namespace ModelEx
             }
         }
 
-        float maxZoom = 3.0f;
         public void Zoom(int value)
         {
             float scaleFactor = 1.0f;
@@ -59,7 +58,9 @@ namespace ModelEx
             else
             {
                 if ((eye - target).Length() > maxZoom)
+                {
                     scaleFactor = 0.9f;
+                }
             }
 
             Matrix scale = Matrix.Scaling(scaleFactor, scaleFactor, scaleFactor);
@@ -120,6 +121,10 @@ namespace ModelEx
         public override void KeyUp(object sender, KeyEventArgs e)
         {
 
+        }
+
+        public override void Update()
+        {
         }
     }
 }

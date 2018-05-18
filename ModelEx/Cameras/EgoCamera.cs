@@ -8,9 +8,17 @@ using SlimDX.DXGI;
 
 namespace ModelEx
 {
-    public class EgoCamera : Camera
+    public class EgoCamera : DynamicCamera
     {
         Vector3 look;
+
+        bool strafingLeft = false;
+        bool strafingRight = false;
+        bool movingForward = false;
+        bool movingBack = false;
+
+        float pitchVal = 0.0f;
+        float moveSpeed = 5.0f;
 
         public EgoCamera()
         {
@@ -23,39 +31,6 @@ namespace ModelEx
             perspective = Matrix.PerspectiveFovLH((float)Math.PI / 4, 1.0f, 0.1f, 1000.0f);
         }
 
-        public override void SetView(Vector3 eye, Vector3 target, Vector3 up)
-        {
-            this.look = target - eye;
-            this.eye = eye;
-            this.target = target;
-            this.up = up;
-            view = Matrix.LookAtLH(eye, target, up);
-
-            Vector3 dir = look;
-            dir.Normalize();
-            pitchVal = (float)System.Math.Asin(dir.Y);
-        }
-
-        public override Matrix ViewPerspective
-        {
-            get
-            {
-                if (strafingLeft)
-                    strafe(1);
-
-                if (strafingRight)
-                    strafe(-1);
-
-                if (movingForward)
-                    move(1);
-
-                if (movingBack)
-                    move(-1);
-
-                return view * perspective;
-            }
-        }
-
         public void Yaw(int x)
         {
             Matrix rot = Matrix.RotationY(x / 100.0f);
@@ -65,7 +40,6 @@ namespace ModelEx
             view = Matrix.LookAtLH(eye, target, up);
         }
 
-        float pitchVal = 0.0f;
         public void Pitch(int y)
         {
             Vector3 axis = Vector3.Cross(up, look);
@@ -93,6 +67,61 @@ namespace ModelEx
 
             target = eye + look;
             view = Matrix.LookAtLH(eye, target, up);
+        }
+
+        public void Strafe(int val)
+        {
+            Vector3 axis = Vector3.Cross(look, up);
+            // AMF - Added Deltatime
+            //Matrix scale = Matrix.Scaling(0.1f, 0.1f, 0.1f);
+            //axis = Vector3.TransformCoordinate(axis, scale);
+            axis *= Timer.Instance.DeltaTime * moveSpeed;
+
+            if (val > 0)
+            {
+                eye = eye + axis;
+            }
+            else
+            {
+                eye = eye - axis;
+            }
+
+            target = eye + look;
+            view = Matrix.LookAtLH(eye, target, up);
+        }
+
+        public void Move(int val)
+        {
+            Vector3 tempLook = look;
+            // AMF - Added Deltatime
+            //Matrix scale = Matrix.Scaling(0.1f, 0.1f, 0.1f);
+            //tempLook = Vector3.TransformCoordinate(tempLook, scale);
+            tempLook *= Timer.Instance.DeltaTime * moveSpeed;
+
+            if (val > 0)
+            {
+                eye = eye + tempLook;
+            }
+            else
+            {
+                eye = eye - tempLook;
+            }
+
+            target = eye + look;
+            view = Matrix.LookAtLH(eye, target, up);
+        }
+
+        public override void SetView(Vector3 eye, Vector3 target, Vector3 up)
+        {
+            this.look = target - eye;
+            this.eye = eye;
+            this.target = target;
+            this.up = up;
+            view = Matrix.LookAtLH(eye, target, up);
+
+            Vector3 dir = look;
+            dir.Normalize();
+            pitchVal = (float)System.Math.Asin(dir.Y);
         }
 
         public override void MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -128,59 +157,13 @@ namespace ModelEx
             }
         }
 
-        public void strafe(int val)
+        public override void MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            Vector3 axis = Vector3.Cross(look, up);
-            // AMF - Added Deltatime
-            //Matrix scale = Matrix.Scaling(0.1f, 0.1f, 0.1f);
-            //axis = Vector3.TransformCoordinate(axis, scale);
-            axis *= Timer.Instance.DeltaTime;
-
-            if (val > 0)
-            {
-                eye = eye + axis;
-            }
-            else
-            {
-                eye = eye - axis;
-            }
-
-            target = eye + look;
-            view = Matrix.LookAtLH(eye, target, up);
         }
-
-        public void move(int val)
-        {
-            Vector3 tempLook = look;
-            // AMF - Added Deltatime
-            //Matrix scale = Matrix.Scaling(0.1f, 0.1f, 0.1f);
-            //tempLook = Vector3.TransformCoordinate(tempLook, scale);
-            tempLook *= Timer.Instance.DeltaTime;
-
-            if (val > 0)
-            {
-                eye = eye + tempLook;
-            }
-            else
-            {
-                eye = eye - tempLook;
-            }
-
-            target = eye + look;
-            view = Matrix.LookAtLH(eye, target, up);
-        }
-
-        // Nothing to do here
-        public override void MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e) { }
 
         public override void KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
         }
-
-        bool strafingLeft = false;
-        bool strafingRight = false;
-        bool movingForward = false;
-        bool movingBack = false;
 
         public override void KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
@@ -219,6 +202,29 @@ namespace ModelEx
             else if (e.KeyCode == System.Windows.Forms.Keys.D)
             {
                 strafingRight = false;
+            }
+        }
+
+        public override void Update()
+        {
+            if (strafingLeft)
+            {
+                Strafe(1);
+            }
+
+            if (strafingRight)
+            {
+                Strafe(-1);
+            }
+
+            if (movingForward)
+            {
+                Move(1);
+            }
+
+            if (movingBack)
+            {
+                Move(-1);
             }
         }
     }
