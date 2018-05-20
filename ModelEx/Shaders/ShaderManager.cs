@@ -24,14 +24,12 @@ namespace ModelEx
         #endregion
 
         public EffectWrapperTransformEffectWireframe transformEffectWireFrame;
-        public EffectWrapperPhongBlinn effectPhongBlinn;
         public EffectWrapperPhongTexture effectPhongTexture;
         public EffectWrapperGouraudTexture effectGouraudTexture;
 
         public void Initialize()
         {
             transformEffectWireFrame = new EffectWrapperTransformEffectWireframe();
-            effectPhongBlinn = new EffectWrapperPhongBlinn();
             effectPhongTexture = new EffectWrapperPhongTexture();
             effectGouraudTexture = new EffectWrapperGouraudTexture();
         }
@@ -39,7 +37,6 @@ namespace ModelEx
         public void ShutDown()
         {
             transformEffectWireFrame?.Dispose();
-            effectPhongBlinn?.Dispose();
             effectPhongTexture?.Dispose();
             effectGouraudTexture?.Dispose();
         }
@@ -47,7 +44,6 @@ namespace ModelEx
         public void LoadShaders()
         {
             transformEffectWireFrame.Load();
-            effectPhongBlinn.Load();
             effectPhongTexture.Load();
             effectGouraudTexture.Load();
         }

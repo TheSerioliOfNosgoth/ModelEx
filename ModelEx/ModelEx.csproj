@@ -122,7 +122,6 @@
     <Compile Include="Renderables\RenderManager.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="Shaders\EffectWrapperGouraudTexture.cs" />
-    <Compile Include="Shaders\EffectWrapperPhongBlinn.cs" />
     <Compile Include="Shaders\EffectWrapperPhongTexture.cs" />
     <Compile Include="Shaders\EffectWrapperTransformEffectWireframe.cs" />
     <Compile Include="Shaders\ShaderManager.cs" />
@@ -162,9 +161,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Shaders\GouraudTextured.fx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Shaders\PhongBlinn.fx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Shaders\PhongTextured.fx">

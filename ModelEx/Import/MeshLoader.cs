@@ -29,7 +29,7 @@ namespace ModelEx
                 _exGroup = srModel.Groups[groupIndex];
             }
 
-            public void BuildMesh(bool isUnit)
+            public void BuildMesh(bool isSR2File, bool isUnit)
             {
                 int startIndexLocation = 0;
 
@@ -65,11 +65,11 @@ namespace ModelEx
                 {
                     if (isUnit)
                     {
-                        Mesh = new MeshPCT(this);
+                        Mesh = new MeshPCT(this, isSR2File ? "SR2Render" : "SR1Render");
                     }
                     else
                     {
-                        Mesh = new MeshPNT(this);
+                        Mesh = new MeshPNT(this, isSR2File ? "SR2Render" : "SR1Render");
                     }
                 }
             }
@@ -256,7 +256,7 @@ namespace ModelEx
                         String meshName = groupName + "-mesh-" + groupIndex.ToString();
 
                         SRObjectParser parser = new SRObjectParser(srModel, groupIndex);
-                        parser.BuildMesh(srFile.m_eFileType == FileType.Unit);
+                        parser.BuildMesh(isSR2File, srFile.m_eFileType == FileType.Unit);
                         parser.Mesh.Name = meshName;
                         foreach (SubMesh subMesh in parser.SubMeshes)
                         {

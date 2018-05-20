@@ -4,7 +4,7 @@ matrix Projection;
 float3 CameraPosition;
 float3 LightDirection = float3(1, 1, 1);
 
-bool TextureEnabled = false;
+bool UseTexture = false;
 Texture2D Texture;
 
 SamplerState stateLinear
@@ -52,14 +52,16 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 float4 PixelShaderFunction(VertexShaderOutput input) : SV_TARGET
 {
 	// Start with diffuse color
-	float4 color = DiffuseColor;
-
-	color *= Texture.Sample(stateLinear, input.TexCoord);
+	float4 color = UseTexture == false ? DiffuseColor : Texture.Sample(stateLinear, input.TexCoord);
+	if (color.a < 0.5)
+	{
+		clip(-1);
+	}
 
 	// Calculate final color
-	float4 output = float4(input.Color, 1) * color; // * float3(4, 4, 4, 1);
+	float3 output = input.Color * color.rgb;
 
-	return output;
+	return float4(output, color.a);
 }
 
 BlendState AlphaBlend
@@ -68,27 +70,62 @@ BlendState AlphaBlend
 	SrcBlend = SRC_ALPHA;
 	DestBlend = INV_SRC_ALPHA;
 	BlendOp = ADD;
-	RenderTargetWriteMask[0] = 0x0F;
+	//RenderTargetWriteMask[0] = 0x0F;
 };
 
-RasterizerState WireframeState
+RasterizerState DefaultRasterizerState
 {
 	FillMode = Solid;
-	CullMode = Front; // Is Front for Soul Reaver 2. Normally None.
+	CullMode = None;
 	FrontCounterClockwise = false;
 };
 
-technique10 Render
+RasterizerState SR1RasterizerState
+{
+	FillMode = Solid;
+	CullMode = None;
+	FrontCounterClockwise = false;
+};
+
+RasterizerState SR2RasterizerState
+{
+	FillMode = Solid;
+	CullMode = Front;
+	FrontCounterClockwise = false;
+};
+
+technique10 DefaultRender
 {
 	pass P0
 	{
 		SetVertexShader(CompileShader(vs_4_0, VertexShaderFunction()));
 		SetGeometryShader(NULL);
 		SetPixelShader(CompileShader(ps_4_0, PixelShaderFunction()));
-		SetRasterizerState(WireframeState);
+		SetRasterizerState(DefaultRasterizerState);
 		//SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 }
 
+technique10 SR1Render
+{
+	pass P0
+	{
+		SetVertexShader(CompileShader(vs_4_0, VertexShaderFunction()));
+		SetGeometryShader(NULL);
+		SetPixelShader(CompileShader(ps_4_0, PixelShaderFunction()));
+		SetRasterizerState(SR1RasterizerState);
+		SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+	}
+}
 
-
+technique10 SR2Render
+{
+	pass P0
+	{
+		SetVertexShader(CompileShader(vs_4_0, VertexShaderFunction()));
+		SetGeometryShader(NULL);
+		SetPixelShader(CompileShader(ps_4_0, PixelShaderFunction()));
+		SetRasterizerState(SR2RasterizerState);
+		//SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+	}
+}

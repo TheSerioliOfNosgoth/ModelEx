@@ -31,6 +31,7 @@ namespace ModelEx
         public EffectScalarVariable SpecularPower;
 
         // Texture
+        public EffectScalarVariable UseTexture;
         public EffectResourceVariable TextureVariable;
 
         InputElement[] elements = new[] { 
@@ -74,6 +75,7 @@ namespace ModelEx
 
                 SpecularPower = effect.GetVariableByName("SpecularPower").AsScalar();
 
+                UseTexture = effect.GetVariableByName("UseTexture").AsScalar();
                 TextureVariable = effect.GetVariableByName("Texture").AsResource();
             }
             catch (Exception ex)

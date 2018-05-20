@@ -9,11 +9,13 @@ namespace ModelEx
     public class MeshPCT : Mesh
     {
         protected EffectWrapperGouraudTexture effect = ShaderManager.Instance.effectGouraudTexture;
+        protected string techniqueName = "";
 
-        public MeshPCT(IMeshParser<PositionColorTexturedVertex, short> meshParser)
+        public MeshPCT(IMeshParser<PositionColorTexturedVertex, short> meshParser, string techniqueName)
         {
             SetIndexBuffer(meshParser);
             SetVertexBuffer(meshParser);
+            this.techniqueName = techniqueName;
         }
 
         public override void ApplyBuffers()
@@ -31,12 +33,17 @@ namespace ModelEx
             effect.SpecularColor.Set(ColorToVector4(material.Specular));
             effect.LightColor.Set(new Vector4(1, 1, 1, 1));
             effect.SpecularPower.Set(128);
-            if (material.TextureFileName != null)
+            if (material.TextureFileName != null && material.TextureFileName != "")
             {
+                effect.UseTexture.Set(true);
                 effect.TextureVariable.SetResource(TextureManager.Instance.GetShaderResourceView(material.TextureFileName + ".dds"));
             }
+            else
+            {
+                effect.UseTexture.Set(false);
+            }
 
-            effect.technique = effect.effect.GetTechniqueByName("Render");
+            effect.technique = effect.effect.GetTechniqueByName(techniqueName);
         }
 
         public override void ApplyTransform(Matrix transform)

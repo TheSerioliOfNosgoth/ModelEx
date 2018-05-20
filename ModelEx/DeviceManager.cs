@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Windows.Forms;
 using Resource = SlimDX.Direct3D11.Resource;
 using Device = SlimDX.Direct3D11.Device;
 using SlimDX;
-using SlimDX.Windows;
-using SlimDX.D3DCompiler;
 using SlimDX.Direct3D11;
 using SlimDX.DXGI;
 
@@ -14,13 +11,11 @@ namespace ModelEx
     {
         public Device device;
         public SwapChain swapChain;
-        public Viewport viewport;
         public RenderTargetView renderTarget;
         public DepthStencilView depthStencil;
-        Texture2D DSTexture;
-        Texture2D resource;
-        DepthStencilState dss;
-        DepthStencilState depthStencilStateNormal;
+        Texture2D depthStencilTexture;
+        Texture2D backBufferTexture;
+        DepthStencilState depthStencilState;
 
         public DeviceContext context;
 
@@ -69,8 +64,8 @@ namespace ModelEx
             Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.None, description, out device, out swapChain);
 
             // create a view of our render target, which is the backbuffer of the swap chain we just created
-            resource = Resource.FromSwapChain<Texture2D>(swapChain, 0);
-            renderTarget = new RenderTargetView(device, resource);
+            backBufferTexture = Resource.FromSwapChain<Texture2D>(swapChain, 0);
+            renderTarget = new RenderTargetView(device, backBufferTexture);
 
             // setting a viewport is required if you want to actually see anything
             context = device.ImmediateContext;
@@ -85,10 +80,8 @@ namespace ModelEx
 
         public void CreateDepthStencilBuffer(System.Windows.Forms.Control form)
         {
-            if (DSTexture != null)
-                DSTexture.Dispose();
-
-            DSTexture = new Texture2D(
+            depthStencilTexture?.Dispose();
+            depthStencilTexture = new Texture2D(
               device,
               new Texture2DDescription()
               {
@@ -104,12 +97,10 @@ namespace ModelEx
               }
             );
 
-            if (depthStencil != null)
-                depthStencil.Dispose();
-
+            depthStencil?.Dispose();
             depthStencil = new DepthStencilView(
               device,
-              DSTexture,
+              depthStencilTexture,
               new DepthStencilViewDescription()
               {
                   ArraySize = 0,
@@ -120,44 +111,29 @@ namespace ModelEx
               }
              );
 
-            if (dss != null)
-                dss.Dispose();
+            depthStencilState?.Dispose();
+            depthStencilState = DepthStencilState.FromDescription(
+             device,
+             new DepthStencilStateDescription()
+             {
+                 DepthComparison = Comparison.Less,
+                 DepthWriteMask = DepthWriteMask.All,
+                 IsDepthEnabled = true,
+                 IsStencilEnabled = false
+             }
+           );
 
-             dss = DepthStencilState.FromDescription(
-              device,
-              new DepthStencilStateDescription()
-              {
-                  DepthComparison = Comparison.Always,
-                  DepthWriteMask = DepthWriteMask.All,
-                  IsDepthEnabled = true,
-                  IsStencilEnabled = false
-              }
-            );
-
-            context.OutputMerger.DepthStencilState = dss;
-
+            context.OutputMerger.DepthStencilState = depthStencilState;
             context.OutputMerger.SetTargets(depthStencil, renderTarget);
-
-            DepthStencilStateDescription dssd = new DepthStencilStateDescription
-            {
-                IsDepthEnabled = true,
-                IsStencilEnabled = false,
-                DepthWriteMask = DepthWriteMask.All,
-                DepthComparison = Comparison.Less,
-            };
-
-            depthStencilStateNormal = DepthStencilState.FromDescription(DeviceManager.Instance.device, dssd);
-            DeviceManager.Instance.context.OutputMerger.DepthStencilState = depthStencilStateNormal;
         }
 
         public void ShutDown()
         {
-            depthStencilStateNormal.Dispose();
-            dss.Dispose();
+            depthStencilState.Dispose();
             depthStencil.Dispose();
-            DSTexture.Dispose();
+            depthStencilTexture.Dispose();
             renderTarget.Dispose();
-            resource.Dispose();
+            backBufferTexture.Dispose();
             swapChain.Dispose();
             device.Dispose();
         }
@@ -167,14 +143,16 @@ namespace ModelEx
             try
             {
                 if (device == null)
+                {
                     return;
+                }
 
                 float aspectRatio = (float)form.ClientSize.Width / (float)form.ClientSize.Height;
                 CameraManager.Instance.SetPerspective((float)Math.PI / 4, aspectRatio, 0.1f, 1000.0f);
 
                 // Dispose before resizing.
                 renderTarget?.Dispose();
-                resource?.Dispose();
+                backBufferTexture?.Dispose();
                 depthStencil?.Dispose();
 
                 swapChain.ResizeBuffers(1,
@@ -183,12 +161,12 @@ namespace ModelEx
                   Format.R8G8B8A8_UNorm,
                   SwapChainFlags.AllowModeSwitch);
 
-                resource = Texture2D.FromSwapChain<Texture2D>(swapChain, 0);
-                renderTarget = new RenderTargetView(device, resource);
+                backBufferTexture = Texture2D.FromSwapChain<Texture2D>(swapChain, 0);
+                renderTarget = new RenderTargetView(device, backBufferTexture);
 
                 CreateDepthStencilBuffer(form);
 
-                viewport = new Viewport(0.0f, 0.0f, form.ClientSize.Width, form.ClientSize.Height);
+                Viewport viewport = new Viewport(0.0f, 0.0f, form.ClientSize.Width, form.ClientSize.Height);
                 context.Rasterizer.SetViewports(viewport);
                 context.OutputMerger.SetTargets(depthStencil, renderTarget);
             }
