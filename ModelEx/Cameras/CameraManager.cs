@@ -6,6 +6,19 @@ namespace ModelEx
 {
     public class CameraManager
     {
+        public enum CameraMode : int
+        {
+            Ego = 0,
+            Orbit = 1,
+            OrbitPan = 2
+        }
+
+        List<DynamicCamera> cameras = new List<DynamicCamera>();
+
+        public Camera frameCamera;
+        public DynamicCamera currentCamera;
+        CameraMode cameraMode;
+
         #region Singleton Pattern
         private static CameraManager instance = null;
         public static CameraManager Instance
@@ -24,29 +37,15 @@ namespace ModelEx
         private CameraManager()
         {
             frameCamera = new Camera();
-            OrbitPanCamera ocp = new OrbitPanCamera();
-            OrbitCamera oc = new OrbitCamera();
             EgoCamera ec = new EgoCamera();
-            cameras.Add(ocp);
-            cameras.Add(oc);
+            OrbitCamera oc = new OrbitCamera();
+            OrbitPanCamera ocp = new OrbitPanCamera();
             cameras.Add(ec);
+            cameras.Add(oc);
+            cameras.Add(ocp);
 
-            currentIndex = 0;
-            currentCamera = cameras[currentIndex];
-        }
-
-        List<DynamicCamera> cameras = new List<DynamicCamera>();
-
-        public Camera frameCamera;
-        public DynamicCamera currentCamera;
-        int currentIndex;
-
-        public Matrix ViewPerspective
-        {
-            get
-            {
-                return currentCamera.ViewPerspective;
-            }
+            cameraMode = 0;
+            currentCamera = cameras[(int)cameraMode];
         }
 
         public void SetPerspective(float fov, float aspect, float znear, float zfar)
@@ -54,14 +53,6 @@ namespace ModelEx
             foreach (Camera camera in cameras)
             {
                 camera.SetPerspective(fov, aspect, znear, zfar);
-            }
-        }
-
-        public Matrix View
-        {
-            get
-            {
-                return currentCamera.View;
             }
         }
 
@@ -73,22 +64,10 @@ namespace ModelEx
             }
         }
 
-        public string CycleCameras()
+        public void SetCamera(CameraMode mode)
         {
-            Camera previousCamera = currentCamera;
-
-            int numCameras = cameras.Count;
-            currentIndex = currentIndex + 1;
-            if (currentIndex == numCameras)
-                currentIndex = 0;
-            currentCamera = cameras[currentIndex];
-
-            if (previousCamera != null && currentCamera != null)
-            {
-                currentCamera.CopyFromOther(previousCamera);
-            }
-
-            return currentCamera.ToString();
+            cameraMode = mode;
+            currentCamera = cameras[(int)cameraMode];
         }
 
         public void UpdateFrameCamera()

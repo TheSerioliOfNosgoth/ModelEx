@@ -104,6 +104,8 @@ namespace ModelEx
 
                 Thread loadingThread = new Thread((ThreadStart)(() =>
                 {
+                    CameraManager.Instance.SetView(new SlimDX.Vector3(0.0f, 5.0f, -5.0f), new SlimDX.Vector3(0.0f, 5.0f, 0.0f));
+
                     Scene.Instance.ShutDown();
                     if (OpenDlg.FilterIndex == 1)
                     {
@@ -116,7 +118,6 @@ namespace ModelEx
 
                     //MeshLoader.LoadSoulReaverFile("C:/Users/A/Documents/SR2-Models-PC/raziel.drm", true);
                     //MeshLoader.Import("C:/Program Files/Assimp/test/models-nonbsd/3DS/mar_rifle.3ds");
-                    CameraManager.Instance.SetView(new SlimDX.Vector3(0.0f, 5.0f, -5.0f), new SlimDX.Vector3(0.0f, 5.0f, 0.0f));
 
                     Invoke(new MethodInvoker(EndLoading));
                 }));
@@ -165,6 +166,35 @@ namespace ModelEx
                     }
                 }
             }
+        }
+
+        private void resetPositionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CameraManager.Instance.SetView(new SlimDX.Vector3(0.0f, 5.0f, -5.0f), new SlimDX.Vector3(0.0f, 5.0f, 0.0f));
+        }
+
+        private void egoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CameraManager.Instance.SetCamera(CameraManager.CameraMode.Ego);
+            egoToolStripMenuItem.Checked = true;
+            orbitToolStripMenuItem.Checked = false;
+            orbitPanToolStripMenuItem.Checked = false;
+        }
+
+        private void orbitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CameraManager.Instance.SetCamera(CameraManager.CameraMode.Orbit);
+            egoToolStripMenuItem.Checked = false;
+            orbitToolStripMenuItem.Checked = true;
+            orbitPanToolStripMenuItem.Checked = false;
+        }
+
+        private void orbitPanToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CameraManager.Instance.SetCamera(CameraManager.CameraMode.OrbitPan);
+            egoToolStripMenuItem.Checked = false;
+            orbitToolStripMenuItem.Checked = false;
+            orbitPanToolStripMenuItem.Checked = true;
         }
     }
 }

@@ -18,7 +18,7 @@ namespace ModelEx
         bool movingBack = false;
 
         float pitchVal = 0.0f;
-        float moveSpeed = 5.0f;
+        float moveSpeed = 10.0f;
 
         public EgoCamera()
         {

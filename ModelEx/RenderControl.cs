@@ -76,10 +76,6 @@ namespace ModelEx
         {
             if (e.KeyCode == Keys.F1)
             {
-                CameraManager.Instance.CycleCameras();
-            }
-            else if (e.KeyCode == Keys.F2)
-            {
                 RenderManager.Instance.SwitchSyncInterval();
             }
 
