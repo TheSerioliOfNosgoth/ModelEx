@@ -9,5 +9,7 @@ namespace ModelEx
 
         public virtual string Name { get; set; }
         public virtual Matrix Transform { get; set; } = Matrix.Identity;
+
+        public abstract BoundingSphere GetBoundingSphere();
     }
 }

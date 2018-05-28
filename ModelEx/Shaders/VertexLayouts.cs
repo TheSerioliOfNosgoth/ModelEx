@@ -19,6 +19,11 @@ namespace ModelEx
     }
     public interface IMeshParser<V, I> : IVertexParser<V>, IIndexParser<I>
     {
+        string MeshName { get; }
+        string Technique { get; }
+    }
+    public interface IModelParser
+    {
 
     }
 

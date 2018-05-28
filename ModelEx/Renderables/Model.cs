@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SlimDX;
 
 namespace ModelEx
 {
@@ -9,6 +10,11 @@ namespace ModelEx
         public List<Mesh> Meshes { get; } = new List<Mesh>();
         public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
         public Node Root { get; } = new Node();
+
+        public Model(IModelParser modelParser)
+        {
+
+        }
 
         public override void Render()
         {
@@ -67,6 +73,17 @@ namespace ModelEx
             }
 
             return null;
+        }
+
+        public override BoundingSphere GetBoundingSphere()
+        {
+            BoundingSphere boundingSphere = new BoundingSphere();
+            foreach (Mesh mesh in Meshes)
+            {
+                boundingSphere = BoundingSphere.Merge(boundingSphere, mesh.BoundingSphere);
+            }
+
+            return boundingSphere;
         }
 
         public override void Dispose()

@@ -104,8 +104,6 @@ namespace ModelEx
 
                 Thread loadingThread = new Thread((ThreadStart)(() =>
                 {
-                    CameraManager.Instance.SetView(new SlimDX.Vector3(0.0f, 5.0f, -5.0f), new SlimDX.Vector3(0.0f, 5.0f, 0.0f));
-
                     Scene.Instance.ShutDown();
                     if (OpenDlg.FilterIndex == 1)
                     {
@@ -115,6 +113,12 @@ namespace ModelEx
                     {
                         MeshLoader.LoadSoulReaverFile(OpenDlg.FileName, true);
                     }
+
+                    SlimDX.BoundingSphere boundingSphere = Scene.Instance.RenderObjects[0].GetBoundingSphere();
+                    SlimDX.Vector3 target = boundingSphere.Center;
+                    SlimDX.Vector3 eye = target - new SlimDX.Vector3(0.0f, 0.0f, boundingSphere.Radius * 2.5f);
+                    CameraManager.Instance.SetView(eye, target);
+                    //CameraManager.Instance.SetView(new SlimDX.Vector3(0.0f, 5.0f, -5.0f), new SlimDX.Vector3(0.0f, 5.0f, 0.0f));
 
                     //MeshLoader.LoadSoulReaverFile("C:/Users/A/Documents/SR2-Models-PC/raziel.drm", true);
                     //MeshLoader.Import("C:/Program Files/Assimp/test/models-nonbsd/3DS/mar_rifle.3ds");
@@ -170,7 +174,11 @@ namespace ModelEx
 
         private void resetPositionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CameraManager.Instance.SetView(new SlimDX.Vector3(0.0f, 5.0f, -5.0f), new SlimDX.Vector3(0.0f, 5.0f, 0.0f));
+            SlimDX.BoundingSphere boundingSphere = Scene.Instance.RenderObjects[0].GetBoundingSphere();
+            SlimDX.Vector3 target = boundingSphere.Center;
+            SlimDX.Vector3 eye = target - new SlimDX.Vector3(0.0f, 0.0f, boundingSphere.Radius * 2.5f);
+            CameraManager.Instance.SetView(eye, target);
+            //CameraManager.Instance.SetView(new SlimDX.Vector3(0.0f, 5.0f, -5.0f), new SlimDX.Vector3(0.0f, 5.0f, 0.0f));
         }
 
         private void egoToolStripMenuItem_Click(object sender, EventArgs e)

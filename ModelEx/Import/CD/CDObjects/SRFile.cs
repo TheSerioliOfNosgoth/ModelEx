@@ -11,7 +11,13 @@ namespace ModelEx
         PSX,
         Dreamcast
     }
-    public enum FileType
+    public enum Game
+    {
+        SR1,
+        SR2
+    }
+
+    public enum Asset
     {
         Object,
         Unit
@@ -420,13 +426,16 @@ namespace ModelEx
         public UInt32 m_uConnectedUnitCount;
         public UInt32 m_uConnectedUnitsStart;
         public String[] m_astrConnectedUnit;
-        public FileType m_eFileType;
+        public Game m_eGame;
+        public Asset m_eAsset;
         public Platform m_ePlatform;
 
         public static StreamWriter m_xLogFile = null;
 
-        protected SRFile(String strFileName)
+        protected SRFile(String strFileName, Game game)
         {
+            m_eGame = game;
+
             FileStream xFile = new FileStream(strFileName, FileMode.Open, FileAccess.Read);
             BinaryReader xReader = new BinaryReader(xFile);
             MemoryStream xStream = new MemoryStream((int)xFile.Length);
@@ -441,7 +450,7 @@ namespace ModelEx
 
             ReadHeaderData(xReader);
 
-            if (m_eFileType == FileType.Object)
+            if (m_eAsset == Asset.Object)
             {
                 ReadObjectData(xReader);
             }

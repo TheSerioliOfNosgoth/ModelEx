@@ -9,13 +9,14 @@ namespace ModelEx
     public class MeshPNT : Mesh
     {
         protected EffectWrapperPhongTexture effect = ShaderManager.Instance.effectPhongTexture;
-        protected string techniqueName = "";
+        protected string technique = "";
 
-        public MeshPNT(IMeshParser<PositionNormalTexturedVertex, short> meshParser, string techniqueName)
+        public MeshPNT(IMeshParser<PositionNormalTexturedVertex, short> meshParser)
         {
+            Name = meshParser.MeshName;
+            technique = meshParser.Technique;
             SetIndexBuffer(meshParser);
             SetVertexBuffer(meshParser);
-            this.techniqueName = techniqueName;
         }
 
         public override void ApplyBuffers()
@@ -43,7 +44,7 @@ namespace ModelEx
                 effect.UseTexture.Set(false);
             }
 
-            effect.technique = effect.effect.GetTechniqueByName(techniqueName);
+            effect.technique = effect.effect.GetTechniqueByName(technique);
         }
 
         public override void ApplyTransform(Matrix transform)

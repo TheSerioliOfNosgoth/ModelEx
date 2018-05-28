@@ -12,35 +12,114 @@ namespace ModelEx
 {
     public class MeshLoader
     {
-        class SRObjectParser :
+        class SRModelParser :
+            IModelParser
+        {
+            SRFile _srFile;
+            SRModel _srModel;
+            public Model Model;
+
+            public SRModelParser(SRFile srFile)
+            {
+                _srFile = srFile;
+            }
+
+            public void BuildModel(string objectName, int modelIndex)
+            {
+                _srModel = _srFile.m_axModels[modelIndex];
+                String modelName = objectName + "-" + modelIndex.ToString();
+
+                List<Material> materials = new List<Material>();
+                List<Mesh> meshes = new List<Mesh>();
+                List<SubMesh> subMeshes = new List<SubMesh>();
+                List<Node> groups = new List<Node>();
+
+                #region Materials
+                progressStage = "Model " + modelIndex.ToString() + " - Creating Materials";
+                Thread.Sleep(500);
+                for (int materialIndex = 0; materialIndex < _srModel.MaterialCount; materialIndex++)
+                {
+                    Material material = new Material();
+                    Color colorDiffuse = Color.FromArgb((int)unchecked(_srModel.Materials[materialIndex].colour));
+                    material.Diffuse = colorDiffuse;
+                    material.TextureFileName = GetTextureName(_srModel, materialIndex);
+                    materials.Add(material);
+
+                    progressLevel += _srModel.IndexCount / _srModel.Groups.Length;
+                }
+                #endregion
+
+                #region Groups
+                for (int groupIndex = 0; groupIndex < _srModel.Groups.Length; groupIndex++)
+                {
+                    progressStage = "Model " + modelIndex.ToString() + " - Creating Group " + groupIndex.ToString();
+                    Thread.Sleep(100);
+
+                    ExTree srGroup = _srModel.Groups[groupIndex];
+                    String groupName = String.Format("{0}-{1}-group-{2}", objectName, modelIndex, groupIndex);
+                    if (srGroup != null && srGroup.m_xMesh != null)
+                    {
+                        Node group = new Node();
+                        SRMeshParser meshParser = new SRMeshParser(_srFile);
+                        meshParser.BuildMesh(objectName, modelIndex, groupIndex, 0);
+                        foreach (SubMesh subMesh in meshParser.SubMeshes)
+                        {
+                            // If the mesh parser knew the total submeshes for the model,
+                            // then this could be done inside BuildMesh.
+                            subMesh.MeshIndex = meshes.Count;
+                            group.SubMeshIndices.Add(subMeshes.Count);
+                            subMeshes.Add(subMesh);
+                        }
+                        meshes.Add(meshParser.Mesh);
+                        group.Name = groupName;
+                        groups.Add(group);
+                    }
+                }
+                #endregion
+
+                Model = new Model(this);
+                Model.Materials.AddRange(materials);
+                Model.Meshes.AddRange(meshes);
+                Model.SubMeshes.AddRange(subMeshes);
+                Model.Root.Nodes.AddRange(groups);
+                Model.Name = modelName;
+                Model.Root.Name = modelName;
+            }
+        }
+
+        class SRMeshParser :
             IMeshParser<PositionNormalTexturedVertex, short>,
             IMeshParser<PositionColorTexturedVertex, short>
         {
+            SRFile _srFile;
             SRModel _srModel;
-            ExTree _exGroup;
+            ExTree _srGroup;
             List<int> _vertexList = new List<int>();
             List<int> _indexList = new List<int>();
             public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
             public Mesh Mesh;
 
-            public SRObjectParser(SRModel srModel, int groupIndex)
+            public SRMeshParser(SRFile srFile)
             {
-                _srModel = srModel;
-                _exGroup = srModel.Groups[groupIndex];
+                _srFile = srFile;
             }
 
-            public void BuildMesh(bool isSR2File, bool isUnit)
+            public void BuildMesh(string objectName, int modelIndex, int groupIndex, int meshIndex)
             {
-                int startIndexLocation = 0;
+                _srModel = _srFile.m_axModels[modelIndex];
+                _srGroup = _srModel.Groups[groupIndex];
+                String modelName = String.Format("{0}-{1}", objectName, modelIndex);
+                String groupName = String.Format("{0}-{1}-group-{2}", objectName, modelIndex, groupIndex);
+                String meshName = String.Format("{0}-{1}-group-{2}-mesh-{3}", objectName, modelIndex, groupIndex, meshIndex);
 
+                int startIndexLocation = 0;
                 for (int materialIndex = 0; materialIndex < _srModel.MaterialCount; materialIndex++)
                 {
                     int indexCount = 0;
-
-                    int totalIndexCount = (int)_exGroup.m_xMesh.m_uIndexCount;
+                    int totalIndexCount = (int)_srGroup.m_xMesh.m_uIndexCount;
                     for (int v = 0; v < totalIndexCount; v++)
                     {
-                        if (_exGroup.m_xMesh.m_axPolygons[v / 3].material.ID == materialIndex)
+                        if (_srGroup.m_xMesh.m_axPolygons[v / 3].material.ID == materialIndex)
                         {
                             _vertexList.Add(v);
                             _indexList.Add(_indexList.Count - startIndexLocation);
@@ -50,11 +129,15 @@ namespace ModelEx
 
                     if (indexCount > 0)
                     {
-                        SubMesh subMesh = new SubMesh();
-                        subMesh.startIndexLocation = startIndexLocation;
-                        subMesh.indexCount = indexCount;
-                        subMesh.baseVertexLocation = startIndexLocation;
-                        subMesh.MaterialIndex = materialIndex;
+                        String subMeshName = String.Format("{0}-{1}-group-{2}-submesh-{3}", objectName, modelIndex, groupIndex, materialIndex);
+                        SubMesh subMesh = new SubMesh
+                        {
+                            Name = subMeshName,
+                            MaterialIndex = materialIndex,
+                            indexCount = indexCount,
+                            startIndexLocation = startIndexLocation,
+                            baseVertexLocation = startIndexLocation
+                        };
                         SubMeshes.Add(subMesh);
 
                         startIndexLocation += indexCount;
@@ -63,22 +146,36 @@ namespace ModelEx
 
                 if (SubMeshes.Count > 0)
                 {
-                    if (isUnit)
+                    MeshName = meshName;
+                    Technique = _srFile.m_eGame == Game.SR2 ? "SR2Render" : "SR1Render";
+                    if (_srFile.m_eAsset == Asset.Unit)
                     {
-                        Mesh = new MeshPCT(this, isSR2File ? "SR2Render" : "SR1Render");
+                        Mesh = new MeshPCT(this);
                     }
                     else
                     {
-                        Mesh = new MeshPNT(this, isSR2File ? "SR2Render" : "SR1Render");
+                        Mesh = new MeshPNT(this);
                     }
                 }
+            }
+
+            public string MeshName
+            {
+                get;
+                private set;
+            }
+
+            public string Technique
+            {
+                get;
+                private set;
             }
 
             public int VertexCount { get { return _vertexList.Count; } }
 
             public void FillVertex(int v, out PositionNormalTexturedVertex vertex)
             {
-                ref ExVertex exVertex = ref _exGroup.m_xMesh.m_axVertices[_vertexList[v]];
+                ref ExVertex exVertex = ref _srGroup.m_xMesh.m_axVertices[_vertexList[v]];
 
                 vertex.Position = new SlimDX.Vector3()
                 {
@@ -104,7 +201,7 @@ namespace ModelEx
 
             public void FillVertex(int v, out PositionColorTexturedVertex vertex)
             {
-                ref ExVertex exVertex = ref _exGroup.m_xMesh.m_axVertices[_vertexList[v]];
+                ref ExVertex exVertex = ref _srGroup.m_xMesh.m_axVertices[_vertexList[v]];
 
                 vertex.Position = new SlimDX.Vector3()
                 {
@@ -192,6 +289,7 @@ namespace ModelEx
             }
             #endregion
 
+            #region Progress Levels
             for (int modelIndex = 0; modelIndex < srFile.m_axModels.Length; modelIndex++)
             {
                 SRModel srModel = srFile.m_axModels[modelIndex];
@@ -213,73 +311,21 @@ namespace ModelEx
                     }
                 }
             }
+            #endregion
 
             String objectName = System.IO.Path.GetFileNameWithoutExtension(fileName);
 
-            Model model = new Model();
-            model.Name = objectName;
-            model.Root.Name = objectName;
-
             for (int modelIndex = 0; modelIndex < srFile.m_axModels.Length; modelIndex++)
             {
-                SRModel srModel = srFile.m_axModels[modelIndex];
-                String modelName = objectName + "-" + modelIndex.ToString();
-
-                progressStage = "Model " + modelIndex.ToString() + " - Creating Materials";
-                Thread.Sleep(500);
-
-                for (int materialIndex = 0; materialIndex < srModel.MaterialCount; materialIndex++)
-                {
-                    Material material = new Material();
-                    Color colorDiffuse = Color.FromArgb((int)unchecked(srModel.Materials[materialIndex].colour));
-                    material.Diffuse = colorDiffuse;
-                    material.TextureFileName = GetTextureName(srModel, materialIndex);
-                    model.Materials.Add(material);
-
-                    progressLevel += srModel.IndexCount / srModel.Groups.Length;
-                }
-
-                Node modelNode = new Node();
-                modelNode.Name = modelName;
-
-                for (int groupIndex = 0; groupIndex < srModel.Groups.Length; groupIndex++)
-                {
-                    progressStage = "Model " + modelIndex.ToString() + " - Creating Group " + groupIndex.ToString();
-                    Thread.Sleep(100);
-
-                    String groupName = modelName + "-group-" + groupIndex.ToString();
-                    Node group = new Node();
-                    group.Name = groupName;
-
-                    if (srModel.Groups[groupIndex] != null && srModel.Groups[groupIndex].m_xMesh != null)
-                    {
-                        String meshName = groupName + "-mesh-" + groupIndex.ToString();
-
-                        SRObjectParser parser = new SRObjectParser(srModel, groupIndex);
-                        parser.BuildMesh(isSR2File, srFile.m_eFileType == FileType.Unit);
-                        parser.Mesh.Name = meshName;
-                        foreach (SubMesh subMesh in parser.SubMeshes)
-                        {
-                            String subMeshName = groupName + "-subMesh-" + subMesh.MaterialIndex.ToString();
-                            subMesh.Name = meshName;
-                            subMesh.MeshIndex = model.Meshes.Count;
-                            group.SubMeshIndices.Add(model.SubMeshes.Count);
-                            model.SubMeshes.Add(subMesh);
-                        }
-                        model.Meshes.Add(parser.Mesh);
-                    }
-
-                    modelNode.Nodes.Add(group);
-                }
-
-                model.Root.Nodes.Add(modelNode);
+                SRModelParser modelParser = new SRModelParser(srFile);
+                modelParser.BuildModel(objectName, modelIndex);
+                Scene.Instance.AddRenderObject(modelParser.Model);
             }
-
-            Scene.Instance.AddRenderObject(model);
 
             progressStage = "Loading Textures";
             System.Threading.Thread.Sleep(1000);
 
+            #region Textures
             if (srFile.GetType() == typeof(SR2File))
             {
                 String textureFileName = System.IO.Path.ChangeExtension(fileName, "vrm");
@@ -422,6 +468,7 @@ namespace ModelEx
                     }
                 }
             }
+            #endregion
 
             progressLevel = progressLevels;
             progressStage = "Done";

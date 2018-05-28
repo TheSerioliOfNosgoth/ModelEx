@@ -969,7 +969,7 @@ namespace ModelEx
         #endregion
 
         public SR1File(String strFileName)
-            : base(strFileName)
+            : base(strFileName, Game.SR1)
         {
         }
 
@@ -1141,11 +1141,11 @@ namespace ModelEx
             UInt32 uDataStart = ((xReader.ReadUInt32() >> 9) << 11) + 0x00000800;
             if (xReader.ReadUInt32() == 0x00000000)
             {
-                m_eFileType = FileType.Unit;
+                m_eAsset = Asset.Unit;
             }
             else
             {
-                m_eFileType = FileType.Object;
+                m_eAsset = Asset.Object;
             }
 
             xReader.BaseStream.Position = uDataStart;

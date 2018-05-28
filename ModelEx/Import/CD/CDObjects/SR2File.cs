@@ -1138,7 +1138,7 @@ namespace ModelEx
         #endregion
 
         public SR2File(String strFileName) 
-            : base(strFileName)
+            : base(strFileName, Game.SR2)
         {
         }
 
@@ -1149,11 +1149,11 @@ namespace ModelEx
             xReader.BaseStream.Position = 0x00000080;
             if (xReader.ReadUInt32() == 0x04C2041D)
             {
-                m_eFileType = FileType.Unit;
+                m_eAsset = Asset.Unit;
             }
             else
             {
-                m_eFileType = FileType.Object;
+                m_eAsset = Asset.Object;
             }
         }
 

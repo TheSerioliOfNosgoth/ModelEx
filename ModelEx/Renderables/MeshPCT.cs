@@ -9,13 +9,14 @@ namespace ModelEx
     public class MeshPCT : Mesh
     {
         protected EffectWrapperGouraudTexture effect = ShaderManager.Instance.effectGouraudTexture;
-        protected string techniqueName = "";
+        protected string technique = "";
 
-        public MeshPCT(IMeshParser<PositionColorTexturedVertex, short> meshParser, string techniqueName)
+        public MeshPCT(IMeshParser<PositionColorTexturedVertex, short> meshParser)
         {
+            Name = meshParser.MeshName;
+            technique = meshParser.Technique;
             SetIndexBuffer(meshParser);
             SetVertexBuffer(meshParser);
-            this.techniqueName = techniqueName;
         }
 
         public override void ApplyBuffers()
@@ -43,7 +44,7 @@ namespace ModelEx
                 effect.UseTexture.Set(false);
             }
 
-            effect.technique = effect.effect.GetTechniqueByName(techniqueName);
+            effect.technique = effect.effect.GetTechniqueByName(technique);
         }
 
         public override void ApplyTransform(Matrix transform)

@@ -11,14 +11,20 @@ namespace ModelEx
         protected Buffer vertexBuffer;
         protected DataStream vertices;
 
-        protected int vertexStride;
-        protected int numVertices;
+        protected int vertexStride = 0;
+        protected int numVertices = 0;
 
         protected Buffer indexBuffer;
         protected int indexStride = 0;
         protected int numIndices = 0;
         protected int indexBufferSizeInBytes = 0;
         protected DataStream indices;
+
+        protected BoundingBox boundingBox;
+        public BoundingBox BoundingBox { get { return boundingBox; } }
+
+        protected BoundingSphere boundingSphere;
+        public BoundingSphere BoundingSphere { get { return boundingSphere; } }
 
         public String Name = "";
 
@@ -72,6 +78,9 @@ namespace ModelEx
             }
 
             vertices.Position = 0;
+
+            boundingBox = BoundingBox.FromPoints(vertices, numVertices, vertexStride);
+            boundingSphere = BoundingSphere.FromBox(boundingBox);
 
             vertexBuffer = new Buffer(DeviceManager.Instance.device,
                 vertices,

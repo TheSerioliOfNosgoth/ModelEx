@@ -41,7 +41,7 @@ namespace ModelEx
             Vector3 newEye = eyeLocal + target;
             Vector3 newViewDir = target - newEye;
             float cosAngle = Vector3.Dot(newViewDir, up) / (newViewDir.Length() * up.Length());
-            if (cosAngle < 0.9f && cosAngle > -0.9f)
+            if (cosAngle < 0.999f && cosAngle > -0.999f)
             {
                 eye = eyeLocal + target;
                 SetView(eye, target, up);

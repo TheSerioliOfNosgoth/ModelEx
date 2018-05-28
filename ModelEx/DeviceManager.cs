@@ -47,7 +47,7 @@ namespace ModelEx
             this.form = form;
 
             float aspectRatio = (float)form.ClientSize.Width / (float)form.ClientSize.Height;
-            CameraManager.Instance.SetPerspective((float)Math.PI / 4, aspectRatio, 0.1f, 1000.0f);
+            CameraManager.Instance.SetPerspective((float)Math.PI / 4, aspectRatio, 0.1f, 10000.0f);
 
             var description = new SwapChainDescription()
             {
@@ -148,7 +148,7 @@ namespace ModelEx
                 }
 
                 float aspectRatio = (float)form.ClientSize.Width / (float)form.ClientSize.Height;
-                CameraManager.Instance.SetPerspective((float)Math.PI / 4, aspectRatio, 0.1f, 1000.0f);
+                CameraManager.Instance.SetPerspective((float)Math.PI / 4, aspectRatio, 0.1f, 10000.0f);
 
                 // Dispose before resizing.
                 renderTarget?.Dispose();
