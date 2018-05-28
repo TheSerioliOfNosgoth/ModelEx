@@ -754,7 +754,8 @@ namespace ModelEx
 
             protected virtual void ReadSpectralData(BinaryReader xReader)
             {
-                if (m_eRealm == Realm.Spectral)
+                if (m_eRealm == Realm.Spectral &&
+                    m_uSpectralVertexStart != 0 && m_uSpectralColourStart != 0)
                 {
                     // Spectral Colours
                     xReader.BaseStream.Position = m_uSpectralColourStart;

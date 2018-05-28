@@ -709,7 +709,8 @@ namespace ModelEx
 
             protected virtual void ReadSpectralData(BinaryReader xReader)
             {
-                if (m_eRealm == Realm.Spectral)
+                if (m_eRealm == Realm.Spectral &&
+                    m_uSpectralVertexStart != 0 && m_uSpectralColourStart != 0)
                 {
                     // Spectral Colours
                     xReader.BaseStream.Position = m_uSpectralColourStart;
@@ -1117,7 +1118,7 @@ namespace ModelEx
 
             // Model data
             xReader.BaseStream.Position = m_uDataStart;
-            m_usModelCount = 1;
+            m_usModelCount = 2;
             m_uModelStart = m_uDataStart;
             m_axModels = new SR1Model[m_usModelCount];
             xReader.BaseStream.Position = m_uModelStart;
@@ -1127,7 +1128,7 @@ namespace ModelEx
             m_axModels[0] = SR1UnitModel.Load(xReader, m_uDataStart, m_uModelData, m_strModelName, m_ePlatform, Realm.Material, m_uVersion);
 
             // Spectral data
-            //m_axModels[1] = SR1UnitModel.Load(xReader, m_uDataStart, m_uModelData, m_strModelName, m_ePlatform, Realm.Spectral, m_uVersion);
+            m_axModels[1] = SR1UnitModel.Load(xReader, m_uDataStart, m_uModelData, m_strModelName, m_ePlatform, Realm.Spectral, m_uVersion);
 
             //if (m_axModels[0].Platform == Platform.Dreamcast ||
             //    m_axModels[1].Platform == Platform.Dreamcast)

@@ -57,7 +57,8 @@ namespace ModelEx
 
                     ExTree srGroup = _srModel.Groups[groupIndex];
                     String groupName = String.Format("{0}-{1}-group-{2}", objectName, modelIndex, groupIndex);
-                    if (srGroup != null && srGroup.m_xMesh != null)
+                    if (srGroup != null && srGroup.m_xMesh != null &&
+                        srGroup.m_xMesh.m_uIndexCount > 0 && srGroup.m_xMesh.m_uPolygonCount > 0)
                     {
                         Node group = new Node();
                         SRMeshParser meshParser = new SRMeshParser(_srFile);
