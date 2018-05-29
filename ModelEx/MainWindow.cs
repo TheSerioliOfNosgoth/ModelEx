@@ -53,7 +53,7 @@ namespace ModelEx
             sceneTreeNode.Checked = true;
             foreach (Renderable renderable in Scene.Instance.RenderObjects)
             {
-                if (renderable.GetType() == typeof(Model))
+                if (renderable.GetType().IsSubclassOf(typeof(Model)))
                 {
                     Node objectNode = ((Model)renderable).Root;
 
@@ -114,11 +114,20 @@ namespace ModelEx
                         MeshLoader.LoadSoulReaverFile(OpenDlg.FileName, true);
                     }
 
-                    SlimDX.BoundingSphere boundingSphere = Scene.Instance.RenderObjects[0].GetBoundingSphere();
-                    SlimDX.Vector3 target = boundingSphere.Center;
-                    SlimDX.Vector3 eye = target - new SlimDX.Vector3(0.0f, 0.0f, boundingSphere.Radius * 2.5f);
-                    CameraManager.Instance.SetView(eye, target);
-                    //CameraManager.Instance.SetView(new SlimDX.Vector3(0.0f, 5.0f, -5.0f), new SlimDX.Vector3(0.0f, 5.0f, 0.0f));
+                    Renderable mainObject = Scene.Instance.RenderObjects[0];
+                    if (mainObject != null && mainObject.GetType() == typeof(Physical))
+                    {
+                        SlimDX.BoundingSphere boundingSphere = Scene.Instance.RenderObjects[0].GetBoundingSphere();
+                        SlimDX.Vector3 target = boundingSphere.Center;
+                        SlimDX.Vector3 eye = target - new SlimDX.Vector3(0.0f, 0.0f, boundingSphere.Radius * 2.5f);
+                        CameraManager.Instance.SetView(eye, target);
+                    }
+                    else
+                    {
+                        SlimDX.Vector3 eye = new SlimDX.Vector3(0.0f, 0.0f, 0.0f);
+                        SlimDX.Vector3 target = new SlimDX.Vector3(0.0f, 0.0f, 1.0f);
+                        CameraManager.Instance.SetView(eye, target);
+                    }
 
                     //MeshLoader.LoadSoulReaverFile("C:/Users/A/Documents/SR2-Models-PC/raziel.drm", true);
                     //MeshLoader.Import("C:/Program Files/Assimp/test/models-nonbsd/3DS/mar_rifle.3ds");
@@ -161,7 +170,7 @@ namespace ModelEx
         {
             foreach (Renderable renderable in Scene.Instance.RenderObjects)
             {
-                if (renderable.GetType() == typeof(Model))
+                if (renderable.GetType().IsSubclassOf(typeof(Model)))
                 {
                     Node node = ((Model)renderable).FindNode(e.Node.Text);
                     if (node != null)
@@ -174,11 +183,20 @@ namespace ModelEx
 
         private void resetPositionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SlimDX.BoundingSphere boundingSphere = Scene.Instance.RenderObjects[0].GetBoundingSphere();
-            SlimDX.Vector3 target = boundingSphere.Center;
-            SlimDX.Vector3 eye = target - new SlimDX.Vector3(0.0f, 0.0f, boundingSphere.Radius * 2.5f);
-            CameraManager.Instance.SetView(eye, target);
-            //CameraManager.Instance.SetView(new SlimDX.Vector3(0.0f, 5.0f, -5.0f), new SlimDX.Vector3(0.0f, 5.0f, 0.0f));
+            Renderable mainObject = Scene.Instance.RenderObjects[0];
+            if (mainObject != null && mainObject.GetType() == typeof(Physical))
+            {
+                SlimDX.BoundingSphere boundingSphere = Scene.Instance.RenderObjects[0].GetBoundingSphere();
+                SlimDX.Vector3 target = boundingSphere.Center;
+                SlimDX.Vector3 eye = target - new SlimDX.Vector3(0.0f, 0.0f, boundingSphere.Radius * 2.5f);
+                CameraManager.Instance.SetView(eye, target);
+            }
+            else
+            {
+                SlimDX.Vector3 eye = new SlimDX.Vector3(0.0f, 0.0f, 0.0f);
+                SlimDX.Vector3 target = new SlimDX.Vector3(0.0f, 0.0f, 1.0f);
+                CameraManager.Instance.SetView(eye, target);
+            }
         }
 
         private void egoToolStripMenuItem_Click(object sender, EventArgs e)

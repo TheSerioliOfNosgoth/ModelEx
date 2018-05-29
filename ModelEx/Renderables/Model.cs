@@ -13,7 +13,12 @@ namespace ModelEx
 
         public Model(IModelParser modelParser)
         {
-
+            Name = modelParser.ModelName;
+            Materials.AddRange(modelParser.Materials);
+            Meshes.AddRange(modelParser.Meshes);
+            SubMeshes.AddRange(modelParser.SubMeshes);
+            Root.Nodes.AddRange(modelParser.Groups);
+            Root.Name = modelParser.ModelName;
         }
 
         public override void Render()

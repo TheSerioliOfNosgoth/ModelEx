@@ -107,6 +107,8 @@
     <Compile Include="Renderables\MeshPCT.cs" />
     <Compile Include="Renderables\MeshPNT.cs" />
     <Compile Include="Renderables\Mesh.cs" />
+    <Compile Include="Renderables\Physical.cs" />
+    <Compile Include="Renderables\Unit.cs" />
     <Compile Include="Renderables\SubMesh.cs" />
     <Compile Include="Renderables\Node.cs" />
     <Compile Include="Renderables\Model.cs" />

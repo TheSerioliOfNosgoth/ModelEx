@@ -24,7 +24,11 @@ namespace ModelEx
     }
     public interface IModelParser
     {
-
+        string ModelName { get; }
+        List<Material> Materials { get; }
+        List<Mesh> Meshes { get; }
+        List<SubMesh> SubMeshes { get; }
+        List<Node> Groups { get; }
     }
 
     [StructLayout(LayoutKind.Sequential)]
