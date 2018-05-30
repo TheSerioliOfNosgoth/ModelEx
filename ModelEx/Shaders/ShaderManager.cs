@@ -26,12 +26,14 @@ namespace ModelEx
         public EffectWrapperTransformEffectWireframe transformEffectWireFrame;
         public EffectWrapperPhongTexture effectPhongTexture;
         public EffectWrapperGouraudTexture effectGouraudTexture;
+        public EffectMorphingUnit effectMorphingUnit;
 
         public void Initialize()
         {
             transformEffectWireFrame = new EffectWrapperTransformEffectWireframe();
             effectPhongTexture = new EffectWrapperPhongTexture();
             effectGouraudTexture = new EffectWrapperGouraudTexture();
+            effectMorphingUnit = new EffectMorphingUnit();
         }
 
         public void ShutDown()
@@ -39,6 +41,7 @@ namespace ModelEx
             transformEffectWireFrame?.Dispose();
             effectPhongTexture?.Dispose();
             effectGouraudTexture?.Dispose();
+            effectMorphingUnit?.Dispose();
         }
 
         public void LoadShaders()
@@ -46,6 +49,7 @@ namespace ModelEx
             transformEffectWireFrame.Load();
             effectPhongTexture.Load();
             effectGouraudTexture.Load();
+            effectMorphingUnit.Load();
         }
     }
 }

@@ -109,6 +109,25 @@ namespace ModelEx
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    public struct Position2Color2TexturedVertex
+    {
+        public Vector3 Position0;
+        public Vector3 Position1;
+        public Color3 Color0;
+        public Color3 Color1;
+        public Vector2 TextureCoordinates;
+
+        public Position2Color2TexturedVertex(Vector3 position0, Vector3 position1, Color3 color0, Color3 color1, Vector2 textureCoordinates)
+        {
+            this.Position0 = position0;
+            this.Position1 = position1;
+            this.Color0 = color0;
+            this.Color1 = color1;
+            this.TextureCoordinates = textureCoordinates;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     public struct PositionTexturedVertex
     {
         public Vector3 Position;

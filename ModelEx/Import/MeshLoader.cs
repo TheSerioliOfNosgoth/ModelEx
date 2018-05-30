@@ -100,7 +100,8 @@ namespace ModelEx
 
         class SRMeshParser :
             IMeshParser<PositionNormalTexturedVertex, short>,
-            IMeshParser<PositionColorTexturedVertex, short>
+            IMeshParser<PositionColorTexturedVertex, short>,
+            IMeshParser<Position2Color2TexturedVertex, short>
         {
             string _objectName;
             SRFile _srFile;
@@ -163,7 +164,8 @@ namespace ModelEx
                     Technique = _srFile.m_eGame == Game.SR2 ? "SR2Render" : "SR1Render";
                     if (_srFile.m_eAsset == Asset.Unit)
                     {
-                        Mesh = new MeshPCT(this);
+                        //Mesh = new MeshPCT(this);
+                        Mesh = new MeshMorphingUnit(this);
                     }
                     else
                     {
@@ -224,6 +226,47 @@ namespace ModelEx
                 };
 
                 vertex.Color = new SlimDX.Color3()
+                {
+                    //Alpha = ((_srModel.Colours[vertex.colourID] & 0xFF000000) >> 24) / 255.0f,
+                    Red = ((_srModel.Colours[exVertex.colourID] & 0x00FF0000) >> 16) / 255.0f,
+                    Green = ((_srModel.Colours[exVertex.colourID] & 0x0000FF00) >> 8) / 255.0f,
+                    Blue = ((_srModel.Colours[exVertex.colourID] & 0x000000FF) >> 0) / 255.0f
+                };
+
+                vertex.TextureCoordinates = new SlimDX.Vector2()
+                {
+                    X = _srModel.UVs[exVertex.UVID].u,
+                    Y = _srModel.UVs[exVertex.UVID].v
+                };
+            }
+
+            public void FillVertex(int v, out Position2Color2TexturedVertex vertex)
+            {
+                ref ExVertex exVertex = ref _srGroup.m_xMesh.m_axVertices[_vertexList[v]];
+
+                vertex.Position0 = new SlimDX.Vector3()
+                {
+                    X = 0.01f * _srModel.Positions[exVertex.positionID].worldPos.x,
+                    Y = 0.01f * _srModel.Positions[exVertex.positionID].worldPos.z,
+                    Z = 0.01f * _srModel.Positions[exVertex.positionID].worldPos.y
+                };
+
+                vertex.Position1 = new SlimDX.Vector3()
+                {
+                    X = 0.01f * _srModel.Positions[exVertex.positionID].worldPos.x,
+                    Y = 0.01f * _srModel.Positions[exVertex.positionID].worldPos.z,
+                    Z = 0.01f * _srModel.Positions[exVertex.positionID].worldPos.y
+                };
+
+                vertex.Color0 = new SlimDX.Color3()
+                {
+                    //Alpha = ((_srModel.Colours[vertex.colourID] & 0xFF000000) >> 24) / 255.0f,
+                    Red = ((_srModel.Colours[exVertex.colourID] & 0x00FF0000) >> 16) / 255.0f,
+                    Green = ((_srModel.Colours[exVertex.colourID] & 0x0000FF00) >> 8) / 255.0f,
+                    Blue = ((_srModel.Colours[exVertex.colourID] & 0x000000FF) >> 0) / 255.0f
+                };
+
+                vertex.Color1 = new SlimDX.Color3()
                 {
                     //Alpha = ((_srModel.Colours[vertex.colourID] & 0xFF000000) >> 24) / 255.0f,
                     Red = ((_srModel.Colours[exVertex.colourID] & 0x00FF0000) >> 16) / 255.0f,
