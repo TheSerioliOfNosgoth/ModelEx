@@ -32,7 +32,7 @@ namespace ModelEx
 
             public void BuildModel(int modelIndex)
             {
-                _srModel = _srFile.m_axModels[modelIndex];
+                _srModel = _srFile.Models[modelIndex];
                 String modelName = _objectName + "-" + modelIndex.ToString();
 
                 #region Materials
@@ -58,8 +58,8 @@ namespace ModelEx
 
                     ExTree srGroup = _srModel.Groups[groupIndex];
                     String groupName = String.Format("{0}-{1}-group-{2}", _objectName, modelIndex, groupIndex);
-                    if (srGroup != null && srGroup.m_xMesh != null &&
-                        srGroup.m_xMesh.m_uIndexCount > 0 && srGroup.m_xMesh.m_uPolygonCount > 0)
+                    if (srGroup != null && srGroup.mesh != null &&
+                        srGroup.mesh.indexCount > 0 && srGroup.mesh.polygonCount > 0)
                     {
                         Node group = new Node();
                         SRMeshParser meshParser = new SRMeshParser(_objectName, _srFile);
@@ -81,7 +81,7 @@ namespace ModelEx
 
                 ModelName = modelName;
 
-                if (_srFile.m_eAsset == Asset.Unit)
+                if (_srFile.Asset == Asset.Unit)
                 {
                     Model = new Unit(this);
                 }
@@ -120,7 +120,7 @@ namespace ModelEx
 
             public void BuildMesh(int modelIndex, int groupIndex, int meshIndex)
             {
-                _srModel = _srFile.m_axModels[modelIndex];
+                _srModel = _srFile.Models[modelIndex];
                 _srGroup = _srModel.Groups[groupIndex];
                 String modelName = String.Format("{0}-{1}", _objectName, modelIndex);
                 String groupName = String.Format("{0}-{1}-group-{2}", _objectName, modelIndex, groupIndex);
@@ -130,10 +130,10 @@ namespace ModelEx
                 for (int materialIndex = 0; materialIndex < _srModel.MaterialCount; materialIndex++)
                 {
                     int indexCount = 0;
-                    int totalIndexCount = (int)_srGroup.m_xMesh.m_uIndexCount;
+                    int totalIndexCount = (int)_srGroup.mesh.indexCount;
                     for (int v = 0; v < totalIndexCount; v++)
                     {
-                        if (_srGroup.m_xMesh.m_axPolygons[v / 3].material.ID == materialIndex)
+                        if (_srGroup.mesh.polygons[v / 3].material.ID == materialIndex)
                         {
                             _vertexList.Add(v);
                             _indexList.Add(_indexList.Count - startIndexLocation);
@@ -161,8 +161,8 @@ namespace ModelEx
                 if (SubMeshes.Count > 0)
                 {
                     MeshName = meshName;
-                    Technique = _srFile.m_eGame == Game.SR2 ? "SR2Render" : "SR1Render";
-                    if (_srFile.m_eAsset == Asset.Unit)
+                    Technique = _srFile.Game == Game.SR2 ? "SR2Render" : "SR1Render";
+                    if (_srFile.Asset == Asset.Unit)
                     {
                         //Mesh = new MeshPCT(this);
                         Mesh = new MeshMorphingUnit(this);
@@ -190,7 +190,7 @@ namespace ModelEx
 
             public void FillVertex(int v, out PositionNormalTexturedVertex vertex)
             {
-                ref ExVertex exVertex = ref _srGroup.m_xMesh.m_axVertices[_vertexList[v]];
+                ref ExVertex exVertex = ref _srGroup.mesh.vertices[_vertexList[v]];
 
                 vertex.Position = new SlimDX.Vector3()
                 {
@@ -216,7 +216,7 @@ namespace ModelEx
 
             public void FillVertex(int v, out PositionColorTexturedVertex vertex)
             {
-                ref ExVertex exVertex = ref _srGroup.m_xMesh.m_axVertices[_vertexList[v]];
+                ref ExVertex exVertex = ref _srGroup.mesh.vertices[_vertexList[v]];
 
                 vertex.Position = new SlimDX.Vector3()
                 {
@@ -242,7 +242,7 @@ namespace ModelEx
 
             public void FillVertex(int v, out Position2Color2TexturedVertex vertex)
             {
-                ref ExVertex exVertex = ref _srGroup.m_xMesh.m_axVertices[_vertexList[v]];
+                ref ExVertex exVertex = ref _srGroup.mesh.vertices[_vertexList[v]];
 
                 vertex.Position0 = new SlimDX.Vector3()
                 {
@@ -346,9 +346,9 @@ namespace ModelEx
             #endregion
 
             #region Progress Levels
-            for (int modelIndex = 0; modelIndex < srFile.m_axModels.Length; modelIndex++)
+            for (int modelIndex = 0; modelIndex < srFile.Models.Length; modelIndex++)
             {
-                SRModel srModel = srFile.m_axModels[modelIndex];
+                SRModel srModel = srFile.Models[modelIndex];
 
                 for (int materialIndex = 0; materialIndex < srModel.MaterialCount; materialIndex++)
                 {
@@ -357,11 +357,11 @@ namespace ModelEx
 
                 for (int groupIndex = 0; groupIndex < srModel.Groups.Length; groupIndex++)
                 {
-                    if (srModel.Groups[groupIndex] != null && srModel.Groups[groupIndex].m_xMesh != null)
+                    if (srModel.Groups[groupIndex] != null && srModel.Groups[groupIndex].mesh != null)
                     {
                         for (int materialIndex = 0; materialIndex < srModel.MaterialCount; materialIndex++)
                         {
-                            int vertexCount = (int)srModel.Groups[groupIndex].m_xMesh.m_uIndexCount;
+                            int vertexCount = (int)srModel.Groups[groupIndex].mesh.indexCount;
                             progressLevels += (vertexCount * 3);
                         }
                     }
@@ -371,7 +371,7 @@ namespace ModelEx
 
             String objectName = System.IO.Path.GetFileNameWithoutExtension(fileName);
 
-            for (int modelIndex = 0; modelIndex < srFile.m_axModels.Length; modelIndex++)
+            for (int modelIndex = 0; modelIndex < srFile.Models.Length; modelIndex++)
             {
                 SRModelParser modelParser = new SRModelParser(objectName, srFile);
                 modelParser.BuildModel(modelIndex);
@@ -409,13 +409,13 @@ namespace ModelEx
             }
             else
             {
-                if (srFile.m_ePlatform == Platform.PC)
+                if (srFile.Platform == Platform.PC)
                 {
                     String textureFileName = System.IO.Path.GetDirectoryName(fileName) + "\\textures.big";
                     try
                     {
                         SR1PCTextureFile textureFile = new SR1PCTextureFile(textureFileName);
-                        foreach (SRModel srModel in srFile.m_axModels)
+                        foreach (SRModel srModel in srFile.Models)
                         {
                             foreach (ExMaterial material in srModel.Materials)
                             {
@@ -437,13 +437,13 @@ namespace ModelEx
                         Console.Write(ex.ToString());
                     }
                 }
-                else if (srFile.m_ePlatform == Platform.Dreamcast)
+                else if (srFile.Platform == Platform.Dreamcast)
                 {
                     String textureFileName = System.IO.Path.GetDirectoryName(fileName) + "\\textures.vq";
                     try
                     {
                         SR1DCTextureFile textureFile = new SR1DCTextureFile(textureFileName);
-                        foreach (SRModel srModel in srFile.m_axModels)
+                        foreach (SRModel srModel in srFile.Models)
                         {
                             foreach (ExMaterial material in srModel.Materials)
                             {
@@ -474,7 +474,7 @@ namespace ModelEx
                         SR1PSTextureFile textureFile = new SR1PSTextureFile(textureFileName);
 
                         UInt32 polygonCountAllModels = 0;
-                        foreach (SRModel srModel in srFile.m_axModels)
+                        foreach (SRModel srModel in srFile.Models)
                         {
                             polygonCountAllModels += srModel.PolygonCount;
                         }
@@ -483,7 +483,7 @@ namespace ModelEx
                             new SR1PSTextureFile.SoulReaverPlaystationPolygonTextureData[polygonCountAllModels];
 
                         int polygonNum = 0;
-                        foreach (SRModel srModel in srFile.m_axModels)
+                        foreach (SRModel srModel in srFile.Models)
                         {
                             foreach (ExPolygon polygon in srModel.Polygons)
                             {

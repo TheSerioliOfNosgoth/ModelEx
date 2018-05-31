@@ -1,6 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 
 namespace ModelEx
 {
@@ -215,14 +215,14 @@ namespace ModelEx
         public UInt32 tempID;
         public UInt32 dataPos;
         public Boolean isLeaf;
-        public ExMesh m_xMesh;
+        public ExMesh mesh;
     }
     public class ExMesh
     {
-        public UInt32 m_uPolygonCount;
-        public UInt32 m_uIndexCount;
-        public ExVertex[] m_axVertices;
-        public ExPolygon[] m_axPolygons;
+        public UInt32 polygonCount;
+        public UInt32 indexCount;
+        public ExVertex[] vertices;
+        public ExPolygon[] polygons;
     }
 
     public class Utility
@@ -362,11 +362,13 @@ namespace ModelEx
         protected UInt32 m_uMaterialCount;
         protected UInt32 m_uMaterialStart;
         protected UInt32 m_uIndexCount { get { return 3 * m_uPolygonCount; } }
-        protected ExVector m_xVertexScale;
+        protected ExVector m_xScale;
         protected ExVertex[] m_axVertices;
         protected ExPosition[] m_axPositions;
+        protected ExVector[] m_axPositionsAlt;
         protected ExVector[] m_axNormals;
         protected UInt32[] m_auColours;
+        protected UInt32[] m_auColoursAlt;
         protected ExUV[] m_axUVs;
         protected ExPolygon[] m_axPolygons;
         protected ExBone[]  m_axBones;
@@ -401,34 +403,48 @@ namespace ModelEx
             m_uVertexStart = 0;
             m_uPolygonCount = 0;
             m_uPolygonStart = 0;
-            m_xVertexScale.x = 1.0f;
-            m_xVertexScale.y = 1.0f;
-            m_xVertexScale.z = 1.0f;
+            m_xScale.x = 1.0f;
+            m_xScale.y = 1.0f;
+            m_xScale.z = 1.0f;
             m_xMaterialsList = new List<ExMaterial>();
         }
     }
 
     public abstract class SRFile
     {
-        public String m_strModelName;
-        public UInt32 m_uVersion;
-        public UInt32 m_uDataStart;
-        public UInt16 m_usModelCount;
-        public UInt16 m_usAnimCount;
-        public UInt32 m_uModelStart;
-        public SRModel[] m_axModels;
-        public UInt32 m_uAnimStart;
-        public UInt32 m_uInstanceCount;
-        public UInt32 m_uInstanceStart;
-        public String[] m_astrInstances;
-        public UInt32 m_uInstanceTypesStart;
-        public String[] m_axInstanceTypeNames;
-        public UInt32 m_uConnectedUnitCount;
-        public UInt32 m_uConnectedUnitsStart;
-        public String[] m_astrConnectedUnit;
-        public Game m_eGame;
-        public Asset m_eAsset;
-        public Platform m_ePlatform;
+        protected String m_strModelName;
+        protected UInt32 m_uVersion;
+        protected UInt32 m_uDataStart;
+        protected UInt16 m_usModelCount;
+        protected UInt16 m_usAnimCount;
+        protected UInt32 m_uModelStart;
+        protected SRModel[] m_axModels;
+        protected UInt32 m_uAnimStart;
+        protected UInt32 m_uInstanceCount;
+        protected UInt32 m_uInstanceStart;
+        protected String[] m_astrInstanceNames;
+        protected UInt32 m_uInstanceTypesStart;
+        protected String[] m_axInstanceTypeNames;
+        protected UInt32 m_uConnectedUnitCount;
+        protected UInt32 m_uConnectedUnitsStart;
+        protected String[] m_astrConnectedUnit;
+        protected Game m_eGame;
+        protected Asset m_eAsset;
+        protected Platform m_ePlatform;
+
+        public String Name { get { return m_strModelName; } }
+        public UInt32 Version { get { return m_uVersion; } }
+        public UInt16 ModelCount { get { return m_usModelCount; } }
+        public UInt16 AnimCount { get { return m_usAnimCount; } }
+        public SRModel[] Models { get { return m_axModels; } }
+        public UInt32 InstanceCount { get { return m_uInstanceCount; } }
+        public String[] Instances { get { return m_astrInstanceNames; } }
+        public String[] InstanceTypeNames { get { return m_axInstanceTypeNames; } }
+        public UInt32 ConectedUnitCount { get { return m_uConnectedUnitCount; } }
+        public String[] ConnectedUnit { get { return m_astrConnectedUnit; } }
+        public Game Game { get { return m_eGame; } }
+        public Asset Asset { get { return m_eAsset; } }
+        public Platform Platform { get { return m_ePlatform; } }
 
         public static StreamWriter m_xLogFile = null;
 

@@ -292,7 +292,9 @@ namespace ModelEx
             // Get the vertices
             m_axVertices = new ExVertex[m_uVertexCount];
             m_axPositions = new ExPosition[m_uVertexCount];
+            m_axPositionsAlt = new ExVector[m_uVertexCount];
             m_auColours = new UInt32[m_uVertexCount];
+            m_auColoursAlt = new UInt32[m_uVertexCount];
             m_axUVs = new ExUV[m_uVertexCount];
             ReadVertices(xReader);
 
@@ -316,6 +318,7 @@ namespace ModelEx
 
             // Before transformation, the world coords equal the local coords
             m_axPositions[v].worldPos = m_axPositions[v].localPos;
+            m_axPositionsAlt[v] = m_axPositions[v].localPos;
         }
 
         protected virtual void ReadVertices(BinaryReader xReader)
@@ -379,9 +382,9 @@ namespace ModelEx
                 UInt32 uBoneCount2          = xReader.ReadUInt32();
                 m_uBoneCount                = uBoneCount1 + uBoneCount2;
                 m_uBoneStart                = xReader.ReadUInt32();
-                m_xVertexScale.x            = xReader.ReadSingle();
-                m_xVertexScale.y            = xReader.ReadSingle();
-                m_xVertexScale.z            = xReader.ReadSingle();
+                m_xScale.x            = xReader.ReadSingle();
+                m_xScale.y            = xReader.ReadSingle();
+                m_xScale.z            = xReader.ReadSingle();
                 xReader.BaseStream.Position += 0x04;
                 m_uVertexCount              = xReader.ReadUInt32();
                 m_uVertexStart              = m_uDataStart + xReader.ReadUInt32();
@@ -411,10 +414,6 @@ namespace ModelEx
             protected override void ReadVertex(BinaryReader xReader, int v)
             {
                 base.ReadVertex(xReader, v);
-
-                m_axPositions[v].worldPos.x *= m_xVertexScale.x;
-                m_axPositions[v].worldPos.y *= m_xVertexScale.y;
-                m_axPositions[v].worldPos.z *= m_xVertexScale.z;
 
                 m_axVertices[v].normalID = xReader.ReadUInt16();
                 xReader.BaseStream.Position += 0x02;
@@ -519,6 +518,7 @@ namespace ModelEx
                         for (UInt16 v = m_axBones[b].vFirst; v <= m_axBones[b].vLast; v++)
                         {
                             m_axPositions[v].worldPos += m_axBones[b].worldPos;
+                            m_axPositionsAlt[v] += m_axBones[b].worldPos;
                             m_axPositions[v].boneID = b;
                         }
                     }
@@ -564,19 +564,19 @@ namespace ModelEx
                 for (UInt32 t = 0; t < m_uTreeCount; t++)
                 {
                     m_axTrees[t] = new ExTree();
-                    m_axTrees[t].m_xMesh = new ExMesh();
+                    m_axTrees[t].mesh = new ExMesh();
 
                     foreach (SR2TriangleList xTriangleList in xTriangleListList)
                     {
                         if (t == (UInt32)xTriangleList.m_usGroupID)
                         {
-                            m_axTrees[t].m_xMesh.m_uPolygonCount += xTriangleList.m_uPolygonCount;
+                            m_axTrees[t].mesh.polygonCount += xTriangleList.m_uPolygonCount;
                         }
                     }
 
-                    m_axTrees[t].m_xMesh.m_uIndexCount = m_axTrees[t].m_xMesh.m_uPolygonCount * 3;
-                    m_axTrees[t].m_xMesh.m_axPolygons = new ExPolygon[m_axTrees[t].m_xMesh.m_uPolygonCount];
-                    m_axTrees[t].m_xMesh.m_axVertices = new ExVertex[m_axTrees[t].m_xMesh.m_uIndexCount];
+                    m_axTrees[t].mesh.indexCount = m_axTrees[t].mesh.polygonCount * 3;
+                    m_axTrees[t].mesh.polygons = new ExPolygon[m_axTrees[t].mesh.polygonCount];
+                    m_axTrees[t].mesh.vertices = new ExVertex[m_axTrees[t].mesh.indexCount];
                 }
 
                 for (UInt32 t = 0; t < m_uTreeCount; t++)
@@ -592,20 +592,20 @@ namespace ModelEx
                         xReader.BaseStream.Position = xTriangleList.m_uPolygonStart;
                         for (int pl = 0; pl < xTriangleList.m_uPolygonCount; pl++)
                         {
-                            m_axTrees[t].m_xMesh.m_axPolygons[tp].v1 = m_axVertices[xReader.ReadUInt16()];
-                            m_axTrees[t].m_xMesh.m_axPolygons[tp].v2 = m_axVertices[xReader.ReadUInt16()];
-                            m_axTrees[t].m_xMesh.m_axPolygons[tp].v3 = m_axVertices[xReader.ReadUInt16()];
-                            m_axTrees[t].m_xMesh.m_axPolygons[tp].material = xTriangleList.m_xMaterial;
+                            m_axTrees[t].mesh.polygons[tp].v1 = m_axVertices[xReader.ReadUInt16()];
+                            m_axTrees[t].mesh.polygons[tp].v2 = m_axVertices[xReader.ReadUInt16()];
+                            m_axTrees[t].mesh.polygons[tp].v3 = m_axVertices[xReader.ReadUInt16()];
+                            m_axTrees[t].mesh.polygons[tp].material = xTriangleList.m_xMaterial;
                             tp++;
                         }
                     }
 
                     // Make the vertices unique - Because I do the same thing in GenerateOutput
-                    for (UInt16 poly = 0; poly < m_axTrees[t].m_xMesh.m_uPolygonCount; poly++)
+                    for (UInt16 poly = 0; poly < m_axTrees[t].mesh.polygonCount; poly++)
                     {
-                        m_axTrees[t].m_xMesh.m_axVertices[(3 * poly) + 0] = m_axTrees[t].m_xMesh.m_axPolygons[poly].v1;
-                        m_axTrees[t].m_xMesh.m_axVertices[(3 * poly) + 1] = m_axTrees[t].m_xMesh.m_axPolygons[poly].v2;
-                        m_axTrees[t].m_xMesh.m_axVertices[(3 * poly) + 2] = m_axTrees[t].m_xMesh.m_axPolygons[poly].v3;
+                        m_axTrees[t].mesh.vertices[(3 * poly) + 0] = m_axTrees[t].mesh.polygons[poly].v1;
+                        m_axTrees[t].mesh.vertices[(3 * poly) + 1] = m_axTrees[t].mesh.polygons[poly].v2;
+                        m_axTrees[t].mesh.vertices[(3 * poly) + 2] = m_axTrees[t].mesh.polygons[poly].v3;
                     }
                 }
 
@@ -716,10 +716,6 @@ namespace ModelEx
             {
                 base.ReadVertex(xReader, v);
 
-                m_axPositions[v].worldPos.x *= m_xVertexScale.x;
-                m_axPositions[v].worldPos.y *= m_xVertexScale.y;
-                m_axPositions[v].worldPos.z *= m_xVertexScale.z;
-
                 m_axVertices[v].colourID = v;
 
                 m_auColours[v] = xReader.ReadUInt32();
@@ -791,6 +787,7 @@ namespace ModelEx
 
                         m_axPositions[iVertex].localPos = xShiftVertex.basePos;
                         m_axPositions[iVertex].worldPos = m_axPositions[iVertex].localPos;
+                        m_axPositionsAlt[iVertex] = m_axPositions[iVertex].localPos;
                     }
 
                     //// Spectral Verticices
@@ -894,7 +891,7 @@ namespace ModelEx
                 {
                     xTree = new ExTree();
                     xMesh = new ExMesh();
-                    xTree.m_xMesh = xMesh;
+                    xTree.mesh = xMesh;
 
                     if (xParentTree != null)
                     {
@@ -904,7 +901,7 @@ namespace ModelEx
                 else
                 {
                     xTree = xParentTree;
-                    xMesh = xParentTree.m_xMesh;
+                    xMesh = xParentTree.mesh;
                 }
 
                 if (iSubTreeCount == 0)
@@ -930,7 +927,7 @@ namespace ModelEx
 
                 if (uDepth <= uMaxDepth)
                 {
-                    if (xMesh != null && xMesh.m_uIndexCount > 0)
+                    if (xMesh != null && xMesh.indexCount > 0)
                     {
                         xMeshes.Add(xMesh);
                         xMeshPositions.Add(xPolyWriter.BaseStream.Position);
@@ -1013,7 +1010,7 @@ namespace ModelEx
 
                             if (xMesh != null)
                             {
-                                xMesh.m_uIndexCount += uIndexCount2;
+                                xMesh.indexCount += uIndexCount2;
                             }
                         }
 
@@ -1059,7 +1056,7 @@ namespace ModelEx
 
                         if (xMesh != null)
                         {
-                            xMesh.m_uIndexCount += uIndexCount;
+                            xMesh.indexCount += uIndexCount;
                         }
                     }
 
@@ -1074,17 +1071,17 @@ namespace ModelEx
                 //uIndexCount *= 3;
 
                 //xMesh.m_uIndexCount = uIndexCount;
-                xMesh.m_uPolygonCount = xMesh.m_uIndexCount / 3;
-                xMesh.m_axPolygons = new ExPolygon[xMesh.m_uPolygonCount];
-                for (UInt32 p = 0; p < xMesh.m_uPolygonCount; p++)
+                xMesh.polygonCount = xMesh.indexCount / 3;
+                xMesh.polygons = new ExPolygon[xMesh.polygonCount];
+                for (UInt32 p = 0; p < xMesh.polygonCount; p++)
                 {
                     UInt16 uV1 = xPolyReader.ReadUInt16();
                     UInt16 uV2 = xPolyReader.ReadUInt16();
                     UInt16 uV3 = xPolyReader.ReadUInt16();
 
-                    xMesh.m_axPolygons[p].v1 = m_axVertices[uV1];
-                    xMesh.m_axPolygons[p].v2 = m_axVertices[uV2];
-                    xMesh.m_axPolygons[p].v3 = m_axVertices[uV3];
+                    xMesh.polygons[p].v1 = m_axVertices[uV1];
+                    xMesh.polygons[p].v2 = m_axVertices[uV2];
+                    xMesh.polygons[p].v3 = m_axVertices[uV3];
 
                     xMaterial = new ExMaterial();
 
@@ -1121,17 +1118,17 @@ namespace ModelEx
                         m_xMaterialsList.Add(xMaterial);
                     }
 
-                    xMesh.m_axPolygons[p].material = xMaterial;
+                    xMesh.polygons[p].material = xMaterial;
                 }
 
                 // Make the vertices unique - Because I do the same thing in GenerateOutput
-                xMesh.m_axVertices = new ExVertex[xMesh.m_uIndexCount];
-                for (UInt32 poly = 0; poly < xMesh.m_uPolygonCount; poly++)
+                xMesh.vertices = new ExVertex[xMesh.indexCount];
+                for (UInt32 poly = 0; poly < xMesh.polygonCount; poly++)
                 {
-                    m_axPolygons[uPolygon++] = xMesh.m_axPolygons[poly];
-                    xMesh.m_axVertices[(3 * poly) + 0] = xMesh.m_axPolygons[poly].v1;
-                    xMesh.m_axVertices[(3 * poly) + 1] = xMesh.m_axPolygons[poly].v2;
-                    xMesh.m_axVertices[(3 * poly) + 2] = xMesh.m_axPolygons[poly].v3;
+                    m_axPolygons[uPolygon++] = xMesh.polygons[poly];
+                    xMesh.vertices[(3 * poly) + 0] = xMesh.polygons[poly].v1;
+                    xMesh.vertices[(3 * poly) + 1] = xMesh.polygons[poly].v2;
+                    xMesh.vertices[(3 * poly) + 2] = xMesh.polygons[poly].v3;
                 }
             }
         }
@@ -1211,12 +1208,12 @@ namespace ModelEx
             xReader.BaseStream.Position = m_uDataStart + 0x44;
             m_uInstanceCount = xReader.ReadUInt32();
             m_uInstanceStart = m_uDataStart + xReader.ReadUInt32();
-            m_astrInstances = new String[m_uInstanceCount];
+            m_astrInstanceNames = new String[m_uInstanceCount];
             for (int i = 0; i < m_uInstanceCount; i++)
             {
                 xReader.BaseStream.Position = m_uInstanceStart + 0x60 * i;
                 String strInstanceName = new String(xReader.ReadChars(8));
-                m_astrInstances[i] = Utility.CleanName(strInstanceName);
+                m_astrInstanceNames[i] = Utility.CleanName(strInstanceName);
             }
 
             // Instance types
