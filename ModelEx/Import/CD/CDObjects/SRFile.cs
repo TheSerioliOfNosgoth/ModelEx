@@ -63,12 +63,6 @@ namespace ModelEx
         public UInt16 parentID2;        // ID of parent bone 2
         public UInt32 flags;            // Flags including which parent to use.
     }
-    public struct ExPosition
-    {
-        public ExVector localPos;       // Local vertex coordinates
-        public ExVector worldPos;       // World vertex coordinates
-        public UInt16 boneID;           // Index of the bone effecting this vertex
-    }
     public struct ExNormal
     {
         public Int32 x, y, z;
@@ -79,10 +73,11 @@ namespace ModelEx
     }
     public struct ExVertex
     {
-        public int positionID;       // Index of the vertex position
-        public int normalID;         // Index of the vertex normal
-        public int colourID;         // Index of the vertex colour
-        public int UVID;             // Index of the vertex UV
+        public int positionID;          // Index of the vertex position
+        public int normalID;            // Index of the vertex normal
+        public int colourID;            // Index of the vertex colour
+        public int UVID;                // Index of the vertex UV
+        public UInt16 boneID;              // Index of the vertex bone influence
     }
     public struct ExShiftVertex
     {
@@ -364,7 +359,7 @@ namespace ModelEx
         protected UInt32 m_uIndexCount { get { return 3 * m_uPolygonCount; } }
         protected ExVector m_xScale;
         protected ExVertex[] m_axVertices;
-        protected ExPosition[] m_axPositions;
+        protected ExVector[] m_axPositions;
         protected ExVector[] m_axPositionsAlt;
         protected ExVector[] m_axNormals;
         protected UInt32[] m_auColours;
@@ -381,7 +376,7 @@ namespace ModelEx
         public ExPolygon[] Polygons { get { return m_axPolygons; } }
         public UInt32 IndexCount { get { return m_uIndexCount; } }
         public ExVertex[] Vertices { get { return m_axVertices; } }
-        public ExPosition[] Positions { get { return m_axPositions; } }
+        public ExVector[] Positions { get { return m_axPositionsAlt; } }
         public ExVector[] Normals { get { return m_axNormals; } }
         public UInt32[] Colours { get { return m_auColours; } }
         public ExUV[] UVs { get { return m_axUVs; } }

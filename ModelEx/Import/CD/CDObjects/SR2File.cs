@@ -291,7 +291,7 @@ namespace ModelEx
 
             // Get the vertices
             m_axVertices = new ExVertex[m_uVertexCount];
-            m_axPositions = new ExPosition[m_uVertexCount];
+            m_axPositions = new ExVector[m_uVertexCount];
             m_axPositionsAlt = new ExVector[m_uVertexCount];
             m_auColours = new UInt32[m_uVertexCount];
             m_auColoursAlt = new UInt32[m_uVertexCount];
@@ -311,14 +311,13 @@ namespace ModelEx
             m_axVertices[v].positionID = v;
 
             // Read the local coordinates
-            m_axPositions[v].localPos.x = (float)xReader.ReadInt16();
-            m_axPositions[v].localPos.y = (float)xReader.ReadInt16();
-            m_axPositions[v].localPos.z = (float)xReader.ReadInt16();
+            m_axPositions[v].x = (float)xReader.ReadInt16();
+            m_axPositions[v].y = (float)xReader.ReadInt16();
+            m_axPositions[v].z = (float)xReader.ReadInt16();
             xReader.BaseStream.Position += 0x02;
 
             // Before transformation, the world coords equal the local coords
-            m_axPositions[v].worldPos = m_axPositions[v].localPos;
-            m_axPositionsAlt[v] = m_axPositions[v].localPos;
+            m_axPositionsAlt[v] = m_axPositions[v];
         }
 
         protected virtual void ReadVertices(BinaryReader xReader)
@@ -517,9 +516,8 @@ namespace ModelEx
                     {
                         for (UInt16 v = m_axBones[b].vFirst; v <= m_axBones[b].vLast; v++)
                         {
-                            m_axPositions[v].worldPos += m_axBones[b].worldPos;
                             m_axPositionsAlt[v] += m_axBones[b].worldPos;
-                            m_axPositions[v].boneID = b;
+                            m_axVertices[v].boneID = b;
                         }
                     }
                 }
@@ -785,9 +783,8 @@ namespace ModelEx
                         xShiftVertex.basePos.z = (float)xReader.ReadInt16();
                         uCurrentSpectralVertex = (UInt32)xReader.BaseStream.Position;
 
-                        m_axPositions[iVertex].localPos = xShiftVertex.basePos;
-                        m_axPositions[iVertex].worldPos = m_axPositions[iVertex].localPos;
-                        m_axPositionsAlt[iVertex] = m_axPositions[iVertex].localPos;
+                        m_axPositions[iVertex] = xShiftVertex.basePos;
+                        m_axPositionsAlt[iVertex] = m_axPositions[iVertex];
                     }
 
                     //// Spectral Verticices
