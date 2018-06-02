@@ -13,6 +13,8 @@ float4 LightColor = float4(0.9, 0.9, 0.9, 1);
 float SpecularPower = 32;
 float4 SpecularColor = float4(1, 1, 1, 1);
 
+float RealmBlend = 0.0f;
+
 struct VertexShaderInput
 {
 	float4 Position0 : POSITION0;
@@ -69,8 +71,8 @@ RasterizerState SR2RasterizerState
 
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 {
-	float4 position = input.Position0;
-	float3 color = input.Color0;
+	float4 position = RealmBlend < 0.5 ? input.Position0 : input.Position1;
+	float3 color = RealmBlend < 0.5 ? input.Color0 : input.Color1;
 
 	VertexShaderOutput output;
 	float4 worldPosition = mul(position, World);

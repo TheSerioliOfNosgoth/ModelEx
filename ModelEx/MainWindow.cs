@@ -222,5 +222,10 @@ namespace ModelEx
             orbitToolStripMenuItem.Checked = false;
             orbitPanToolStripMenuItem.Checked = true;
         }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            MeshMorphingUnit.RealmBlend = ((float)trackBar1.Value / (float)trackBar1.Maximum);
+        }
     }
 }
