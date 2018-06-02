@@ -11,6 +11,8 @@ namespace ModelEx
         protected EffectMorphingUnit effect = ShaderManager.Instance.effectMorphingUnit;
         protected string technique = "";
 
+        public static float RealmBlend = 0.0f;
+
         public MeshMorphingUnit(IMeshParser<Position2Color2TexturedVertex, short> meshParser)
         {
             Name = meshParser.MeshName;
@@ -60,6 +62,8 @@ namespace ModelEx
 
             effect.CameraPosition.Set(CameraManager.Instance.frameCamera.eye);
             effect.LightDirection.Set(viewDir);
+
+            effect.RealmBlend.Set(RealmBlend);
         }
 
         public override void Render(int indexCount, int startIndexLocation, int baseVertexLocation)

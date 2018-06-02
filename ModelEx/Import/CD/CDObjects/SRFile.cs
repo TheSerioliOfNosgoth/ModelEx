@@ -22,11 +22,6 @@ namespace ModelEx
         Object,
         Unit
     }
-    public enum Realm
-    {
-        Material,
-        Spectral
-    }
 
     public struct ExVector
     {
@@ -36,6 +31,14 @@ namespace ModelEx
             this.x = x;
             this.y = y;
             this.z = z;
+        }
+        public static ExVector operator *(ExVector v1, ExVector v2)
+        {
+            return new ExVector(
+                v1.x * v2.x,
+                v1.y * v2.y,
+                v1.z * v2.z
+            );
         }
         public static ExVector operator +(ExVector v1, ExVector v2)
         {
@@ -63,12 +66,6 @@ namespace ModelEx
         public UInt16 parentID2;        // ID of parent bone 2
         public UInt32 flags;            // Flags including which parent to use.
     }
-    public struct ExPosition
-    {
-        public ExVector localPos;       // Local vertex coordinates
-        public ExVector worldPos;       // World vertex coordinates
-        public UInt16 boneID;           // Index of the bone effecting this vertex
-    }
     public struct ExNormal
     {
         public Int32 x, y, z;
@@ -79,10 +76,11 @@ namespace ModelEx
     }
     public struct ExVertex
     {
-        public int positionID;       // Index of the vertex position
-        public int normalID;         // Index of the vertex normal
-        public int colourID;         // Index of the vertex colour
-        public int UVID;             // Index of the vertex UV
+        public int positionID;          // Index of the vertex position
+        public int normalID;            // Index of the vertex normal
+        public int colourID;            // Index of the vertex colour
+        public int UVID;                // Index of the vertex UV
+        public int boneID;              // Index of the vertex bone influence
     }
     public struct ExShiftVertex
     {
@@ -362,10 +360,13 @@ namespace ModelEx
         protected UInt32 m_uMaterialCount;
         protected UInt32 m_uMaterialStart;
         protected UInt32 m_uIndexCount { get { return 3 * m_uPolygonCount; } }
-        protected ExVector m_xScale;
+        // Vertices are scaled before any bones are applied.
+        // Scaling afterwards will break the characters.
+        protected ExVector m_xVertexScale;
         protected ExVertex[] m_axVertices;
-        protected ExPosition[] m_axPositions;
-        protected ExVector[] m_axPositionsAlt;
+        protected ExVector[] m_axPositionsRaw;
+        protected ExVector[] m_axPositionsPhys;
+        protected ExVector[] m_axPositionsAltPhys;
         protected ExVector[] m_axNormals;
         protected UInt32[] m_auColours;
         protected UInt32[] m_auColoursAlt;
@@ -381,9 +382,11 @@ namespace ModelEx
         public ExPolygon[] Polygons { get { return m_axPolygons; } }
         public UInt32 IndexCount { get { return m_uIndexCount; } }
         public ExVertex[] Vertices { get { return m_axVertices; } }
-        public ExPosition[] Positions { get { return m_axPositions; } }
+        public ExVector[] Positions { get { return m_axPositionsPhys; } }
+        public ExVector[] PositionsAlt { get { return m_axPositionsAltPhys; } }
         public ExVector[] Normals { get { return m_axNormals; } }
         public UInt32[] Colours { get { return m_auColours; } }
+        public UInt32[] ColoursAlt { get { return m_auColoursAlt; } }
         public ExUV[] UVs { get { return m_axUVs; } }
         public ExBone[] Bones { get { return m_axBones; } }
         public UInt32 MeshCount { get { return m_uTreeCount; } }
@@ -403,9 +406,9 @@ namespace ModelEx
             m_uVertexStart = 0;
             m_uPolygonCount = 0;
             m_uPolygonStart = 0;
-            m_xScale.x = 1.0f;
-            m_xScale.y = 1.0f;
-            m_xScale.z = 1.0f;
+            m_xVertexScale.x = 1.0f;
+            m_xVertexScale.y = 1.0f;
+            m_xVertexScale.z = 1.0f;
             m_xMaterialsList = new List<ExMaterial>();
         }
     }

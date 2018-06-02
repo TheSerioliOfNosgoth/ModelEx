@@ -74,7 +74,6 @@
     <Compile Include="Cameras\OrbitPanCamera.cs" />
     <Compile Include="DeviceManager.cs" />
     <Compile Include="Import\CD\CDObjects\SR1File.cs" />
-    <Compile Include="Import\CD\CDObjects\SR1FileOld.cs" />
     <Compile Include="Import\CD\CDObjects\SR2File.cs" />
     <Compile Include="Import\CD\CDObjects\SRFile.cs" />
     <Compile Include="Import\CD\CDTextures\SoulReaver2PCVRMTextureFile.cs" />

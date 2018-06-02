@@ -291,8 +291,9 @@ namespace ModelEx
 
             // Get the vertices
             m_axVertices = new ExVertex[m_uVertexCount];
-            m_axPositions = new ExPosition[m_uVertexCount];
-            m_axPositionsAlt = new ExVector[m_uVertexCount];
+            m_axPositionsRaw = new ExVector[m_uVertexCount];
+            m_axPositionsPhys = new ExVector[m_uVertexCount];
+            m_axPositionsAltPhys = new ExVector[m_uVertexCount];
             m_auColours = new UInt32[m_uVertexCount];
             m_auColoursAlt = new UInt32[m_uVertexCount];
             m_axUVs = new ExUV[m_uVertexCount];
@@ -311,14 +312,10 @@ namespace ModelEx
             m_axVertices[v].positionID = v;
 
             // Read the local coordinates
-            m_axPositions[v].localPos.x = (float)xReader.ReadInt16();
-            m_axPositions[v].localPos.y = (float)xReader.ReadInt16();
-            m_axPositions[v].localPos.z = (float)xReader.ReadInt16();
+            m_axPositionsRaw[v].x = (float)xReader.ReadInt16();
+            m_axPositionsRaw[v].y = (float)xReader.ReadInt16();
+            m_axPositionsRaw[v].z = (float)xReader.ReadInt16();
             xReader.BaseStream.Position += 0x02;
-
-            // Before transformation, the world coords equal the local coords
-            m_axPositions[v].worldPos = m_axPositions[v].localPos;
-            m_axPositionsAlt[v] = m_axPositions[v].localPos;
         }
 
         protected virtual void ReadVertices(BinaryReader xReader)
@@ -382,9 +379,9 @@ namespace ModelEx
                 UInt32 uBoneCount2          = xReader.ReadUInt32();
                 m_uBoneCount                = uBoneCount1 + uBoneCount2;
                 m_uBoneStart                = xReader.ReadUInt32();
-                m_xScale.x            = xReader.ReadSingle();
-                m_xScale.y            = xReader.ReadSingle();
-                m_xScale.z            = xReader.ReadSingle();
+                m_xVertexScale.x            = xReader.ReadSingle();
+                m_xVertexScale.y            = xReader.ReadSingle();
+                m_xVertexScale.z            = xReader.ReadSingle();
                 xReader.BaseStream.Position += 0x04;
                 m_uVertexCount              = xReader.ReadUInt32();
                 m_uVertexStart              = m_uDataStart + xReader.ReadUInt32();
@@ -415,6 +412,9 @@ namespace ModelEx
             {
                 base.ReadVertex(xReader, v);
 
+                m_axPositionsPhys[v] = m_axPositionsRaw[v] * m_xVertexScale;
+                m_axPositionsAltPhys[v] = m_axPositionsPhys[v];
+
                 m_axVertices[v].normalID = xReader.ReadUInt16();
                 xReader.BaseStream.Position += 0x02;
 
@@ -435,6 +435,7 @@ namespace ModelEx
                 for (UInt16 v = 0; v < m_uVertexCount; v++)
                 {
                     m_auColours[v] = xReader.ReadUInt32();
+                    m_auColoursAlt[v] = m_auColours[v];
                 }
 
                 ReadArmature(xReader);
@@ -517,9 +518,8 @@ namespace ModelEx
                     {
                         for (UInt16 v = m_axBones[b].vFirst; v <= m_axBones[b].vLast; v++)
                         {
-                            m_axPositions[v].worldPos += m_axBones[b].worldPos;
-                            m_axPositionsAlt[v] += m_axBones[b].worldPos;
-                            m_axPositions[v].boneID = b;
+                            m_axPositionsPhys[v] += m_axBones[b].worldPos;
+                            m_axVertices[v].boneID = b;
                         }
                     }
                 }
@@ -656,14 +656,12 @@ namespace ModelEx
         {
             protected UInt32 m_uOctTreeCount;
             protected UInt32 m_uOctTreeStart;
-            protected Realm m_eRealm;
             protected UInt32 m_uSpectralVertexStart;
             protected UInt32 m_uSpectralColourStart;
 
-            protected SR2UnitModel(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, Realm eRealm, UInt32 uVersion)
+            protected SR2UnitModel(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
                 : base (xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
             {
-                m_eRealm                    = eRealm;
                 // xReader.BaseStream.Position += 0x04;
                 // m_uInstanceCount = xReader.ReadUInt32();
                 // m_uInstanceStart = m_uDataStart + xReader.ReadUInt32();
@@ -705,9 +703,9 @@ namespace ModelEx
                 m_axTrees = new ExTree[m_uTreeCount];
             }
 
-            public static SR2UnitModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, Realm eRealm, UInt32 uVersion)
+            public static SR2UnitModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
             {
-                SR2UnitModel xModel = new SR2UnitModel(xReader, uDataStart, uModelData, strModelName, ePlatform, eRealm, uVersion);
+                SR2UnitModel xModel = new SR2UnitModel(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion);
                 xModel.ReadData(xReader);
                 return xModel;
             }
@@ -716,9 +714,13 @@ namespace ModelEx
             {
                 base.ReadVertex(xReader, v);
 
+                m_axPositionsPhys[v] = m_axPositionsRaw[v];
+                m_axPositionsAltPhys[v] = m_axPositionsPhys[v];
+
                 m_axVertices[v].colourID = v;
 
                 m_auColours[v] = xReader.ReadUInt32();
+                m_auColoursAlt[v] = m_auColours[v];
 
                 m_axVertices[v].UVID = v;
 
@@ -750,19 +752,21 @@ namespace ModelEx
 
             protected virtual void ReadSpectralData(BinaryReader xReader)
             {
-                if (m_eRealm == Realm.Spectral &&
-                    m_uSpectralVertexStart != 0 && m_uSpectralColourStart != 0)
+                if (m_uSpectralColourStart != 0)
                 {
                     // Spectral Colours
                     xReader.BaseStream.Position = m_uSpectralColourStart;
                     for (int v = 0; v < m_uVertexCount; v++)
                     {
                         UInt32 uShiftColour = xReader.ReadUInt32();
-                        UInt32 uAlpha = m_auColours[v] & 0xFF000000;
+                        UInt32 uAlpha = m_auColoursAlt[v] & 0xFF000000;
                         UInt32 uRGB = uShiftColour & 0x00FFFFFF;
-                        m_auColours[v] = uAlpha | uRGB;
+                        m_auColoursAlt[v] = uAlpha | uRGB;
                     }
+                }
 
+                if (m_uSpectralVertexStart != 0)
+                {
                     // Spectral vertices
                     xReader.BaseStream.Position = m_uModelData + 0x2C;
                     UInt32 uCurrentIndexPosition = xReader.ReadUInt32();
@@ -785,9 +789,7 @@ namespace ModelEx
                         xShiftVertex.basePos.z = (float)xReader.ReadInt16();
                         uCurrentSpectralVertex = (UInt32)xReader.BaseStream.Position;
 
-                        m_axPositions[iVertex].localPos = xShiftVertex.basePos;
-                        m_axPositions[iVertex].worldPos = m_axPositions[iVertex].localPos;
-                        m_axPositionsAlt[iVertex] = m_axPositions[iVertex].localPos;
+                        m_axPositionsAltPhys[iVertex] = xShiftVertex.basePos;
                     }
 
                     //// Spectral Verticices
@@ -1249,17 +1251,14 @@ namespace ModelEx
 
             // Model data
             xReader.BaseStream.Position = m_uDataStart;
-            m_usModelCount = 2;
+            m_usModelCount = 1;
             m_uModelStart = m_uDataStart;
             m_axModels = new SR2Model[m_usModelCount];
             xReader.BaseStream.Position = m_uModelStart;
             UInt32 m_uModelData = m_uDataStart + xReader.ReadUInt32();
 
             // Material data
-            m_axModels[0] = SR2UnitModel.Load(xReader, m_uDataStart, m_uModelData, m_strModelName, m_ePlatform, Realm.Material, m_uVersion);
-
-            // Spectral data
-            m_axModels[1] = SR2UnitModel.Load(xReader, m_uDataStart, m_uModelData, m_strModelName, m_ePlatform, Realm.Spectral, m_uVersion);
+            m_axModels[0] = SR2UnitModel.Load(xReader, m_uDataStart, m_uModelData, m_strModelName, m_ePlatform, m_uVersion);
 
             //if (m_axModels[0].Platform == Platform.Dreamcast ||
             //    m_axModels[1].Platform == Platform.Dreamcast)

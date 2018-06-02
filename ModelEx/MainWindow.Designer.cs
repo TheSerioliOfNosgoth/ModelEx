@@ -34,21 +34,30 @@
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.egoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.orbitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.orbitPanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetPositionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sceneViewContainer = new System.Windows.Forms.SplitContainer();
+            this.optionTabs = new System.Windows.Forms.TabControl();
+            this.meshGroupsTab = new System.Windows.Forms.TabPage();
             this.sceneTree = new System.Windows.Forms.TreeView();
+            this.meshDisplayOptions = new System.Windows.Forms.Panel();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.planeBlendLabel = new System.Windows.Forms.Label();
+            this.sceneView = new ModelEx.RenderControl();
             this.sceneTreeContainer = new System.Windows.Forms.SplitContainer();
             this.FPSText = new System.Windows.Forms.TextBox();
-            this.sceneView = new ModelEx.RenderControl();
-            this.modeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.orbitPanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.orbitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.egoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.sceneViewContainer)).BeginInit();
             this.sceneViewContainer.Panel1.SuspendLayout();
             this.sceneViewContainer.Panel2.SuspendLayout();
             this.sceneViewContainer.SuspendLayout();
+            this.optionTabs.SuspendLayout();
+            this.meshGroupsTab.SuspendLayout();
+            this.meshDisplayOptions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.sceneTreeContainer)).BeginInit();
             this.sceneTreeContainer.Panel2.SuspendLayout();
             this.sceneTreeContainer.SuspendLayout();
@@ -103,10 +112,43 @@
             this.cameraToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
             this.cameraToolStripMenuItem.Text = "Camera";
             // 
+            // modeToolStripMenuItem
+            // 
+            this.modeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.egoToolStripMenuItem,
+            this.orbitToolStripMenuItem,
+            this.orbitPanToolStripMenuItem});
+            this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
+            this.modeToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.modeToolStripMenuItem.Text = "Mode";
+            // 
+            // egoToolStripMenuItem
+            // 
+            this.egoToolStripMenuItem.Checked = true;
+            this.egoToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.egoToolStripMenuItem.Name = "egoToolStripMenuItem";
+            this.egoToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.egoToolStripMenuItem.Text = "Ego";
+            this.egoToolStripMenuItem.Click += new System.EventHandler(this.egoToolStripMenuItem_Click);
+            // 
+            // orbitToolStripMenuItem
+            // 
+            this.orbitToolStripMenuItem.Name = "orbitToolStripMenuItem";
+            this.orbitToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.orbitToolStripMenuItem.Text = "Orbit";
+            this.orbitToolStripMenuItem.Click += new System.EventHandler(this.orbitToolStripMenuItem_Click);
+            // 
+            // orbitPanToolStripMenuItem
+            // 
+            this.orbitPanToolStripMenuItem.Name = "orbitPanToolStripMenuItem";
+            this.orbitPanToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.orbitPanToolStripMenuItem.Text = "Orbit Pan";
+            this.orbitPanToolStripMenuItem.Click += new System.EventHandler(this.orbitPanToolStripMenuItem_Click);
+            // 
             // resetPositionToolStripMenuItem
             // 
             this.resetPositionToolStripMenuItem.Name = "resetPositionToolStripMenuItem";
-            this.resetPositionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.resetPositionToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.resetPositionToolStripMenuItem.Text = "Reset Position";
             this.resetPositionToolStripMenuItem.Click += new System.EventHandler(this.resetPositionToolStripMenuItem_Click);
             // 
@@ -118,7 +160,7 @@
             // 
             // sceneViewContainer.Panel1
             // 
-            this.sceneViewContainer.Panel1.Controls.Add(this.sceneTree);
+            this.sceneViewContainer.Panel1.Controls.Add(this.optionTabs);
             // 
             // sceneViewContainer.Panel2
             // 
@@ -128,15 +170,75 @@
             this.sceneViewContainer.SplitterDistance = 227;
             this.sceneViewContainer.TabIndex = 4;
             // 
+            // optionTabs
+            // 
+            this.optionTabs.Controls.Add(this.meshGroupsTab);
+            this.optionTabs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.optionTabs.Location = new System.Drawing.Point(0, 0);
+            this.optionTabs.Name = "optionTabs";
+            this.optionTabs.SelectedIndex = 0;
+            this.optionTabs.Size = new System.Drawing.Size(227, 437);
+            this.optionTabs.TabIndex = 1;
+            // 
+            // meshGroupsTab
+            // 
+            this.meshGroupsTab.Controls.Add(this.sceneTree);
+            this.meshGroupsTab.Controls.Add(this.meshDisplayOptions);
+            this.meshGroupsTab.Location = new System.Drawing.Point(4, 22);
+            this.meshGroupsTab.Name = "meshGroupsTab";
+            this.meshGroupsTab.Padding = new System.Windows.Forms.Padding(3);
+            this.meshGroupsTab.Size = new System.Drawing.Size(219, 411);
+            this.meshGroupsTab.TabIndex = 0;
+            this.meshGroupsTab.Text = "Mesh Groups";
+            this.meshGroupsTab.UseVisualStyleBackColor = true;
+            // 
             // sceneTree
             // 
             this.sceneTree.CheckBoxes = true;
             this.sceneTree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.sceneTree.Location = new System.Drawing.Point(0, 0);
+            this.sceneTree.Location = new System.Drawing.Point(3, 76);
             this.sceneTree.Name = "sceneTree";
-            this.sceneTree.Size = new System.Drawing.Size(227, 437);
-            this.sceneTree.TabIndex = 0;
-            this.sceneTree.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterCheck);
+            this.sceneTree.Size = new System.Drawing.Size(213, 332);
+            this.sceneTree.TabIndex = 3;
+            // 
+            // meshDisplayOptions
+            // 
+            this.meshDisplayOptions.Controls.Add(this.trackBar1);
+            this.meshDisplayOptions.Controls.Add(this.planeBlendLabel);
+            this.meshDisplayOptions.Dock = System.Windows.Forms.DockStyle.Top;
+            this.meshDisplayOptions.Location = new System.Drawing.Point(3, 3);
+            this.meshDisplayOptions.Name = "meshDisplayOptions";
+            this.meshDisplayOptions.Size = new System.Drawing.Size(213, 73);
+            this.meshDisplayOptions.TabIndex = 2;
+            // 
+            // trackBar1
+            // 
+            this.trackBar1.LargeChange = 1;
+            this.trackBar1.Location = new System.Drawing.Point(4, 21);
+            this.trackBar1.Maximum = 100;
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(200, 45);
+            this.trackBar1.TabIndex = 1;
+            this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
+            // 
+            // planeBlendLabel
+            // 
+            this.planeBlendLabel.AutoSize = true;
+            this.planeBlendLabel.Location = new System.Drawing.Point(4, 4);
+            this.planeBlendLabel.Name = "planeBlendLabel";
+            this.planeBlendLabel.Size = new System.Drawing.Size(64, 13);
+            this.planeBlendLabel.TabIndex = 0;
+            this.planeBlendLabel.Text = "Plane Blend";
+            // 
+            // sceneView
+            // 
+            this.sceneView.BackColor = System.Drawing.Color.Gray;
+            this.sceneView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.sceneView.Location = new System.Drawing.Point(0, 0);
+            this.sceneView.Name = "sceneView";
+            this.sceneView.Size = new System.Drawing.Size(453, 437);
+            this.sceneView.TabIndex = 0;
             // 
             // sceneTreeContainer
             // 
@@ -165,48 +267,6 @@
             this.FPSText.TabIndex = 0;
             this.FPSText.Text = "Testing...\r\nTesting...\r\nTesting...";
             // 
-            // sceneView
-            // 
-            this.sceneView.BackColor = System.Drawing.Color.Gray;
-            this.sceneView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.sceneView.Location = new System.Drawing.Point(0, 0);
-            this.sceneView.Name = "sceneView";
-            this.sceneView.Size = new System.Drawing.Size(453, 437);
-            this.sceneView.TabIndex = 0;
-            // 
-            // modeToolStripMenuItem
-            // 
-            this.modeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.egoToolStripMenuItem,
-            this.orbitToolStripMenuItem,
-            this.orbitPanToolStripMenuItem});
-            this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
-            this.modeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.modeToolStripMenuItem.Text = "Mode";
-            // 
-            // orbitPanToolStripMenuItem
-            // 
-            this.orbitPanToolStripMenuItem.Name = "orbitPanToolStripMenuItem";
-            this.orbitPanToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.orbitPanToolStripMenuItem.Text = "Orbit Pan";
-            this.orbitPanToolStripMenuItem.Click += new System.EventHandler(this.orbitPanToolStripMenuItem_Click);
-            // 
-            // orbitToolStripMenuItem
-            // 
-            this.orbitToolStripMenuItem.Name = "orbitToolStripMenuItem";
-            this.orbitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.orbitToolStripMenuItem.Text = "Orbit";
-            this.orbitToolStripMenuItem.Click += new System.EventHandler(this.orbitToolStripMenuItem_Click);
-            // 
-            // egoToolStripMenuItem
-            // 
-            this.egoToolStripMenuItem.Checked = true;
-            this.egoToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.egoToolStripMenuItem.Name = "egoToolStripMenuItem";
-            this.egoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.egoToolStripMenuItem.Text = "Ego";
-            this.egoToolStripMenuItem.Click += new System.EventHandler(this.egoToolStripMenuItem_Click);
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -224,6 +284,11 @@
             this.sceneViewContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.sceneViewContainer)).EndInit();
             this.sceneViewContainer.ResumeLayout(false);
+            this.optionTabs.ResumeLayout(false);
+            this.meshGroupsTab.ResumeLayout(false);
+            this.meshDisplayOptions.ResumeLayout(false);
+            this.meshDisplayOptions.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.sceneTreeContainer.Panel2.ResumeLayout(false);
             this.sceneTreeContainer.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.sceneTreeContainer)).EndInit();
@@ -241,7 +306,6 @@
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.SplitContainer sceneViewContainer;
-        private System.Windows.Forms.TreeView sceneTree;
         private RenderControl sceneView;
         private System.Windows.Forms.SplitContainer sceneTreeContainer;
         private System.Windows.Forms.TextBox FPSText;
@@ -251,5 +315,11 @@
         private System.Windows.Forms.ToolStripMenuItem egoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem orbitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem orbitPanToolStripMenuItem;
+        private System.Windows.Forms.TabControl optionTabs;
+        private System.Windows.Forms.TabPage meshGroupsTab;
+        private System.Windows.Forms.Panel meshDisplayOptions;
+        private System.Windows.Forms.TreeView sceneTree;
+        private System.Windows.Forms.Label planeBlendLabel;
+        private System.Windows.Forms.TrackBar trackBar1;
     }
 }

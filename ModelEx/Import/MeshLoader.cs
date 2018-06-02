@@ -194,9 +194,9 @@ namespace ModelEx
 
                 vertex.Position = new SlimDX.Vector3()
                 {
-                    X = 0.01f * _srModel.Positions[exVertex.positionID].worldPos.x,
-                    Y = 0.01f * _srModel.Positions[exVertex.positionID].worldPos.z,
-                    Z = 0.01f * _srModel.Positions[exVertex.positionID].worldPos.y
+                    X = 0.01f * _srModel.Positions[exVertex.positionID].x,
+                    Y = 0.01f * _srModel.Positions[exVertex.positionID].z,
+                    Z = 0.01f * _srModel.Positions[exVertex.positionID].y
                 };
 
                 vertex.Normal = new SlimDX.Vector3()
@@ -220,9 +220,9 @@ namespace ModelEx
 
                 vertex.Position = new SlimDX.Vector3()
                 {
-                    X = 0.01f * _srModel.Positions[exVertex.positionID].worldPos.x,
-                    Y = 0.01f * _srModel.Positions[exVertex.positionID].worldPos.z,
-                    Z = 0.01f * _srModel.Positions[exVertex.positionID].worldPos.y
+                    X = 0.01f * _srModel.Positions[exVertex.positionID].x,
+                    Y = 0.01f * _srModel.Positions[exVertex.positionID].z,
+                    Z = 0.01f * _srModel.Positions[exVertex.positionID].y
                 };
 
                 vertex.Color = new SlimDX.Color3()
@@ -246,16 +246,16 @@ namespace ModelEx
 
                 vertex.Position0 = new SlimDX.Vector3()
                 {
-                    X = 0.01f * _srModel.Positions[exVertex.positionID].worldPos.x,
-                    Y = 0.01f * _srModel.Positions[exVertex.positionID].worldPos.z,
-                    Z = 0.01f * _srModel.Positions[exVertex.positionID].worldPos.y
+                    X = 0.01f * _srModel.Positions[exVertex.positionID].x,
+                    Y = 0.01f * _srModel.Positions[exVertex.positionID].z,
+                    Z = 0.01f * _srModel.Positions[exVertex.positionID].y
                 };
 
                 vertex.Position1 = new SlimDX.Vector3()
                 {
-                    X = 0.01f * _srModel.Positions[exVertex.positionID].worldPos.x,
-                    Y = 0.01f * _srModel.Positions[exVertex.positionID].worldPos.z,
-                    Z = 0.01f * _srModel.Positions[exVertex.positionID].worldPos.y
+                    X = 0.01f * _srModel.PositionsAlt[exVertex.positionID].x,
+                    Y = 0.01f * _srModel.PositionsAlt[exVertex.positionID].z,
+                    Z = 0.01f * _srModel.PositionsAlt[exVertex.positionID].y
                 };
 
                 vertex.Color0 = new SlimDX.Color3()
@@ -268,10 +268,10 @@ namespace ModelEx
 
                 vertex.Color1 = new SlimDX.Color3()
                 {
-                    //Alpha = ((_srModel.Colours[vertex.colourID] & 0xFF000000) >> 24) / 255.0f,
-                    Red = ((_srModel.Colours[exVertex.colourID] & 0x00FF0000) >> 16) / 255.0f,
-                    Green = ((_srModel.Colours[exVertex.colourID] & 0x0000FF00) >> 8) / 255.0f,
-                    Blue = ((_srModel.Colours[exVertex.colourID] & 0x000000FF) >> 0) / 255.0f
+                    //Alpha = ((_srModel.ColoursAlt[vertex.colourID] & 0xFF000000) >> 24) / 255.0f,
+                    Red = ((_srModel.ColoursAlt[exVertex.colourID] & 0x00FF0000) >> 16) / 255.0f,
+                    Green = ((_srModel.ColoursAlt[exVertex.colourID] & 0x0000FF00) >> 8) / 255.0f,
+                    Blue = ((_srModel.ColoursAlt[exVertex.colourID] & 0x000000FF) >> 0) / 255.0f
                 };
 
                 vertex.TextureCoordinates = new SlimDX.Vector2()

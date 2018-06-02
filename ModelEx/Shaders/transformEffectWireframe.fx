@@ -22,7 +22,7 @@ RasterizerState SolidState
 	FillMode = Solid;
 };
 
-RasterizerState RasterizerState
+RasterizerState WireframeState
 {
     FillMode = Wireframe;
     SlopeScaledDepthBias = -0.5f;
@@ -32,17 +32,17 @@ technique10 Render
 {
 	pass P0
 	{
-		SetVertexShader( CompileShader( vs_4_0, VShader() ));
-		SetGeometryShader( NULL );
-		SetPixelShader( CompileShader( ps_4_0, PShader() ));
+		SetVertexShader(CompileShader(vs_4_0, VShader()));
+		SetGeometryShader(NULL );
+		SetPixelShader(CompileShader(ps_4_0, PShader()));
 		SetRasterizerState(SolidState);
 	}
 
 	pass P1
 	{
-		SetVertexShader( CompileShader( vs_4_0, VShader() ));
-		SetGeometryShader( NULL );
-		SetPixelShader( CompileShader( ps_4_0, PShaderWireframe() ));
-		SetRasterizerState(RasterizerState);
+		SetVertexShader(CompileShader(vs_4_0, VShader()));
+		SetGeometryShader(NULL);
+		SetPixelShader(CompileShader(ps_4_0, PShaderWireframe()));
+		SetRasterizerState(WireframeState);
 	}
 }
