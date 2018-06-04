@@ -73,20 +73,7 @@
     <Compile Include="Cameras\OrbitCamera.cs" />
     <Compile Include="Cameras\OrbitPanCamera.cs" />
     <Compile Include="DeviceManager.cs" />
-    <Compile Include="Import\CD\CDObjects\SR1File.cs" />
-    <Compile Include="Import\CD\CDObjects\SR2File.cs" />
-    <Compile Include="Import\CD\CDObjects\SRFile.cs" />
-    <Compile Include="Import\CD\CDTextures\SoulReaver2PCVRMTextureFile.cs" />
-    <Compile Include="Import\CD\CDTextures\SoulReaver2PS2VRMTextureFile.cs" />
-    <Compile Include="Import\CD\CDTextures\SoulReaverDreamcastTextureFile.cs" />
-    <Compile Include="Import\CD\CDTextures\SoulReaverMonolithicTextureFile.cs" />
-    <Compile Include="Import\CD\CDTextures\SoulReaverPCTextureFile.cs" />
-    <Compile Include="Import\CD\CDTextures\SoulReaverPlaystationTextureFile.cs" />
-    <Compile Include="Import\CD\CDTextures\TextureFile.cs" />
-    <Compile Include="Import\CD\CDTextures\TextureFileException.cs" />
-    <Compile Include="Import\CD\CDTextures\VRMTextureFile.cs" />
     <Compile Include="Import\MeshLoader.cs" />
-    <Compile Include="Import\PS2\PS2ImageData.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -176,7 +163,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\CDC\CDC.csproj">
+      <Project>{d56c2540-e1f6-4e37-bcb0-d4f3afdf5619}</Project>
+      <Name>CDC</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\AssimpNet.3.3.2\build\AssimpNet.targets" Condition="Exists('packages\AssimpNet.3.3.2\build\AssimpNet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
