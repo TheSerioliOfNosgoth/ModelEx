@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27428.2015
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelEx", "ModelEx.csproj", "{604BCB30-3F0F-4AB0-BB41-1B4C255C2D7D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CDC", "..\CDC\CDC.csproj", "{D56C2540-E1F6-4E37-BCB0-D4F3AFDF5619}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,14 @@ Global
 		{604BCB30-3F0F-4AB0-BB41-1B4C255C2D7D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{604BCB30-3F0F-4AB0-BB41-1B4C255C2D7D}.Release|x86.ActiveCfg = Release|x86
 		{604BCB30-3F0F-4AB0-BB41-1B4C255C2D7D}.Release|x86.Build.0 = Release|x86
+		{D56C2540-E1F6-4E37-BCB0-D4F3AFDF5619}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D56C2540-E1F6-4E37-BCB0-D4F3AFDF5619}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D56C2540-E1F6-4E37-BCB0-D4F3AFDF5619}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D56C2540-E1F6-4E37-BCB0-D4F3AFDF5619}.Debug|x86.Build.0 = Debug|Any CPU
+		{D56C2540-E1F6-4E37-BCB0-D4F3AFDF5619}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D56C2540-E1F6-4E37-BCB0-D4F3AFDF5619}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D56C2540-E1F6-4E37-BCB0-D4F3AFDF5619}.Release|x86.ActiveCfg = Release|Any CPU
+		{D56C2540-E1F6-4E37-BCB0-D4F3AFDF5619}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
