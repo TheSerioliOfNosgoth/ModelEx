@@ -2,6 +2,13 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
+using SRFile = CDC.Objects.SRFile;
+using SR1File = CDC.Objects.SR1File;
+using SR2File = CDC.Objects.SR2File;
+using SRModel = CDC.Objects.SRModel;
+using SR1Model = CDC.Objects.SR1Model;
+using SR2Model = CDC.Objects.SR2Model;
+using Tree = CDC.Tree;
 using CDTextureFile = BenLincoln.TheLostWorlds.CDTextures.TextureFile;
 using SR1PCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPCTextureFile;
 using SR1PSTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPlaystationTextureFile;
@@ -56,7 +63,7 @@ namespace ModelEx
                     progressStage = "Model " + modelIndex.ToString() + " - Creating Group " + groupIndex.ToString();
                     Thread.Sleep(100);
 
-                    ExTree srGroup = _srModel.Groups[groupIndex];
+                    Tree srGroup = _srModel.Groups[groupIndex];
                     String groupName = String.Format("{0}-{1}-group-{2}", _objectName, modelIndex, groupIndex);
                     if (srGroup != null && srGroup.mesh != null &&
                         srGroup.mesh.indexCount > 0 && srGroup.mesh.polygonCount > 0)
@@ -81,7 +88,7 @@ namespace ModelEx
 
                 ModelName = modelName;
 
-                if (_srFile.Asset == Asset.Unit)
+                if (_srFile.Asset == CDC.Asset.Unit)
                 {
                     Model = new Unit(this);
                 }
@@ -106,7 +113,7 @@ namespace ModelEx
             string _objectName;
             SRFile _srFile;
             SRModel _srModel;
-            ExTree _srGroup;
+            Tree _srGroup;
             List<int> _vertexList = new List<int>();
             List<int> _indexList = new List<int>();
             public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
@@ -161,8 +168,8 @@ namespace ModelEx
                 if (SubMeshes.Count > 0)
                 {
                     MeshName = meshName;
-                    Technique = _srFile.Game == Game.SR2 ? "SR2Render" : "SR1Render";
-                    if (_srFile.Asset == Asset.Unit)
+                    Technique = _srFile.Game == CDC.Game.SR2 ? "SR2Render" : "SR1Render";
+                    if (_srFile.Asset == CDC.Asset.Unit)
                     {
                         //Mesh = new MeshPCT(this);
                         Mesh = new MeshMorphingUnit(this);
@@ -190,7 +197,7 @@ namespace ModelEx
 
             public void FillVertex(int v, out PositionNormalTexturedVertex vertex)
             {
-                ref ExVertex exVertex = ref _srGroup.mesh.vertices[_vertexList[v]];
+                ref CDC.Vertex exVertex = ref _srGroup.mesh.vertices[_vertexList[v]];
 
                 vertex.Position = new SlimDX.Vector3()
                 {
@@ -216,7 +223,7 @@ namespace ModelEx
 
             public void FillVertex(int v, out PositionColorTexturedVertex vertex)
             {
-                ref ExVertex exVertex = ref _srGroup.mesh.vertices[_vertexList[v]];
+                ref CDC.Vertex exVertex = ref _srGroup.mesh.vertices[_vertexList[v]];
 
                 vertex.Position = new SlimDX.Vector3()
                 {
@@ -242,7 +249,7 @@ namespace ModelEx
 
             public void FillVertex(int v, out Position2Color2TexturedVertex vertex)
             {
-                ref ExVertex exVertex = ref _srGroup.mesh.vertices[_vertexList[v]];
+                ref CDC.Vertex exVertex = ref _srGroup.mesh.vertices[_vertexList[v]];
 
                 vertex.Position0 = new SlimDX.Vector3()
                 {
@@ -409,7 +416,7 @@ namespace ModelEx
             }
             else
             {
-                if (srFile.Platform == Platform.PC)
+                if (srFile.Platform == CDC.Platform.PC)
                 {
                     String textureFileName = System.IO.Path.GetDirectoryName(fileName) + "\\textures.big";
                     try
@@ -417,7 +424,7 @@ namespace ModelEx
                         SR1PCTextureFile textureFile = new SR1PCTextureFile(textureFileName);
                         foreach (SRModel srModel in srFile.Models)
                         {
-                            foreach (ExMaterial material in srModel.Materials)
+                            foreach (CDC.Material material in srModel.Materials)
                             {
                                 if (material.textureUsed)
                                 {
@@ -437,7 +444,7 @@ namespace ModelEx
                         Console.Write(ex.ToString());
                     }
                 }
-                else if (srFile.Platform == Platform.Dreamcast)
+                else if (srFile.Platform == CDC.Platform.Dreamcast)
                 {
                     String textureFileName = System.IO.Path.GetDirectoryName(fileName) + "\\textures.vq";
                     try
@@ -445,7 +452,7 @@ namespace ModelEx
                         SR1DCTextureFile textureFile = new SR1DCTextureFile(textureFileName);
                         foreach (SRModel srModel in srFile.Models)
                         {
-                            foreach (ExMaterial material in srModel.Materials)
+                            foreach (CDC.Material material in srModel.Materials)
                             {
                                 if (material.textureUsed)
                                 {
@@ -485,7 +492,7 @@ namespace ModelEx
                         int polygonNum = 0;
                         foreach (SRModel srModel in srFile.Models)
                         {
-                            foreach (ExPolygon polygon in srModel.Polygons)
+                            foreach (CDC.Polygon polygon in srModel.Polygons)
                             {
                                 polygons[polygonNum].paletteColumn = polygon.paletteColumn;
                                 polygons[polygonNum].paletteRow = polygon.paletteRow;
@@ -533,13 +540,13 @@ namespace ModelEx
 
         static String GetTextureName(SRModel srModel, int materialIndex)
         {
-            ExMaterial material = srModel.Materials[materialIndex];
+            CDC.Material material = srModel.Materials[materialIndex];
             String textureName = "";
             if (material.textureUsed)
             {
                 if (srModel is SR1Model)
                 {
-                    if (srModel.Platform == Platform.PSX)
+                    if (srModel.Platform == CDC.Platform.PSX)
                     {
                         textureName =
                             srModel.Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +

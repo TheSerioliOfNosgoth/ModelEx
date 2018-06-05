@@ -2,458 +2,49 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace ModelEx
+namespace CDC.Objects
 {
-    public enum Platform
-    {
-        None,
-        PC,
-        PSX,
-        Dreamcast
-    }
-    public enum Game
-    {
-        SR1,
-        SR2
-    }
-
-    public enum Asset
-    {
-        Object,
-        Unit
-    }
-
-    public struct ExVector
-    {
-        public float x, y, z;
-        public ExVector(float x, float y, float z)
-        {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-        public static ExVector operator *(ExVector v1, ExVector v2)
-        {
-            return new ExVector(
-                v1.x * v2.x,
-                v1.y * v2.y,
-                v1.z * v2.z
-            );
-        }
-        public static ExVector operator +(ExVector v1, ExVector v2)
-        {
-            return new ExVector(
-                v1.x + v2.x,
-                v1.y + v2.y,
-                v1.z + v2.z
-            );
-        }
-        public static ExVector operator *(ExVector v, float f)
-        {
-            return new ExVector(
-                v.x *= f,
-                v.y *= f,
-                v.z *= f
-            );
-        }
-    }
-    public struct ExBone
-    {
-        public UInt16 vFirst, vLast;    // The ID of first and last effected vertex 
-        public ExVector localPos;       // Local bone coordinates
-        public ExVector worldPos;       // World bone coordinated
-        public UInt16 parentID1;        // ID of parent bone 1
-        public UInt16 parentID2;        // ID of parent bone 2
-        public UInt32 flags;            // Flags including which parent to use.
-    }
-    public struct ExNormal
-    {
-        public Int32 x, y, z;
-    }
-    public struct ExUV
-    {
-        public float u, v;
-    }
-    public struct ExVertex
-    {
-        public int positionID;          // Index of the vertex position
-        public int normalID;            // Index of the vertex normal
-        public int colourID;            // Index of the vertex colour
-        public int UVID;                // Index of the vertex UV
-        public int boneID;              // Index of the vertex bone influence
-    }
-    public struct ExShiftVertex
-    {
-        public UInt16 index;            // Index in the file
-        public ExVector basePos;        // Base vertex coordinates
-        public ExVector offset;         // Offset from base coordinates
-    }
-    public struct ExPolygon
-    {
-        public ExMaterial material;     // The material used
-        public ExVertex v1, v2, v3;     // Vertices for the polygon
-        public int paletteRow;          // The row of the pallete to use (PS1)
-        public int paletteColumn;       // The column of the pallet to use (PS1)
-    }
-    public class ExMaterial
-    {
-        public UInt16 ID;               // The ID of the material
-        public Boolean visible;         // Flag specifying if this material is visible
-        public Boolean textureUsed;     // Flag specifying if this material has a texture
-        public UInt16 textureID;        // ID of the texture file
-        public UInt32 colour;           // Diffuse colour
-    }
-    public class ExMaterialList
-    {
-        protected ExMaterialList _next;
-        public ExMaterialList next
-        {
-            get { return _next; }
-        }
-        public ExMaterial material;
-        public ExMaterialList(ExMaterial material)
-        {
-            this.material = material;
-            _next = null;
-        }
-        // Tries to add the material to the list
-        public virtual ExMaterial AddToList(ExMaterial material)
-        {
-            // Check if the material is already in the list
-            if ((material.textureID == this.material.textureID) &&
-                (material.colour == this.material.colour) &&
-                (material.textureUsed == this.material.textureUsed))
-                return this.material;
-            // Check the rest of the list
-            if (next != null)
-            {
-                return next.AddToList(material);
-            }
-            // Add the material to the list
-            _next = new ExMaterialList(material);
-            return material;
-        }
-    }
-    public class ExTreeStack
-    {
-        private class Node
-        {
-            public ExTree tree;
-            public Node lastNode;
-        }
-        private Node firstNode;
-        private Node currentNode;
-        private UInt32 nodeCount;
-        public void Push(ExTree tree)
-        {
-            Node lastNode = currentNode;
-            currentNode = new Node();
-            currentNode.tree = tree;
-            currentNode.lastNode = lastNode;
-            if (nodeCount == 0)
-            {
-                firstNode = currentNode;
-            }
-            nodeCount++;
-            return;
-        }
-        public ExTree Pop()
-        {
-            if (currentNode == null) return null;
-            ExTree tree = currentNode.tree;
-            currentNode = currentNode.lastNode;
-            nodeCount--;
-            if (nodeCount == 0)
-            {
-                firstNode = null;
-            }
-            return tree;
-        }
-        public ExTree Top
-        {
-            get
-            {
-                if (currentNode == null) return null;
-                return currentNode.tree;
-            }
-        }
-        public ExTree Start
-        {
-            get
-            {
-                if (firstNode == null) return null;
-                return firstNode.tree;
-            }
-        }
-        public UInt32 Count
-        {
-            get { return nodeCount; }
-        }
-        public ExTree GetNode(UInt32 uIndex)
-        {
-            Node xCurrentNode = currentNode;
-            for (UInt32 i = 0; i <= uIndex; i++)
-            {
-                if (xCurrentNode == null)
-                {
-                    return null;
-                }
-                if (i == uIndex)
-                {
-                    return xCurrentNode.tree;
-                }
-                xCurrentNode = xCurrentNode.lastNode;
-            }
-
-            return null;
-        }
-    }
-    public class ExTree : ExTreeStack
-    {
-        public UInt32 tempID;
-        public UInt32 dataPos;
-        public Boolean isLeaf;
-        public ExMesh mesh;
-    }
-    public class ExMesh
-    {
-        public UInt32 polygonCount;
-        public UInt32 indexCount;
-        public ExVertex[] vertices;
-        public ExPolygon[] polygons;
-    }
-
-    public class Utility
-    {
-        public static String CleanName(String name)
-        {
-            if (name == null)
-            {
-                return "";
-            }
-
-            int index = name.IndexOfAny(new char[] { ',', '\0' });
-            if (index >= 0)
-            {
-                name = name.Substring(0, index);
-            }
-
-            return name.Trim();
-        }
-
-        public static void FlipRedAndBlue(ref UInt32 colour)
-        {
-            UInt32 tempColour = colour;
-            colour =
-                (tempColour & 0xFF000000) |
-                ((tempColour << 16) & 0x00FF0000) |
-                (tempColour & 0x0000FF00) |
-                ((tempColour >> 16) & 0x000000FF);
-            return;
-        }
-
-        public static float BizarreFloatToNormalFloat(UInt16 usBizarreFloat)
-        {
-            //UInt32 usSign = (UInt32)usBizarreFloat & 0x00008000;
-            //usSign >>= 15;
-            //UInt32 usExponent = (UInt32)usBizarreFloat & 0x00007C00;
-            //usExponent >>= 10;
-            //usExponent -= 15;
-            //UInt32 usSignificand = (UInt32)usBizarreFloat & 0x000003FF;
-            //float fFraction = 1f;
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    UInt32 usCurrent = usSignificand;
-            //    usCurrent = (byte)(usCurrent << (i + 1));
-            //    usCurrent = (byte)(usCurrent >> 10);
-            //    fFraction += (float)((float)usCurrent * Math.Pow(2, 0 - (1 + i)));
-            //}
-            //float fCalcValue = (float)(fFraction * Math.Pow(2, (double)usExponent));
-            //return fCalcValue;
-
-            // Converts the 16-bit floating point values used in the DC version of Soul Reaver to normal 32-bit floats
-            ushort usExponent;
-            int iUnbiasedExponent;
-            ushort usSignificand;
-            bool bPositive = true;
-            ushort usSignCheck = usBizarreFloat;
-            usSignCheck = (ushort)(usSignCheck >> 15);
-            if (usSignCheck != 0)
-            {
-                bPositive = false;
-            }
-
-            usExponent = usBizarreFloat;
-            usExponent = (ushort)(usExponent << 1);
-            usExponent = (ushort)(usExponent >> 8);
-            iUnbiasedExponent = usExponent - 127;
-            usSignificand = usBizarreFloat;
-            usSignificand = (ushort)(usSignificand << 9);
-            usSignificand = (ushort)(usSignificand >> 9);
-            float fFraction = 1f;
-            for (int i = 0; i < 7; i++)
-            {
-                byte cCurrent = (byte)usSignificand;
-                cCurrent = (byte)(cCurrent << (i + 1));
-                cCurrent = (byte)(cCurrent >> 7);
-                fFraction += (float)((float)cCurrent * Math.Pow(2, 0 - (1 + i)));
-            }
-            float fCalcValue = (float)(fFraction * Math.Pow(2, (double)iUnbiasedExponent));
-            if (!bPositive)
-            {
-                fCalcValue *= -1f;
-            }
-            return fCalcValue;
-        }
-
-        public static float ClampToRange(float fValue, float fMin, float fMax)
-        {
-            if (fValue < fMin)
-            {
-                return fMin;
-            }
-            if (fValue > fMax)
-            {
-                return fMax;
-            }
-            return fValue;
-        }
-
-        public static void AdjustUVs(ref ExUV xUV, float fCentreU, float fCentreV, float fSizeAdjust, float fOffsetAdjust)
-        {
-            if (fCentreU < xUV.u)
-            {
-                xUV.u = Math.Max(fCentreU, xUV.u - fSizeAdjust);
-            }
-            if (fCentreU > xUV.u)
-            {
-                xUV.u = Math.Min(fCentreU, xUV.u + fSizeAdjust);
-            }
-            xUV.u = ClampToRange(xUV.u + fOffsetAdjust, 0.0f, 255.0f);
-
-            if (fCentreV < xUV.v)
-            {
-                xUV.v = Math.Max(fCentreV, xUV.v - fSizeAdjust);
-            }
-            if (fCentreV > xUV.v)
-            {
-                xUV.v = Math.Min(fCentreV, xUV.v + fSizeAdjust);
-            }
-            xUV.v = ClampToRange(xUV.v + fOffsetAdjust, 0.0f, 255.0f);
-        }
-    }
-
-    public abstract class SRModel
-    {
-        protected String m_strModelName;
-        protected UInt32 m_uVersion;
-        protected Platform m_ePlatform;
-        protected UInt32 m_uDataStart;
-        protected UInt32 m_uModelData;
-        protected UInt32 m_uVertexCount;
-        protected UInt32 m_uVertexStart;
-        protected UInt32 m_uPolygonCount;
-        protected UInt32 m_uPolygonStart;
-        protected UInt32 m_uBoneCount;
-        protected UInt32 m_uBoneStart;
-        protected UInt32 m_uTreeCount;
-        protected UInt32 m_uMaterialCount;
-        protected UInt32 m_uMaterialStart;
-        protected UInt32 m_uIndexCount { get { return 3 * m_uPolygonCount; } }
-        // Vertices are scaled before any bones are applied.
-        // Scaling afterwards will break the characters.
-        protected ExVector m_xVertexScale;
-        protected ExVertex[] m_axVertices;
-        protected ExVector[] m_axPositionsRaw;
-        protected ExVector[] m_axPositionsPhys;
-        protected ExVector[] m_axPositionsAltPhys;
-        protected ExVector[] m_axNormals;
-        protected UInt32[] m_auColours;
-        protected UInt32[] m_auColoursAlt;
-        protected ExUV[] m_axUVs;
-        protected ExPolygon[] m_axPolygons;
-        protected ExBone[]  m_axBones;
-        protected ExTree[] m_axTrees;
-        protected ExMaterial[] m_axMaterials;
-        protected List<ExMaterial> m_xMaterialsList;
-
-        public String Name { get { return m_strModelName; } }
-        public UInt32 PolygonCount { get { return m_uPolygonCount; } }
-        public ExPolygon[] Polygons { get { return m_axPolygons; } }
-        public UInt32 IndexCount { get { return m_uIndexCount; } }
-        public ExVertex[] Vertices { get { return m_axVertices; } }
-        public ExVector[] Positions { get { return m_axPositionsPhys; } }
-        public ExVector[] PositionsAlt { get { return m_axPositionsAltPhys; } }
-        public ExVector[] Normals { get { return m_axNormals; } }
-        public UInt32[] Colours { get { return m_auColours; } }
-        public UInt32[] ColoursAlt { get { return m_auColoursAlt; } }
-        public ExUV[] UVs { get { return m_axUVs; } }
-        public ExBone[] Bones { get { return m_axBones; } }
-        public UInt32 MeshCount { get { return m_uTreeCount; } }
-        public ExTree[] Groups { get { return m_axTrees; } }
-        public UInt32 MaterialCount { get { return m_uMaterialCount; } }
-        public ExMaterial[] Materials { get { return m_axMaterials; } }
-        public Platform Platform { get { return m_ePlatform; } }
-
-        protected SRModel(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
-        {
-            m_strModelName = strModelName;
-            m_ePlatform = ePlatform;
-            m_uVersion = uVersion;
-            m_uDataStart = uDataStart;
-            m_uModelData = uModelData;
-            m_uVertexCount = 0;
-            m_uVertexStart = 0;
-            m_uPolygonCount = 0;
-            m_uPolygonStart = 0;
-            m_xVertexScale.x = 1.0f;
-            m_xVertexScale.y = 1.0f;
-            m_xVertexScale.z = 1.0f;
-            m_xMaterialsList = new List<ExMaterial>();
-        }
-    }
-
     public abstract class SRFile
     {
-        protected String m_strModelName;
-        protected UInt32 m_uVersion;
-        protected UInt32 m_uDataStart;
-        protected UInt16 m_usModelCount;
-        protected UInt16 m_usAnimCount;
-        protected UInt32 m_uModelStart;
-        protected SRModel[] m_axModels;
-        protected UInt32 m_uAnimStart;
-        protected UInt32 m_uInstanceCount;
-        protected UInt32 m_uInstanceStart;
-        protected String[] m_astrInstanceNames;
-        protected UInt32 m_uInstanceTypesStart;
-        protected String[] m_axInstanceTypeNames;
-        protected UInt32 m_uConnectedUnitCount;
-        protected UInt32 m_uConnectedUnitsStart;
-        protected String[] m_astrConnectedUnit;
-        protected Game m_eGame;
-        protected Asset m_eAsset;
-        protected Platform m_ePlatform;
+        protected String _name;
+        protected UInt32 _version;
+        protected UInt32 _dataStart;
+        protected UInt16 _modelCount;
+        protected UInt16 _animCount;
+        protected UInt32 _modelStart;
+        protected SRModel[] _models;
+        protected UInt32 _animStart;
+        protected UInt32 _instanceCount;
+        protected UInt32 _instanceStart;
+        protected String[] _instanceNames;
+        protected UInt32 _instanceTypeStart;
+        protected String[] _instanceTypeNames;
+        protected UInt32 _connectedUnitCount;
+        protected UInt32 _connectedUnitStart;
+        protected String[] _connectedUnitNames;
+        protected Game _game;
+        protected Asset _asset;
+        protected Platform _platform;
 
-        public String Name { get { return m_strModelName; } }
-        public UInt32 Version { get { return m_uVersion; } }
-        public UInt16 ModelCount { get { return m_usModelCount; } }
-        public UInt16 AnimCount { get { return m_usAnimCount; } }
-        public SRModel[] Models { get { return m_axModels; } }
-        public UInt32 InstanceCount { get { return m_uInstanceCount; } }
-        public String[] Instances { get { return m_astrInstanceNames; } }
-        public String[] InstanceTypeNames { get { return m_axInstanceTypeNames; } }
-        public UInt32 ConectedUnitCount { get { return m_uConnectedUnitCount; } }
-        public String[] ConnectedUnit { get { return m_astrConnectedUnit; } }
-        public Game Game { get { return m_eGame; } }
-        public Asset Asset { get { return m_eAsset; } }
-        public Platform Platform { get { return m_ePlatform; } }
+        public String Name { get { return _name; } }
+        public UInt32 Version { get { return _version; } }
+        public UInt16 ModelCount { get { return _modelCount; } }
+        public UInt16 AnimCount { get { return _animCount; } }
+        public SRModel[] Models { get { return _models; } }
+        public UInt32 InstanceCount { get { return _instanceCount; } }
+        public String[] Instances { get { return _instanceNames; } }
+        public String[] InstanceTypeNames { get { return _instanceTypeNames; } }
+        public UInt32 ConectedUnitCount { get { return _connectedUnitCount; } }
+        public String[] ConnectedUnit { get { return _connectedUnitNames; } }
+        public Game Game { get { return _game; } }
+        public Asset Asset { get { return _asset; } }
+        public Platform Platform { get { return _platform; } }
 
         public static StreamWriter m_xLogFile = null;
 
         protected SRFile(String strFileName, Game game)
         {
-            m_eGame = game;
+            _game = game;
 
             FileStream xFile = new FileStream(strFileName, FileMode.Open, FileAccess.Read);
             BinaryReader xReader = new BinaryReader(xFile);
@@ -469,7 +60,7 @@ namespace ModelEx
 
             ReadHeaderData(xReader);
 
-            if (m_eAsset == Asset.Object)
+            if (_asset == Asset.Object)
             {
                 ReadObjectData(xReader);
             }

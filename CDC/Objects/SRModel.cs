@@ -1,0 +1,76 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+
+namespace CDC.Objects
+{
+    public abstract class SRModel
+    {
+        protected String _name;
+        protected UInt32 _version;
+        protected Platform _platform;
+        protected UInt32 _dataStart;
+        protected UInt32 _modelData;
+        protected UInt32 _vertexCount;
+        protected UInt32 _vertexStart;
+        protected UInt32 _polygonCount;
+        protected UInt32 _polygonStart;
+        protected UInt32 _boneCount;
+        protected UInt32 _boneStart;
+        protected UInt32 _treeCount;
+        protected UInt32 _materialCount;
+        protected UInt32 _materialStart;
+        protected UInt32 _indexCount { get { return 3 * _polygonCount; } }
+        // Vertices are scaled before any bones are applied.
+        // Scaling afterwards will break the characters.
+        protected Vector _vertexScale;
+        protected Vertex[] _vertices;
+        protected Vector[] _positionsRaw;
+        protected Vector[] _positionsPhys;
+        protected Vector[] _positionsAltPhys;
+        protected Vector[] _normals;
+        protected UInt32[] _colours;
+        protected UInt32[] _coloursAlt;
+        protected UV[] _uvs;
+        protected Polygon[] _polygons;
+        protected Bone[] _bones;
+        protected Tree[] _trees;
+        protected Material[] _materials;
+        protected List<Material> _materialsList;
+
+        public String Name { get { return _name; } }
+        public UInt32 PolygonCount { get { return _polygonCount; } }
+        public Polygon[] Polygons { get { return _polygons; } }
+        public UInt32 IndexCount { get { return _indexCount; } }
+        public Vertex[] Vertices { get { return _vertices; } }
+        public Vector[] Positions { get { return _positionsPhys; } }
+        public Vector[] PositionsAlt { get { return _positionsAltPhys; } }
+        public Vector[] Normals { get { return _normals; } }
+        public UInt32[] Colours { get { return _colours; } }
+        public UInt32[] ColoursAlt { get { return _coloursAlt; } }
+        public UV[] UVs { get { return _uvs; } }
+        public Bone[] Bones { get { return _bones; } }
+        public UInt32 MeshCount { get { return _treeCount; } }
+        public Tree[] Groups { get { return _trees; } }
+        public UInt32 MaterialCount { get { return _materialCount; } }
+        public Material[] Materials { get { return _materials; } }
+        public Platform Platform { get { return _platform; } }
+
+        protected SRModel(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
+        {
+            _name = strModelName;
+            _platform = ePlatform;
+            _version = uVersion;
+            _dataStart = uDataStart;
+            _modelData = uModelData;
+            _vertexCount = 0;
+            _vertexStart = 0;
+            _polygonCount = 0;
+            _polygonStart = 0;
+            _vertexScale.x = 1.0f;
+            _vertexScale.y = 1.0f;
+            _vertexScale.z = 1.0f;
+            _materialsList = new List<Material>();
+        }
+    }
+}

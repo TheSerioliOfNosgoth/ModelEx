@@ -55,9 +55,14 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CDC.cs" />
     <Compile Include="Objects\SR1File.cs" />
+    <Compile Include="Objects\SR2Model.cs" />
+    <Compile Include="Objects\SR1Model.cs" />
     <Compile Include="Objects\SR2File.cs" />
     <Compile Include="Objects\SRFile.cs" />
+    <Compile Include="Objects\SRModel.cs" />
+    <Compile Include="Objects\Utility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PS2\PS2ImageData.cs" />
     <Compile Include="Textures\SoulReaver2PCVRMTextureFile.cs" />
