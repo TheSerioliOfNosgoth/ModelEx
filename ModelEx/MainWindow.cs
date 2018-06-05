@@ -166,6 +166,39 @@ namespace ModelEx
             }
         }
 
+        private void exportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog OpenDlg = new OpenFileDialog();
+            OpenDlg.CheckFileExists = true;
+            OpenDlg.CheckPathExists = true;
+            OpenDlg.Filter =
+                "Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|" +
+                "Soul Reaver 2 Mesh Files|*.SRObj;*.drm;*.pcm|" +
+                "Collada Mesh Files (*.dae)|*.dae";
+            //"Soul Reaver DRM Files (*.drm)|*.drm|" +
+            //"Soul Reaver PCM Files (*.pcm)|*.pcm|" +
+            //"All Mesh Files|*.SRObj;*.drm;*.pcm|" +
+            //"All Files (*.*)|*.*";
+            OpenDlg.DefaultExt = "drm";
+            OpenDlg.FilterIndex = 1;
+            if (OpenDlg.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    CDC.Objects.SRFile srFile = new CDC.Objects.SR1File(OpenDlg.FileName);
+                    string saveFileName = "C://Users//Andrew//Desktop//TestModel.dae";
+                    if (srFile != null)
+                    {
+                        srFile.ExportToFile(saveFileName);
+                    }
+                }
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
         private void treeView1_AfterCheck(object sender, TreeViewEventArgs e)
         {
             foreach (Renderable renderable in Scene.Instance.RenderObjects)
