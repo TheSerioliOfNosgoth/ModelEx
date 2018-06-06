@@ -85,5 +85,30 @@ namespace CDC.Objects
         protected abstract void ReadUnitData(BinaryReader xReader);
 
         protected abstract void ResolvePointers(BinaryReader xReader, BinaryWriter xWriter);
+
+        public bool ExportToFile(String fileName)
+        {
+            //Create a very simple scene a single node with a mesh that has a single face, a triangle and a default material
+            Assimp.Scene scene = new Assimp.Scene();
+            scene.RootNode = new Assimp.Node("Root");
+
+            Assimp.Mesh triangle = new Assimp.Mesh("", Assimp.PrimitiveType.Triangle);
+            triangle.Vertices.Add(new Assimp.Vector3D(1, 0, 0));
+            triangle.Vertices.Add(new Assimp.Vector3D(5, 5, 0));
+            triangle.Vertices.Add(new Assimp.Vector3D(10, 0, 0));
+            triangle.Faces.Add(new Assimp.Face(new int[] { 0, 1, 2 }));
+            triangle.MaterialIndex = 0;
+
+            scene.Meshes.Add(triangle);
+            scene.RootNode.MeshIndices.Add(0);
+
+            Assimp.Material mat = new Assimp.Material();
+            mat.Name = "MyMaterial";
+            scene.Materials.Add(mat);
+
+            Assimp.AssimpContext context = new Assimp.AssimpContext();
+            context.ExportFile(scene, fileName, "collada", Assimp.PostProcessSteps.None);
+            return false;
+        }
     }
 }
