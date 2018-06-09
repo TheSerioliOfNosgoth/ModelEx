@@ -19,7 +19,6 @@ namespace ModelEx
         public DynamicCamera currentCamera;
         CameraMode cameraMode;
 
-        #region Singleton Pattern
         private static CameraManager instance = null;
         public static CameraManager Instance
         {
@@ -32,7 +31,6 @@ namespace ModelEx
                 return instance;
             }
         }
-        #endregion
 
         private CameraManager()
         {
@@ -46,6 +44,25 @@ namespace ModelEx
 
             cameraMode = 0;
             currentCamera = cameras[(int)cameraMode];
+        }
+
+        public void Reset()
+        {
+            Vector3 eye = new Vector3(0.0f, 0.0f, 0.0f);
+            Vector3 target = new Vector3(0.0f, 0.0f, 1.0f);
+
+            Renderable currentObject = SceneManager.Instance.CurrentObject;
+            if (currentObject != null && currentObject.GetType() == typeof(Physical))
+            {
+                BoundingSphere boundingSphere = currentObject.GetBoundingSphere();
+                if (boundingSphere != null)
+                {
+                    target = boundingSphere.Center;
+                    eye = target - new Vector3(0.0f, 0.0f, boundingSphere.Radius * 2.5f);
+                }
+            }
+
+            SetView(eye, target);
         }
 
         public void SetPerspective(float fov, float aspect, float znear, float zfar)

@@ -4,7 +4,6 @@ namespace ModelEx
 {
     public class ShaderManager
     {
-        #region Singleton Pattern
         private static ShaderManager instance = null;
         public static ShaderManager Instance
         {
@@ -17,11 +16,10 @@ namespace ModelEx
                 return instance;
             }
         }
-        #endregion
 
-        #region Constructor
-        private ShaderManager() { }
-        #endregion
+        private ShaderManager()
+        {
+        }
 
         public EffectWrapperTransformEffectWireframe transformEffectWireFrame;
         public EffectWrapperPhongTexture effectPhongTexture;

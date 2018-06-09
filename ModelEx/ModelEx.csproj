@@ -73,7 +73,6 @@
     <Compile Include="Cameras\OrbitCamera.cs" />
     <Compile Include="Cameras\OrbitPanCamera.cs" />
     <Compile Include="DeviceManager.cs" />
-    <Compile Include="Import\MeshLoader.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -109,7 +108,9 @@
       <DependentUpon>RenderControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Renderables\RenderManager.cs" />
-    <Compile Include="Scene.cs" />
+    <Compile Include="Scenes\Scene.cs" />
+    <Compile Include="Scenes\SceneCDC.cs" />
+    <Compile Include="Scenes\SceneManager.cs" />
     <Compile Include="Shaders\EffectMorphingUnit.cs" />
     <Compile Include="Shaders\EffectWrapperGouraudTexture.cs" />
     <Compile Include="Shaders\EffectWrapperPhongTexture.cs" />

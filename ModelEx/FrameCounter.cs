@@ -13,7 +13,6 @@ namespace ModelEx
         private static extern bool QueryPerformanceFrequency(
             out long lpFrequency);
 
-        #region Singleton Pattern
         private static FrameCounter instance = null;
         public static FrameCounter Instance
         {
@@ -26,14 +25,11 @@ namespace ModelEx
                 return instance;
             }
         }
-        #endregion
 
-        #region Constructor
         private FrameCounter()
         {
             msPerTick = (float)MillisecondsPerTick;
         }
-        #endregion
 
         float msPerTick = 0.0f;
 

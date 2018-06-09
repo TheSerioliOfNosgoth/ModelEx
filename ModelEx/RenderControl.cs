@@ -42,7 +42,7 @@ namespace ModelEx
             RenderManager.Instance.ShutDown();
             ShaderManager.Instance.ShutDown();
             DeviceManager.Instance.ShutDown();
-            Scene.Instance.ShutDown();
+            SceneManager.Instance.ShutDown();
         }
 
         private void RenderControl_MouseUp(object sender, MouseEventArgs e)

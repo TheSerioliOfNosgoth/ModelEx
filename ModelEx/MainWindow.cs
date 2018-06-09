@@ -51,7 +51,7 @@ namespace ModelEx
 
             TreeNode sceneTreeNode = new TreeNode("Scene");
             sceneTreeNode.Checked = true;
-            foreach (Renderable renderable in Scene.Instance.RenderObjects)
+            foreach (Renderable renderable in SceneManager.Instance.CurrentScene.RenderObjects)
             {
                 if (renderable.GetType().IsSubclassOf(typeof(Model)))
                 {
@@ -83,54 +83,43 @@ namespace ModelEx
             }
         }
 
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog OpenDlg = new OpenFileDialog();
-            OpenDlg.CheckFileExists = true;
-            OpenDlg.CheckPathExists = true;
-            OpenDlg.Filter =
-                "Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|" +
-                "Soul Reaver 2 Mesh Files|*.SRObj;*.drm;*.pcm|" +
-                "Collada Mesh Files (*.dae)|*.dae";
-            //"Soul Reaver DRM Files (*.drm)|*.drm|" +
-            //"Soul Reaver PCM Files (*.pcm)|*.pcm|" +
-            //"All Mesh Files|*.SRObj;*.drm;*.pcm|" +
-            //"All Files (*.*)|*.*";
-            OpenDlg.DefaultExt = "drm";
-            OpenDlg.FilterIndex = 1;
+            OpenFileDialog OpenDlg = new OpenFileDialog
+            {
+                CheckFileExists = true,
+                CheckPathExists = true,
+                Filter =
+                    "Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|" +
+                    "Soul Reaver 2 Mesh Files|*.SRObj;*.drm;*.pcm|" +
+                    "Collada Mesh Files (*.dae)|*.dae",
+                    //"Soul Reaver DRM Files (*.drm)|*.drm|" +
+                    //"Soul Reaver PCM Files (*.pcm)|*.pcm|" +
+                    //"All Mesh Files|*.SRObj;*.drm;*.pcm|" +
+                    //"All Files (*.*)|*.*";
+                DefaultExt = "drm",
+                FilterIndex = 1
+            };
+
             if (OpenDlg.ShowDialog() == DialogResult.OK)
             {
                 Invoke(new MethodInvoker(BeginLoading));
 
-                Thread loadingThread = new Thread((ThreadStart)(() =>
+                Thread loadingThread = new Thread((() =>
                 {
-                    Scene.Instance.ShutDown();
+                    SceneManager.Instance.ShutDown();
                     if (OpenDlg.FilterIndex == 1)
                     {
-                        MeshLoader.LoadSoulReaverFile(OpenDlg.FileName, false);
+                        SceneManager.Instance.AddScene(new SceneCDC(false));
+                        SceneManager.Instance.CurrentScene.ImportFromFile(OpenDlg.FileName);
                     }
                     else if (OpenDlg.FilterIndex == 2)
                     {
-                        MeshLoader.LoadSoulReaverFile(OpenDlg.FileName, true);
+                        SceneManager.Instance.AddScene(new SceneCDC(true));
+                        SceneManager.Instance.CurrentScene.ImportFromFile(OpenDlg.FileName);
                     }
 
-                    Renderable mainObject = Scene.Instance.RenderObjects[0];
-                    if (mainObject != null && mainObject.GetType() == typeof(Physical))
-                    {
-                        SlimDX.BoundingSphere boundingSphere = Scene.Instance.RenderObjects[0].GetBoundingSphere();
-                        SlimDX.Vector3 target = boundingSphere.Center;
-                        SlimDX.Vector3 eye = target - new SlimDX.Vector3(0.0f, 0.0f, boundingSphere.Radius * 2.5f);
-                        CameraManager.Instance.SetView(eye, target);
-                    }
-                    else
-                    {
-                        SlimDX.Vector3 eye = new SlimDX.Vector3(0.0f, 0.0f, 0.0f);
-                        SlimDX.Vector3 target = new SlimDX.Vector3(0.0f, 0.0f, 1.0f);
-                        CameraManager.Instance.SetView(eye, target);
-                    }
-
-                    //MeshLoader.LoadSoulReaverFile("C:/Users/A/Documents/SR2-Models-PC/raziel.drm", true);
-                    //MeshLoader.Import("C:/Program Files/Assimp/test/models-nonbsd/3DS/mar_rifle.3ds");
+                    CameraManager.Instance.Reset();
 
                     Invoke(new MethodInvoker(EndLoading));
                 }));
@@ -140,16 +129,16 @@ namespace ModelEx
                 loadingThread.Start();
                 //loadingThread.Join();
 
-                Thread progressThread = new Thread((ThreadStart)(() =>
+                Thread progressThread = new Thread((() =>
                 {
                     do
                     {
-                        lock (MeshLoader.ProgressStage)
+                        lock (SceneCDC.ProgressStage)
                         {
-                            progressWindow.SetMessage(MeshLoader.ProgressStage);
+                            progressWindow.SetMessage(SceneCDC.ProgressStage);
 
                             int oldProgress = progressWindow.GetProgress();
-                            if (oldProgress < MeshLoader.ProgressPercent)
+                            if (oldProgress < SceneCDC.ProgressPercent)
                             {
                                 progressWindow.SetProgress(oldProgress + 1);
                             }
@@ -166,29 +155,32 @@ namespace ModelEx
             }
         }
 
-        private void exportToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ExportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog OpenDlg = new OpenFileDialog();
-            OpenDlg.CheckFileExists = true;
-            OpenDlg.CheckPathExists = true;
-            OpenDlg.Filter =
-                "Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|" +
-                "Soul Reaver 2 Mesh Files|*.SRObj;*.drm;*.pcm|" +
-                "Collada Mesh Files (*.dae)|*.dae";
-            //"Soul Reaver DRM Files (*.drm)|*.drm|" +
-            //"Soul Reaver PCM Files (*.pcm)|*.pcm|" +
-            //"All Mesh Files|*.SRObj;*.drm;*.pcm|" +
-            //"All Files (*.*)|*.*";
-            OpenDlg.DefaultExt = "drm";
-            OpenDlg.FilterIndex = 1;
+            OpenFileDialog OpenDlg = new OpenFileDialog
+            {
+                CheckFileExists = true,
+                CheckPathExists = true,
+                Filter =
+                    "Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|" +
+                    "Soul Reaver 2 Mesh Files|*.SRObj;*.drm;*.pcm|" +
+                    "Collada Mesh Files (*.dae)|*.dae",
+                    //"Soul Reaver DRM Files (*.drm)|*.drm|" +
+                    //"Soul Reaver PCM Files (*.pcm)|*.pcm|" +
+                    //"All Mesh Files|*.SRObj;*.drm;*.pcm|" +
+                    //"All Files (*.*)|*.*";
+                DefaultExt = "drm",
+                FilterIndex = 1
+            };
+
             if (OpenDlg.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
                     CDC.Objects.SRFile srFile = new CDC.Objects.SR1File(OpenDlg.FileName);
-                    string saveFileName = "C://Users//Andrew//Desktop//TestModel.dae";
                     if (srFile != null)
                     {
+                        string saveFileName = "C://Users//Andrew//Desktop//TestModel.dae";
                         srFile.ExportToFile(saveFileName);
                     }
                 }
@@ -199,40 +191,31 @@ namespace ModelEx
             }
         }
 
-        private void treeView1_AfterCheck(object sender, TreeViewEventArgs e)
+        private void TreeView1_AfterCheck(object sender, TreeViewEventArgs e)
         {
-            foreach (Renderable renderable in Scene.Instance.RenderObjects)
+            Scene currentScene = SceneManager.Instance.CurrentScene;
+            if (currentScene != null)
             {
-                if (renderable.GetType().IsSubclassOf(typeof(Model)))
+                foreach (Renderable renderable in currentScene.RenderObjects)
                 {
-                    Node node = ((Model)renderable).FindNode(e.Node.Text);
-                    if (node != null)
+                    if (renderable.GetType().IsSubclassOf(typeof(Model)))
                     {
-                        node.Visible = e.Node.Checked;
+                        Node node = ((Model)renderable).FindNode(e.Node.Text);
+                        if (node != null)
+                        {
+                            node.Visible = e.Node.Checked;
+                        }
                     }
                 }
             }
         }
 
-        private void resetPositionToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ResetPositionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Renderable mainObject = Scene.Instance.RenderObjects[0];
-            if (mainObject != null && mainObject.GetType() == typeof(Physical))
-            {
-                SlimDX.BoundingSphere boundingSphere = Scene.Instance.RenderObjects[0].GetBoundingSphere();
-                SlimDX.Vector3 target = boundingSphere.Center;
-                SlimDX.Vector3 eye = target - new SlimDX.Vector3(0.0f, 0.0f, boundingSphere.Radius * 2.5f);
-                CameraManager.Instance.SetView(eye, target);
-            }
-            else
-            {
-                SlimDX.Vector3 eye = new SlimDX.Vector3(0.0f, 0.0f, 0.0f);
-                SlimDX.Vector3 target = new SlimDX.Vector3(0.0f, 0.0f, 1.0f);
-                CameraManager.Instance.SetView(eye, target);
-            }
+            CameraManager.Instance.Reset();
         }
 
-        private void egoToolStripMenuItem_Click(object sender, EventArgs e)
+        private void EgoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CameraManager.Instance.SetCamera(CameraManager.CameraMode.Ego);
             egoToolStripMenuItem.Checked = true;
@@ -240,7 +223,7 @@ namespace ModelEx
             orbitPanToolStripMenuItem.Checked = false;
         }
 
-        private void orbitToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OrbitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CameraManager.Instance.SetCamera(CameraManager.CameraMode.Orbit);
             egoToolStripMenuItem.Checked = false;
@@ -248,7 +231,7 @@ namespace ModelEx
             orbitPanToolStripMenuItem.Checked = false;
         }
 
-        private void orbitPanToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OrbitPanToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CameraManager.Instance.SetCamera(CameraManager.CameraMode.OrbitPan);
             egoToolStripMenuItem.Checked = false;
@@ -256,9 +239,9 @@ namespace ModelEx
             orbitPanToolStripMenuItem.Checked = true;
         }
 
-        private void trackBar1_Scroll(object sender, EventArgs e)
+        private void RealmBlendBar_Scroll(object sender, EventArgs e)
         {
-            MeshMorphingUnit.RealmBlend = ((float)trackBar1.Value / (float)trackBar1.Maximum);
+            MeshMorphingUnit.RealmBlend = ((float)realmBlendBar.Value / realmBlendBar.Maximum);
         }
     }
 }

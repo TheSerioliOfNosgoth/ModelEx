@@ -11,7 +11,6 @@ namespace ModelEx
 {
     public class TextureManager
     {
-        #region Singleton Pattern
         private static TextureManager instance = null;
         public static TextureManager Instance
         {
@@ -24,11 +23,10 @@ namespace ModelEx
                 return instance;
             }
         }
-        #endregion
 
-        #region Constructor
-        private TextureManager() { }
-        #endregion
+        private TextureManager()
+        {
+        }
 
         Dictionary<string, Texture2D> FileTextureDictionary = new Dictionary<string, Texture2D>();
         Dictionary<string, ShaderResourceView> FileShaderResourceViewDictionary = new Dictionary<string, ShaderResourceView>();

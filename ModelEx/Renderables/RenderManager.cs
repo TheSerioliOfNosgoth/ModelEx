@@ -78,7 +78,7 @@ namespace ModelEx
 
                 CameraManager.Instance.UpdateFrameCamera();
 
-                Scene.Instance.Render();
+                SceneManager.Instance.Render();
 
                 // syncInterval can be 0
                 dm.swapChain.Present(syncInterval, PresentFlags.None);

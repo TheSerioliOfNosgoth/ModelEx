@@ -25,7 +25,7 @@ namespace ModelEx
                 BeginInvoke(new IntDelegate(SetProgress), new object[] { newProgress });
                 return;
             }
-            pbProgress.Value = newProgress;
+            pbProgress.Value = Math.Max(pbProgress.Minimum, Math.Min(pbProgress.Maximum, newProgress));
         }
 
         public void SetMessage(string newMessage)

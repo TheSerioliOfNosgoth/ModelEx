@@ -9,7 +9,6 @@ using SRModel = CDC.Objects.SRModel;
 using SR1Model = CDC.Objects.SR1Model;
 using SR2Model = CDC.Objects.SR2Model;
 using Tree = CDC.Tree;
-using CDTextureFile = BenLincoln.TheLostWorlds.CDTextures.TextureFile;
 using SR1PCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPCTextureFile;
 using SR1PSTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPlaystationTextureFile;
 using SR1DCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverDreamcastTextureFile;
@@ -17,7 +16,7 @@ using SR2PCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaver2PCVRMTex
 
 namespace ModelEx
 {
-    public class MeshLoader
+    public class SceneCDC : Scene
     {
         class SRModelParser :
             IModelParser
@@ -43,7 +42,7 @@ namespace ModelEx
                 String modelName = _objectName + "-" + modelIndex.ToString();
 
                 #region Materials
-                progressStage = "Model " + modelIndex.ToString() + " - Creating Materials";
+                ProgressStage = "Model " + modelIndex.ToString() + " - Creating Materials";
                 Thread.Sleep(500);
                 for (int materialIndex = 0; materialIndex < _srModel.MaterialCount; materialIndex++)
                 {
@@ -60,7 +59,7 @@ namespace ModelEx
                 #region Groups
                 for (int groupIndex = 0; groupIndex < _srModel.Groups.Length; groupIndex++)
                 {
-                    progressStage = "Model " + modelIndex.ToString() + " - Creating Group " + groupIndex.ToString();
+                    ProgressStage = "Model " + modelIndex.ToString() + " - Creating Group " + groupIndex.ToString();
                     Thread.Sleep(100);
 
                     Tree srGroup = _srModel.Groups[groupIndex];
@@ -298,7 +297,6 @@ namespace ModelEx
 
         private static long progressLevels = 0;
         private static long progressLevel = 0;
-        private static string progressStage = "Done";
 
         public static int ProgressPercent
         {
@@ -313,21 +311,59 @@ namespace ModelEx
             }
         }
 
-        public static string ProgressStage
+        public static string ProgressStage { get; private set; } = "Done";
+
+        bool _isSR2File = false;
+        List<SRFile> _objectFiles = new List<SRFile>();
+
+        public SceneCDC(bool isSR2File)
+            : base()
         {
-            get { return progressStage; }
+            _isSR2File = isSR2File;
         }
 
-        public static void LoadSoulReaverFile(String fileName, bool isSR2File)
+        protected static String GetTextureName(SRModel srModel, int materialIndex)
+        {
+            CDC.Material material = srModel.Materials[materialIndex];
+            String textureName = "";
+            if (material.textureUsed)
+            {
+                if (srModel is SR1Model)
+                {
+                    if (srModel.Platform == CDC.Platform.PSX)
+                    {
+                        textureName =
+                            srModel.Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
+                            material.textureID.ToString("0000");
+                    }
+                    else
+                    {
+                        textureName =
+                            "Texture-" +
+                            material.textureID.ToString("00000");
+                    }
+                }
+                else if (srModel is SR2Model)
+                {
+                    textureName =
+                        srModel.Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
+                        material.textureID.ToString("0000");
+                }
+            }
+
+            return textureName;
+        }
+
+        public override void ImportFromFile(string fileName)
         {
             progressLevel = 0;
             progressLevels = 0;
-            progressStage = "Reading file";
+            ProgressStage = "Reading file";
 
             SRFile srFile = null;
 
             #region TryLoad
-            if (!isSR2File)
+            if (!_isSR2File)
             {
                 try
                 {
@@ -343,7 +379,6 @@ namespace ModelEx
                 try
                 {
                     srFile = new SR2File(fileName);
-                    isSR2File = true;
                 }
                 catch
                 {
@@ -359,7 +394,7 @@ namespace ModelEx
 
                 for (int materialIndex = 0; materialIndex < srModel.MaterialCount; materialIndex++)
                 {
-                    progressLevels += srModel.IndexCount / srModel.Groups.Length;
+                    progressLevels += 1;
                 }
 
                 for (int groupIndex = 0; groupIndex < srModel.Groups.Length; groupIndex++)
@@ -369,7 +404,7 @@ namespace ModelEx
                         for (int materialIndex = 0; materialIndex < srModel.MaterialCount; materialIndex++)
                         {
                             int vertexCount = (int)srModel.Groups[groupIndex].mesh.indexCount;
-                            progressLevels += (vertexCount * 3);
+                            progressLevels += 1;
                         }
                     }
                 }
@@ -382,11 +417,11 @@ namespace ModelEx
             {
                 SRModelParser modelParser = new SRModelParser(objectName, srFile);
                 modelParser.BuildModel(modelIndex);
-                Scene.Instance.AddRenderObject(modelParser.Model);
+                AddRenderObject(modelParser.Model);
             }
 
-            progressStage = "Loading Textures";
-            System.Threading.Thread.Sleep(1000);
+            ProgressStage = "Loading Textures";
+            Thread.Sleep(1000);
 
             #region Textures
             if (srFile.GetType() == typeof(SR2File))
@@ -534,40 +569,12 @@ namespace ModelEx
             #endregion
 
             progressLevel = progressLevels;
-            progressStage = "Done";
+            ProgressStage = "Done";
             Thread.Sleep(1000);
         }
 
-        static String GetTextureName(SRModel srModel, int materialIndex)
+        public override void ExportToFile(string fileName)
         {
-            CDC.Material material = srModel.Materials[materialIndex];
-            String textureName = "";
-            if (material.textureUsed)
-            {
-                if (srModel is SR1Model)
-                {
-                    if (srModel.Platform == CDC.Platform.PSX)
-                    {
-                        textureName =
-                            srModel.Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
-                            material.textureID.ToString("0000");
-                    }
-                    else
-                    {
-                        textureName =
-                            "Texture-" +
-                            material.textureID.ToString("00000");
-                    }
-                }
-                else if (srModel is SR2Model)
-                {
-                    textureName =
-                        srModel.Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
-                        material.textureID.ToString("0000");
-                }
-            }
-
-            return textureName;
         }
     }
 }
