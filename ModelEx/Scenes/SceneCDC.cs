@@ -420,6 +420,8 @@ namespace ModelEx
                 AddRenderObject(modelParser.Model);
             }
 
+            _objectFiles.Add(srFile);
+
             ProgressStage = "Loading Textures";
             Thread.Sleep(1000);
 
@@ -575,6 +577,10 @@ namespace ModelEx
 
         public override void ExportToFile(string fileName)
         {
+            if (_objectFiles[0] != null)
+            {
+                _objectFiles[0].ExportToFile(fileName);
+            }
         }
     }
 }

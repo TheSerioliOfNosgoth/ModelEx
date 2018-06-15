@@ -30,9 +30,9 @@ namespace CDC.Objects
                 xReader.BaseStream.Position += 0x10;
                 _materialStart            = _dataStart + xReader.ReadUInt32();
                 _materialCount            = 0;
-                _treeCount                = 1;
+                _groupCount                = 1;
 
-                _trees = new Tree[_treeCount];
+                _trees = new Tree[_groupCount];
             }
 
             public static SR1ObjectModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 uVersion)
@@ -199,7 +199,7 @@ namespace CDC.Objects
 
                 _materialCount = (UInt32)_materialsList.Count;
 
-                for (UInt32 t = 0; t < _treeCount; t++)
+                for (UInt32 t = 0; t < _groupCount; t++)
                 {
                     _trees[t] = new Tree();
                     _trees[t].mesh = new Mesh();
@@ -250,9 +250,9 @@ namespace CDC.Objects
                 m_uSpectralColourStart      = _dataStart + xReader.ReadUInt32();
                 m_uBspTreeCount             = xReader.ReadUInt32();
                 m_uBspTreeStart             = _dataStart + xReader.ReadUInt32();
-                _treeCount                = m_uBspTreeCount;
+                _groupCount                = m_uBspTreeCount;
 
-                _trees = new Tree[_treeCount];
+                _trees = new Tree[_groupCount];
             }
 
             public static SR1UnitModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)

@@ -17,7 +17,7 @@ namespace CDC.Objects
         protected UInt32 _polygonStart;
         protected UInt32 _boneCount;
         protected UInt32 _boneStart;
-        protected UInt32 _treeCount;
+        protected UInt32 _groupCount;
         protected UInt32 _materialCount;
         protected UInt32 _materialStart;
         protected UInt32 _indexCount { get { return 3 * _polygonCount; } }
@@ -50,7 +50,7 @@ namespace CDC.Objects
         public UInt32[] ColoursAlt { get { return _coloursAlt; } }
         public UV[] UVs { get { return _uvs; } }
         public Bone[] Bones { get { return _bones; } }
-        public UInt32 MeshCount { get { return _treeCount; } }
+        public UInt32 GroupCount { get { return _groupCount; } }
         public Tree[] Groups { get { return _trees; } }
         public UInt32 MaterialCount { get { return _materialCount; } }
         public Material[] Materials { get { return _materials; } }
@@ -71,6 +71,41 @@ namespace CDC.Objects
             _vertexScale.y = 1.0f;
             _vertexScale.z = 1.0f;
             _materialsList = new List<Material>();
+        }
+
+        public String GetTextureName(int materialIndex)
+        {
+            String textureName = "";
+            if (materialIndex >= 0 && materialIndex < MaterialCount)
+            {
+                Material material = Materials[materialIndex];
+                if (material.textureUsed)
+                {
+                    if (this is SR1Model)
+                    {
+                        if (Platform == Platform.PSX)
+                        {
+                            textureName =
+                                Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
+                                material.textureID.ToString("0000");
+                        }
+                        else
+                        {
+                            textureName =
+                                "Texture-" +
+                                material.textureID.ToString("00000");
+                        }
+                    }
+                    else if (this is SR2Model)
+                    {
+                        textureName =
+                            Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
+                            material.textureID.ToString("0000");
+                    }
+                }
+            }
+
+            return textureName;
         }
     }
 }

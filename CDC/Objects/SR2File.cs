@@ -34,9 +34,9 @@ namespace CDC.Objects
                 xReader.BaseStream.Position += 0x0C;
                 _materialStart            = _dataStart + xReader.ReadUInt32();
                 _materialCount            = 0;
-                _treeCount                = 1;
+                _groupCount                = 1;
 
-                _trees = new Tree[_treeCount];
+                _trees = new Tree[_groupCount];
             }
 
             public static SR2ObjectModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 uVersion)
@@ -176,7 +176,7 @@ namespace CDC.Objects
 
                 List<SR2TriangleList> xTriangleListList = new List<SR2TriangleList>();
                 UInt32 uMaterialPosition = _materialStart;
-                _treeCount = 0;
+                _groupCount = 0;
                 while (uMaterialPosition != 0)
                 {
                     xReader.BaseStream.Position = uMaterialPosition;
@@ -187,9 +187,9 @@ namespace CDC.Objects
                         xTriangleListList.Add(xTriangleList);
                         _polygonCount += xTriangleList.m_uPolygonCount;
 
-                        if ((UInt32)xTriangleList.m_usGroupID > _treeCount)
+                        if ((UInt32)xTriangleList.m_usGroupID > _groupCount)
                         {
-                            _treeCount = xTriangleList.m_usGroupID;
+                            _groupCount = xTriangleList.m_usGroupID;
                         }
                     }
 
@@ -200,9 +200,9 @@ namespace CDC.Objects
 
                 _materialCount = (UInt32)_materialsList.Count;
 
-                _treeCount++;
-                _trees = new Tree[_treeCount];
-                for (UInt32 t = 0; t < _treeCount; t++)
+                _groupCount++;
+                _trees = new Tree[_groupCount];
+                for (UInt32 t = 0; t < _groupCount; t++)
                 {
                     _trees[t] = new Tree();
                     _trees[t].mesh = new Mesh();
@@ -220,7 +220,7 @@ namespace CDC.Objects
                     _trees[t].mesh.vertices = new Vertex[_trees[t].mesh.indexCount];
                 }
 
-                for (UInt32 t = 0; t < _treeCount; t++)
+                for (UInt32 t = 0; t < _groupCount; t++)
                 {
                     UInt32 tp = 0;
                     foreach (SR2TriangleList xTriangleList in xTriangleListList)
@@ -322,7 +322,7 @@ namespace CDC.Objects
                 _materialCount            = 0;
                 m_uOctTreeCount             = xReader.ReadUInt32();
                 m_uOctTreeStart             = _dataStart + xReader.ReadUInt32();
-                _treeCount                = m_uOctTreeCount;
+                _groupCount                = m_uOctTreeCount;
 
                 //m_uVertexCount = xReader.ReadUInt32();
                 //m_uPolygonCount = 0; // xReader.ReadUInt32(); // Length = 0x14
@@ -341,7 +341,7 @@ namespace CDC.Objects
                 //m_uOctTreeStart = m_uDataStart + xReader.ReadUInt32();
                 //m_uTreeCount = m_uOctTreeCount;
 
-                _trees = new Tree[_treeCount];
+                _trees = new Tree[_groupCount];
             }
 
             public static SR2UnitModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)

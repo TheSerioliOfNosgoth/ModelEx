@@ -157,36 +157,27 @@ namespace ModelEx
 
         private void ExportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog OpenDlg = new OpenFileDialog
+            SaveFileDialog SaveDlg = new SaveFileDialog
             {
-                CheckFileExists = true,
                 CheckPathExists = true,
                 Filter =
-                    "Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|" +
-                    "Soul Reaver 2 Mesh Files|*.SRObj;*.drm;*.pcm|" +
                     "Collada Mesh Files (*.dae)|*.dae",
                     //"Soul Reaver DRM Files (*.drm)|*.drm|" +
                     //"Soul Reaver PCM Files (*.pcm)|*.pcm|" +
                     //"All Mesh Files|*.SRObj;*.drm;*.pcm|" +
                     //"All Files (*.*)|*.*";
-                DefaultExt = "drm",
+                DefaultExt = "dae",
                 FilterIndex = 1
             };
 
-            if (OpenDlg.ShowDialog() == DialogResult.OK)
+            if (SaveDlg.ShowDialog() == DialogResult.OK)
             {
-                try
+                Scene currentScene = SceneManager.Instance.CurrentScene;
+                if (currentScene != null)
                 {
-                    CDC.Objects.SRFile srFile = new CDC.Objects.SR1File(OpenDlg.FileName);
-                    if (srFile != null)
-                    {
-                        string saveFileName = "C://Users//Andrew//Desktop//TestModel.dae";
-                        srFile.ExportToFile(saveFileName);
-                    }
-                }
-                catch
-                {
-                    return;
+                    //string saveFileName = "C://Users//Andrew//Desktop//TestModel.dae";
+                    currentScene.ExportToFile(SaveDlg.FileName);
+
                 }
             }
         }
