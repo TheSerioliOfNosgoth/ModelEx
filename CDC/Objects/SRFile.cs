@@ -104,6 +104,11 @@ namespace CDC.Objects
                 for (int groupIndex = 0; groupIndex < model.GroupCount; groupIndex++)
                 {
                     Tree group = model.Groups[groupIndex];
+                    if (group == null)
+                    {
+                        continue;
+                    }
+
                     string groupName = name + "-" + modelIndex + "-" + groupIndex;
 
                     Assimp.Node groupNode = new Assimp.Node(groupName);
