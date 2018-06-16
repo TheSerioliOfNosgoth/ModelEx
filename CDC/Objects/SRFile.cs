@@ -136,22 +136,50 @@ namespace CDC.Objects
 
                             ref Polygon[] polygons = ref group.mesh.polygons;
                             Vector[] positions = model.Positions;
+                            Vector[] normals = model.Normals;
+                            UInt32[] colors = model.Colours;
+                            UV[] uvs = model.UVs;
                             int i = 0;
                             for (int p = 0; p < polygonCount; p++)
                             {
                                 ref Polygon polygon = ref polygons[polygonList[p]];
 
                                 ref Vertex vert1 = ref polygon.v1;
-                                ref Vector pos1 = ref positions[vert1.positionID];
-                                mesh.Vertices.Add(new Assimp.Vector3D(pos1.x, pos1.y, pos1.z));
-
                                 ref Vertex vert2 = ref polygon.v2;
-                                ref Vector pos2 = ref positions[vert2.positionID];
-                                mesh.Vertices.Add(new Assimp.Vector3D(pos2.x, pos2.y, pos2.z));
-
                                 ref Vertex vert3 = ref polygon.v3;
+
+                                ref Vector pos1 = ref positions[vert1.positionID];
+                                ref Vector pos2 = ref positions[vert2.positionID];
                                 ref Vector pos3 = ref positions[vert3.positionID];
+                                mesh.Vertices.Add(new Assimp.Vector3D(pos1.x, pos1.y, pos1.z));
+                                mesh.Vertices.Add(new Assimp.Vector3D(pos2.x, pos2.y, pos2.z));
                                 mesh.Vertices.Add(new Assimp.Vector3D(pos3.x, pos3.y, pos3.z));
+
+                                if (Asset == Asset.Object)
+                                {
+                                    ref Vector norm1 = ref normals[vert1.normalID];
+                                    ref Vector norm2 = ref normals[vert2.normalID];
+                                    ref Vector norm3 = ref normals[vert3.normalID];
+                                    mesh.Normals.Add(new Assimp.Vector3D(norm1.x, norm1.y, norm1.z));
+                                    mesh.Normals.Add(new Assimp.Vector3D(norm2.x, norm2.y, norm2.z));
+                                    mesh.Normals.Add(new Assimp.Vector3D(norm3.x, norm3.y, norm3.z));
+                                }
+                                else
+                                {
+                                    Assimp.Color4D col1 = GetAssimpColorOpaque(colors[vert1.colourID]);
+                                    Assimp.Color4D col2 = GetAssimpColorOpaque(colors[vert2.colourID]);
+                                    Assimp.Color4D col3 = GetAssimpColorOpaque(colors[vert3.colourID]);
+                                    mesh.VertexColorChannels[0].Add(col1);
+                                    mesh.VertexColorChannels[0].Add(col2);
+                                    mesh.VertexColorChannels[0].Add(col3);
+                                }
+
+                                Assimp.Vector3D uv1 = GetAssimpUV(uvs[vert1.UVID]);
+                                Assimp.Vector3D uv2 = GetAssimpUV(uvs[vert2.UVID]);
+                                Assimp.Vector3D uv3 = GetAssimpUV(uvs[vert3.UVID]);
+                                mesh.TextureCoordinateChannels[0].Add(uv1);
+                                mesh.TextureCoordinateChannels[0].Add(uv2);
+                                mesh.TextureCoordinateChannels[0].Add(uv3);
 
                                 mesh.Faces.Add(new Assimp.Face(new int[] { i++, i++, i++ }));
                             }
@@ -182,25 +210,45 @@ namespace CDC.Objects
             Assimp.AssimpContext context = new Assimp.AssimpContext();
             context.ExportFile(scene, fileName, "collada", Assimp.PostProcessSteps.None);
 
-            //scene.RootNode = new Assimp.Node("Root");
+            return true;
+        }
 
-            //Assimp.Mesh triangle = new Assimp.Mesh("", Assimp.PrimitiveType.Triangle);
-            //triangle.Vertices.Add(new Assimp.Vector3D(1, 0, 0));
-            //triangle.Vertices.Add(new Assimp.Vector3D(5, 5, 0));
-            //triangle.Vertices.Add(new Assimp.Vector3D(10, 0, 0));
-            //triangle.Faces.Add(new Assimp.Face(new int[] { 0, 1, 2 }));
-            //triangle.MaterialIndex = 0;
+        protected Assimp.Color4D GetAssimpColor(UInt32 color)
+        {
+            Assimp.Color4D color4D = new Assimp.Color4D()
+            {
+                A = ((color & 0xFF000000) >> 24) / 255.0f,
+                R = ((color & 0x00FF0000) >> 16) / 255.0f,
+                G = ((color & 0x0000FF00) >> 8) / 255.0f,
+                B = ((color & 0x000000FF) >> 0) / 255.0f
+            };
+            
+            return color4D;
+        }
 
-            //scene.Meshes.Add(triangle);
-            //scene.RootNode.MeshIndices.Add(0);
+        protected Assimp.Color4D GetAssimpColorOpaque(UInt32 color)
+        {
+            Assimp.Color4D color4D = new Assimp.Color4D()
+            {
+                A = 1.0f, // ((A8R8G8B8 & 0x00FF0000) >> 24) / 255.0f,
+                R = ((color & 0x00FF0000) >> 16) / 255.0f,
+                G = ((color & 0x0000FF00) >> 8) / 255.0f,
+                B = ((color & 0x000000FF) >> 0) / 255.0f
+            };
 
-            //Assimp.Material mat = new Assimp.Material();
-            //mat.Name = "MyMaterial";
-            //scene.Materials.Add(mat);
+            return color4D;
+        }
 
-            //Assimp.AssimpContext context = new Assimp.AssimpContext();
-            //context.ExportFile(scene, fileName, "collada", Assimp.PostProcessSteps.None);
-            return false;
+        protected Assimp.Vector3D GetAssimpUV(UV uv)
+        {
+            Assimp.Vector3D uv3D = new Assimp.Vector3D()
+            {
+                X = uv.u,
+                Y = uv.u,
+                Z = 0.0f
+            };
+
+            return uv3D;
         }
 
         protected Assimp.Material GetAssimpMaterial(String name, SRModel model, int materialIndex)
@@ -236,11 +284,7 @@ namespace CDC.Objects
             else
             {
                 // Should I still use this when there's a texture? Texture colours would be multiplied by this colour.
-                Assimp.Color4D colorDiffuse = new Assimp.Color4D();
-                colorDiffuse.A = ((model.Materials[materialIndex].colour & 0xFF000000) >> 24) / 255.0f;
-                colorDiffuse.R = ((model.Materials[materialIndex].colour & 0x00FF0000) >> 16) / 255.0f;
-                colorDiffuse.G = ((model.Materials[materialIndex].colour & 0x0000FF00) >> 8) / 255.0f;
-                colorDiffuse.B = ((model.Materials[materialIndex].colour & 0x000000FF) >> 0) / 255.0f;
+                Assimp.Color4D colorDiffuse = GetAssimpColor(model.Materials[materialIndex].colour);
 
                 // Bugged.
                 //material.ColorDiffuse = colorDiffuse;
@@ -249,16 +293,7 @@ namespace CDC.Objects
                 material.AddProperty(diffuseProp);
             }
 
-            if (Asset == Asset.Unit)
-            {
-                // Bugged.
-                //material.ShadingMode = ShadingMode.Gouraud;
-                string shadingPropName = /*Assimp.Unmanaged.AiMatKeys.SHADING_MODEL_BASE*/"$mat.shadingm";
-                Assimp.MaterialProperty shadingProp = new Assimp.MaterialProperty(shadingPropName, (int)Assimp.ShadingMode.Gouraud);
-                shadingProp.SetIntegerValue((int)Assimp.ShadingMode.Gouraud);
-                material.AddProperty(shadingProp);
-            }
-            else
+            if (Asset == Asset.Object)
             {
                 // Bugged.
                 //material.ShadingMode = ShadingMode.Phong;
@@ -267,8 +302,15 @@ namespace CDC.Objects
                 shadingProp.SetIntegerValue((int)Assimp.ShadingMode.Phong);
                 material.AddProperty(shadingProp);
             }
-
-            // Assimp.MaterialProperty[] props = aMaterial.GetAllProperties();
+            else
+            {
+                // Bugged.
+                //material.ShadingMode = ShadingMode.Gouraud;
+                string shadingPropName = /*Assimp.Unmanaged.AiMatKeys.SHADING_MODEL_BASE*/"$mat.shadingm";
+                Assimp.MaterialProperty shadingProp = new Assimp.MaterialProperty(shadingPropName, (int)Assimp.ShadingMode.Gouraud);
+                shadingProp.SetIntegerValue((int)Assimp.ShadingMode.Gouraud);
+                material.AddProperty(shadingProp);
+            }
 
             return material;
         }
