@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace CDC.Objects
+namespace CDC.Objects.Models
 {
     public abstract class SRModel
     {
