@@ -10,6 +10,7 @@ namespace ModelEx
     public partial class MainWindow : Form
     {
         ProgressWindow progressWindow;
+        int filterIndex = 1;
 
         public MainWindow()
         {
@@ -92,17 +93,20 @@ namespace ModelEx
                 Filter =
                     "Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|" +
                     "Soul Reaver 2 Mesh Files|*.SRObj;*.drm;*.pcm|" +
+                    "Defiance Mesh Files|*.SRObj;*.drm;*.pcm|" +
                     "Collada Mesh Files (*.dae)|*.dae",
                     //"Soul Reaver DRM Files (*.drm)|*.drm|" +
                     //"Soul Reaver PCM Files (*.pcm)|*.pcm|" +
                     //"All Mesh Files|*.SRObj;*.drm;*.pcm|" +
                     //"All Files (*.*)|*.*";
                 DefaultExt = "drm",
-                FilterIndex = 1
+                FilterIndex = filterIndex
             };
 
             if (OpenDlg.ShowDialog() == DialogResult.OK)
             {
+                filterIndex = OpenDlg.FilterIndex;
+
                 Invoke(new MethodInvoker(BeginLoading));
 
                 Thread loadingThread = new Thread((() =>
@@ -110,12 +114,17 @@ namespace ModelEx
                     SceneManager.Instance.ShutDown();
                     if (OpenDlg.FilterIndex == 1)
                     {
-                        SceneManager.Instance.AddScene(new SceneCDC(false));
+                        SceneManager.Instance.AddScene(new SceneCDC(CDC.Game.SR1));
                         SceneManager.Instance.CurrentScene.ImportFromFile(OpenDlg.FileName);
                     }
                     else if (OpenDlg.FilterIndex == 2)
                     {
-                        SceneManager.Instance.AddScene(new SceneCDC(true));
+                        SceneManager.Instance.AddScene(new SceneCDC(CDC.Game.SR2));
+                        SceneManager.Instance.CurrentScene.ImportFromFile(OpenDlg.FileName);
+                    }
+                    else
+                    {
+                        SceneManager.Instance.AddScene(new SceneCDC(CDC.Game.Defiance));
                         SceneManager.Instance.CurrentScene.ImportFromFile(OpenDlg.FileName);
                     }
 

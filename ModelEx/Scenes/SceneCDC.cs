@@ -5,6 +5,7 @@ using System.Threading;
 using SRFile = CDC.Objects.SRFile;
 using SR1File = CDC.Objects.SR1File;
 using SR2File = CDC.Objects.SR2File;
+using DefianceFile = CDC.Objects.DefianceFile;
 using SRModel = CDC.Objects.Models.SRModel;
 using SR1Model = CDC.Objects.Models.SR1Model;
 using SR2Model = CDC.Objects.Models.SR2Model;
@@ -313,13 +314,13 @@ namespace ModelEx
 
         public static string ProgressStage { get; private set; } = "Done";
 
-        bool _isSR2File = false;
+        CDC.Game _game = CDC.Game.SR1;
         List<SRFile> _objectFiles = new List<SRFile>();
 
-        public SceneCDC(bool isSR2File)
+        public SceneCDC(CDC.Game game)
             : base()
         {
-            _isSR2File = isSR2File;
+            _game = game;
         }
 
         protected static String GetTextureName(SRModel srModel, int materialIndex)
@@ -363,7 +364,7 @@ namespace ModelEx
             SRFile srFile = null;
 
             #region TryLoad
-            if (!_isSR2File)
+            if (_game == CDC.Game.SR1)
             {
                 try
                 {
@@ -374,11 +375,22 @@ namespace ModelEx
                     return;
                 }
             }
-            else
+            else if (_game == CDC.Game.SR2)
             {
                 try
                 {
                     srFile = new SR2File(fileName);
+                }
+                catch
+                {
+                    return;
+                }
+            }
+            else
+            {
+                try
+                {
+                    srFile = new DefianceFile(fileName);
                 }
                 catch
                 {

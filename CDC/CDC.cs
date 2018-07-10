@@ -14,7 +14,8 @@ namespace CDC
     public enum Game
     {
         SR1,
-        SR2
+        SR2,
+        Defiance
     }
 
     public enum Asset
