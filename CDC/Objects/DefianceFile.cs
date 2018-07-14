@@ -16,8 +16,8 @@ namespace CDC.Objects
         {
             _dataStart = 0;
 
-            xReader.BaseStream.Position = 0x00000080;
-            if (xReader.ReadUInt32() == 0x04C2041D)
+            xReader.BaseStream.Position = 0x0000009C;
+            if (xReader.ReadUInt32() == 0x04C2046E)
             {
                 _asset = Asset.Unit;
             }
@@ -29,11 +29,12 @@ namespace CDC.Objects
 
         protected override void ReadObjectData(BinaryReader xReader)
         {
-            // Object name
-            xReader.BaseStream.Position = _dataStart + 0x00000024;
-            xReader.BaseStream.Position = _dataStart + xReader.ReadUInt32();
-            String strModelName = new String(xReader.ReadChars(8));
-            _name = Utility.CleanName(strModelName);
+            // Object name. No names in Defiance :(
+            //xReader.BaseStream.Position = _dataStart + 0x00000024;
+            //xReader.BaseStream.Position = _dataStart + xReader.ReadUInt32();
+            //String strModelName = new String(xReader.ReadChars(8));
+            //_name = Utility.CleanName(strModelName);
+            _name = "kain";
 
             // Texture type
             //xReader.BaseStream.Position = m_uDataStart + 0x44;
@@ -47,16 +48,17 @@ namespace CDC.Objects
             //}
 
             // Model data
-            xReader.BaseStream.Position = _dataStart + 0x0000000C;
+            xReader.BaseStream.Position = _dataStart + 0x0000001C;
+            //xReader.BaseStream.Position = _dataStart + xReader.ReadUInt32();
             _modelCount = 1; //xReader.ReadUInt16();
             _animCount = 0; //xReader.ReadUInt16();
             _modelStart = _dataStart + xReader.ReadUInt32();
             _animStart = 0; //m_uDataStart + xReader.ReadUInt32();
 
-            _models = new SR2Model[_modelCount];
+            _models = new DefianceModel[_modelCount];
             for (UInt16 m = 0; m < _modelCount; m++)
             {
-                _models[m] = SR2ObjectModel.Load(xReader, _dataStart, _modelStart, _name, _platform, m, _version);
+                _models[m] = DefianceObjectModel.Load(xReader, _dataStart, _modelStart, _name, _platform, m, _version);
             }
         }
 
