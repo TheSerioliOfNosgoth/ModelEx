@@ -22,7 +22,7 @@ namespace ModelEx
         private List<Scene> scenes;
         public readonly ReadOnlyCollection<Scene> Scenes;
         public Scene CurrentScene { get; private set; }
-        public Renderable CurrentObject { get { return CurrentScene?.RenderObjects[0]; } }
+        public Renderable CurrentObject { get { return CurrentScene?.CurrentObject; } }
 
         private SceneManager()
         {

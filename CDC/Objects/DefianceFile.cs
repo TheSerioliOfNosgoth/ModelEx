@@ -34,7 +34,6 @@ namespace CDC.Objects
             //xReader.BaseStream.Position = _dataStart + xReader.ReadUInt32();
             //String strModelName = new String(xReader.ReadChars(8));
             //_name = Utility.CleanName(strModelName);
-            _name = "kain";
 
             // Texture type
             //xReader.BaseStream.Position = m_uDataStart + 0x44;

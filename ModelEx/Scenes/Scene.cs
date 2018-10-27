@@ -8,6 +8,7 @@ namespace ModelEx
     {
         private List<Renderable> renderObjects;
         public readonly ReadOnlyCollection<Renderable> RenderObjects;
+        public Renderable CurrentObject { get { return RenderObjects.Count > 0 ? renderObjects[0] : null; } }
 
         protected Scene()
         {

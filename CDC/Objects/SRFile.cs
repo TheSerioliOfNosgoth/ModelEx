@@ -45,6 +45,7 @@ namespace CDC.Objects
 
         protected SRFile(String strFileName, Game game)
         {
+            _name = Path.GetFileNameWithoutExtension(strFileName);
             _game = game;
 
             FileStream xFile = new FileStream(strFileName, FileMode.Open, FileAccess.Read);

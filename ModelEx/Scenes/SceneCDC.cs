@@ -9,6 +9,7 @@ using DefianceFile = CDC.Objects.DefianceFile;
 using SRModel = CDC.Objects.Models.SRModel;
 using SR1Model = CDC.Objects.Models.SR1Model;
 using SR2Model = CDC.Objects.Models.SR2Model;
+using DefianceModel = CDC.Objects.Models.DefianceModel;
 using Tree = CDC.Tree;
 using SR1PCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPCTextureFile;
 using SR1PSTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPlaystationTextureFile;
@@ -344,7 +345,8 @@ namespace ModelEx
                             material.textureID.ToString("00000");
                     }
                 }
-                else if (srModel is SR2Model)
+                else if (srModel is SR2Model ||
+                    srModel is DefianceModel)
                 {
                     textureName =
                         srModel.Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
@@ -438,7 +440,8 @@ namespace ModelEx
             Thread.Sleep(1000);
 
             #region Textures
-            if (srFile.GetType() == typeof(SR2File))
+            if (srFile.GetType() == typeof(SR2File) ||
+                srFile.GetType() == typeof(DefianceFile))
             {
                 String textureFileName = System.IO.Path.ChangeExtension(fileName, "vrm");
                 try

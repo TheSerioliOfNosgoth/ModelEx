@@ -25,11 +25,12 @@ namespace CDC.Objects.Models
             xReader.BaseStream.Position += 0x08;
             _polygonCount = 0; // xReader.ReadUInt32();
             _polygonStart = 0; // m_uDataStart + xReader.ReadUInt32();
-            xReader.BaseStream.Position += 0x30;
-            m_uColourStart = xReader.ReadUInt32();
-            xReader.BaseStream.Position += 0x0C;
+            xReader.BaseStream.Position += 0x28;
             _materialStart = _dataStart + xReader.ReadUInt32();
+            xReader.BaseStream.Position += 0x04;
+            //_materialStart = 0; // ^^Whatever that was, it's a dword and then an array of shorts. 
             _materialCount = 0;
+            m_uColourStart = _dataStart + xReader.ReadUInt32();
             _groupCount = 1;
 
             _trees = new Tree[_groupCount];
@@ -52,8 +53,8 @@ namespace CDC.Objects.Models
             _positionsPhys[v] = _positionsRaw[v] * _vertexScale;
             _positionsAltPhys[v] = _positionsPhys[v];
 
-            _vertices[v].normalID = xReader.ReadUInt16();
-            xReader.BaseStream.Position += 0x02;
+            _vertices[v].normalID = 0; // xReader.ReadUInt16();
+            xReader.BaseStream.Position += 0x04; // 0x02;
 
             _vertices[v].UVID = v;
 
@@ -266,12 +267,13 @@ namespace CDC.Objects.Models
         {
             xTriangleList.m_uPolygonCount = (UInt32)xReader.ReadUInt16() / 3;
             xTriangleList.m_usGroupID = xReader.ReadUInt16(); // Used by MON_SetAccessories and INSTANCE_UnhideAllDrawGroups
-            xTriangleList.m_uPolygonStart = (UInt32)(xReader.BaseStream.Position) + 0x0C;
+            xTriangleList.m_uPolygonStart = (UInt32)(xReader.BaseStream.Position) + 0x10;
             UInt16 xWord0 = xReader.ReadUInt16();
             UInt16 xWord1 = xReader.ReadUInt16();
             UInt32 xDWord0 = xReader.ReadUInt32();
+            UInt32 xDWord1 = xReader.ReadUInt32();
             xTriangleList.m_xMaterial = new Material();
-            xTriangleList.m_xMaterial.visible = ((xWord1 & 0x0800) == 0);
+            xTriangleList.m_xMaterial.visible = ((xWord1 & 0xFF00) == 0);
             xTriangleList.m_xMaterial.textureID = (UInt16)(xWord0 & 0x0FFF);
             xTriangleList.m_xMaterial.colour = 0xFFFFFFFF;
             if (xTriangleList.m_xMaterial.textureID > 0)
@@ -284,6 +286,11 @@ namespace CDC.Objects.Models
                 //xMaterial.colour = 0x00000000;
             }
             xTriangleList.m_uNext = xReader.ReadUInt32();
+
+            if (xTriangleList.m_uPolygonCount == 0)
+            {
+                xTriangleList.m_uNext = 0;
+            }
 
             return (xTriangleList.m_xMaterial.visible);
         }

@@ -26,7 +26,7 @@ namespace CDC.Objects.Models
             _polygonCount = 0; // xReader.ReadUInt32();
             _polygonStart = 0; // m_uDataStart + xReader.ReadUInt32();
             xReader.BaseStream.Position += 0x18;
-            m_uColourStart = xReader.ReadUInt32();
+            m_uColourStart = _dataStart + xReader.ReadUInt32();
             xReader.BaseStream.Position += 0x0C;
             _materialStart = _dataStart + xReader.ReadUInt32();
             _materialCount = 0;
