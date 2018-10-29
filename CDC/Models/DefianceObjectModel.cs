@@ -53,8 +53,8 @@ namespace CDC.Objects.Models
             _positionsPhys[v] = _positionsRaw[v] * _vertexScale;
             _positionsAltPhys[v] = _positionsPhys[v];
 
-            _vertices[v].normalID = 0; // xReader.ReadUInt16();
-            xReader.BaseStream.Position += 0x04; // 0x02;
+            _vertices[v].normalID = xReader.ReadByte();
+            xReader.BaseStream.Position += 0x03;
 
             _vertices[v].UVID = v;
 

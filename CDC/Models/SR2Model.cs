@@ -284,9 +284,14 @@ namespace CDC.Objects.Models
             _normals = new Vector[s_aiNormals.Length / 3];
             for (int n = 0; n < _normals.Length; n++)
             {
+                // Are these wrong? Different on PC and PS2?
                 _normals[n].x = s_aiNormals[n, 0];
                 _normals[n].y = s_aiNormals[n, 1];
                 _normals[n].z = s_aiNormals[n, 2];
+
+                //_normals[n].x = ((float)s_aiNormals[n, 0] / 4096.0f);
+                //_normals[n].y = ((float)s_aiNormals[n, 1] / 4096.0f);
+                //_normals[n].z = ((float)s_aiNormals[n, 2] / 4096.0f);
             }
 
             // Get the vertices
