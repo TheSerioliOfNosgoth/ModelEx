@@ -65,6 +65,7 @@
     <Compile Include="Models\SR1ObjectModel.cs" />
     <Compile Include="Models\DefianceModel.cs" />
     <Compile Include="Models\DefianceObjectModel.cs" />
+    <Compile Include="Models\DefianceUnitModel.cs" />
     <Compile Include="Objects\SR1File.cs" />
     <Compile Include="Models\SR2UnitModel.cs" />
     <Compile Include="Models\SR2ObjectModel.cs" />
