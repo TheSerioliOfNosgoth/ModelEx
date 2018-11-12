@@ -15,7 +15,7 @@ namespace CDC
                 return "";
             }
 
-            int index = name.IndexOfAny(new char[] { ',', '\0' });
+            int index = name.IndexOfAny(new char[] { '\0' });
             if (index >= 0)
             {
                 name = name.Substring(0, index);

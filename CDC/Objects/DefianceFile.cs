@@ -8,7 +8,7 @@ namespace CDC.Objects
     public class DefianceFile : SRFile
     {
         public DefianceFile(String strFileName) 
-            : base(strFileName, Game.SR2)
+            : base(strFileName, Game.Defiance)
         {
         }
 
@@ -63,48 +63,50 @@ namespace CDC.Objects
 
         protected override void ReadUnitData(BinaryReader xReader)
         {
-            // Connected unit names
+            // Adjacent units are seperate from portals.
+            // There can be multiple portals to the same unit.
+            // Portals
             xReader.BaseStream.Position = _dataStart;
-            UInt32 m_uConnectionData = _dataStart + xReader.ReadUInt32();
+            UInt32 m_uConnectionData = _dataStart + xReader.ReadUInt32(); // Same as m_uModelData?
             xReader.BaseStream.Position = m_uConnectionData + 0x24;
-            _connectedUnitCount = xReader.ReadUInt32();
+            portalCount = xReader.ReadUInt32();
             xReader.BaseStream.Position = _dataStart + xReader.ReadUInt32();
-            _connectedUnitNames = new String[_connectedUnitCount];
-            for (int i = 0; i < _connectedUnitCount; i++)
+            _portalNames = new String[portalCount];
+            for (int i = 0; i < portalCount; i++)
             {
-                String strUnitName = new String(xReader.ReadChars(12));
-                _connectedUnitNames[i] = Utility.CleanName(strUnitName);
-                xReader.BaseStream.Position += 0x84;
+                String strUnitName = new String(xReader.ReadChars(16));
+                _portalNames[i] = Utility.CleanName(strUnitName);
+                xReader.BaseStream.Position += 0x90;
             }
 
             // Instances
-            xReader.BaseStream.Position = _dataStart + 0x44;
-            _instanceCount = xReader.ReadUInt32();
-            _instanceStart = _dataStart + xReader.ReadUInt32();
-            _instanceNames = new String[_instanceCount];
-            for (int i = 0; i < _instanceCount; i++)
-            {
-                xReader.BaseStream.Position = _instanceStart + 0x60 * i;
-                String strInstanceName = new String(xReader.ReadChars(8));
-                _instanceNames[i] = Utility.CleanName(strInstanceName);
-            }
+            //xReader.BaseStream.Position = _dataStart + 0x44;
+            //_instanceCount = xReader.ReadUInt32();
+            //_instanceStart = _dataStart + xReader.ReadUInt32();
+            //_instanceNames = new String[_instanceCount];
+            //for (int i = 0; i < _instanceCount; i++)
+            //{
+            //    xReader.BaseStream.Position = _instanceStart + 0x60 * i;
+            //    String strInstanceName = new String(xReader.ReadChars(8));
+            //    _instanceNames[i] = Utility.CleanName(strInstanceName);
+            //}
 
             // Instance types
-            xReader.BaseStream.Position = _dataStart + 0x4C;
-            _instanceTypeStart = _dataStart + xReader.ReadUInt32();
-            xReader.BaseStream.Position = _instanceTypeStart;
-            List<String> xInstanceList = new List<String>();
-            while (xReader.ReadByte() != 0xFF)
-            {
-                xReader.BaseStream.Position--;
-                String strInstanceTypeName = new String(xReader.ReadChars(8));
-                xInstanceList.Add(Utility.CleanName(strInstanceTypeName));
-                xReader.BaseStream.Position += 0x08;
-            }
-            _instanceTypeNames = xInstanceList.ToArray();
+            //xReader.BaseStream.Position = _dataStart + 0x4C;
+            //_instanceTypeStart = _dataStart + xReader.ReadUInt32();
+            //xReader.BaseStream.Position = _instanceTypeStart;
+            //List<String> xInstanceList = new List<String>();
+            //while (xReader.ReadByte() != 0xFF)
+            //{
+            //    xReader.BaseStream.Position--;
+            //    String strInstanceTypeName = new String(xReader.ReadChars(8));
+            //    xInstanceList.Add(Utility.CleanName(strInstanceTypeName));
+            //    xReader.BaseStream.Position += 0x08;
+            //}
+            //_instanceTypeNames = xInstanceList.ToArray();
 
             // Unit name
-            xReader.BaseStream.Position = _dataStart + 0x50;
+            xReader.BaseStream.Position = _dataStart + 0x74;
             xReader.BaseStream.Position = _dataStart + xReader.ReadUInt32();
             String strModelName = new String(xReader.ReadChars(10)); // Need to check
             _name = Utility.CleanName(strModelName);
@@ -124,12 +126,12 @@ namespace CDC.Objects
             xReader.BaseStream.Position = _dataStart;
             _modelCount = 1;
             _modelStart = _dataStart;
-            _models = new SR2Model[_modelCount];
+            _models = new DefianceModel[_modelCount];
             xReader.BaseStream.Position = _modelStart;
             UInt32 m_uModelData = _dataStart + xReader.ReadUInt32();
 
             // Material data
-            _models[0] = SR2UnitModel.Load(xReader, _dataStart, m_uModelData, _name, _platform, _version);
+            _models[0] = DefianceUnitModel.Load(xReader, _dataStart, m_uModelData, _name, _platform, _version);
 
             //if (m_axModels[0].Platform == Platform.Dreamcast ||
             //    m_axModels[1].Platform == Platform.Dreamcast)

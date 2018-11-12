@@ -62,18 +62,20 @@ namespace CDC.Objects
 
         protected override void ReadUnitData(BinaryReader xReader)
         {
-            // Connected unit names
+            // Adjacent units are seperate from portals.
+            // There can be multiple portals to the same unit.
+            // Portals
             xReader.BaseStream.Position = _dataStart;
-            UInt32 m_uConnectionData = _dataStart + xReader.ReadUInt32();
+            UInt32 m_uConnectionData = _dataStart + xReader.ReadUInt32(); // Same as m_uModelData?
             xReader.BaseStream.Position = m_uConnectionData + 0x24;
-            _connectedUnitCount = xReader.ReadUInt32();
+            portalCount = xReader.ReadUInt32();
             xReader.BaseStream.Position = _dataStart + xReader.ReadUInt32();
-            _connectedUnitNames = new String[_connectedUnitCount];
-            for (int i = 0; i < _connectedUnitCount; i++)
+            _portalNames = new String[portalCount];
+            for (int i = 0; i < portalCount; i++)
             {
-                String strUnitName = new String(xReader.ReadChars(12));
-                _connectedUnitNames[i] = Utility.CleanName(strUnitName);
-                xReader.BaseStream.Position += 0x84;
+                String strUnitName = new String(xReader.ReadChars(16));
+                _portalNames[i] = Utility.CleanName(strUnitName);
+                xReader.BaseStream.Position += 0x80;
             }
 
             // Instances

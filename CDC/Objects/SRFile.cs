@@ -20,9 +20,9 @@ namespace CDC.Objects
         protected String[] _instanceNames;
         protected UInt32 _instanceTypeStart;
         protected String[] _instanceTypeNames;
-        protected UInt32 _connectedUnitCount;
+        protected UInt32 portalCount;
         protected UInt32 _connectedUnitStart;
-        protected String[] _connectedUnitNames;
+        protected String[] _portalNames;
         protected Game _game;
         protected Asset _asset;
         protected Platform _platform;
@@ -35,8 +35,8 @@ namespace CDC.Objects
         public UInt32 InstanceCount { get { return _instanceCount; } }
         public String[] Instances { get { return _instanceNames; } }
         public String[] InstanceTypeNames { get { return _instanceTypeNames; } }
-        public UInt32 ConectedUnitCount { get { return _connectedUnitCount; } }
-        public String[] ConnectedUnit { get { return _connectedUnitNames; } }
+        public UInt32 ConectedUnitCount { get { return portalCount; } }
+        public String[] ConnectedUnit { get { return _portalNames; } }
         public Game Game { get { return _game; } }
         public Asset Asset { get { return _asset; } }
         public Platform Platform { get { return _platform; } }

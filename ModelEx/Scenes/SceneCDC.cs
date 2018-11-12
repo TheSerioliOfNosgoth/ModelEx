@@ -169,7 +169,7 @@ namespace ModelEx
                 if (SubMeshes.Count > 0)
                 {
                     MeshName = meshName;
-                    Technique = _srFile.Game == CDC.Game.SR2 ? "SR2Render" : "SR1Render";
+                    Technique = _srFile.Game == CDC.Game.SR1 ? "SR1Render" : "SR2Render";
                     if (_srFile.Asset == CDC.Asset.Unit)
                     {
                         //Mesh = new MeshPCT(this);

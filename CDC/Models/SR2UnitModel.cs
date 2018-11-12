@@ -24,33 +24,15 @@ namespace CDC.Objects.Models
             xReader.BaseStream.Position += 0x08;
             _vertexStart = _dataStart + xReader.ReadUInt32();
             _polygonStart = 0; // m_uDataStart + xReader.ReadUInt32();
-            xReader.BaseStream.Position += 0x14;
-            xReader.BaseStream.Position += 0x04;
+            xReader.BaseStream.Position += 0x18;
             m_uSpectralVertexStart = _dataStart + xReader.ReadUInt32();
-            xReader.BaseStream.Position += 0x04;
+            xReader.BaseStream.Position += 0x04; // m_uMaterialColourStart
             m_uSpectralColourStart = _dataStart + xReader.ReadUInt32();
             _materialStart = 0;
             _materialCount = 0;
             m_uOctTreeCount = xReader.ReadUInt32();
             m_uOctTreeStart = _dataStart + xReader.ReadUInt32();
             _groupCount = m_uOctTreeCount;
-
-            //m_uVertexCount = xReader.ReadUInt32();
-            //m_uPolygonCount = 0; // xReader.ReadUInt32(); // Length = 0x14
-            //xReader.BaseStream.Position += 0x08;
-            //m_uVertexStart = m_uDataStart + xReader.ReadUInt32();
-            //m_uPolygonStart = 0; // m_uDataStart + xReader.ReadUInt32();
-            //xReader.BaseStream.Position += 0x14;
-            //m_uMaterialStart = m_uDataStart + xReader.ReadUInt32(); // Vertex colours
-            //m_uMaterialStart = m_uDataStart + xReader.ReadUInt32(); // Vertex colours
-            //m_uMaterialStart = m_uDataStart + xReader.ReadUInt32(); // Vertex colours
-            //m_uMaterialStart = 0;
-            //m_uMaterialCount = 0;
-            //m_uSpectralColourStart = m_uDataStart + xReader.ReadUInt32();
-            //m_uSpectralVertexStart = 0; // m_uDataStart + xReader.ReadUInt32();
-            //m_uOctTreeCount = xReader.ReadUInt32();
-            //m_uOctTreeStart = m_uDataStart + xReader.ReadUInt32();
-            //m_uTreeCount = m_uOctTreeCount;
 
             _trees = new Tree[_groupCount];
         }
@@ -79,20 +61,8 @@ namespace CDC.Objects.Models
             UInt16 vU = xReader.ReadUInt16();
             UInt16 vV = xReader.ReadUInt16();
 
-            // This is the broken one in pillars4c.
-            // Search for in Cheat Engine 03 3E 17 3F DF F1 F6 D4 D3 C7 00 00 36 4B 39 FF
-            if (v == 13370)
-            {
-                _uvs[v].u = Utility.BizarreFloatToNormalFloat(vU); // 0x3E03 = 0.127929688 with Ben's formula
-                _uvs[v].v = Utility.BizarreFloatToNormalFloat(vV); // 0x3F17 = 0.58984375 with Ben's formula
-                                                                   //m_axUVs[v].u = 0.0f;
-                                                                   //m_axUVs[v].v = 0.0f;
-            }
-            else
-            {
-                _uvs[v].u = Utility.BizarreFloatToNormalFloat(vU);
-                _uvs[v].v = Utility.BizarreFloatToNormalFloat(vV);
-            }
+            _uvs[v].u = Utility.BizarreFloatToNormalFloat(vU);
+            _uvs[v].v = Utility.BizarreFloatToNormalFloat(vV);
         }
 
         protected override void ReadVertices(BinaryReader xReader)
@@ -143,30 +113,6 @@ namespace CDC.Objects.Models
 
                     _positionsAltPhys[iVertex] = xShiftVertex.basePos;
                 }
-
-                //// Spectral Verticices
-                //xReader.BaseStream.Position = m_uSpectralVertexStart + 0x06;
-                //int sVertex = xReader.ReadInt16();
-                //xReader.BaseStream.Position = m_uSpectralVertexStart;
-                //while (sVertex != 0xFFFF)
-                //{
-                //    ExShiftVertex xShiftVertex;
-                //    xShiftVertex.basePos.x = (float)xReader.ReadInt16();
-                //    xShiftVertex.basePos.y = (float)xReader.ReadInt16();
-                //    xShiftVertex.basePos.z = (float)xReader.ReadInt16();
-                //    sVertex = xReader.ReadUInt16();
-
-                //    if (sVertex == 0xFFFF)
-                //    {
-                //        break;
-                //    }
-
-                //    xShiftVertex.offset.x = (float)xReader.ReadInt16();
-                //    xShiftVertex.offset.y = (float)xReader.ReadInt16();
-                //    xShiftVertex.offset.z = (float)xReader.ReadInt16();
-                //    m_axPositions[sVertex].localPos = xShiftVertex.offset + xShiftVertex.basePos;
-                //    m_axPositions[sVertex].worldPos = m_axPositions[sVertex].localPos;
-                //}
             }
         }
 
@@ -200,6 +146,7 @@ namespace CDC.Objects.Models
                 xReader.BaseStream.Position += 0x08;
                 // In each terrain group, vertices start from part way through the array.
                 UInt32 uStartIndex = xReader.ReadUInt32();
+                //UInt32 uIndexCount = xReader.ReadUInt32();
 
                 _trees[t] = ReadOctTree(xReader, xPolyWriter, xTextureWriter, uDataPos, _trees[t], xMeshes, xMeshPositions, 0, (UInt16)uStartIndex);
             }
