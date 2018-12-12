@@ -309,7 +309,7 @@ namespace CDC.Objects.Models
 
             xReader.BaseStream.Position = _vertexStart;
 
-            for (UInt16 v = 0; v < _vertexCount; v++)
+            for (int v = 0; v < _vertexCount; v++)
             {
                 ReadVertex(xReader, v);
             }

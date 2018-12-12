@@ -149,7 +149,7 @@ namespace CDC.Objects.Models
                 UInt32 uStartIndex = xReader.ReadUInt32();
                 //UInt32 uIndexCount = xReader.ReadUInt32();
 
-                _trees[t] = ReadOctTree(xReader, xPolyWriter, xTextureWriter, uDataPos, _trees[t], xMeshes, xMeshPositions, 0, (UInt16)uStartIndex);
+                _trees[t] = ReadOctTree(xReader, xPolyWriter, xTextureWriter, uDataPos, _trees[t], xMeshes, xMeshPositions, 0, uStartIndex);
             }
 
             _polygonCount = (UInt32)xPolyReader.BaseStream.Position / 6;
@@ -174,7 +174,7 @@ namespace CDC.Objects.Models
             return;
         }
 
-        protected virtual Tree ReadOctTree(BinaryReader xReader, BinaryWriter xPolyWriter, BinaryWriter xTextureWriter, UInt32 uDataPos, Tree xParentTree, List<Mesh> xMeshes, List<Int64> xMeshPositions, UInt32 uDepth, UInt16 uStartIndex)
+        protected virtual Tree ReadOctTree(BinaryReader xReader, BinaryWriter xPolyWriter, BinaryWriter xTextureWriter, UInt32 uDataPos, Tree xParentTree, List<Mesh> xMeshes, List<Int64> xMeshPositions, UInt32 uDepth, UInt32 uStartIndex)
         {
             if (uDataPos == 0)
             {
@@ -193,6 +193,7 @@ namespace CDC.Objects.Models
             {
                 xTree = new Tree();
                 xMesh = new Mesh();
+                xMesh.startIndex = uStartIndex;
                 xTree.mesh = xMesh;
 
                 if (xParentTree != null)
@@ -239,7 +240,7 @@ namespace CDC.Objects.Models
             return xTree;
         }
 
-        protected virtual void ReadOctLeaf(BinaryReader xReader, BinaryWriter xPolyWriter, BinaryWriter xTextureWriter, Mesh xMesh, UInt16 uStartIndex)
+        protected virtual void ReadOctLeaf(BinaryReader xReader, BinaryWriter xPolyWriter, BinaryWriter xTextureWriter, Mesh xMesh, UInt32 uStartIndex)
         {
             UInt32 uLeafData = _dataStart + xReader.ReadUInt32();
             xReader.BaseStream.Position = uLeafData;
@@ -267,7 +268,7 @@ namespace CDC.Objects.Models
                 UInt16[] axStripIndices = new UInt16[uIndexCount];
                 for (UInt32 i = 0; i < uIndexCount; i++)
                 {
-                    axStripIndices[i] = (UInt16)(uStartIndex + xReader.ReadUInt16());
+                    axStripIndices[i] = xReader.ReadUInt16();
                 }
 
                 if (xReader.BaseStream.Position % 4 != 0)
@@ -343,7 +344,7 @@ namespace CDC.Objects.Models
                 UInt16[] axStripIndices = new UInt16[uIndexCount];
                 for (UInt32 i = 0; i < uIndexCount; i++)
                 {
-                    axStripIndices[i] = (UInt16)(uStartIndex + xReader.ReadUInt16());
+                    axStripIndices[i] = xReader.ReadUInt16();
                 }
 
                 if (bShouldWrite)
@@ -378,9 +379,9 @@ namespace CDC.Objects.Models
             xMesh.polygons = new Polygon[xMesh.polygonCount];
             for (UInt32 p = 0; p < xMesh.polygonCount; p++)
             {
-                UInt16 uV1 = xPolyReader.ReadUInt16();
-                UInt16 uV2 = xPolyReader.ReadUInt16();
-                UInt16 uV3 = xPolyReader.ReadUInt16();
+                UInt32 uV1 = xPolyReader.ReadUInt16() + xMesh.startIndex;
+                UInt32 uV2 = xPolyReader.ReadUInt16() + xMesh.startIndex;
+                UInt32 uV3 = xPolyReader.ReadUInt16() + xMesh.startIndex;
 
                 xMesh.polygons[p].v1 = _vertices[uV1];
                 xMesh.polygons[p].v2 = _vertices[uV2];

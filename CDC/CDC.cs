@@ -238,6 +238,7 @@ namespace CDC
     {
         public UInt32 polygonCount;
         public UInt32 indexCount;
+        public UInt32 startIndex;
         public Vertex[] vertices;
         public Polygon[] polygons;
     }

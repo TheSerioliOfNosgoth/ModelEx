@@ -246,6 +246,7 @@ namespace CDC.Objects.Models
             {
                 xTree = new Tree();
                 xMesh = new Mesh();
+                xMesh.startIndex = 0;
                 xTree.mesh = xMesh;
 
                 if (xParentTree != null)
