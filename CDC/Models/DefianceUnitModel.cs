@@ -257,6 +257,7 @@ namespace CDC.Objects.Models
 
                 uNextStrip += uLength;
 
+                xReader.BaseStream.Position += 0x04;
                 UInt32 uIndexCount = xReader.ReadUInt32();
                 if (uIndexCount == 0)
                 {
@@ -289,7 +290,7 @@ namespace CDC.Objects.Models
 
                     xReader.BaseStream.Position += 0x04;
                     UInt32 uTextureID = xReader.ReadUInt32();
-                    xReader.BaseStream.Position += 0x04;
+                    xReader.BaseStream.Position += 0x08;
 
                     UInt32 uTestNextStrip = xReader.ReadUInt32();
 
@@ -335,8 +336,8 @@ namespace CDC.Objects.Models
 
                 xReader.BaseStream.Position += 0x04;
                 UInt32 uTextureID = xReader.ReadUInt32();
+                xReader.BaseStream.Position += 0x08;
 
-                xReader.BaseStream.Position += 0x04;
                 uNextStrip = xReader.ReadUInt32();
 
                 UInt16[] axStripIndices = new UInt16[uIndexCount];
