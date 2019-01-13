@@ -250,8 +250,6 @@ namespace CDC.Objects
                 Z = 0.0f
             };
 
-            Console.WriteLine("V: " + uv.v + " U: " + uv.u);
-
             return uv3D;
         }
 
