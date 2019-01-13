@@ -153,9 +153,11 @@ namespace CDC.Objects
                                 ref Vector pos1 = ref positions[vert1.positionID];
                                 ref Vector pos2 = ref positions[vert2.positionID];
                                 ref Vector pos3 = ref positions[vert3.positionID];
-                                mesh.Vertices.Add(new Assimp.Vector3D(pos1.x, pos1.y, pos1.z));
-                                mesh.Vertices.Add(new Assimp.Vector3D(pos2.x, pos2.y, pos2.z));
-                                mesh.Vertices.Add(new Assimp.Vector3D(pos3.x, pos3.y, pos3.z));
+
+                                //swapped Z and Y angetived Y to make export up-Y:
+                                mesh.Vertices.Add(new Assimp.Vector3D(pos1.x, pos1.z, -pos1.y));
+                                mesh.Vertices.Add(new Assimp.Vector3D(pos2.x, pos2.z, -pos2.y));
+                                mesh.Vertices.Add(new Assimp.Vector3D(pos3.x, pos3.z, -pos3.y));
 
                                 if (Asset == Asset.Object)
                                 {

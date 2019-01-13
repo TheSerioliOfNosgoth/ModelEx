@@ -103,7 +103,8 @@ namespace ModelEx
                     //"All Mesh Files|*.SRObj;*.drm;*.pcm|" +
                     //"All Files (*.*)|*.*";
                 DefaultExt = "drm",
-                FilterIndex = filterIndex
+                FilterIndex = filterIndex,
+                FileName = Path.GetFileName(importedFileName)
             };
 
             if (OpenDlg.ShowDialog() == DialogResult.OK)
