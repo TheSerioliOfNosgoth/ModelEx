@@ -266,7 +266,7 @@ namespace CDC.Objects
             {
                 Assimp.TextureSlot textureDiffuse = new Assimp.TextureSlot();
                 textureDiffuse.BlendFactor = 1.0f;
-                textureDiffuse.FilePath = model.GetTextureName(materialIndex) + ".dds"; //model.Materials[materialIndex].textureID.ToString("0000") + ".png";
+                textureDiffuse.FilePath = model.Materials[materialIndex].textureID.ToString("0000") + ".png"; //model.GetTextureName(materialIndex) + ".dds";
                 textureDiffuse.TextureIndex = 0;
                 textureDiffuse.TextureType = Assimp.TextureType.Diffuse;
                 textureDiffuse.WrapModeU = Assimp.TextureWrapMode.Clamp;
