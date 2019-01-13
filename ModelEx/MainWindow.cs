@@ -4,13 +4,16 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace ModelEx
 {
     public partial class MainWindow : Form
     {
         ProgressWindow progressWindow;
+
         int filterIndex = 1;
+        string importedFileName = "";
 
         public MainWindow()
         {
@@ -106,6 +109,7 @@ namespace ModelEx
             if (OpenDlg.ShowDialog() == DialogResult.OK)
             {
                 filterIndex = OpenDlg.FilterIndex;
+                importedFileName = OpenDlg.FileName;
 
                 Invoke(new MethodInvoker(BeginLoading));
 
@@ -176,7 +180,8 @@ namespace ModelEx
                     //"All Mesh Files|*.SRObj;*.drm;*.pcm|" +
                     //"All Files (*.*)|*.*";
                 DefaultExt = "dae",
-                FilterIndex = 1
+                FilterIndex = 1,
+                FileName = Path.GetFileNameWithoutExtension(importedFileName)
             };
 
             if (SaveDlg.ShowDialog() == DialogResult.OK)

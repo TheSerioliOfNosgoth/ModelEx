@@ -246,9 +246,11 @@ namespace CDC.Objects
             Assimp.Vector3D uv3D = new Assimp.Vector3D()
             {
                 X = uv.u,
-                Y = uv.u,
+                Y = 1-uv.v,
                 Z = 0.0f
             };
+
+            Console.WriteLine("V: " + uv.v + " U: " + uv.u);
 
             return uv3D;
         }
@@ -266,7 +268,7 @@ namespace CDC.Objects
             {
                 Assimp.TextureSlot textureDiffuse = new Assimp.TextureSlot();
                 textureDiffuse.BlendFactor = 1.0f;
-                textureDiffuse.FilePath = model.GetTextureName(materialIndex) + ".dds";
+                textureDiffuse.FilePath = model.GetTextureName(materialIndex) + ".dds"; //model.Materials[materialIndex].textureID.ToString("0000") + ".png";
                 textureDiffuse.TextureIndex = 0;
                 textureDiffuse.TextureType = Assimp.TextureType.Diffuse;
                 textureDiffuse.WrapModeU = Assimp.TextureWrapMode.Clamp;
