@@ -233,7 +233,7 @@ namespace CDC.Objects.Models
                     auSubTreePositions[s] = xReader.ReadUInt32();
                 }
 
-                for (Int32 s = iSubTreeCount - 1; s >= 0; s--)
+                for (Int32 s = 0; s < iSubTreeCount; s++)
                 {
                     ReadOctTree(xReader, xPolyWriter, xTextureWriter, auSubTreePositions[s], xTree, xMeshes, xMeshPositions, uDepth + 1, uStartIndex);
                 }
