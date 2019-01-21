@@ -10,6 +10,7 @@ namespace CDC.Objects.Models
         protected UInt32 m_uOctTreeStart;
         protected UInt32 m_uSpectralVertexStart;
         protected UInt32 m_uSpectralColourStart;
+        protected UInt32 m_uNoOfLeaves;
 
         protected DefianceUnitModel(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
             : base(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
@@ -33,6 +34,9 @@ namespace CDC.Objects.Models
             m_uOctTreeCount = xReader.ReadUInt32();
             m_uOctTreeStart = _dataStart + xReader.ReadUInt32();
             _groupCount = m_uOctTreeCount;
+
+            xReader.BaseStream.Position = _modelData + 0x70;
+            UInt32 _vertexStart2 = xReader.ReadUInt32();
 
             _trees = new Tree[_groupCount];
         }
@@ -142,14 +146,21 @@ namespace CDC.Objects.Models
                 bool drawTester = ((xReader.ReadUInt32() & 1) != 1);
                 UInt32 uOctID = xReader.ReadUInt32();
                 xReader.BaseStream.Position += 0x10;
-                UInt32 uDataPos = xReader.ReadUInt32();
-                xReader.BaseStream.Position += 0x08;
+
+                // Below seems to be (According to TRL.pdb):
+                // OctTreeSphere
+                // OctTreeScrollInfo
+                // OctTreeAnimatedInfo
+
+                UInt32 uOctTreePos = xReader.ReadUInt32();
+                UInt32 uAltVerticesPos = xReader.ReadUInt32(); // Add 0x20 to this. There's probably a length or something first.
+                xReader.BaseStream.Position += 0x04;
                 xReader.BaseStream.Position += 0x40; // The 0x40 is a 4x4 matrix
                 // In each terrain group, vertices start from part way through the array.
                 UInt32 uStartIndex = xReader.ReadUInt32();
                 //UInt32 uIndexCount = xReader.ReadUInt32();
 
-                _trees[t] = ReadOctTree(xReader, xPolyWriter, xTextureWriter, uDataPos, _trees[t], xMeshes, xMeshPositions, 0, uStartIndex);
+                _trees[t] = ReadOctTree(xReader, xPolyWriter, xTextureWriter, uOctTreePos, _trees[t], xMeshes, xMeshPositions, 0, uStartIndex);
             }
 
             _polygonCount = (UInt32)xPolyReader.BaseStream.Position / 6;
@@ -242,6 +253,14 @@ namespace CDC.Objects.Models
 
         protected virtual void ReadOctLeaf(BinaryReader xReader, BinaryWriter xPolyWriter, BinaryWriter xTextureWriter, Mesh xMesh, UInt32 uStartIndex)
         {
+            // if (m_uNoOfLeaves < 293 || m_uNoOfLeaves > 295)
+            if (m_uNoOfLeaves == 295)
+            {
+                //m_uNoOfLeaves++;
+                //return;
+                m_uNoOfLeaves = m_uNoOfLeaves;
+            }
+
             UInt32 uLeafData = _dataStart + xReader.ReadUInt32();
             xReader.BaseStream.Position = uLeafData;
 
@@ -301,6 +320,14 @@ namespace CDC.Objects.Models
                         axStripIndices2[i] = xReader.ReadUInt16();
                     }
 
+                    if (axStripIndices[0] == 0x009A &&
+                        axStripIndices[1] == 0x009B &&
+                        axStripIndices[2] == 0x009C &&
+                        axStripIndices[3] == 0x009D)
+                    {
+                        bShouldWrite = false;
+                    }
+
                     if (bShouldWrite)
                     {
                         for (UInt16 i = 0; i < uIndexCount2; i++)
@@ -325,7 +352,7 @@ namespace CDC.Objects.Models
             }
 
             // Was this a special second set of polys?  Animated ones?
-            while (true)
+            while (false)
             {
                 bool bShouldWrite = true; // For debug.
 
@@ -366,6 +393,8 @@ namespace CDC.Objects.Models
 
                 xReader.BaseStream.Position = uNextStrip;
             }
+
+            m_uNoOfLeaves++;
         }
 
         protected virtual void FinaliseMesh(BinaryReader xPolyReader, BinaryReader xTextureReader, Mesh xMesh, Material xMaterial, UInt32 uIndexCount, ref UInt32 uPolygon)
