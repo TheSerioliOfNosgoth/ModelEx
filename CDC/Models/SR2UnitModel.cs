@@ -143,7 +143,8 @@ namespace CDC.Objects.Models
                 UInt32 uOctID = xReader.ReadUInt32();
                 xReader.BaseStream.Position += 0x10;
                 UInt32 uDataPos = xReader.ReadUInt32();
-                xReader.BaseStream.Position += 0x08;
+                UInt32 uAltVerticesPos = xReader.ReadUInt32(); // Add 0x20 to this. There's probably a length or something first.
+                xReader.BaseStream.Position += 0x04;
                 // In each terrain group, vertices start from part way through the array.
                 UInt32 uStartIndex = xReader.ReadUInt32();
                 //UInt32 uIndexCount = xReader.ReadUInt32();
@@ -221,7 +222,7 @@ namespace CDC.Objects.Models
                     auSubTreePositions[s] = xReader.ReadUInt32();
                 }
 
-                for (Int32 s = iSubTreeCount - 1; s >= 0; s--)
+                for (Int32 s = 0; s < iSubTreeCount; s++)
                 {
                     ReadOctTree(xReader, xPolyWriter, xTextureWriter, auSubTreePositions[s], xTree, xMeshes, xMeshPositions, uDepth + 1, uStartIndex);
                 }
