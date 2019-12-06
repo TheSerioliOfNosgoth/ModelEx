@@ -175,11 +175,12 @@ namespace ModelEx
             {
                 CheckPathExists = true,
                 Filter =
-                    "Collada Mesh Files (*.dae)|*.dae",
+                    "Collada Mesh Files (*.dae)|*.dae",// +
                     //"Soul Reaver DRM Files (*.drm)|*.drm|" +
                     //"Soul Reaver PCM Files (*.pcm)|*.pcm|" +
                     //"All Mesh Files|*.SRObj;*.drm;*.pcm|" +
                     //"All Files (*.*)|*.*";
+                    //"Wavefront Object (*.obj)|*.obj",
                 DefaultExt = "dae",
                 FilterIndex = 1,
                 FileName = Path.GetFileNameWithoutExtension(importedFileName)
@@ -190,8 +191,8 @@ namespace ModelEx
                 Scene currentScene = SceneManager.Instance.CurrentScene;
                 if (currentScene != null)
                 {
-                    //string saveFileName = "C://Users//Andrew//Desktop//TestModel.dae";
-                    currentScene.ExportToFile(SaveDlg.FileName);
+                    string[] formats = { "collada", "obj" };
+                    currentScene.ExportToFile(SaveDlg.FileName, formats[SaveDlg.FilterIndex - 1]);
 
                 }
             }

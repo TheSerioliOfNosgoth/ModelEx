@@ -88,7 +88,7 @@ namespace CDC.Objects
 
         protected abstract void ResolvePointers(BinaryReader xReader, BinaryWriter xWriter);
 
-        public bool ExportToFile(String fileName)
+        public bool ExportToFile(String fileName, string fileFormat = "collada")
         {
             string name = Utility.CleanName(Name).TrimEnd(new char[] { '_' });
 
@@ -212,7 +212,7 @@ namespace CDC.Objects
             scene.Meshes.AddRange(meshes);
 
             Assimp.AssimpContext context = new Assimp.AssimpContext();
-            context.ExportFile(scene, fileName, "collada", Assimp.PostProcessSteps.None);
+            context.ExportFile(scene, fileName, fileFormat, Assimp.PostProcessSteps.None);
 
             return true;
         }

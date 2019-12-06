@@ -590,11 +590,11 @@ namespace ModelEx
             Thread.Sleep(1000);
         }
 
-        public override void ExportToFile(string fileName)
+        public override void ExportToFile(string fileName, string fileFormat = "collada")
         {
             if (_objectFiles[0] != null)
             {
-                _objectFiles[0].ExportToFile(fileName);
+                _objectFiles[0].ExportToFile(fileName, fileFormat);
             }
         }
     }

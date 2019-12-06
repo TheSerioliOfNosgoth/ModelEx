@@ -49,6 +49,6 @@ namespace ModelEx
 
         public abstract void ImportFromFile(string fileName);
 
-        public abstract void ExportToFile(string fileName);
+        public abstract void ExportToFile(string fileName, string fileFormat = "collada");
     }
 }
