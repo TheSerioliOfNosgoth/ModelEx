@@ -7,7 +7,7 @@ namespace CDC.Objects
 {
     public class DefianceFile : SRFile
     {
-        public DefianceFile(String strFileName) 
+        public DefianceFile(String strFileName)
             : base(strFileName, Game.Defiance)
         {
         }
@@ -16,7 +16,7 @@ namespace CDC.Objects
         {
             _dataStart = 0;
 
-            xReader.BaseStream.Position = 0x0000009C;
+            xReader.BaseStream.Position = 0x000000AC;
             if (xReader.ReadUInt32() == 0x04C2046E)
             {
                 _asset = Asset.Unit;
@@ -47,7 +47,7 @@ namespace CDC.Objects
             //}
 
             // Model data
-            xReader.BaseStream.Position = _dataStart + 0x0000001C;
+            xReader.BaseStream.Position = _dataStart + 0x0000002C;
             //xReader.BaseStream.Position = _dataStart + xReader.ReadUInt32();
             _modelCount = 1; //xReader.ReadUInt16();
             _animCount = 0; //xReader.ReadUInt16();
@@ -66,7 +66,7 @@ namespace CDC.Objects
             // Adjacent units are seperate from portals.
             // There can be multiple portals to the same unit.
             // Portals
-            xReader.BaseStream.Position = _dataStart;
+            xReader.BaseStream.Position = _dataStart + 0x10;
             UInt32 m_uConnectionData = _dataStart + xReader.ReadUInt32(); // Same as m_uModelData?
             xReader.BaseStream.Position = m_uConnectionData + 0x24;
             portalCount = xReader.ReadUInt32();
@@ -106,7 +106,7 @@ namespace CDC.Objects
             //_instanceTypeNames = xInstanceList.ToArray();
 
             // Unit name
-            xReader.BaseStream.Position = _dataStart + 0x74;
+            xReader.BaseStream.Position = _dataStart + 0x84;
             xReader.BaseStream.Position = _dataStart + xReader.ReadUInt32();
             String strModelName = new String(xReader.ReadChars(10)); // Need to check
             _name = Utility.CleanName(strModelName);
@@ -123,9 +123,9 @@ namespace CDC.Objects
             //}
 
             // Model data
-            xReader.BaseStream.Position = _dataStart;
+            xReader.BaseStream.Position = _dataStart + 0x10;
             _modelCount = 1;
-            _modelStart = _dataStart;
+            _modelStart = _dataStart + 0x10;
             _models = new DefianceModel[_modelCount];
             xReader.BaseStream.Position = _modelStart;
             UInt32 m_uModelData = _dataStart + xReader.ReadUInt32();
@@ -156,22 +156,29 @@ namespace CDC.Objects
                 auRegionSizes[r] = xReader.ReadUInt32();
                 auRegionPositions[r] = uTotal;
                 uTotal += auRegionSizes[r];
+                uTotal += 0x10; // An extra 16 bytes for metadata.
                 xReader.BaseStream.Position += 0x08;
             }
 
             UInt32 uRegionDataSize = uRegionCount * 0x0C;
             UInt32 uPointerData = (uRegionDataSize + 0x17) & 0xFFFFFFF0;
-            for (UInt32 r = 0; r < uRegionCount; r++)
+            for (UInt32 currentRegion = 0; currentRegion < uRegionCount; currentRegion++)
             {
                 xReader.BaseStream.Position = uPointerData;
                 UInt32 uPointerCount = xReader.ReadUInt32();
                 UInt32 uPointerDataSize = uPointerCount * 0x04;
                 UInt32 uObjectData = uPointerData + ((uPointerDataSize + 0x13) & 0xFFFFFFF0);
-                UInt32 uObjectDataSize = (auRegionSizes[r] + 0x0F) & 0xFFFFFFF0;
+                UInt32 uObjectDataSize = (auRegionSizes[currentRegion] + 0x0F) & 0xFFFFFFF0;
 
                 xReader.BaseStream.Position = uObjectData;
-                xWriter.BaseStream.Position = auRegionPositions[r];
-                Byte[] auObjectData = xReader.ReadBytes((Int32)auRegionSizes[r]);
+                xWriter.BaseStream.Position = auRegionPositions[currentRegion];
+
+                xWriter.Write(0x0001BADE); // Seems like it's always 0x0001BADE
+                xWriter.Write(0x00000002); // Seems like it's always 0x00000002
+                xWriter.Write(auRegionSizes[currentRegion]);
+                xWriter.Write(auRegionPositions[currentRegion] + auRegionSizes[currentRegion]);
+
+                Byte[] auObjectData = xReader.ReadBytes((Int32)auRegionSizes[currentRegion]);
                 xWriter.Write(auObjectData);
 
                 xReader.BaseStream.Position = uPointerData + 0x04;
@@ -185,12 +192,12 @@ namespace CDC.Objects
                 for (UInt32 p = 0; p < uPointerCount; p++)
                 {
                     xReader.BaseStream.Position = uObjectData + auAddresses[p];
-                    UInt32 uValue1 = xReader.ReadUInt32();
-                    UInt32 uValue2 = uValue1 & 0x003FFFFF;
-                    UInt32 uValue3 = uValue1 >> 0x16;
+                    UInt32 regionIndexAndOffset = xReader.ReadUInt32();
+                    UInt32 offset = regionIndexAndOffset & 0x003FFFFF;
+                    UInt32 regionIndex = regionIndexAndOffset >> 0x16;
 
-                    auAddresses[p] += auRegionPositions[r];
-                    auValues[p] = auRegionPositions[uValue3] + uValue2;
+                    auAddresses[p] += auRegionPositions[currentRegion] + 0x10;
+                    auValues[p] = auRegionPositions[regionIndex] + offset + 0x10;
 
                     xWriter.BaseStream.Position = auAddresses[p];
                     xWriter.Write(auValues[p]);

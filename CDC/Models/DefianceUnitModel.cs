@@ -18,13 +18,15 @@ namespace CDC.Objects.Models
             // m_uInstanceCount = xReader.ReadUInt32();
             // m_uInstanceStart = m_uDataStart + xReader.ReadUInt32();
             xReader.BaseStream.Position = _modelData + 0x0C;
-
             _vertexCount = xReader.ReadUInt32();
             _polygonCount = 0; // xReader.ReadUInt32(); // Length = 0x14
             xReader.BaseStream.Position += 0x08;
             _vertexStart = _dataStart + xReader.ReadUInt32();
-            _polygonStart = 0; // m_uDataStart + xReader.ReadUInt32();
-            xReader.BaseStream.Position += 0x18;
+            _polygonStart = 0;
+            UInt32 arrayAfterThisHeader = _dataStart + xReader.ReadUInt32();
+            UInt32 expectedEndOfVertices = _vertexStart + (_vertexCount * 0x10);
+            UInt32 endOfVertices = xReader.ReadUInt32();
+            xReader.BaseStream.Position += 0x10;
             m_uSpectralVertexStart = _dataStart + xReader.ReadUInt32();
             xReader.BaseStream.Position += 0x04; // m_uMaterialColourStart
             m_uSpectralColourStart = _dataStart + xReader.ReadUInt32();
@@ -33,6 +35,23 @@ namespace CDC.Objects.Models
             m_uOctTreeCount = xReader.ReadUInt32();
             m_uOctTreeStart = _dataStart + xReader.ReadUInt32();
             _groupCount = m_uOctTreeCount;
+
+            // The data I'm looking for appears to take up a whole block,
+            // with no indication of length other than the block data itself.
+
+            xReader.BaseStream.Position = _modelData + 0x70;
+            UInt32 _vertices2 = xReader.ReadUInt32();
+            // (unknown0 = 0001BADE, unknown1 = 00000002, blockSize = 0001B1D0, pNextBlock = 02B43720)
+            UInt32 arrayAfterThisHeader1 = xReader.ReadUInt32();
+            UInt32 arrayAfterThisHeader2 = xReader.ReadUInt32();
+            UInt32 arrayAfterThisHeader3 = xReader.ReadUInt32();
+            UInt32 arrayAfterThisHeader4 = xReader.ReadUInt32();
+            UInt32 arrayAfterThisHeader5 = xReader.ReadUInt32();
+            UInt32 arrayAfterThisHeader6 = xReader.ReadUInt32();
+            UInt32 arrayAfterThisHeader7 = xReader.ReadUInt32();
+            UInt32 mysteryValue = _vertices2 - _vertexStart;
+            UInt32 mysteryValue3 = _vertexStart - arrayAfterThisHeader; // Would be 0001B1D0 if not for the missing line.
+            UInt32 mysteryValue4 = _vertexStart - 0x10;
 
             _trees = new Tree[_groupCount];
         }
