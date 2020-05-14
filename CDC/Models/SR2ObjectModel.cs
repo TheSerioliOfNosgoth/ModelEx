@@ -49,19 +49,19 @@ namespace CDC.Objects.Models
         {
             base.ReadVertex(xReader, v);
 
-            _positionsPhys[v] = _positionsRaw[v] * _vertexScale;
-            _positionsAltPhys[v] = _positionsPhys[v];
+            _geometry.PositionsPhys[v] = _geometry.PositionsRaw[v] * _vertexScale;
+            _geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
 
-            _vertices[v].normalID = xReader.ReadUInt16();
+            _geometry.Vertices[v].normalID = xReader.ReadUInt16();
             xReader.BaseStream.Position += 0x02;
 
-            _vertices[v].UVID = v;
+            _geometry.Vertices[v].UVID = v;
 
             UInt16 vU = xReader.ReadUInt16();
             UInt16 vV = xReader.ReadUInt16();
 
-            _uvs[v].u = Utility.BizarreFloatToNormalFloat(vU);
-            _uvs[v].v = Utility.BizarreFloatToNormalFloat(vV);
+            _geometry.UVs[v].u = Utility.BizarreFloatToNormalFloat(vU);
+            _geometry.UVs[v].v = Utility.BizarreFloatToNormalFloat(vV);
         }
 
         protected override void ReadVertices(BinaryReader xReader)
@@ -71,8 +71,8 @@ namespace CDC.Objects.Models
             xReader.BaseStream.Position = m_uColourStart;
             for (UInt16 v = 0; v < _vertexCount; v++)
             {
-                _colours[v] = xReader.ReadUInt32();
-                _coloursAlt[v] = _colours[v];
+                _geometry.Colours[v] = xReader.ReadUInt32();
+                _geometry.ColoursAlt[v] = _geometry.Colours[v];
             }
 
             ReadArmature(xReader);
@@ -155,8 +155,8 @@ namespace CDC.Objects.Models
                 {
                     for (UInt16 v = _bones[b].vFirst; v <= _bones[b].vLast; v++)
                     {
-                        _positionsPhys[v] += _bones[b].worldPos;
-                        _vertices[v].boneID = b;
+                        _geometry.PositionsPhys[v] += _bones[b].worldPos;
+                        _geometry.Vertices[v].boneID = b;
                     }
                 }
             }
@@ -229,15 +229,14 @@ namespace CDC.Objects.Models
                     xReader.BaseStream.Position = xTriangleList.m_uPolygonStart;
                     for (int pl = 0; pl < xTriangleList.m_uPolygonCount; pl++)
                     {
-                        _trees[t].mesh.polygons[tp].v1 = _vertices[xReader.ReadUInt16()];
-                        _trees[t].mesh.polygons[tp].v2 = _vertices[xReader.ReadUInt16()];
-                        _trees[t].mesh.polygons[tp].v3 = _vertices[xReader.ReadUInt16()];
+                        _trees[t].mesh.polygons[tp].v1 = _geometry.Vertices[xReader.ReadUInt16()];
+                        _trees[t].mesh.polygons[tp].v2 = _geometry.Vertices[xReader.ReadUInt16()];
+                        _trees[t].mesh.polygons[tp].v3 = _geometry.Vertices[xReader.ReadUInt16()];
                         _trees[t].mesh.polygons[tp].material = xTriangleList.m_xMaterial;
                         tp++;
                     }
                 }
 
-                // Make the vertices unique - Because I do the same thing in GenerateOutput
                 for (UInt16 poly = 0; poly < _trees[t].mesh.polygonCount; poly++)
                 {
                     _trees[t].mesh.vertices[(3 * poly) + 0] = _trees[t].mesh.polygons[poly].v1;
@@ -253,9 +252,9 @@ namespace CDC.Objects.Models
                 xReader.BaseStream.Position = xTriangleList.m_uPolygonStart;
                 for (int pl = 0; pl < xTriangleList.m_uPolygonCount; pl++)
                 {
-                    _polygons[p].v1 = _vertices[xReader.ReadUInt16()];
-                    _polygons[p].v2 = _vertices[xReader.ReadUInt16()];
-                    _polygons[p].v3 = _vertices[xReader.ReadUInt16()];
+                    _polygons[p].v1 = _geometry.Vertices[xReader.ReadUInt16()];
+                    _polygons[p].v2 = _geometry.Vertices[xReader.ReadUInt16()];
+                    _polygons[p].v3 = _geometry.Vertices[xReader.ReadUInt16()];
                     _polygons[p].material = xTriangleList.m_xMaterial;
                     p++;
                 }

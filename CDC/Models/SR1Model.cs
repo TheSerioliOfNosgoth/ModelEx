@@ -264,26 +264,26 @@ namespace CDC.Objects.Models
         protected virtual void ReadData(BinaryReader xReader)
         {
             // Get the normals
-            _normals = new Vector[s_aiNormals.Length / 3];
-            for (int n = 0; n < _normals.Length; n++)
+            _geometry.Normals = new Vector[s_aiNormals.Length / 3];
+            for (int n = 0; n < _geometry.Normals.Length; n++)
             {
-                _normals[n].x = ((float)s_aiNormals[n, 0] / 4096.0f);
-                _normals[n].y = ((float)s_aiNormals[n, 1] / 4096.0f);
-                _normals[n].z = ((float)s_aiNormals[n, 2] / 4096.0f);
+                _geometry.Normals[n].x = ((float)s_aiNormals[n, 0] / 4096.0f);
+                _geometry.Normals[n].y = ((float)s_aiNormals[n, 1] / 4096.0f);
+                _geometry.Normals[n].z = ((float)s_aiNormals[n, 2] / 4096.0f);
             }
 
             // Get the vertices
-            _vertices = new Vertex[_vertexCount];
-            _positionsRaw = new Vector[_vertexCount];
-            _positionsPhys = new Vector[_vertexCount];
-            _positionsAltPhys = new Vector[_vertexCount];
-            _colours = new UInt32[_vertexCount];
-            _coloursAlt = new UInt32[_vertexCount];
+            _geometry.Vertices = new Vertex[_vertexCount];
+            _geometry.PositionsRaw = new Vector[_vertexCount];
+            _geometry.PositionsPhys = new Vector[_vertexCount];
+            _geometry.PositionsAltPhys = new Vector[_vertexCount];
+            _geometry.Colours = new UInt32[_vertexCount];
+            _geometry.ColoursAlt = new UInt32[_vertexCount];
             ReadVertices(xReader);
 
             // Get the polygons
             _polygons = new Polygon[_polygonCount];
-            _uvs = new UV[_indexCount];
+            _geometry.UVs = new UV[_indexCount];
             ReadPolygons(xReader);
 
             // Generate the output
@@ -292,12 +292,12 @@ namespace CDC.Objects.Models
 
         protected virtual void ReadVertex(BinaryReader xReader, int v)
         {
-            _vertices[v].positionID = v;
+            _geometry.Vertices[v].positionID = v;
 
             // Read the local coordinates
-            _positionsRaw[v].x = (float)xReader.ReadInt16();
-            _positionsRaw[v].y = (float)xReader.ReadInt16();
-            _positionsRaw[v].z = (float)xReader.ReadInt16();
+            _geometry.PositionsRaw[v].x = (float)xReader.ReadInt16();
+            _geometry.PositionsRaw[v].y = (float)xReader.ReadInt16();
+            _geometry.PositionsRaw[v].z = (float)xReader.ReadInt16();
         }
 
         protected virtual void ReadVertices(BinaryReader xReader)
@@ -362,21 +362,12 @@ namespace CDC.Objects.Models
                 Byte v3U = xReader.ReadByte();
                 Byte v3V = xReader.ReadByte();
 
-                _uvs[v1].u = ((float)v1U) / 255.0f;
-                _uvs[v1].v = ((float)v1V) / 255.0f;
-                _uvs[v2].u = ((float)v2U) / 255.0f;
-                _uvs[v2].v = ((float)v2V) / 255.0f;
-                _uvs[v3].u = ((float)v3U) / 255.0f;
-                _uvs[v3].v = ((float)v3V) / 255.0f;
-
-                float fCU = (_uvs[v1].u + _uvs[v2].u + _uvs[v3].u) / 3.0f;
-                float fCV = (_uvs[v1].v + _uvs[v2].v + _uvs[v3].v) / 3.0f;
-                float fSizeAdjust = 1.0f / 255.0f;      // 2.0f seems to work better for dreamcast
-                float fOffsetAdjust = 0.5f / 255.0f;
-
-                Utility.AdjustUVs(ref _uvs[v1], fCU, fCV, fSizeAdjust, fOffsetAdjust);
-                Utility.AdjustUVs(ref _uvs[v2], fCU, fCV, fSizeAdjust, fOffsetAdjust);
-                Utility.AdjustUVs(ref _uvs[v3], fCU, fCV, fSizeAdjust, fOffsetAdjust);
+                _geometry.UVs[v1].u = ((float)v1U) / 255.0f;
+                _geometry.UVs[v1].v = ((float)v1V) / 255.0f;
+                _geometry.UVs[v2].u = ((float)v2U) / 255.0f;
+                _geometry.UVs[v2].v = ((float)v2V) / 255.0f;
+                _geometry.UVs[v3].u = ((float)v3U) / 255.0f;
+                _geometry.UVs[v3].v = ((float)v3V) / 255.0f;
             }
             else
             {
@@ -387,12 +378,12 @@ namespace CDC.Objects.Models
                 UInt16 v3U = xReader.ReadUInt16();
                 UInt16 v3V = xReader.ReadUInt16();
 
-                _uvs[v1].u = Utility.BizarreFloatToNormalFloat(v1U);
-                _uvs[v1].v = Utility.BizarreFloatToNormalFloat(v1V);
-                _uvs[v2].u = Utility.BizarreFloatToNormalFloat(v2U);
-                _uvs[v2].v = Utility.BizarreFloatToNormalFloat(v2V);
-                _uvs[v3].u = Utility.BizarreFloatToNormalFloat(v3U);
-                _uvs[v3].v = Utility.BizarreFloatToNormalFloat(v3V);
+                _geometry.UVs[v1].u = Utility.BizarreFloatToNormalFloat(v1U);
+                _geometry.UVs[v1].v = Utility.BizarreFloatToNormalFloat(v1V);
+                _geometry.UVs[v2].u = Utility.BizarreFloatToNormalFloat(v2U);
+                _geometry.UVs[v2].v = Utility.BizarreFloatToNormalFloat(v2V);
+                _geometry.UVs[v3].u = Utility.BizarreFloatToNormalFloat(v3U);
+                _geometry.UVs[v3].v = Utility.BizarreFloatToNormalFloat(v3V);
 
                 _polygons[p].material.textureID = (UInt16)((xReader.ReadUInt16() & 0x07FF) - 1);
             }
@@ -405,12 +396,12 @@ namespace CDC.Objects.Models
         protected virtual void GenerateOutput()
         {
             // Make the vertices unique
-            _vertices = new Vertex[_indexCount];
+            _geometry.Vertices = new Vertex[_indexCount];
             for (UInt32 p = 0; p < _polygonCount; p++)
             {
-                _vertices[(3 * p) + 0] = _polygons[p].v1;
-                _vertices[(3 * p) + 1] = _polygons[p].v2;
-                _vertices[(3 * p) + 2] = _polygons[p].v3;
+                _geometry.Vertices[(3 * p) + 0] = _polygons[p].v1;
+                _geometry.Vertices[(3 * p) + 1] = _polygons[p].v2;
+                _geometry.Vertices[(3 * p) + 2] = _polygons[p].v3;
             }
 
             // Build the materials array

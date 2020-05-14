@@ -50,20 +50,20 @@ namespace CDC.Objects.Models
         {
             base.ReadVertex(xReader, v);
 
-            _positionsPhys[v] = _positionsRaw[v];
-            _positionsAltPhys[v] = _positionsPhys[v];
+            _geometry.PositionsPhys[v] = _geometry.PositionsRaw[v];
+            _geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
 
-            _vertices[v].colourID = v;
+            _geometry.Vertices[v].colourID = v;
 
             xReader.BaseStream.Position += 2;
-            _colours[v] = xReader.ReadUInt32() | 0xFF000000;
+            _geometry.Colours[v] = xReader.ReadUInt32() | 0xFF000000;
 
             if (_platform != Platform.Dreamcast)
             {
-                Utility.FlipRedAndBlue(ref _colours[v]);
+                Utility.FlipRedAndBlue(ref _geometry.Colours[v]);
             }
 
-            _coloursAlt[v] = _colours[v];
+            _geometry.ColoursAlt[v] = _geometry.Colours[v];
         }
 
         protected override void ReadVertices(BinaryReader xReader)
@@ -82,11 +82,11 @@ namespace CDC.Objects.Models
                 for (int v = 0; v < _vertexCount; v++)
                 {
                     UInt32 uShiftColour = xReader.ReadUInt16();
-                    UInt32 uAlpha = _coloursAlt[v] & 0xFF000000;
+                    UInt32 uAlpha = _geometry.ColoursAlt[v] & 0xFF000000;
                     UInt32 uRed = ((uShiftColour >> 0) & 0x1F) << 0x13;
                     UInt32 uGreen = ((uShiftColour >> 5) & 0x1F) << 0x0B;
                     UInt32 uBlue = ((uShiftColour >> 10) & 0x1F) << 0x03;
-                    _coloursAlt[v] = uAlpha | uRed | uGreen | uBlue;
+                    _geometry.ColoursAlt[v] = uAlpha | uRed | uGreen | uBlue;
                 }
             }
 
@@ -112,7 +112,7 @@ namespace CDC.Objects.Models
                     xShiftVertex.offset.x = (float)xReader.ReadInt16();
                     xShiftVertex.offset.y = (float)xReader.ReadInt16();
                     xShiftVertex.offset.z = (float)xReader.ReadInt16();
-                    _positionsAltPhys[sVertex] = xShiftVertex.offset + xShiftVertex.basePos;
+                    _geometry.PositionsAltPhys[sVertex] = xShiftVertex.offset + xShiftVertex.basePos;
                 }
             }
         }
@@ -121,9 +121,9 @@ namespace CDC.Objects.Models
         {
             UInt32 uPolygonPosition = (UInt32)xReader.BaseStream.Position;
 
-            _polygons[p].v1 = _vertices[xReader.ReadUInt16()];
-            _polygons[p].v2 = _vertices[xReader.ReadUInt16()];
-            _polygons[p].v3 = _vertices[xReader.ReadUInt16()];
+            _polygons[p].v1 = _geometry.Vertices[xReader.ReadUInt16()];
+            _polygons[p].v2 = _geometry.Vertices[xReader.ReadUInt16()];
+            _polygons[p].v3 = _geometry.Vertices[xReader.ReadUInt16()];
             _polygons[p].material = new Material();
 
             _polygons[p].material.textureUsed |= (Boolean)(((int)xReader.ReadUInt16() & 0x0004) == 0);
@@ -324,7 +324,6 @@ namespace CDC.Objects.Models
                 xMesh.polygons[p] = _polygons[polygonID];
             }
 
-            // Make the vertices unique - Because I do the same thing in GenerateOutput
             xMesh.vertices = new Vertex[xMesh.indexCount];
             for (UInt16 poly = 0; poly < xMesh.polygonCount; poly++)
             {

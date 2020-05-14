@@ -137,10 +137,10 @@ namespace CDC.Objects
                             mesh.PrimitiveType = Assimp.PrimitiveType.Triangle;
 
                             ref Polygon[] polygons = ref group.mesh.polygons;
-                            Vector[] positions = model.Positions;
-                            Vector[] normals = model.Normals;
-                            UInt32[] colors = model.Colours;
-                            UV[] uvs = model.UVs;
+                            Vector[] positions = model.Geometry.PositionsPhys;
+                            Vector[] normals = model.Geometry.Normals;
+                            UInt32[] colors = model.Geometry.Colours;
+                            UV[] uvs = model.Geometry.UVs;
                             int i = 0;
                             for (int p = 0; p < polygonCount; p++)
                             {

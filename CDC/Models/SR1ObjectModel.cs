@@ -42,10 +42,10 @@ namespace CDC.Objects.Models
         {
             base.ReadVertex(xReader, v);
 
-            _positionsPhys[v] = _positionsRaw[v];
-            _positionsAltPhys[v] = _positionsPhys[v];
+            _geometry.PositionsPhys[v] = _geometry.PositionsRaw[v];
+            _geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
 
-            _vertices[v].normalID = xReader.ReadUInt16();
+            _geometry.Vertices[v].normalID = xReader.ReadUInt16();
         }
 
         protected override void ReadVertices(BinaryReader xReader)
@@ -100,8 +100,8 @@ namespace CDC.Objects.Models
                 {
                     for (UInt16 v = _bones[b].vFirst; v <= _bones[b].vLast; v++)
                     {
-                        _positionsPhys[v] += _bones[b].worldPos;
-                        _vertices[v].boneID = b;
+                        _geometry.PositionsPhys[v] += _bones[b].worldPos;
+                        _geometry.Vertices[v].boneID = b;
                     }
                 }
             }
@@ -112,9 +112,9 @@ namespace CDC.Objects.Models
         {
             UInt32 uPolygonPosition = (UInt32)xReader.BaseStream.Position;
 
-            _polygons[p].v1 = _vertices[xReader.ReadUInt16()];
-            _polygons[p].v2 = _vertices[xReader.ReadUInt16()];
-            _polygons[p].v3 = _vertices[xReader.ReadUInt16()];
+            _polygons[p].v1 = _geometry.Vertices[xReader.ReadUInt16()];
+            _polygons[p].v2 = _geometry.Vertices[xReader.ReadUInt16()];
+            _polygons[p].v3 = _geometry.Vertices[xReader.ReadUInt16()];
 
             _polygons[p].material = new Material();
             _polygons[p].material.visible = true;
@@ -199,9 +199,8 @@ namespace CDC.Objects.Models
                 _trees[t].mesh.indexCount = _indexCount;
                 _trees[t].mesh.polygonCount = _polygonCount;
                 _trees[t].mesh.polygons = _polygons;
-                _trees[t].mesh.vertices = _vertices;
+                _trees[t].mesh.vertices = _geometry.Vertices;
 
-                // Make the vertices unique - Because I do the same thing in GenerateOutput
                 _trees[t].mesh.vertices = new Vertex[_indexCount];
                 for (UInt16 poly = 0; poly < _polygonCount; poly++)
                 {

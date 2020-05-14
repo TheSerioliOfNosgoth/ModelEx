@@ -242,4 +242,16 @@ namespace CDC
         public Vertex[] vertices;
         public Polygon[] polygons;
     }
+
+    public class Geometry
+    {
+        public Vertex[] Vertices;
+        public Vector[] PositionsRaw;
+        public Vector[] PositionsPhys;
+        public Vector[] PositionsAltPhys;
+        public Vector[] Normals;
+        public UInt32[] Colours;
+        public UInt32[] ColoursAlt;
+        public UV[] UVs;
+    }
 }

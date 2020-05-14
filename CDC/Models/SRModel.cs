@@ -24,14 +24,7 @@ namespace CDC.Objects.Models
         // Vertices are scaled before any bones are applied.
         // Scaling afterwards will break the characters.
         protected Vector _vertexScale;
-        protected Vertex[] _vertices;
-        protected Vector[] _positionsRaw;
-        protected Vector[] _positionsPhys;
-        protected Vector[] _positionsAltPhys;
-        protected Vector[] _normals;
-        protected UInt32[] _colours;
-        protected UInt32[] _coloursAlt;
-        protected UV[] _uvs;
+        protected Geometry _geometry;
         protected Polygon[] _polygons;
         protected Bone[] _bones;
         protected Tree[] _trees;
@@ -42,13 +35,7 @@ namespace CDC.Objects.Models
         public UInt32 PolygonCount { get { return _polygonCount; } }
         public Polygon[] Polygons { get { return _polygons; } }
         public UInt32 IndexCount { get { return _indexCount; } }
-        public Vertex[] Vertices { get { return _vertices; } }
-        public Vector[] Positions { get { return _positionsPhys; } }
-        public Vector[] PositionsAlt { get { return _positionsAltPhys; } }
-        public Vector[] Normals { get { return _normals; } }
-        public UInt32[] Colours { get { return _colours; } }
-        public UInt32[] ColoursAlt { get { return _coloursAlt; } }
-        public UV[] UVs { get { return _uvs; } }
+        public Geometry Geometry { get { return _geometry; } }
         public Bone[] Bones { get { return _bones; } }
         public UInt32 GroupCount { get { return _groupCount; } }
         public Tree[] Groups { get { return _trees; } }
@@ -70,6 +57,7 @@ namespace CDC.Objects.Models
             _vertexScale.x = 1.0f;
             _vertexScale.y = 1.0f;
             _vertexScale.z = 1.0f;
+            _geometry = new Geometry();
             _materialsList = new List<Material>();
         }
 

@@ -202,23 +202,23 @@ namespace ModelEx
 
                 vertex.Position = new SlimDX.Vector3()
                 {
-                    X = 0.01f * _srModel.Positions[exVertex.positionID].x,
-                    Y = 0.01f * _srModel.Positions[exVertex.positionID].z,
-                    Z = 0.01f * _srModel.Positions[exVertex.positionID].y
+                    X = 0.01f * _srModel.Geometry.PositionsPhys[exVertex.positionID].x,
+                    Y = 0.01f * _srModel.Geometry.PositionsPhys[exVertex.positionID].z,
+                    Z = 0.01f * _srModel.Geometry.PositionsPhys[exVertex.positionID].y
                 };
 
                 vertex.Normal = new SlimDX.Vector3()
                 {
-                    X = _srModel.Normals[exVertex.normalID].x,
-                    Y = _srModel.Normals[exVertex.normalID].z,
-                    Z = _srModel.Normals[exVertex.normalID].y
+                    X = _srModel.Geometry.Normals[exVertex.normalID].x,
+                    Y = _srModel.Geometry.Normals[exVertex.normalID].z,
+                    Z = _srModel.Geometry.Normals[exVertex.normalID].y
                 };
                 vertex.Normal.Normalize();
 
                 vertex.TextureCoordinates = new SlimDX.Vector2()
                 {
-                    X = _srModel.UVs[exVertex.UVID].u,
-                    Y = _srModel.UVs[exVertex.UVID].v
+                    X = _srModel.Geometry.UVs[exVertex.UVID].u,
+                    Y = _srModel.Geometry.UVs[exVertex.UVID].v
                 };
             }
 
@@ -228,23 +228,23 @@ namespace ModelEx
 
                 vertex.Position = new SlimDX.Vector3()
                 {
-                    X = 0.01f * _srModel.Positions[exVertex.positionID].x,
-                    Y = 0.01f * _srModel.Positions[exVertex.positionID].z,
-                    Z = 0.01f * _srModel.Positions[exVertex.positionID].y
+                    X = 0.01f * _srModel.Geometry.PositionsPhys[exVertex.positionID].x,
+                    Y = 0.01f * _srModel.Geometry.PositionsPhys[exVertex.positionID].z,
+                    Z = 0.01f * _srModel.Geometry.PositionsPhys[exVertex.positionID].y
                 };
 
                 vertex.Color = new SlimDX.Color3()
                 {
                     //Alpha = ((_srModel.Colours[vertex.colourID] & 0xFF000000) >> 24) / 255.0f,
-                    Red = ((_srModel.Colours[exVertex.colourID] & 0x00FF0000) >> 16) / 255.0f,
-                    Green = ((_srModel.Colours[exVertex.colourID] & 0x0000FF00) >> 8) / 255.0f,
-                    Blue = ((_srModel.Colours[exVertex.colourID] & 0x000000FF) >> 0) / 255.0f
+                    Red = ((_srModel.Geometry.Colours[exVertex.colourID] & 0x00FF0000) >> 16) / 255.0f,
+                    Green = ((_srModel.Geometry.Colours[exVertex.colourID] & 0x0000FF00) >> 8) / 255.0f,
+                    Blue = ((_srModel.Geometry.Colours[exVertex.colourID] & 0x000000FF) >> 0) / 255.0f
                 };
 
                 vertex.TextureCoordinates = new SlimDX.Vector2()
                 {
-                    X = _srModel.UVs[exVertex.UVID].u,
-                    Y = _srModel.UVs[exVertex.UVID].v
+                    X = _srModel.Geometry.UVs[exVertex.UVID].u,
+                    Y = _srModel.Geometry.UVs[exVertex.UVID].v
                 };
             }
 
@@ -254,38 +254,38 @@ namespace ModelEx
 
                 vertex.Position0 = new SlimDX.Vector3()
                 {
-                    X = 0.01f * _srModel.Positions[exVertex.positionID].x,
-                    Y = 0.01f * _srModel.Positions[exVertex.positionID].z,
-                    Z = 0.01f * _srModel.Positions[exVertex.positionID].y
+                    X = 0.01f * _srModel.Geometry.PositionsPhys[exVertex.positionID].x,
+                    Y = 0.01f * _srModel.Geometry.PositionsPhys[exVertex.positionID].z,
+                    Z = 0.01f * _srModel.Geometry.PositionsPhys[exVertex.positionID].y
                 };
 
                 vertex.Position1 = new SlimDX.Vector3()
                 {
-                    X = 0.01f * _srModel.PositionsAlt[exVertex.positionID].x,
-                    Y = 0.01f * _srModel.PositionsAlt[exVertex.positionID].z,
-                    Z = 0.01f * _srModel.PositionsAlt[exVertex.positionID].y
+                    X = 0.01f * _srModel.Geometry.PositionsAltPhys[exVertex.positionID].x,
+                    Y = 0.01f * _srModel.Geometry.PositionsAltPhys[exVertex.positionID].z,
+                    Z = 0.01f * _srModel.Geometry.PositionsAltPhys[exVertex.positionID].y
                 };
 
                 vertex.Color0 = new SlimDX.Color3()
                 {
-                    //Alpha = ((_srModel.Colours[vertex.colourID] & 0xFF000000) >> 24) / 255.0f,
-                    Red = ((_srModel.Colours[exVertex.colourID] & 0x00FF0000) >> 16) / 255.0f,
-                    Green = ((_srModel.Colours[exVertex.colourID] & 0x0000FF00) >> 8) / 255.0f,
-                    Blue = ((_srModel.Colours[exVertex.colourID] & 0x000000FF) >> 0) / 255.0f
+                    //Alpha = ((_srModel.VertexData.Colours[vertex.colourID] & 0xFF000000) >> 24) / 255.0f,
+                    Red = ((_srModel.Geometry.Colours[exVertex.colourID] & 0x00FF0000) >> 16) / 255.0f,
+                    Green = ((_srModel.Geometry.Colours[exVertex.colourID] & 0x0000FF00) >> 8) / 255.0f,
+                    Blue = ((_srModel.Geometry.Colours[exVertex.colourID] & 0x000000FF) >> 0) / 255.0f
                 };
 
                 vertex.Color1 = new SlimDX.Color3()
                 {
                     //Alpha = ((_srModel.ColoursAlt[vertex.colourID] & 0xFF000000) >> 24) / 255.0f,
-                    Red = ((_srModel.ColoursAlt[exVertex.colourID] & 0x00FF0000) >> 16) / 255.0f,
-                    Green = ((_srModel.ColoursAlt[exVertex.colourID] & 0x0000FF00) >> 8) / 255.0f,
-                    Blue = ((_srModel.ColoursAlt[exVertex.colourID] & 0x000000FF) >> 0) / 255.0f
+                    Red = ((_srModel.Geometry.ColoursAlt[exVertex.colourID] & 0x00FF0000) >> 16) / 255.0f,
+                    Green = ((_srModel.Geometry.ColoursAlt[exVertex.colourID] & 0x0000FF00) >> 8) / 255.0f,
+                    Blue = ((_srModel.Geometry.ColoursAlt[exVertex.colourID] & 0x000000FF) >> 0) / 255.0f
                 };
 
                 vertex.TextureCoordinates = new SlimDX.Vector2()
                 {
-                    X = _srModel.UVs[exVertex.UVID].u,
-                    Y = _srModel.UVs[exVertex.UVID].v
+                    X = _srModel.Geometry.UVs[exVertex.UVID].u,
+                    Y = _srModel.Geometry.UVs[exVertex.UVID].v
                 };
             }
 
@@ -551,12 +551,12 @@ namespace ModelEx
                                 polygons[polygonNum].u = new int[3];
                                 polygons[polygonNum].v = new int[3];
 
-                                polygons[polygonNum].u[0] = (int)(srModel.UVs[polygon.v1.UVID].u * 255);
-                                polygons[polygonNum].v[0] = (int)(srModel.UVs[polygon.v1.UVID].v * 255);
-                                polygons[polygonNum].u[1] = (int)(srModel.UVs[polygon.v2.UVID].u * 255);
-                                polygons[polygonNum].v[1] = (int)(srModel.UVs[polygon.v2.UVID].v * 255);
-                                polygons[polygonNum].u[2] = (int)(srModel.UVs[polygon.v3.UVID].u * 255);
-                                polygons[polygonNum].v[2] = (int)(srModel.UVs[polygon.v3.UVID].v * 255);
+                                polygons[polygonNum].u[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].u * 255);
+                                polygons[polygonNum].v[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].v * 255);
+                                polygons[polygonNum].u[1] = (int)(srModel.Geometry.UVs[polygon.v2.UVID].u * 255);
+                                polygons[polygonNum].v[1] = (int)(srModel.Geometry.UVs[polygon.v2.UVID].v * 255);
+                                polygons[polygonNum].u[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].u * 255);
+                                polygons[polygonNum].v[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].v * 255);
 
                                 polygons[polygonNum].textureID = polygon.material.textureID;
 

@@ -281,13 +281,13 @@ namespace CDC.Objects.Models
         protected virtual void ReadData(BinaryReader xReader)
         {
             // Get the normals
-            _normals = new Vector[s_aiNormals.Length / 3];
-            for (int n = 0; n < _normals.Length; n++)
+            _geometry.Normals = new Vector[s_aiNormals.Length / 3];
+            for (int n = 0; n < _geometry.Normals.Length; n++)
             {
                 // Are these wrong? Different on PC and PS2?
-                _normals[n].x = s_aiNormals[n, 0];
-                _normals[n].y = s_aiNormals[n, 1];
-                _normals[n].z = s_aiNormals[n, 2];
+                _geometry.Normals[n].x = s_aiNormals[n, 0];
+                _geometry.Normals[n].y = s_aiNormals[n, 1];
+                _geometry.Normals[n].z = s_aiNormals[n, 2];
 
                 //_normals[n].x = ((float)s_aiNormals[n, 0] / 4096.0f);
                 //_normals[n].y = ((float)s_aiNormals[n, 1] / 4096.0f);
@@ -295,13 +295,13 @@ namespace CDC.Objects.Models
             }
 
             // Get the vertices
-            _vertices = new Vertex[_vertexCount];
-            _positionsRaw = new Vector[_vertexCount];
-            _positionsPhys = new Vector[_vertexCount];
-            _positionsAltPhys = new Vector[_vertexCount];
-            _colours = new UInt32[_vertexCount];
-            _coloursAlt = new UInt32[_vertexCount];
-            _uvs = new UV[_vertexCount];
+            _geometry.Vertices = new Vertex[_vertexCount];
+            _geometry.PositionsRaw = new Vector[_vertexCount];
+            _geometry.PositionsPhys = new Vector[_vertexCount];
+            _geometry.PositionsAltPhys = new Vector[_vertexCount];
+            _geometry.Colours = new UInt32[_vertexCount];
+            _geometry.ColoursAlt = new UInt32[_vertexCount];
+            _geometry.UVs = new UV[_vertexCount];
             ReadVertices(xReader);
 
             // Get the polygons
@@ -314,12 +314,12 @@ namespace CDC.Objects.Models
 
         protected virtual void ReadVertex(BinaryReader xReader, int v)
         {
-            _vertices[v].positionID = v;
+            _geometry.Vertices[v].positionID = v;
 
             // Read the local coordinates
-            _positionsRaw[v].x = (float)xReader.ReadInt16();
-            _positionsRaw[v].y = (float)xReader.ReadInt16();
-            _positionsRaw[v].z = (float)xReader.ReadInt16();
+            _geometry.PositionsRaw[v].x = (float)xReader.ReadInt16();
+            _geometry.PositionsRaw[v].y = (float)xReader.ReadInt16();
+            _geometry.PositionsRaw[v].z = (float)xReader.ReadInt16();
             xReader.BaseStream.Position += 0x02;
         }
 
@@ -345,12 +345,12 @@ namespace CDC.Objects.Models
         protected virtual void GenerateOutput()
         {
             // Make the vertices unique
-            _vertices = new Vertex[_indexCount];
+            _geometry.Vertices = new Vertex[_indexCount];
             for (UInt32 p = 0; p < _polygonCount; p++)
             {
-                _vertices[(3 * p) + 0] = _polygons[p].v1;
-                _vertices[(3 * p) + 1] = _polygons[p].v2;
-                _vertices[(3 * p) + 2] = _polygons[p].v3;
+                _geometry.Vertices[(3 * p) + 0] = _polygons[p].v1;
+                _geometry.Vertices[(3 * p) + 1] = _polygons[p].v2;
+                _geometry.Vertices[(3 * p) + 2] = _polygons[p].v3;
             }
 
             // Build the materials array
