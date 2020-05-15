@@ -92,7 +92,7 @@ namespace CDC
 
     public struct ShiftVertex
     {
-        public UInt16 index;            // Index in the file
+        public UInt16 index;          // Index in the file
         public Vector basePos;        // Base vertex coordinates
         public Vector offset;         // Offset from base coordinates
     }
@@ -101,8 +101,14 @@ namespace CDC
     {
         public Material material;     // The material used
         public Vertex v1, v2, v3;     // Vertices for the polygon
-        public int paletteRow;          // The row of the pallete to use (PS1)
-        public int paletteColumn;       // The column of the pallet to use (PS1)
+        public int paletteRow;        // The row of the pallete to use (PS1)
+        public int paletteColumn;     // The column of the pallet to use (PS1)
+    }
+
+    public struct TreePolygon
+    {
+        public UInt32 textureID;
+        public UInt16 v1, v2, v3;
     }
 
     public class Material
