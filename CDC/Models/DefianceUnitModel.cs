@@ -173,6 +173,7 @@ namespace CDC.Objects.Models
                 FinaliseMesh(treePolygons, currentPosition, xMeshes[m], xMaterial, ref currentPolygon);
                 currentPosition = xMeshPositions[m];
             }
+
             _materialCount = (UInt32)_materialsList.Count;
 
             return;
