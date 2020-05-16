@@ -211,60 +211,22 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                     }
                 }
 
-                // if specified, quantize the rectangle's boundaries 
-                if (quantizeBounds)
-                {
-                    while ((uMin % width) > 0)
-                    {
-                        uMin--;
-                    }
-                    while ((uMax % width) > 0)
-                    {
-                        uMax++;
-                    }
-                    while ((vMin % height) > 0)
-                    {
-                        vMin--;
-                    }
-                    while ((vMax % height) > 0)
-                    {
-                        vMax++;
-                    }
-                    if (uMin < 0)
-                    {
-                        uMin = 0;
-                    }
-                    if (uMax > 256)
-                    {
-                        uMax = 256;
-                    }
-                    if (vMin < 0)
-                    {
-                        vMin = 0;
-                    }
-                    if (vMax > 256)
-                    {
-                        vMax = 256;
-                    }
-                }
-
-                //// if specified, quantize the rectangle's boundaries to a multiple of 16
+                //// if specified, quantize the rectangle's boundaries 
                 //if (quantizeBounds)
                 //{
-                //    int quantizeRes = 16;
-                //    while ((uMin % quantizeRes) > 0)
+                //    while ((uMin % width) > 0)
                 //    {
                 //        uMin--;
                 //    }
-                //    while ((uMax % quantizeRes) > 0)
+                //    while ((uMax % width) > 0)
                 //    {
                 //        uMax++;
                 //    }
-                //    while ((vMin % quantizeRes) > 0)
+                //    while ((vMin % height) > 0)
                 //    {
                 //        vMin--;
                 //    }
-                //    while ((vMax % quantizeRes) > 0)
+                //    while ((vMax % height) > 0)
                 //    {
                 //        vMax++;
                 //    }
@@ -285,6 +247,44 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                 //        vMax = 256;
                 //    }
                 //}
+
+                // if specified, quantize the rectangle's boundaries to a multiple of 16
+                if (quantizeBounds)
+                {
+                    int quantizeRes = 16;
+                    while ((uMin % quantizeRes) > 0)
+                    {
+                        uMin--;
+                    }
+                    while ((uMax % quantizeRes) > 0)
+                    {
+                        uMax++;
+                    }
+                    while ((vMin % quantizeRes) > 0)
+                    {
+                        vMin--;
+                    }
+                    while ((vMax % quantizeRes) > 0)
+                    {
+                        vMax++;
+                    }
+                    if (uMin < 0)
+                    {
+                        uMin = 0;
+                    }
+                    if (uMax > 256)
+                    {
+                        uMax = 256;
+                    }
+                    if (vMin < 0)
+                    {
+                        vMin = 0;
+                    }
+                    if (vMax > 256)
+                    {
+                        vMax = 256;
+                    }
+                }
 
                 for (int y = vMin; y < vMax; y++)
                 {

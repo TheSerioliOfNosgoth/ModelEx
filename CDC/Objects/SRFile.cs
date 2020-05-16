@@ -49,16 +49,16 @@ namespace CDC.Objects
             _game = game;
 
             FileStream xFile = new FileStream(strFileName, FileMode.Open, FileAccess.Read);
-            BinaryReader xReader = new BinaryReader(xFile);
+            BinaryReader xReader = new BinaryReader(xFile, System.Text.Encoding.ASCII);
             MemoryStream xStream = new MemoryStream((int)xFile.Length);
-            BinaryWriter xWriter = new BinaryWriter(xStream);
+            BinaryWriter xWriter = new BinaryWriter(xStream, System.Text.Encoding.ASCII);
 
             //String strDebugFileName = Path.GetDirectoryName(strFileName) + "\\" + Path.GetFileNameWithoutExtension(strFileName) + "-Debug.txt";
             //m_xLogFile = File.CreateText(strDebugFileName);
 
             ResolvePointers(xReader, xWriter);
             xReader.Close();
-            xReader = new BinaryReader(xStream);
+            xReader = new BinaryReader(xStream, System.Text.Encoding.ASCII);
 
             ReadHeaderData(xReader);
 

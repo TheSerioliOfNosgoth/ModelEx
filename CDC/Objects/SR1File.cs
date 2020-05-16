@@ -7,6 +7,10 @@ namespace CDC.Objects
 {
     public class SR1File : SRFile
     {
+        public const UInt32 ALPHA_VERSION_1_X = 0x3c204127;
+        public const UInt32 ALPHA_VERSION_1 = 0x3c204128;
+        public const UInt32 ALPHA_VERSION_2 = 0x3c204129;
+        public const UInt32 ALPHA_VERSION_3 = 0x3c204131;
         public const UInt32 BETA_VERSION = 0x3c204139;
         public const UInt32 RETAIL_VERSION = 0x3C20413B;
 
@@ -78,6 +82,52 @@ namespace CDC.Objects
 
         protected override void ReadUnitData(BinaryReader xReader)
         {
+            bool validVersion = false;
+
+            if (!validVersion)
+            {
+                xReader.BaseStream.Position = _dataStart + 0xF0;
+                _version = xReader.ReadUInt32();
+                if (_version == RETAIL_VERSION)
+                {
+                    validVersion = true;
+                }
+                else if (_version == BETA_VERSION)
+                {
+                    validVersion = true;
+                }
+            }
+
+            if (!validVersion)
+            {
+                xReader.BaseStream.Position = _dataStart + 0xE4;
+                _version = xReader.ReadUInt32();
+                if (_version == ALPHA_VERSION_3)
+                {
+                    validVersion = true;
+                }
+            }
+
+            if (!validVersion)
+            {
+                xReader.BaseStream.Position = _dataStart + 0xE0;
+                _version = xReader.ReadUInt32();
+                if (_version == ALPHA_VERSION_2)
+                {
+                    validVersion = true;
+                }
+                if (_version == ALPHA_VERSION_1_X ||
+                    _version == ALPHA_VERSION_1)
+                {
+                    validVersion = true;
+                }
+            }
+
+            if (!validVersion)
+            {
+                throw new Exception("Wrong version number for level x");
+            }
+
             // Adjacent units are seperate from portals.
             // There can be multiple portals to the same unit.
             // Portals
@@ -95,19 +145,55 @@ namespace CDC.Objects
             }
 
             // Instances
-            xReader.BaseStream.Position = _dataStart + 0x78;
+            if (_version == ALPHA_VERSION_1_X ||
+                _version == ALPHA_VERSION_1 ||
+                _version == ALPHA_VERSION_2)
+            {
+                xReader.BaseStream.Position = _dataStart + 0x70;
+            }
+            else if (_version == ALPHA_VERSION_3)
+            {
+                xReader.BaseStream.Position = _dataStart + 0x74;
+            }
+            else
+            {
+                xReader.BaseStream.Position = _dataStart + 0x78;
+            }
+
             _instanceCount = xReader.ReadUInt32();
             _instanceStart = _dataStart + xReader.ReadUInt32();
             _instanceNames = new String[_instanceCount];
             for (int i = 0; i < _instanceCount; i++)
             {
-                xReader.BaseStream.Position = _instanceStart + 0x4C * i;
+                if (_version == ALPHA_VERSION_1_X ||
+                    _version == ALPHA_VERSION_1 ||
+                    _version == ALPHA_VERSION_2)
+                {
+                    xReader.BaseStream.Position = _instanceStart + 0x50 * i;
+                }
+                else
+                {
+                    xReader.BaseStream.Position = _instanceStart + 0x4C * i;
+                }
                 String strInstanceName = new String(xReader.ReadChars(8));
                 _instanceNames[i] = Utility.CleanName(strInstanceName);
             }
 
             // Instance types
-            xReader.BaseStream.Position = _dataStart + 0x8C;
+            if (_version == ALPHA_VERSION_1_X ||
+                _version == ALPHA_VERSION_1 ||
+                _version == ALPHA_VERSION_2)
+            {
+                xReader.BaseStream.Position = _dataStart + 0x84;
+            }
+            else if (_version == ALPHA_VERSION_3)
+            {
+                xReader.BaseStream.Position = _dataStart + 0x88;
+            }
+            else
+            {
+                xReader.BaseStream.Position = _dataStart + 0x8C;
+            }
             _instanceTypeStart = _dataStart + xReader.ReadUInt32();
             xReader.BaseStream.Position = _instanceTypeStart;
             List<String> xInstanceList = new List<String>();
@@ -121,20 +207,43 @@ namespace CDC.Objects
             _instanceTypeNames = xInstanceList.ToArray();
 
             // Unit name
-            xReader.BaseStream.Position = _dataStart + 0x98;
+            if (_version == ALPHA_VERSION_1_X ||
+                _version == ALPHA_VERSION_1 ||
+                _version == ALPHA_VERSION_2)
+            {
+                xReader.BaseStream.Position = _dataStart + 0x90;
+            }
+            else if (_version == ALPHA_VERSION_3)
+            {
+                xReader.BaseStream.Position = _dataStart + 0x94;
+            }
+            else
+            {
+                xReader.BaseStream.Position = _dataStart + 0x98;
+            }
             xReader.BaseStream.Position = _dataStart + xReader.ReadUInt32();
             String strModelName = new String(xReader.ReadChars(8));
             _name = Utility.CleanName(strModelName);
 
             // Texture type
-            xReader.BaseStream.Position = _dataStart + 0x9C;
-            if (xReader.ReadUInt64() != 0xFFFFFFFFFFFFFFFF)
+            if (_version == ALPHA_VERSION_1_X ||
+                _version == ALPHA_VERSION_1 ||
+                _version == ALPHA_VERSION_2 ||
+                _version == ALPHA_VERSION_3)
             {
                 _platform = Platform.PSX;
             }
             else
             {
-                _platform = Platform.PC;
+                xReader.BaseStream.Position = _dataStart + 0x9C;
+                if (xReader.ReadUInt64() != 0xFFFFFFFFFFFFFFFF)
+                {
+                    _platform = Platform.PSX;
+                }
+                else
+                {
+                    _platform = Platform.PC;
+                }
             }
 
             // Connected unit list. (unreferenced?)
@@ -150,14 +259,6 @@ namespace CDC.Objects
             //xReader.BaseStream.Position += 0x18;
             //String strUnitName2 = new String(xReader.ReadChars(16));
             //strUnitName2 = strUnitName2.Substring(0, strUnitName2.IndexOf(','));
-
-            // Version number
-            xReader.BaseStream.Position = _dataStart + 0xF0;
-            _version = xReader.ReadUInt32();
-            if (_version != RETAIL_VERSION && _version != BETA_VERSION)
-            {
-                throw new Exception("Wrong version number for level x");
-            }
 
             // Model data
             xReader.BaseStream.Position = _dataStart;

@@ -23,11 +23,18 @@ namespace CDC.Objects.Models
             xReader.BaseStream.Position += 0x10;
             _materialStart = _dataStart + xReader.ReadUInt32();
             _materialCount = 0;
-            xReader.BaseStream.Position += 0x04;
 
-            if (_version == SR1File.BETA_VERSION)
+            if (_version == SR1File.ALPHA_VERSION_1_X ||
+                _version == SR1File.ALPHA_VERSION_1 ||
+                _version == SR1File.ALPHA_VERSION_2 ||
+                _version == SR1File.ALPHA_VERSION_3 ||
+                _version == SR1File.BETA_VERSION)
             {
-                xReader.BaseStream.Position += 0x08;
+                xReader.BaseStream.Position += 0x0C;
+            }
+            else
+            {
+                xReader.BaseStream.Position += 0x04;
             }
 
             m_uSpectralVertexStart = _dataStart + xReader.ReadUInt32();
@@ -135,7 +142,8 @@ namespace CDC.Objects.Models
             {
                 // WIP
                 UInt32 uMaterialPosition = uMaterialOffset + _materialStart;
-                if ((((uMaterialPosition - _materialStart) % 0x0C) != 0) &&
+                if (_version == SR1File.RETAIL_VERSION &&
+                    (((uMaterialPosition - _materialStart) % 0x0C) != 0) &&
                      ((uMaterialPosition - _materialStart) % 0x14) == 0)
                 {
                     _platform = Platform.Dreamcast;
