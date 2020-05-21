@@ -23,10 +23,7 @@ namespace CDC.Objects.Models
             xReader.BaseStream.Position += 0x08;
             _vertexStart = _dataStart + xReader.ReadUInt32();
             _polygonStart = 0;
-            UInt32 arrayAfterThisHeader = _dataStart + xReader.ReadUInt32();
-            UInt32 expectedEndOfVertices = _vertexStart + (_vertexCount * 0x10);
-            UInt32 endOfVertices = xReader.ReadUInt32();
-            xReader.BaseStream.Position += 0x10;
+            xReader.BaseStream.Position += 0x18;
             m_uSpectralVertexStart = _dataStart + xReader.ReadUInt32();
             xReader.BaseStream.Position += 0x04; // m_uMaterialColourStart
             m_uSpectralColourStart = _dataStart + xReader.ReadUInt32();
@@ -38,20 +35,16 @@ namespace CDC.Objects.Models
 
             // The data I'm looking for appears to take up a whole block,
             // with no indication of length other than the block data itself.
+            // 4 bytes before the start is the position of the next block.
+            // 4 bytes before that is the length of the whole block.
 
             xReader.BaseStream.Position = _modelData + 0x70;
-            UInt32 _vertices2 = xReader.ReadUInt32();
-            // (unknown0 = 0001BADE, unknown1 = 00000002, blockSize = 0001B1D0, pNextBlock = 02B43720)
-            UInt32 arrayAfterThisHeader1 = xReader.ReadUInt32();
-            UInt32 arrayAfterThisHeader2 = xReader.ReadUInt32();
-            UInt32 arrayAfterThisHeader3 = xReader.ReadUInt32();
-            UInt32 arrayAfterThisHeader4 = xReader.ReadUInt32();
-            UInt32 arrayAfterThisHeader5 = xReader.ReadUInt32();
-            UInt32 arrayAfterThisHeader6 = xReader.ReadUInt32();
-            UInt32 arrayAfterThisHeader7 = xReader.ReadUInt32();
-            UInt32 mysteryValue = _vertices2 - _vertexStart;
-            UInt32 mysteryValue3 = _vertexStart - arrayAfterThisHeader; // Would be 0001B1D0 if not for the missing line.
-            UInt32 mysteryValue4 = _vertexStart - 0x10;
+            _extraVertexStart = xReader.ReadUInt32();
+            if (_extraVertexStart != 0)
+            {
+                xReader.BaseStream.Position = _extraVertexStart - 0x08;
+                _extraVertexCount = xReader.ReadUInt32() / 0x34;
+            }
 
             _trees = new Tree[_groupCount];
         }
@@ -63,9 +56,9 @@ namespace CDC.Objects.Models
             return xModel;
         }
 
-        protected override void ReadVertex(BinaryReader xReader, int v)
+        protected override void ReadTypeAVertex(BinaryReader xReader, int v)
         {
-            base.ReadVertex(xReader, v);
+            base.ReadTypeAVertex(xReader, v);
 
             _geometry.PositionsPhys[v] = _geometry.PositionsRaw[v];
             _geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
@@ -84,11 +77,47 @@ namespace CDC.Objects.Models
             _geometry.UVs[v].v = Utility.BizarreFloatToNormalFloat(vV);
         }
 
-        protected override void ReadVertices(BinaryReader xReader)
+        protected override void ReadTypeAVertices(BinaryReader xReader)
         {
-            base.ReadVertices(xReader);
+            base.ReadTypeAVertices(xReader);
 
             ReadSpectralData(xReader);
+        }
+
+        protected override void ReadTypeBVertex(BinaryReader xReader, int v)
+        {
+            base.ReadTypeBVertex(xReader, v);
+
+            _extraGeometry.PositionsPhys[v] = _extraGeometry.PositionsRaw[v];
+            _extraGeometry.PositionsAltPhys[v] = _extraGeometry.PositionsPhys[v];
+
+            _extraGeometry.Vertices[v].colourID = v;
+
+            _extraGeometry.Vertices[v].UVID = v;
+
+            //UInt16 vU = xReader.ReadUInt16();
+            //UInt16 vV = xReader.ReadUInt16();
+
+            //_extraGeometry.UVs[v].u = Utility.BizarreFloatToNormalFloat(vU);
+            //_extraGeometry.UVs[v].v = Utility.BizarreFloatToNormalFloat(vV);
+
+            xReader.BaseStream.Position += 0x04;
+
+            _extraGeometry.UVs[v].u = xReader.ReadSingle(); // Offset = 0x0C
+            _extraGeometry.UVs[v].v = xReader.ReadSingle(); // Offset = 0x10
+
+            _extraGeometry.Colours[v] = xReader.ReadUInt32(); // Offset = 0x14
+            _extraGeometry.ColoursAlt[v] = _geometry.Colours[v];
+
+            // Spectral colours in here for this type of vertex.
+            xReader.BaseStream.Position += 0x1C;
+        }
+
+        protected override void ReadTypeBVertices(BinaryReader xReader)
+        {
+            base.ReadTypeBVertices(xReader);
+
+            //ReadSpectralData(xReader);
         }
 
         protected virtual void ReadSpectralData(BinaryReader xReader)
@@ -247,10 +276,10 @@ namespace CDC.Objects.Models
 
         protected virtual void ReadOctLeaf(BinaryReader xReader, List<TreePolygon> treePolygons, Mesh xMesh, UInt32 uStartIndex)
         {
-            UInt32 uLeafData = _dataStart + xReader.ReadUInt32();
-            xReader.BaseStream.Position = uLeafData;
+            UInt32 uNextStrip = _dataStart + xReader.ReadUInt32();
+            xReader.BaseStream.Position = uNextStrip;
 
-            UInt32 uNextStrip = (UInt32)xReader.BaseStream.Position;
+            int counter = 0;
             while (true)
             {
                 bool bShouldWrite = true; // For debug.
@@ -260,6 +289,8 @@ namespace CDC.Objects.Models
                 {
                     break;
                 }
+
+                counter++;
 
                 uNextStrip += uLength;
 
@@ -281,7 +312,7 @@ namespace CDC.Objects.Models
                     xReader.BaseStream.Position += 0x02;
                 }
 
-                while (false)
+                while (counter == 5)
                 {
                     // 0xFFFF wrong?  Try uTestNextStrip
                     UInt32 uIndexCount2 = xReader.ReadUInt32();
@@ -316,6 +347,7 @@ namespace CDC.Objects.Models
                             newPolygon.v2 = axStripIndices[axStripIndices2[i++]];
                             newPolygon.v3 = axStripIndices[axStripIndices2[i++]];
                             newPolygon.textureID = uTextureID;
+                            newPolygon.useExtraGeometry = true;
                             treePolygons.Add(newPolygon);
                         }
 
@@ -383,13 +415,25 @@ namespace CDC.Objects.Models
             xMesh.polygons = new Polygon[xMesh.polygonCount];
             for (int p = 0; p < xMesh.polygonCount; p++)
             {
-                UInt32 uV1 = treePolygons[firstPolygon + p].v1 + xMesh.startIndex;
-                UInt32 uV2 = treePolygons[firstPolygon + p].v2 + xMesh.startIndex;
-                UInt32 uV3 = treePolygons[firstPolygon + p].v3 + xMesh.startIndex;
+                UInt32 uV1 = treePolygons[firstPolygon + p].v1;
+                UInt32 uV2 = treePolygons[firstPolygon + p].v2;
+                UInt32 uV3 = treePolygons[firstPolygon + p].v3;
 
-                xMesh.polygons[p].v1 = _geometry.Vertices[uV1];
-                xMesh.polygons[p].v2 = _geometry.Vertices[uV2];
-                xMesh.polygons[p].v3 = _geometry.Vertices[uV3];
+                if (treePolygons[firstPolygon + p].useExtraGeometry == false)
+                {
+                    xMesh.polygons[p].v1 = _geometry.Vertices[uV1 + xMesh.startIndex];
+                    xMesh.polygons[p].v2 = _geometry.Vertices[uV2 + xMesh.startIndex];
+                    xMesh.polygons[p].v3 = _geometry.Vertices[uV3 + xMesh.startIndex];
+                }
+                else
+                {
+                    xMesh.polygons[p].v1 = _extraGeometry.Vertices[uV1];
+                    xMesh.polygons[p].v2 = _extraGeometry.Vertices[uV2];
+                    xMesh.polygons[p].v3 = _extraGeometry.Vertices[uV3];
+                    xMesh.polygons[p].v1.isExtraGeometry = true;
+                    xMesh.polygons[p].v2.isExtraGeometry = true;
+                    xMesh.polygons[p].v3.isExtraGeometry = true;
+                }
 
                 xMaterial = new Material();
 

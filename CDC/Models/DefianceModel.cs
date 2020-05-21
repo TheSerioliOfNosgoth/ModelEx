@@ -264,6 +264,9 @@ namespace CDC.Objects.Models
         };
         #endregion
 
+        protected UInt32 _extraVertexCount;
+        protected UInt32 _extraVertexStart;
+
         protected class DefianceTriangleList
         {
             public Material m_xMaterial;
@@ -297,7 +300,17 @@ namespace CDC.Objects.Models
             _geometry.Colours = new UInt32[_vertexCount];
             _geometry.ColoursAlt = new UInt32[_vertexCount];
             _geometry.UVs = new UV[_vertexCount];
-            ReadVertices(xReader);
+            ReadTypeAVertices(xReader);
+
+            // Get the extra vertices
+            _extraGeometry.Vertices = new Vertex[_extraVertexCount];
+            _extraGeometry.PositionsRaw = new Vector[_extraVertexCount];
+            _extraGeometry.PositionsPhys = new Vector[_extraVertexCount];
+            _extraGeometry.PositionsAltPhys = new Vector[_extraVertexCount];
+            _extraGeometry.Colours = new UInt32[_extraVertexCount];
+            _extraGeometry.ColoursAlt = new UInt32[_extraVertexCount];
+            _extraGeometry.UVs = new UV[_extraVertexCount];
+            ReadTypeBVertices(xReader);
 
             // Get the polygons
             _polygons = new Polygon[_polygonCount];
@@ -307,7 +320,7 @@ namespace CDC.Objects.Models
             GenerateOutput();
         }
 
-        protected virtual void ReadVertex(BinaryReader xReader, int v)
+        protected virtual void ReadTypeAVertex(BinaryReader xReader, int v)
         {
             _geometry.Vertices[v].positionID = v;
 
@@ -318,7 +331,7 @@ namespace CDC.Objects.Models
             xReader.BaseStream.Position += 0x02;
         }
 
-        protected virtual void ReadVertices(BinaryReader xReader)
+        protected virtual void ReadTypeAVertices(BinaryReader xReader)
         {
             if (_vertexStart == 0 || _vertexCount == 0)
             {
@@ -329,7 +342,35 @@ namespace CDC.Objects.Models
 
             for (int v = 0; v < _vertexCount; v++)
             {
-                ReadVertex(xReader, v);
+                ReadTypeAVertex(xReader, v);
+            }
+
+            return;
+        }
+
+        protected virtual void ReadTypeBVertex(BinaryReader xReader, int v)
+        {
+            _extraGeometry.Vertices[v].positionID = v;
+
+            // Read the local coordinates
+            _extraGeometry.PositionsRaw[v].x = (float)xReader.ReadInt16();
+            _extraGeometry.PositionsRaw[v].y = (float)xReader.ReadInt16();
+            _extraGeometry.PositionsRaw[v].z = (float)xReader.ReadInt16();
+            xReader.BaseStream.Position += 0x02;
+        }
+
+        protected virtual void ReadTypeBVertices(BinaryReader xReader)
+        {
+            if (_extraVertexStart == 0 || _extraVertexCount == 0)
+            {
+                return;
+            }
+
+            xReader.BaseStream.Position = _extraVertexStart;
+
+            for (int v = 0; v < _extraVertexCount; v++)
+            {
+                ReadTypeBVertex(xReader, v);
             }
 
             return;

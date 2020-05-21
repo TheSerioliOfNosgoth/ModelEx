@@ -199,93 +199,96 @@ namespace ModelEx
             public void FillVertex(int v, out PositionNormalTexturedVertex vertex)
             {
                 ref CDC.Vertex exVertex = ref _srGroup.mesh.vertices[_vertexList[v]];
+                CDC.Geometry exGeometry = exVertex.isExtraGeometry ? _srModel.ExtraGeometry : _srModel.Geometry;
 
                 vertex.Position = new SlimDX.Vector3()
                 {
-                    X = 0.01f * _srModel.Geometry.PositionsPhys[exVertex.positionID].x,
-                    Y = 0.01f * _srModel.Geometry.PositionsPhys[exVertex.positionID].z,
-                    Z = 0.01f * _srModel.Geometry.PositionsPhys[exVertex.positionID].y
+                    X = 0.01f * exGeometry.PositionsPhys[exVertex.positionID].x,
+                    Y = 0.01f * exGeometry.PositionsPhys[exVertex.positionID].z,
+                    Z = 0.01f * exGeometry.PositionsPhys[exVertex.positionID].y
                 };
 
                 vertex.Normal = new SlimDX.Vector3()
                 {
-                    X = _srModel.Geometry.Normals[exVertex.normalID].x,
-                    Y = _srModel.Geometry.Normals[exVertex.normalID].z,
-                    Z = _srModel.Geometry.Normals[exVertex.normalID].y
+                    X = exGeometry.Normals[exVertex.normalID].x,
+                    Y = exGeometry.Normals[exVertex.normalID].z,
+                    Z = exGeometry.Normals[exVertex.normalID].y
                 };
                 vertex.Normal.Normalize();
 
                 vertex.TextureCoordinates = new SlimDX.Vector2()
                 {
-                    X = _srModel.Geometry.UVs[exVertex.UVID].u,
-                    Y = _srModel.Geometry.UVs[exVertex.UVID].v
+                    X = exGeometry.UVs[exVertex.UVID].u,
+                    Y = exGeometry.UVs[exVertex.UVID].v
                 };
             }
 
             public void FillVertex(int v, out PositionColorTexturedVertex vertex)
             {
                 ref CDC.Vertex exVertex = ref _srGroup.mesh.vertices[_vertexList[v]];
+                CDC.Geometry exGeometry = exVertex.isExtraGeometry ? _srModel.ExtraGeometry : _srModel.Geometry;
 
                 vertex.Position = new SlimDX.Vector3()
                 {
-                    X = 0.01f * _srModel.Geometry.PositionsPhys[exVertex.positionID].x,
-                    Y = 0.01f * _srModel.Geometry.PositionsPhys[exVertex.positionID].z,
-                    Z = 0.01f * _srModel.Geometry.PositionsPhys[exVertex.positionID].y
+                    X = 0.01f * exGeometry.PositionsPhys[exVertex.positionID].x,
+                    Y = 0.01f * exGeometry.PositionsPhys[exVertex.positionID].z,
+                    Z = 0.01f * exGeometry.PositionsPhys[exVertex.positionID].y
                 };
 
                 vertex.Color = new SlimDX.Color3()
                 {
                     //Alpha = ((_srModel.Colours[vertex.colourID] & 0xFF000000) >> 24) / 255.0f,
-                    Red = ((_srModel.Geometry.Colours[exVertex.colourID] & 0x00FF0000) >> 16) / 255.0f,
-                    Green = ((_srModel.Geometry.Colours[exVertex.colourID] & 0x0000FF00) >> 8) / 255.0f,
-                    Blue = ((_srModel.Geometry.Colours[exVertex.colourID] & 0x000000FF) >> 0) / 255.0f
+                    Red = ((exGeometry.Colours[exVertex.colourID] & 0x00FF0000) >> 16) / 255.0f,
+                    Green = ((exGeometry.Colours[exVertex.colourID] & 0x0000FF00) >> 8) / 255.0f,
+                    Blue = ((exGeometry.Colours[exVertex.colourID] & 0x000000FF) >> 0) / 255.0f
                 };
 
                 vertex.TextureCoordinates = new SlimDX.Vector2()
                 {
-                    X = _srModel.Geometry.UVs[exVertex.UVID].u,
-                    Y = _srModel.Geometry.UVs[exVertex.UVID].v
+                    X = exGeometry.UVs[exVertex.UVID].u,
+                    Y = exGeometry.UVs[exVertex.UVID].v
                 };
             }
 
             public void FillVertex(int v, out Position2Color2TexturedVertex vertex)
             {
                 ref CDC.Vertex exVertex = ref _srGroup.mesh.vertices[_vertexList[v]];
+                CDC.Geometry exGeometry = exVertex.isExtraGeometry ? _srModel.ExtraGeometry : _srModel.Geometry;
 
                 vertex.Position0 = new SlimDX.Vector3()
                 {
-                    X = 0.01f * _srModel.Geometry.PositionsPhys[exVertex.positionID].x,
-                    Y = 0.01f * _srModel.Geometry.PositionsPhys[exVertex.positionID].z,
-                    Z = 0.01f * _srModel.Geometry.PositionsPhys[exVertex.positionID].y
+                    X = 0.01f * exGeometry.PositionsPhys[exVertex.positionID].x,
+                    Y = 0.01f * exGeometry.PositionsPhys[exVertex.positionID].z,
+                    Z = 0.01f * exGeometry.PositionsPhys[exVertex.positionID].y
                 };
 
                 vertex.Position1 = new SlimDX.Vector3()
                 {
-                    X = 0.01f * _srModel.Geometry.PositionsAltPhys[exVertex.positionID].x,
-                    Y = 0.01f * _srModel.Geometry.PositionsAltPhys[exVertex.positionID].z,
-                    Z = 0.01f * _srModel.Geometry.PositionsAltPhys[exVertex.positionID].y
+                    X = 0.01f * exGeometry.PositionsAltPhys[exVertex.positionID].x,
+                    Y = 0.01f * exGeometry.PositionsAltPhys[exVertex.positionID].z,
+                    Z = 0.01f * exGeometry.PositionsAltPhys[exVertex.positionID].y
                 };
 
                 vertex.Color0 = new SlimDX.Color3()
                 {
                     //Alpha = ((_srModel.VertexData.Colours[vertex.colourID] & 0xFF000000) >> 24) / 255.0f,
-                    Red = ((_srModel.Geometry.Colours[exVertex.colourID] & 0x00FF0000) >> 16) / 255.0f,
-                    Green = ((_srModel.Geometry.Colours[exVertex.colourID] & 0x0000FF00) >> 8) / 255.0f,
-                    Blue = ((_srModel.Geometry.Colours[exVertex.colourID] & 0x000000FF) >> 0) / 255.0f
+                    Red = ((exGeometry.Colours[exVertex.colourID] & 0x00FF0000) >> 16) / 255.0f,
+                    Green = ((exGeometry.Colours[exVertex.colourID] & 0x0000FF00) >> 8) / 255.0f,
+                    Blue = ((exGeometry.Colours[exVertex.colourID] & 0x000000FF) >> 0) / 255.0f
                 };
 
                 vertex.Color1 = new SlimDX.Color3()
                 {
                     //Alpha = ((_srModel.ColoursAlt[vertex.colourID] & 0xFF000000) >> 24) / 255.0f,
-                    Red = ((_srModel.Geometry.ColoursAlt[exVertex.colourID] & 0x00FF0000) >> 16) / 255.0f,
-                    Green = ((_srModel.Geometry.ColoursAlt[exVertex.colourID] & 0x0000FF00) >> 8) / 255.0f,
-                    Blue = ((_srModel.Geometry.ColoursAlt[exVertex.colourID] & 0x000000FF) >> 0) / 255.0f
+                    Red = ((exGeometry.ColoursAlt[exVertex.colourID] & 0x00FF0000) >> 16) / 255.0f,
+                    Green = ((exGeometry.ColoursAlt[exVertex.colourID] & 0x0000FF00) >> 8) / 255.0f,
+                    Blue = ((exGeometry.ColoursAlt[exVertex.colourID] & 0x000000FF) >> 0) / 255.0f
                 };
 
                 vertex.TextureCoordinates = new SlimDX.Vector2()
                 {
-                    X = _srModel.Geometry.UVs[exVertex.UVID].u,
-                    Y = _srModel.Geometry.UVs[exVertex.UVID].v
+                    X = exGeometry.UVs[exVertex.UVID].u,
+                    Y = exGeometry.UVs[exVertex.UVID].v
                 };
             }
 

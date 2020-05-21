@@ -88,6 +88,7 @@ namespace CDC
         public int colourID;            // Index of the vertex colour
         public int UVID;                // Index of the vertex UV
         public int boneID;              // Index of the vertex bone influence
+        public Boolean isExtraGeometry; // Is part of the extra geometry (Should be in the polygon or mesh, but need to refactor)
     }
 
     public struct ShiftVertex
@@ -109,6 +110,7 @@ namespace CDC
     {
         public UInt32 textureID;
         public UInt16 v1, v2, v3;
+        public bool useExtraGeometry;
     }
 
     public class Material

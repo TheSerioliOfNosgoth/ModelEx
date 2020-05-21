@@ -137,51 +137,40 @@ namespace CDC.Objects
                             mesh.PrimitiveType = Assimp.PrimitiveType.Triangle;
 
                             ref Polygon[] polygons = ref group.mesh.polygons;
-                            Vector[] positions = model.Geometry.PositionsPhys;
-                            Vector[] normals = model.Geometry.Normals;
-                            UInt32[] colors = model.Geometry.Colours;
-                            UV[] uvs = model.Geometry.UVs;
                             int i = 0;
                             for (int p = 0; p < polygonCount; p++)
                             {
                                 ref Polygon polygon = ref polygons[polygonList[p]];
 
-                                ref Vertex vert1 = ref polygon.v1;
-                                ref Vertex vert2 = ref polygon.v2;
-                                ref Vertex vert3 = ref polygon.v3;
+                                Vertex[] vertices = { polygon.v1, polygon.v2, polygon.v3 };
 
-                                ref Vector pos1 = ref positions[vert1.positionID];
-                                ref Vector pos2 = ref positions[vert2.positionID];
-                                ref Vector pos3 = ref positions[vert3.positionID];
-                                mesh.Vertices.Add(new Assimp.Vector3D(pos1.x, pos1.y, pos1.z));
-                                mesh.Vertices.Add(new Assimp.Vector3D(pos2.x, pos2.y, pos2.z));
-                                mesh.Vertices.Add(new Assimp.Vector3D(pos3.x, pos3.y, pos3.z));
-
-                                if (Asset == Asset.Object)
+                                for (int v = 0; v < vertices.Length; v++)
                                 {
-                                    ref Vector norm1 = ref normals[vert1.normalID];
-                                    ref Vector norm2 = ref normals[vert2.normalID];
-                                    ref Vector norm3 = ref normals[vert3.normalID];
-                                    mesh.Normals.Add(new Assimp.Vector3D(norm1.x, norm1.y, norm1.z));
-                                    mesh.Normals.Add(new Assimp.Vector3D(norm2.x, norm2.y, norm2.z));
-                                    mesh.Normals.Add(new Assimp.Vector3D(norm3.x, norm3.y, norm3.z));
-                                }
-                                else
-                                {
-                                    Assimp.Color4D col1 = GetAssimpColorOpaque(colors[vert1.colourID]);
-                                    Assimp.Color4D col2 = GetAssimpColorOpaque(colors[vert2.colourID]);
-                                    Assimp.Color4D col3 = GetAssimpColorOpaque(colors[vert3.colourID]);
-                                    mesh.VertexColorChannels[0].Add(col1);
-                                    mesh.VertexColorChannels[0].Add(col2);
-                                    mesh.VertexColorChannels[0].Add(col3);
-                                }
+                                    ref Vertex vert = ref vertices[v];
+                                    Geometry geometry = vert.isExtraGeometry ? model.ExtraGeometry : model.Geometry;
 
-                                Assimp.Vector3D uv1 = GetAssimpUV(uvs[vert1.UVID]);
-                                Assimp.Vector3D uv2 = GetAssimpUV(uvs[vert2.UVID]);
-                                Assimp.Vector3D uv3 = GetAssimpUV(uvs[vert3.UVID]);
-                                mesh.TextureCoordinateChannels[0].Add(uv1);
-                                mesh.TextureCoordinateChannels[0].Add(uv2);
-                                mesh.TextureCoordinateChannels[0].Add(uv3);
+                                    ref Vector[] positions = ref geometry.PositionsPhys;
+                                    ref Vector[] normals = ref geometry.Normals;
+                                    ref UInt32[] colors = ref geometry.Colours;
+                                    ref UV[] uvs = ref geometry.UVs;
+
+                                    ref Vector pos = ref positions[vert.positionID];
+                                    mesh.Vertices.Add(new Assimp.Vector3D(pos.x, pos.y, pos.z));
+
+                                    if (Asset == Asset.Object)
+                                    {
+                                        ref Vector norm = ref normals[vert.normalID];
+                                        mesh.Normals.Add(new Assimp.Vector3D(norm.x, norm.y, norm.z));
+                                    }
+                                    else
+                                    {
+                                        Assimp.Color4D col = GetAssimpColorOpaque(colors[vert.colourID]);
+                                        mesh.VertexColorChannels[0].Add(col);
+                                    }
+
+                                    Assimp.Vector3D uv = GetAssimpUV(uvs[vert.UVID]);
+                                    mesh.TextureCoordinateChannels[0].Add(uv);
+                                }
 
                                 mesh.Faces.Add(new Assimp.Face(new int[] { i++, i++, i++ }));
                             }

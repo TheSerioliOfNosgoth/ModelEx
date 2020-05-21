@@ -25,6 +25,7 @@ namespace CDC.Objects.Models
         // Scaling afterwards will break the characters.
         protected Vector _vertexScale;
         protected Geometry _geometry;
+        protected Geometry _extraGeometry;
         protected Polygon[] _polygons;
         protected Bone[] _bones;
         protected Tree[] _trees;
@@ -36,6 +37,7 @@ namespace CDC.Objects.Models
         public Polygon[] Polygons { get { return _polygons; } }
         public UInt32 IndexCount { get { return _indexCount; } }
         public Geometry Geometry { get { return _geometry; } }
+        public Geometry ExtraGeometry { get { return _extraGeometry; } }
         public Bone[] Bones { get { return _bones; } }
         public UInt32 GroupCount { get { return _groupCount; } }
         public Tree[] Groups { get { return _trees; } }
@@ -58,6 +60,7 @@ namespace CDC.Objects.Models
             _vertexScale.y = 1.0f;
             _vertexScale.z = 1.0f;
             _geometry = new Geometry();
+            _extraGeometry = new Geometry();
             _materialsList = new List<Material>();
         }
 
