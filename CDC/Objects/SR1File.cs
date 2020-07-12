@@ -7,11 +7,11 @@ namespace CDC.Objects
 {
     public class SR1File : SRFile
     {
-        public const UInt32 ALPHA_VERSION_1_X = 0x3c204127;
-        public const UInt32 ALPHA_VERSION_1 = 0x3c204128;
-        public const UInt32 ALPHA_VERSION_2 = 0x3c204129;
-        public const UInt32 ALPHA_VERSION_3 = 0x3c204131;
-        public const UInt32 BETA_VERSION = 0x3c204139;
+        public const UInt32 ALPHA_19990123_VERSION_1_X = 0x3c204127;
+        public const UInt32 ALPHA_19990123_VERSION_1 = 0x3c204128;
+        public const UInt32 ALPHA_19990204_VERSION_2 = 0x3c204129;
+        public const UInt32 ALPHA_19990216_VERSION_3 = 0x3c204131;
+        public const UInt32 BETA_19990512_VERSION = 0x3c204139;
         public const UInt32 RETAIL_VERSION = 0x3C20413B;
 
         public SR1File(String strFileName, CDC.Objects.ExportOptions options)
@@ -51,13 +51,20 @@ namespace CDC.Objects
 
             // Texture type
             xReader.BaseStream.Position = _dataStart + 0x44;
-            if (xReader.ReadUInt64() != 0xFFFFFFFFFFFFFFFF)
+            if (options.ForcedPlatform == CDC.Platform.None)
             {
-                _platform = Platform.PSX;
+                if (xReader.ReadUInt64() != 0xFFFFFFFFFFFFFFFF)
+                {
+                    _platform = Platform.PSX;
+                }
+                else
+                {
+                    _platform = Platform.PC;
+                }
             }
             else
             {
-                _platform = Platform.PC;
+                _platform = options.ForcedPlatform;
             }
 
             // Model data
@@ -71,18 +78,27 @@ namespace CDC.Objects
             Platform ePlatform = _platform;
             for (UInt16 m = 0; m < _modelCount; m++)
             {
+                Console.WriteLine(string.Format("Debug: reading object model {0} / {1}", m, (_modelCount - 1)));
                 _models[m] = SR1ObjectModel.Load(xReader, _dataStart, _modelStart, _name, _platform, m, _version, options);
-                if (_models[m].Platform == Platform.Dreamcast)
+                if ((options.ForcedPlatform == CDC.Platform.None) && (_models[m].Platform == Platform.Dreamcast))
                 {
                     ePlatform = _models[m].Platform;
                 }
             }
-            _platform = ePlatform;
+            if (options.ForcedPlatform == CDC.Platform.None)
+            {
+                _platform = ePlatform;
+            }
         }
 
         protected override void ReadUnitData(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             bool validVersion = false;
+
+            if (options.ForcedPlatform != Platform.None)
+            {
+                _platform = options.ForcedPlatform;
+            }
 
             if (!validVersion)
             {
@@ -92,7 +108,7 @@ namespace CDC.Objects
                 {
                     validVersion = true;
                 }
-                else if (_version == BETA_VERSION)
+                else if (_version == BETA_19990512_VERSION)
                 {
                     validVersion = true;
                 }
@@ -102,7 +118,7 @@ namespace CDC.Objects
             {
                 xReader.BaseStream.Position = _dataStart + 0xE4;
                 _version = xReader.ReadUInt32();
-                if (_version == ALPHA_VERSION_3)
+                if (_version == ALPHA_19990216_VERSION_3)
                 {
                     validVersion = true;
                 }
@@ -112,12 +128,12 @@ namespace CDC.Objects
             {
                 xReader.BaseStream.Position = _dataStart + 0xE0;
                 _version = xReader.ReadUInt32();
-                if (_version == ALPHA_VERSION_2)
+                if (_version == ALPHA_19990204_VERSION_2)
                 {
                     validVersion = true;
                 }
-                if (_version == ALPHA_VERSION_1_X ||
-                    _version == ALPHA_VERSION_1)
+                if (_version == ALPHA_19990123_VERSION_1_X ||
+                    _version == ALPHA_19990123_VERSION_1)
                 {
                     validVersion = true;
                 }
@@ -145,13 +161,13 @@ namespace CDC.Objects
             }
 
             // Instances
-            if (_version == ALPHA_VERSION_1_X ||
-                _version == ALPHA_VERSION_1 ||
-                _version == ALPHA_VERSION_2)
+            if (_version == ALPHA_19990123_VERSION_1_X ||
+                _version == ALPHA_19990123_VERSION_1 ||
+                _version == ALPHA_19990204_VERSION_2)
             {
                 xReader.BaseStream.Position = _dataStart + 0x70;
             }
-            else if (_version == ALPHA_VERSION_3)
+            else if (_version == ALPHA_19990216_VERSION_3)
             {
                 xReader.BaseStream.Position = _dataStart + 0x74;
             }
@@ -165,9 +181,9 @@ namespace CDC.Objects
             _instanceNames = new String[_instanceCount];
             for (int i = 0; i < _instanceCount; i++)
             {
-                if (_version == ALPHA_VERSION_1_X ||
-                    _version == ALPHA_VERSION_1 ||
-                    _version == ALPHA_VERSION_2)
+                if (_version == ALPHA_19990123_VERSION_1_X ||
+                    _version == ALPHA_19990123_VERSION_1 ||
+                    _version == ALPHA_19990204_VERSION_2)
                 {
                     xReader.BaseStream.Position = _instanceStart + 0x50 * i;
                 }
@@ -180,13 +196,13 @@ namespace CDC.Objects
             }
 
             // Instance types
-            if (_version == ALPHA_VERSION_1_X ||
-                _version == ALPHA_VERSION_1 ||
-                _version == ALPHA_VERSION_2)
+            if (_version == ALPHA_19990123_VERSION_1_X ||
+                _version == ALPHA_19990123_VERSION_1 ||
+                _version == ALPHA_19990204_VERSION_2)
             {
                 xReader.BaseStream.Position = _dataStart + 0x84;
             }
-            else if (_version == ALPHA_VERSION_3)
+            else if (_version == ALPHA_19990216_VERSION_3)
             {
                 xReader.BaseStream.Position = _dataStart + 0x88;
             }
@@ -207,13 +223,13 @@ namespace CDC.Objects
             _instanceTypeNames = xInstanceList.ToArray();
 
             // Unit name
-            if (_version == ALPHA_VERSION_1_X ||
-                _version == ALPHA_VERSION_1 ||
-                _version == ALPHA_VERSION_2)
+            if (_version == ALPHA_19990123_VERSION_1_X ||
+                _version == ALPHA_19990123_VERSION_1 ||
+                _version == ALPHA_19990204_VERSION_2)
             {
                 xReader.BaseStream.Position = _dataStart + 0x90;
             }
-            else if (_version == ALPHA_VERSION_3)
+            else if (_version == ALPHA_19990216_VERSION_3)
             {
                 xReader.BaseStream.Position = _dataStart + 0x94;
             }
@@ -226,23 +242,37 @@ namespace CDC.Objects
             _name = Utility.CleanName(strModelName);
 
             // Texture type
-            if (_version == ALPHA_VERSION_1_X ||
-                _version == ALPHA_VERSION_1 ||
-                _version == ALPHA_VERSION_2 ||
-                _version == ALPHA_VERSION_3)
+            bool handledSpecificVersion = false;
+            if (_version == ALPHA_19990123_VERSION_1_X ||
+                _version == ALPHA_19990123_VERSION_1 ||
+                _version == ALPHA_19990204_VERSION_2 ||
+                _version == ALPHA_19990216_VERSION_3)
             {
-                _platform = Platform.PSX;
-            }
-            else
-            {
-                xReader.BaseStream.Position = _dataStart + 0x9C;
-                if (xReader.ReadUInt64() != 0xFFFFFFFFFFFFFFFF)
+                if (options.ForcedPlatform == CDC.Platform.None)
                 {
                     _platform = Platform.PSX;
                 }
+                handledSpecificVersion = true;
+            }
+            
+            if (!handledSpecificVersion)
+            {
+                xReader.BaseStream.Position = _dataStart + 0x9C;
+                UInt64 checkVal = xReader.ReadUInt64();
+                if (options.ForcedPlatform == CDC.Platform.None)
+                {
+                    if (checkVal != 0xFFFFFFFFFFFFFFFF)
+                    {
+                        _platform = Platform.PSX;
+                    }
+                    else
+                    {
+                        _platform = Platform.PC;
+                    }
+                }
                 else
                 {
-                    _platform = Platform.PC;
+                    _platform = options.ForcedPlatform;
                 }
             }
 
@@ -269,6 +299,7 @@ namespace CDC.Objects
             UInt32 m_uModelData = _dataStart + xReader.ReadUInt32();
 
             // Material data
+            Console.WriteLine("Debug: reading area model 0");
             _models[0] = SR1UnitModel.Load(xReader, _dataStart, m_uModelData, _name, _platform, _version, options);
 
             //if (m_axModels[0].Platform == Platform.Dreamcast ||

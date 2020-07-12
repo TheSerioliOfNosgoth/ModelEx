@@ -43,7 +43,14 @@ namespace CDC.Objects
             //}
             //else
             //{
-            _platform = Platform.PC;
+            if (options.ForcedPlatform == CDC.Platform.None)
+            {
+                _platform = Platform.PC;
+            }
+            else
+            {
+                _platform = options.ForcedPlatform;
+            }
             //}
 
             // Model data
@@ -119,7 +126,14 @@ namespace CDC.Objects
             //}
             //else
             //{
+            if (options.ForcedPlatform == CDC.Platform.None)
+            {
                 _platform = Platform.PC;
+            }
+            else
+            {
+                _platform = options.ForcedPlatform;
+            }
             //}
 
             // Model data
@@ -131,6 +145,7 @@ namespace CDC.Objects
             UInt32 m_uModelData = _dataStart + xReader.ReadUInt32();
 
             // Material data
+            Console.WriteLine("Debug: reading area model 0");
             _models[0] = DefianceUnitModel.Load(xReader, _dataStart, m_uModelData, _name, _platform, _version, options);
 
             //if (m_axModels[0].Platform == Platform.Dreamcast ||

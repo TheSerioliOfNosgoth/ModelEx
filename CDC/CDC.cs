@@ -8,7 +8,9 @@ namespace CDC
         None,
         PC,
         PSX,
-        Dreamcast
+        PlayStation2,
+        Dreamcast,
+        Xbox
     }
 
     public enum Game
@@ -88,6 +90,8 @@ namespace CDC
         public int colourID;            // Index of the vertex colour
         public int UVID;                // Index of the vertex UV
         public int boneID;              // Index of the vertex bone influence
+        public ushort RGB15;
+        public ushort code;
         public Boolean isExtraGeometry; // Is part of the extra geometry (Should be in the polygon or mesh, but need to refactor)
     }
 
@@ -102,8 +106,15 @@ namespace CDC
     {
         public Material material;     // The material used
         public Vertex v1, v2, v3;     // Vertices for the polygon
-        public int paletteRow;        // The row of the pallete to use (PS1)
-        public int paletteColumn;     // The column of the pallet to use (PS1)
+        public ushort CLUT;
+        public int paletteRow;          // The row of the pallete to use (PS1)
+        public int paletteColumn;       // The column of the pallet to use (PS1)
+        public int normal;
+        //public byte sr1Flags;           // flags value from Soul Reaver specifically
+        //public UInt16 sr1TextureFT3Attributes;
+        public UInt32 colour;           // Diffuse colour
+        public uint RootBSPTreeNumber;
+        public string BSPNodeID;
     }
 
     public struct TreePolygon
@@ -115,11 +126,195 @@ namespace CDC
 
     public class Material
     {
+        public const float OPACITY_TRANSLUCENT = 0.6f;         // 0.3
+        public const float OPACITY_BARELY_VISIBLE = 0.4f;      // 0.25f
+
         public UInt16 ID;               // The ID of the material
         public Boolean visible;         // Flag specifying if this material is visible
         public Boolean textureUsed;     // Flag specifying if this material has a texture
         public UInt16 textureID;        // ID of the texture file
+        public UInt16 texturePage;      // raw "tpage" value from the DRM
         public UInt32 colour;           // Diffuse colour
+        public float opacity;
+        public float emissivity;
+        public bool UseAlphaMask;
+        public byte polygonFlags;
+        public byte sortPush;
+        public UInt16 textureAttributes;
+        public UInt16 textureAttributesA;
+        public UInt16 clutValue;     // Colour lookup table row/column
+        public uint RootBSPTreeNumber;
+        public UInt16 BSPTreeRootFlags;
+        public UInt16 BSPTreeParentNodeFlags;
+        public UInt16 BSPTreeAllParentNodeFlagsORd;
+        public UInt16 BSPTreeLeafFlags;
+
+        // bitflag masks
+        public byte polygonFlagsUsedMask;
+        public byte sortPushUsedMask;
+        public UInt16 texturePageUsedMask;
+        public UInt32 colourUsedMask;
+        public UInt16 textureAttributesUsedMask;
+        public UInt16 textureAttributesAUsedMask;
+        public UInt16 clutValueUsedMask;
+        public UInt16 BSPTreeRootFlagsUsedMask;
+        public UInt16 BSPTreeParentNodeFlagsUsedMask;
+        public UInt16 BSPTreeAllParentNodeFlagsORdUsedMask;
+        public UInt16 BSPTreeLeafFlagsUsedMask;
+
+        // values for matching whether or not a material is the same or not
+        public byte polygonFlagsEffective
+        {
+            get
+            {
+                return (byte)(polygonFlagsUsedMask & polygonFlags);
+            }
+        }
+
+        public byte sortPushEffective
+        {
+            get
+            {
+                return (byte)(sortPushUsedMask & sortPush);
+            }
+        }
+
+        public UInt16 texturePageEffective
+        {
+            get
+            {
+                return (UInt16)(texturePageUsedMask & texturePage);
+            }
+        }
+
+        public UInt32 colourEffective
+        {
+            get
+            {
+                return (UInt32)(colourUsedMask & colour);
+            }
+        }
+
+        public UInt16 textureAttributesEffective
+        {
+            get
+            {
+                return (UInt16)(textureAttributesUsedMask & textureAttributes);
+            }
+        }
+
+        public UInt16 textureAttributesAEffective
+        {
+            get
+            {
+                return (UInt16)(textureAttributesAUsedMask & textureAttributesA);
+            }
+        }
+
+        public UInt16 clutValueEffective
+        {
+            get
+            {
+                return (UInt16)(clutValueUsedMask & clutValue);
+            }
+        }
+
+        public UInt16 BSPTreeRootFlagsEffective
+        {
+            get
+            {
+                return (UInt16)(BSPTreeRootFlagsUsedMask & BSPTreeRootFlags);
+            }
+        }
+
+        public UInt16 BSPTreeParentNodeFlagsEffective
+        {
+            get
+            {
+                return (UInt16)(BSPTreeParentNodeFlagsUsedMask & BSPTreeParentNodeFlags);
+            }
+        }
+
+        public UInt16 BSPTreeAllParentNodeFlagsORdEffective
+        {
+            get
+            {
+                return (UInt16)(BSPTreeAllParentNodeFlagsORdUsedMask & BSPTreeAllParentNodeFlagsORd);
+            }
+        }
+
+        public UInt16 BSPTreeLeafFlagsEffective
+        {
+            get
+            {
+                return (UInt16)(BSPTreeLeafFlagsUsedMask & BSPTreeLeafFlags);
+            }
+        }
+
+        public Material()
+        {
+            opacity = 1.0f;
+            emissivity = 0.0f;
+            UseAlphaMask = false;
+            polygonFlags = 0;
+            sortPush = 0;
+            textureAttributes = 0;
+            textureAttributesA = 0;
+            texturePage = 0;
+            textureID = 0;
+            RootBSPTreeNumber = 0;
+            BSPTreeRootFlags = 0;
+            BSPTreeParentNodeFlags = 0;
+            BSPTreeAllParentNodeFlagsORd = 0;
+            BSPTreeLeafFlags = 0;
+
+            polygonFlagsUsedMask = 0xFF;
+            sortPushUsedMask = 0xFF;
+            texturePageUsedMask = 0xFFFF;
+            colourUsedMask = 0xFFFFFFFF;
+            textureAttributesUsedMask = 0xFFFF;
+            textureAttributesAUsedMask = 0xFFFF;
+            clutValueUsedMask = 0xFFFF;
+            BSPTreeRootFlagsUsedMask = 0xFFFF;
+            BSPTreeParentNodeFlagsUsedMask = 0xFFFF;
+            BSPTreeAllParentNodeFlagsORdUsedMask = 0xFFFF;
+            BSPTreeLeafFlagsUsedMask = 0xFFFF;
+        }
+
+        public Material Clone()
+        {
+            Material clone = new Material();
+            clone.ID = ID;
+            clone.visible = visible;
+            clone.textureUsed = textureUsed;
+            clone.texturePage = texturePage;
+            clone.textureID = textureID;
+            clone.textureAttributesA = textureAttributesA;
+            clone.colour = colour;
+            clone.opacity = opacity;
+            clone.UseAlphaMask = UseAlphaMask;
+            clone.emissivity = emissivity;
+            clone.polygonFlags = polygonFlags;
+            clone.sortPush = sortPush;
+            clone.textureAttributes = textureAttributes;
+            clone.RootBSPTreeNumber = RootBSPTreeNumber;
+            clone.BSPTreeRootFlags = BSPTreeRootFlags;
+            clone.BSPTreeParentNodeFlags = BSPTreeParentNodeFlags;
+            clone.BSPTreeAllParentNodeFlagsORd = BSPTreeAllParentNodeFlagsORd;
+            clone.BSPTreeLeafFlags = BSPTreeLeafFlags;
+            clone.polygonFlagsUsedMask = polygonFlagsUsedMask;
+            clone.sortPushUsedMask = sortPushUsedMask;
+            clone.texturePageUsedMask = texturePageUsedMask;
+            clone.colourUsedMask = colourUsedMask;
+            clone.textureAttributesUsedMask = textureAttributesUsedMask;
+            clone.textureAttributesAUsedMask = textureAttributesAUsedMask;
+            clone.clutValueUsedMask = clutValueUsedMask;
+            clone.BSPTreeRootFlagsUsedMask = BSPTreeRootFlagsUsedMask;
+            clone.BSPTreeParentNodeFlagsUsedMask = BSPTreeParentNodeFlagsUsedMask;
+            clone.BSPTreeAllParentNodeFlagsORdUsedMask = BSPTreeAllParentNodeFlagsORdUsedMask;
+            clone.BSPTreeLeafFlagsUsedMask = BSPTreeLeafFlagsUsedMask;
+            return clone;
+        }
     }
 
     public class MaterialList
@@ -139,10 +334,46 @@ namespace CDC
         public virtual Material AddToList(Material material)
         {
             // Check if the material is already in the list
-            if ((material.textureID == this.material.textureID) &&
-                (material.colour == this.material.colour) &&
-                (material.textureUsed == this.material.textureUsed))
+            if (//(material.RootBSPTreeNumber == this.material.RootBSPTreeNumber) &&
+                (material.textureID == this.material.textureID) &&
+                (material.texturePageEffective == this.material.texturePageEffective) &&
+                (material.clutValueEffective == this.material.clutValueEffective) &&
+                (material.colourEffective == this.material.colourEffective) &&
+                (material.textureUsed == this.material.textureUsed) &&
+                (material.opacity.Equals(this.material.opacity)) &&
+                (material.emissivity.Equals(this.material.emissivity)) &&
+                (material.polygonFlagsEffective == this.material.polygonFlagsEffective) &&
+                (material.sortPushEffective == this.material.sortPushEffective) &&
+                (material.textureAttributesEffective == this.material.textureAttributesEffective) &&
+                (material.textureAttributesAEffective == this.material.textureAttributesAEffective) &&
+                (material.BSPTreeRootFlagsEffective == this.material.BSPTreeRootFlagsEffective) &&
+                (material.BSPTreeParentNodeFlagsEffective == this.material.BSPTreeParentNodeFlagsEffective) &&
+                (material.BSPTreeLeafFlagsEffective == this.material.BSPTreeLeafFlagsEffective) &&
+                (material.UseAlphaMask == this.material.UseAlphaMask)
+                )
+            {
                 return this.material;
+            }
+            //// Check if the material is already in the list
+            //if ((material.textureID == this.material.textureID) &&
+            //    (material.clutValue == this.material.clutValue) &&
+            //    (material.texturePage == this.material.texturePage) &&
+            //    (material.colour == this.material.colour) &&
+            //    (material.textureUsed == this.material.textureUsed) &&
+            //    (material.opacity.Equals(this.material.opacity)) &&
+            //    (material.emissivity.Equals(this.material.emissivity)) &&
+            //    (material.polygonFlags == this.material.polygonFlags) &&
+            //    (material.sortPush == this.material.sortPush) &&
+            //    (material.textureAttributes == this.material.textureAttributes) &&
+            //    (material.BSPTreeRootFlags == this.material.BSPTreeRootFlags) &&
+            //    (material.BSPTreeParentNodeFlags == this.material.BSPTreeParentNodeFlags) &&
+            //    (material.BSPTreeAllParentNodeFlagsORd == this.material.BSPTreeAllParentNodeFlagsORd) &&
+            //    (material.BSPTreeLeafFlags == this.material.BSPTreeLeafFlags) &&
+            //    (material.UseAlphaMask == this.material.UseAlphaMask)
+            //    )
+            //{
+            //    return this.material;
+            //}
             // Check the rest of the list
             if (next != null)
             {
@@ -240,6 +471,7 @@ namespace CDC
         public UInt32 dataPos;
         public Boolean isLeaf;
         public Mesh mesh;
+        public UInt16 sr1Flags;
     }
 
     public class Mesh
@@ -249,6 +481,15 @@ namespace CDC
         public UInt32 startIndex;
         public Vertex[] vertices;
         public Polygon[] polygons;
+        public UInt16 sr1BSPTreeFlags;
+        public List<UInt16> sr1BSPNodeFlags;
+        public List<UInt16> sr1BSPLeafFlags;
+
+        public Mesh()
+        {
+            sr1BSPNodeFlags = new List<ushort>();
+            sr1BSPLeafFlags = new List<ushort>();
+        }
     }
 
     public class Geometry

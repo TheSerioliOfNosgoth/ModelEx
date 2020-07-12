@@ -286,8 +286,10 @@ namespace CDC.Objects.Models
             _geometry.UVs = new UV[_indexCount];
             ReadPolygons(xReader, options);
 
+            HandleDebugRendering(options);
+
             // Generate the output
-            GenerateOutput(options);
+            GenerateOutput();
         }
 
         protected virtual void ReadVertex(BinaryReader xReader, int v, CDC.Objects.ExportOptions options)
@@ -393,7 +395,7 @@ namespace CDC.Objects.Models
             return;
         }
 
-        protected virtual void GenerateOutput(CDC.Objects.ExportOptions options)
+        protected virtual void GenerateOutput()
         {
             // Make the vertices unique
             _geometry.Vertices = new Vertex[_indexCount];

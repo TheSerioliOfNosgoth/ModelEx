@@ -65,8 +65,19 @@ namespace CDC.Objects.Models
 
             _geometry.Vertices[v].colourID = v;
 
-            _geometry.Colours[v] = xReader.ReadUInt32();
-            _geometry.ColoursAlt[v] = _geometry.Colours[v];
+            //_colours[v] = xReader.ReadUInt32();
+            //_coloursAlt[v] = _colours[v];
+            uint vColour = xReader.ReadUInt32();
+
+            if (options.IgnoreVertexColours)
+            {
+                _geometry.Colours[v] = 0xFFFFFFFF;
+            }
+            else
+            {
+                _geometry.Colours[v] = vColour;
+                _geometry.ColoursAlt[v] = _geometry.Colours[v];
+            }
 
             _geometry.Vertices[v].UVID = v;
 
@@ -81,7 +92,7 @@ namespace CDC.Objects.Models
         {
             base.ReadTypeAVertices(xReader, options);
 
-            ReadSpectralData(xReader);
+            ReadSpectralData(xReader, options);
         }
 
         protected override void ReadTypeBVertex(BinaryReader xReader, int v, CDC.Objects.ExportOptions options)
@@ -95,8 +106,8 @@ namespace CDC.Objects.Models
 
             _extraGeometry.Vertices[v].UVID = v;
 
-            //UInt16 vU = xReader.ReadUInt16();
-            //UInt16 vV = xReader.ReadUInt16();
+            // UInt16 vU = xReader.ReadUInt16();
+            // UInt16 vV = xReader.ReadUInt16();
 
             //_extraGeometry.UVs[v].u = Utility.BizarreFloatToNormalFloat(vU);
             //_extraGeometry.UVs[v].v = Utility.BizarreFloatToNormalFloat(vV);
@@ -106,8 +117,19 @@ namespace CDC.Objects.Models
             _extraGeometry.UVs[v].u = xReader.ReadSingle(); // Offset = 0x0C
             _extraGeometry.UVs[v].v = xReader.ReadSingle(); // Offset = 0x10
 
-            _extraGeometry.Colours[v] = xReader.ReadUInt32(); // Offset = 0x14
-            _extraGeometry.ColoursAlt[v] = _geometry.Colours[v];
+            //_colours[v] = xReader.ReadUInt32();
+            //_coloursAlt[v] = _colours[v];
+            uint vColour = xReader.ReadUInt32(); // Offset = 0x14
+
+            if (options.IgnoreVertexColours)
+            {
+                _extraGeometry.Colours[v] = 0xFFFFFFFF;
+            }
+            else
+            {
+                _extraGeometry.Colours[v] = vColour;
+                _extraGeometry.ColoursAlt[v] = _extraGeometry.Colours[v];
+            }
 
             // Spectral colours in here for this type of vertex.
             xReader.BaseStream.Position += 0x1C;
@@ -117,10 +139,10 @@ namespace CDC.Objects.Models
         {
             base.ReadTypeBVertices(xReader, options);
 
-            //ReadSpectralData(xReader);
+            // ReadSpectralData(xReader, options);
         }
 
-        protected virtual void ReadSpectralData(BinaryReader xReader)
+        protected virtual void ReadSpectralData(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             if (m_uSpectralColourStart != 0)
             {
@@ -131,7 +153,14 @@ namespace CDC.Objects.Models
                     UInt32 uShiftColour = xReader.ReadUInt32();
                     UInt32 uAlpha = _geometry.ColoursAlt[v] & 0xFF000000;
                     UInt32 uRGB = uShiftColour & 0x00FFFFFF;
-                    _geometry.ColoursAlt[v] = uAlpha | uRGB;
+                    if (options.IgnoreVertexColours)
+                    {
+                        _geometry.ColoursAlt[v] = 0xFFFFFFFF;
+                    }
+                    else
+                    {
+                        _geometry.ColoursAlt[v] = uAlpha | uRGB;
+                    }
                 }
             }
 
@@ -312,6 +341,7 @@ namespace CDC.Objects.Models
                     xReader.BaseStream.Position += 0x02;
                 }
 
+                // Did I do this for a reason? Should this be an 'if'?
                 while (counter == 5)
                 {
                     // 0xFFFF wrong?  Try uTestNextStrip

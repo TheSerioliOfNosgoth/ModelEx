@@ -102,6 +102,23 @@ namespace CDC
             return fValue;
         }
 
+        public static float WraparoundUVValues(float fValue, float fMin, float fMax)
+        {
+            float result = fValue;
+            if (fValue < fMin)
+            {
+                while (fValue < fMin)
+                {
+                    result = result + fMax;
+                }
+            }
+            if (fValue > fMax)
+            {
+                result = result % fMax;
+            }
+            return result;
+        }
+
         public static void AdjustUVs(ref UV xUV, float fCentreU, float fCentreV, float fSizeAdjust, float fOffsetAdjust)
         {
             if (fCentreU < xUV.u)
@@ -113,6 +130,7 @@ namespace CDC
                 xUV.u = Math.Min(fCentreU, xUV.u + fSizeAdjust);
             }
             xUV.u = ClampToRange(xUV.u + fOffsetAdjust, 0.0f, 255.0f);
+            //xUV.u = WraparoundUVValues(xUV.u + fOffsetAdjust, 0.0f, 255.0f);
 
             if (fCentreV < xUV.v)
             {
@@ -123,6 +141,7 @@ namespace CDC
                 xUV.v = Math.Min(fCentreV, xUV.v + fSizeAdjust);
             }
             xUV.v = ClampToRange(xUV.v + fOffsetAdjust, 0.0f, 255.0f);
+            //xUV.v = WraparoundUVValues(xUV.v + fOffsetAdjust, 0.0f, 255.0f);
         }
     }
 }

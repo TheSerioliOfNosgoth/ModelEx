@@ -53,8 +53,19 @@ namespace CDC.Objects.Models
 
             _geometry.Vertices[v].colourID = v;
 
-            _geometry.Colours[v] = xReader.ReadUInt32();
-            _geometry.ColoursAlt[v] = _geometry.Colours[v];
+            //_colours[v] = xReader.ReadUInt32();
+            //_coloursAlt[v] = _colours[v];
+            uint vColour = xReader.ReadUInt32();
+
+            if (options.IgnoreVertexColours)
+            {
+                _geometry.Colours[v] = 0xFFFFFFFF;
+            }
+            else
+            {
+                _geometry.Colours[v] = vColour;
+                _geometry.ColoursAlt[v] = _geometry.Colours[v];
+            }
 
             _geometry.Vertices[v].UVID = v;
 
@@ -69,10 +80,10 @@ namespace CDC.Objects.Models
         {
             base.ReadVertices(xReader, options);
 
-            ReadSpectralData(xReader);
+            ReadSpectralData(xReader, options);
         }
 
-        protected virtual void ReadSpectralData(BinaryReader xReader)
+        protected virtual void ReadSpectralData(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             if (m_uSpectralColourStart != 0)
             {
@@ -83,7 +94,14 @@ namespace CDC.Objects.Models
                     UInt32 uShiftColour = xReader.ReadUInt32();
                     UInt32 uAlpha = _geometry.ColoursAlt[v] & 0xFF000000;
                     UInt32 uRGB = uShiftColour & 0x00FFFFFF;
-                    _geometry.ColoursAlt[v] = uAlpha | uRGB;
+                    if (options.IgnoreVertexColours)
+                    {
+                        _geometry.ColoursAlt[v] = 0xFFFFFFFF;
+                    }
+                    else
+                    {
+                        _geometry.ColoursAlt[v] = uAlpha | uRGB;
+                    }
                 }
             }
 
@@ -155,7 +173,6 @@ namespace CDC.Objects.Models
             }
 
             _materialCount = (UInt32)_materialsList.Count;
-
             return;
         }
 

@@ -24,11 +24,11 @@ namespace CDC.Objects.Models
             _materialStart = _dataStart + xReader.ReadUInt32();
             _materialCount = 0;
 
-            if (_version == SR1File.ALPHA_VERSION_1_X ||
-                _version == SR1File.ALPHA_VERSION_1 ||
-                _version == SR1File.ALPHA_VERSION_2 ||
-                _version == SR1File.ALPHA_VERSION_3 ||
-                _version == SR1File.BETA_VERSION)
+            if (_version == SR1File.ALPHA_19990123_VERSION_1_X ||
+                _version == SR1File.ALPHA_19990123_VERSION_1 ||
+                _version == SR1File.ALPHA_19990204_VERSION_2 ||
+                _version == SR1File.ALPHA_19990216_VERSION_3 ||
+                _version == SR1File.BETA_19990512_VERSION)
             {
                 xReader.BaseStream.Position += 0x0C;
             }
@@ -63,7 +63,15 @@ namespace CDC.Objects.Models
             _geometry.Vertices[v].colourID = v;
 
             xReader.BaseStream.Position += 2;
-            _geometry.Colours[v] = xReader.ReadUInt32() | 0xFF000000;
+            uint vColour = xReader.ReadUInt32() | 0xFF000000;
+            if (options.IgnoreVertexColours)
+            {
+                _geometry.Colours[v] = 0xFFFFFFFF;
+            }
+            else
+            {
+                _geometry.Colours[v] = vColour;
+            }
 
             if (_platform != Platform.Dreamcast)
             {
@@ -77,10 +85,10 @@ namespace CDC.Objects.Models
         {
             base.ReadVertices(xReader, options);
 
-            ReadSpectralData(xReader);
+            ReadSpectralData(xReader, options);
         }
 
-        protected virtual void ReadSpectralData(BinaryReader xReader)
+        protected virtual void ReadSpectralData(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             if (m_uSpectralColourStart != 0)
             {
