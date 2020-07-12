@@ -14,6 +14,8 @@ namespace ModelEx
         bool strafingRight = false;
         bool movingForward = false;
         bool movingBack = false;
+        bool movingDown = false;
+        bool movingUp = false;
 
         float pitchVal = 0.0f;
         float moveSpeed = 10.0f;
@@ -70,6 +72,8 @@ namespace ModelEx
         public void Strafe(int val)
         {
             Vector3 axis = Vector3.Cross(look, up);
+            // find the vector which is perpendicular to the current look direction, on the horizontal plane relative to the observer
+            //Vector3 axis = Vector3.TransformCoordinate(look, Matrix.RotationY(0.5f * (float)Math.PI));
             // AMF - Added Deltatime
             //Matrix scale = Matrix.Scaling(0.1f, 0.1f, 0.1f);
             //axis = Vector3.TransformCoordinate(axis, scale);
@@ -103,6 +107,29 @@ namespace ModelEx
             else
             {
                 eye = eye - tempLook;
+            }
+
+            target = eye + look;
+            view = Matrix.LookAtLH(eye, target, up);
+        }
+
+        public void MoveVertically(int val)
+        {
+            Vector3 vertical = up;
+            // find the vector which is perpendicular to the current look direction, on the vertical plane relative to the observer
+            //Vector3 vertical = Vector3.TransformCoordinate(look, Matrix.RotationZ(0.5f * (float)Math.PI));
+            // AMF - Added Deltatime
+            //Matrix scale = Matrix.Scaling(0.1f, 0.1f, 0.1f);
+            //axis = Vector3.TransformCoordinate(axis, scale);
+            vertical *= Timer.Instance.DeltaTime * moveSpeed;
+
+            if (val > 0)
+            {
+                eye = eye + vertical;
+            }
+            else
+            {
+                eye = eye - vertical;
             }
 
             target = eye + look;
@@ -181,6 +208,30 @@ namespace ModelEx
             {
                 strafingRight = true;
             }
+            else if (e.KeyCode == System.Windows.Forms.Keys.Q)
+            {
+                movingDown = true;
+            }
+            else if (e.KeyCode == System.Windows.Forms.Keys.E)
+            {
+                movingUp = true;
+            }
+            else if (e.KeyCode == System.Windows.Forms.Keys.Add)
+            {
+                moveSpeed *= 10.0f;
+                if (moveSpeed > 10000.0f)
+                {
+                    moveSpeed = 10000.0f;
+                }
+            }
+            else if (e.KeyCode == System.Windows.Forms.Keys.Subtract)
+            {
+                moveSpeed /= 10.0f;
+                if (moveSpeed < 1.0f)
+                {
+                    moveSpeed = 1.0f;
+                }
+            }
         }
 
         public override void KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
@@ -200,6 +251,14 @@ namespace ModelEx
             else if (e.KeyCode == System.Windows.Forms.Keys.D)
             {
                 strafingRight = false;
+            }
+            else if (e.KeyCode == System.Windows.Forms.Keys.Q)
+            {
+                movingDown = false;
+            }
+            else if (e.KeyCode == System.Windows.Forms.Keys.E)
+            {
+                movingUp = false;
             }
         }
 
@@ -223,6 +282,16 @@ namespace ModelEx
             if (movingBack)
             {
                 Move(-1);
+            }
+
+            if (movingUp)
+            {
+                MoveVertically(1);
+            }
+
+            if (movingDown)
+            {
+                MoveVertically(-1);
             }
         }
     }

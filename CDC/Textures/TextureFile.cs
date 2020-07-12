@@ -126,9 +126,12 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             }
             if (index > (_TextureCount - 1))
             {
-                throw new IndexOutOfRangeException("Texture " + index.ToString() +
+                string errorMessage = "Texture " + index.ToString() +
                     " was requested but the file '" + _FilePath + "' only contains enough data for " + _TextureCount.ToString() +
-                    " textures.");
+                    " textures.";
+                //throw new IndexOutOfRangeException(errorMessage);
+                Console.WriteLine(errorMessage);
+                return _GetTextureAsBitmap(0);
             }
             return _GetTextureAsBitmap(index);
         }
@@ -138,6 +141,12 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
         public abstract MemoryStream GetDataAsStream(int index);
         // implemented in subclasses to handle specific file types
+
+        public virtual MemoryStream GetTextureWithCLUTAsStream(int textureID, ushort clut)
+        {
+            Console.WriteLine("GetTextureWithCLUTAsStream is not implemented for this class");
+            return null;
+        }
 
         public virtual void ExportFile(int index, string outPath)
         {
