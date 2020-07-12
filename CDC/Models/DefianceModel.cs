@@ -281,7 +281,7 @@ namespace CDC.Objects.Models
         {
         }
 
-        protected virtual void ReadData(BinaryReader xReader)
+        protected virtual void ReadData(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             // Get the normals
             _geometry.Normals = new Vector[s_aiNormals.Length / 3];
@@ -300,7 +300,7 @@ namespace CDC.Objects.Models
             _geometry.Colours = new UInt32[_vertexCount];
             _geometry.ColoursAlt = new UInt32[_vertexCount];
             _geometry.UVs = new UV[_vertexCount];
-            ReadTypeAVertices(xReader);
+            ReadTypeAVertices(xReader, options);
 
             // Get the extra vertices
             _extraGeometry.Vertices = new Vertex[_extraVertexCount];
@@ -310,17 +310,17 @@ namespace CDC.Objects.Models
             _extraGeometry.Colours = new UInt32[_extraVertexCount];
             _extraGeometry.ColoursAlt = new UInt32[_extraVertexCount];
             _extraGeometry.UVs = new UV[_extraVertexCount];
-            ReadTypeBVertices(xReader);
+            ReadTypeBVertices(xReader, options);
 
             // Get the polygons
             _polygons = new Polygon[_polygonCount];
-            ReadPolygons(xReader);
+            ReadPolygons(xReader, options);
 
             // Generate the output
-            GenerateOutput();
+            GenerateOutput(options);
         }
 
-        protected virtual void ReadTypeAVertex(BinaryReader xReader, int v)
+        protected virtual void ReadTypeAVertex(BinaryReader xReader, int v, CDC.Objects.ExportOptions options)
         {
             _geometry.Vertices[v].positionID = v;
 
@@ -331,7 +331,7 @@ namespace CDC.Objects.Models
             xReader.BaseStream.Position += 0x02;
         }
 
-        protected virtual void ReadTypeAVertices(BinaryReader xReader)
+        protected virtual void ReadTypeAVertices(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             if (_vertexStart == 0 || _vertexCount == 0)
             {
@@ -342,13 +342,13 @@ namespace CDC.Objects.Models
 
             for (int v = 0; v < _vertexCount; v++)
             {
-                ReadTypeAVertex(xReader, v);
+                ReadTypeAVertex(xReader, v, options);
             }
 
             return;
         }
 
-        protected virtual void ReadTypeBVertex(BinaryReader xReader, int v)
+        protected virtual void ReadTypeBVertex(BinaryReader xReader, int v, CDC.Objects.ExportOptions options)
         {
             _extraGeometry.Vertices[v].positionID = v;
 
@@ -359,7 +359,7 @@ namespace CDC.Objects.Models
             xReader.BaseStream.Position += 0x02;
         }
 
-        protected virtual void ReadTypeBVertices(BinaryReader xReader)
+        protected virtual void ReadTypeBVertices(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             if (_extraVertexStart == 0 || _extraVertexCount == 0)
             {
@@ -370,15 +370,15 @@ namespace CDC.Objects.Models
 
             for (int v = 0; v < _extraVertexCount; v++)
             {
-                ReadTypeBVertex(xReader, v);
+                ReadTypeBVertex(xReader, v, options);
             }
 
             return;
         }
 
-        protected abstract void ReadPolygons(BinaryReader xReader);
+        protected abstract void ReadPolygons(BinaryReader xReader, CDC.Objects.ExportOptions options);
 
-        protected virtual void GenerateOutput()
+        protected virtual void GenerateOutput(CDC.Objects.ExportOptions options)
         {
             // Make the vertices unique
             _geometry.Vertices = new Vertex[_indexCount];

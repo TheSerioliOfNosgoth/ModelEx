@@ -35,19 +35,19 @@ namespace CDC.Objects.Models
             _trees = new Tree[_groupCount];
         }
 
-        public static SR2ObjectModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 uVersion)
+        public static SR2ObjectModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 uVersion, CDC.Objects.ExportOptions options)
         {
             xReader.BaseStream.Position = uModelData + (0x00000004 * usIndex);
             uModelData = uDataStart + xReader.ReadUInt32();
             xReader.BaseStream.Position = uModelData;
             SR2ObjectModel xModel = new SR2ObjectModel(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion);
-            xModel.ReadData(xReader);
+            xModel.ReadData(xReader, options);
             return xModel;
         }
 
-        protected override void ReadVertex(BinaryReader xReader, int v)
+        protected override void ReadVertex(BinaryReader xReader, int v, CDC.Objects.ExportOptions options)
         {
-            base.ReadVertex(xReader, v);
+            base.ReadVertex(xReader, v, options);
 
             _geometry.PositionsPhys[v] = _geometry.PositionsRaw[v] * _vertexScale;
             _geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
@@ -64,9 +64,9 @@ namespace CDC.Objects.Models
             _geometry.UVs[v].v = Utility.BizarreFloatToNormalFloat(vV);
         }
 
-        protected override void ReadVertices(BinaryReader xReader)
+        protected override void ReadVertices(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
-            base.ReadVertices(xReader);
+            base.ReadVertices(xReader, options);
 
             xReader.BaseStream.Position = m_uColourStart;
             for (UInt16 v = 0; v < _vertexCount; v++)
@@ -163,7 +163,7 @@ namespace CDC.Objects.Models
             return;
         }
 
-        protected override void ReadPolygons(BinaryReader xReader)
+        protected override void ReadPolygons(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             if (_materialStart == 0)
             {

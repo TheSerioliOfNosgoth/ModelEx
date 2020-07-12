@@ -7,12 +7,12 @@ namespace CDC.Objects
 {
     public class DefianceFile : SRFile
     {
-        public DefianceFile(String strFileName)
-            : base(strFileName, Game.Defiance)
+        public DefianceFile(String strFileName, CDC.Objects.ExportOptions options)
+            : base(strFileName, Game.Defiance, options)
         {
         }
 
-        protected override void ReadHeaderData(BinaryReader xReader)
+        protected override void ReadHeaderData(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             _dataStart = 0;
 
@@ -27,7 +27,7 @@ namespace CDC.Objects
             }
         }
 
-        protected override void ReadObjectData(BinaryReader xReader)
+        protected override void ReadObjectData(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             // Object name. No names in Defiance :(
             //xReader.BaseStream.Position = _dataStart + 0x00000024;
@@ -57,11 +57,11 @@ namespace CDC.Objects
             _models = new DefianceModel[_modelCount];
             for (UInt16 m = 0; m < _modelCount; m++)
             {
-                _models[m] = DefianceObjectModel.Load(xReader, _dataStart, _modelStart, _name, _platform, m, _version);
+                _models[m] = DefianceObjectModel.Load(xReader, _dataStart, _modelStart, _name, _platform, m, _version, options);
             }
         }
 
-        protected override void ReadUnitData(BinaryReader xReader)
+        protected override void ReadUnitData(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             // Adjacent units are seperate from portals.
             // There can be multiple portals to the same unit.
@@ -131,7 +131,7 @@ namespace CDC.Objects
             UInt32 m_uModelData = _dataStart + xReader.ReadUInt32();
 
             // Material data
-            _models[0] = DefianceUnitModel.Load(xReader, _dataStart, m_uModelData, _name, _platform, _version);
+            _models[0] = DefianceUnitModel.Load(xReader, _dataStart, m_uModelData, _name, _platform, _version, options);
 
             //if (m_axModels[0].Platform == Platform.Dreamcast ||
             //    m_axModels[1].Platform == Platform.Dreamcast)

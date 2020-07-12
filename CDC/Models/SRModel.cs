@@ -64,7 +64,7 @@ namespace CDC.Objects.Models
             _materialsList = new List<Material>();
         }
 
-        public String GetTextureName(int materialIndex)
+        public String GetTextureName(int materialIndex, CDC.Objects.ExportOptions options)
         {
             String textureName = "";
             if (materialIndex >= 0 && materialIndex < MaterialCount)

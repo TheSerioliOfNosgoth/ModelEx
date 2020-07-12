@@ -36,19 +36,19 @@ namespace CDC.Objects.Models
             _trees = new Tree[_groupCount];
         }
 
-        public static DefianceObjectModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 uVersion)
+        public static DefianceObjectModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 uVersion, CDC.Objects.ExportOptions options)
         {
             xReader.BaseStream.Position = uModelData + (0x00000004 * usIndex);
             uModelData = uDataStart + xReader.ReadUInt32();
             xReader.BaseStream.Position = uModelData;
             DefianceObjectModel xModel = new DefianceObjectModel(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion);
-            xModel.ReadData(xReader);
+            xModel.ReadData(xReader, options);
             return xModel;
         }
 
-        protected override void ReadTypeAVertex(BinaryReader xReader, int v)
+        protected override void ReadTypeAVertex(BinaryReader xReader, int v, CDC.Objects.ExportOptions options)
         {
-            base.ReadTypeAVertex(xReader, v);
+            base.ReadTypeAVertex(xReader, v, options);
 
             _geometry.PositionsPhys[v] = _geometry.PositionsRaw[v] * _vertexScale;
             _geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
@@ -65,9 +65,9 @@ namespace CDC.Objects.Models
             _geometry.UVs[v].v = Utility.BizarreFloatToNormalFloat(vV);
         }
 
-        protected override void ReadTypeAVertices(BinaryReader xReader)
+        protected override void ReadTypeAVertices(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
-            base.ReadTypeAVertices(xReader);
+            base.ReadTypeAVertices(xReader, options);
 
             xReader.BaseStream.Position = m_uColourStart;
             for (UInt16 v = 0; v < _vertexCount; v++)
@@ -164,7 +164,7 @@ namespace CDC.Objects.Models
             return;
         }
 
-        protected override void ReadPolygons(BinaryReader xReader)
+        protected override void ReadPolygons(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             if (_materialStart == 0)
             {

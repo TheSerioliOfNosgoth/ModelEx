@@ -49,16 +49,16 @@ namespace CDC.Objects.Models
             _trees = new Tree[_groupCount];
         }
 
-        public static DefianceUnitModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
+        public static DefianceUnitModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion, CDC.Objects.ExportOptions options)
         {
             DefianceUnitModel xModel = new DefianceUnitModel(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion);
-            xModel.ReadData(xReader);
+            xModel.ReadData(xReader, options);
             return xModel;
         }
 
-        protected override void ReadTypeAVertex(BinaryReader xReader, int v)
+        protected override void ReadTypeAVertex(BinaryReader xReader, int v, CDC.Objects.ExportOptions options)
         {
-            base.ReadTypeAVertex(xReader, v);
+            base.ReadTypeAVertex(xReader, v, options);
 
             _geometry.PositionsPhys[v] = _geometry.PositionsRaw[v];
             _geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
@@ -77,16 +77,16 @@ namespace CDC.Objects.Models
             _geometry.UVs[v].v = Utility.BizarreFloatToNormalFloat(vV);
         }
 
-        protected override void ReadTypeAVertices(BinaryReader xReader)
+        protected override void ReadTypeAVertices(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
-            base.ReadTypeAVertices(xReader);
+            base.ReadTypeAVertices(xReader, options);
 
             ReadSpectralData(xReader);
         }
 
-        protected override void ReadTypeBVertex(BinaryReader xReader, int v)
+        protected override void ReadTypeBVertex(BinaryReader xReader, int v, CDC.Objects.ExportOptions options)
         {
-            base.ReadTypeBVertex(xReader, v);
+            base.ReadTypeBVertex(xReader, v, options);
 
             _extraGeometry.PositionsPhys[v] = _extraGeometry.PositionsRaw[v];
             _extraGeometry.PositionsAltPhys[v] = _extraGeometry.PositionsPhys[v];
@@ -113,9 +113,9 @@ namespace CDC.Objects.Models
             xReader.BaseStream.Position += 0x1C;
         }
 
-        protected override void ReadTypeBVertices(BinaryReader xReader)
+        protected override void ReadTypeBVertices(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
-            base.ReadTypeBVertices(xReader);
+            base.ReadTypeBVertices(xReader, options);
 
             //ReadSpectralData(xReader);
         }
@@ -164,7 +164,7 @@ namespace CDC.Objects.Models
             }
         }
 
-        protected override void ReadPolygons(BinaryReader xReader)
+        protected override void ReadPolygons(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             Material xMaterial = new Material();
             xMaterial.textureID = 0;

@@ -11,10 +11,12 @@ namespace ModelEx
     {
         ProgressWindow progressWindow;
         int filterIndex = 1;
+        CDC.Objects.ExportOptions ImportExportOptions;
 
         public MainWindow()
         {
             InitializeComponent();
+            ImportExportOptions = new CDC.Objects.ExportOptions();
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -115,17 +117,17 @@ namespace ModelEx
                     if (OpenDlg.FilterIndex == 1)
                     {
                         SceneManager.Instance.AddScene(new SceneCDC(CDC.Game.SR1));
-                        SceneManager.Instance.CurrentScene.ImportFromFile(OpenDlg.FileName);
+                        SceneManager.Instance.CurrentScene.ImportFromFile(OpenDlg.FileName, ImportExportOptions);
                     }
                     else if (OpenDlg.FilterIndex == 2)
                     {
                         SceneManager.Instance.AddScene(new SceneCDC(CDC.Game.SR2));
-                        SceneManager.Instance.CurrentScene.ImportFromFile(OpenDlg.FileName);
+                        SceneManager.Instance.CurrentScene.ImportFromFile(OpenDlg.FileName, ImportExportOptions);
                     }
                     else
                     {
                         SceneManager.Instance.AddScene(new SceneCDC(CDC.Game.Defiance));
-                        SceneManager.Instance.CurrentScene.ImportFromFile(OpenDlg.FileName);
+                        SceneManager.Instance.CurrentScene.ImportFromFile(OpenDlg.FileName, ImportExportOptions);
                     }
 
                     CameraManager.Instance.Reset();
@@ -185,7 +187,7 @@ namespace ModelEx
                 if (currentScene != null)
                 {
                     //string saveFileName = "C://Users//Andrew//Desktop//TestModel.dae";
-                    currentScene.ExportToFile(SaveDlg.FileName);
+                    currentScene.ExportToFile(SaveDlg.FileName, ImportExportOptions);
 
                 }
             }

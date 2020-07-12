@@ -47,8 +47,8 @@ namespace ModelEx
             }
         }
 
-        public abstract void ImportFromFile(string fileName);
+        public abstract void ImportFromFile(string fileName, CDC.Objects.ExportOptions options);
 
-        public abstract void ExportToFile(string fileName);
+        public abstract void ExportToFile(string fileName, CDC.Objects.ExportOptions options);
     }
 }

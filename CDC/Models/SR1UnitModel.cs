@@ -46,16 +46,16 @@ namespace CDC.Objects.Models
             _trees = new Tree[_groupCount];
         }
 
-        public static SR1UnitModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
+        public static SR1UnitModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion, CDC.Objects.ExportOptions options)
         {
             SR1UnitModel xModel = new SR1UnitModel(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion);
-            xModel.ReadData(xReader);
+            xModel.ReadData(xReader, options);
             return xModel;
         }
 
-        protected override void ReadVertex(BinaryReader xReader, int v)
+        protected override void ReadVertex(BinaryReader xReader, int v, CDC.Objects.ExportOptions options)
         {
-            base.ReadVertex(xReader, v);
+            base.ReadVertex(xReader, v, options);
 
             _geometry.PositionsPhys[v] = _geometry.PositionsRaw[v];
             _geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
@@ -73,9 +73,9 @@ namespace CDC.Objects.Models
             _geometry.ColoursAlt[v] = _geometry.Colours[v];
         }
 
-        protected override void ReadVertices(BinaryReader xReader)
+        protected override void ReadVertices(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
-            base.ReadVertices(xReader);
+            base.ReadVertices(xReader, options);
 
             ReadSpectralData(xReader);
         }
@@ -124,7 +124,7 @@ namespace CDC.Objects.Models
             }
         }
 
-        protected virtual void ReadPolygon(BinaryReader xReader, int p)
+        protected virtual void ReadPolygon(BinaryReader xReader, int p, CDC.Objects.ExportOptions options)
         {
             UInt32 uPolygonPosition = (UInt32)xReader.BaseStream.Position;
 
@@ -150,7 +150,7 @@ namespace CDC.Objects.Models
                 }
 
                 xReader.BaseStream.Position = uMaterialPosition;
-                ReadMaterial(xReader, p);
+                ReadMaterial(xReader, p, options);
             }
             else
             {
@@ -163,7 +163,7 @@ namespace CDC.Objects.Models
             xReader.BaseStream.Position = uPolygonPosition + 0x0C;
         }
 
-        protected override void ReadPolygons(BinaryReader xReader)
+        protected override void ReadPolygons(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             if (_polygonStart == 0 || _polygonCount == 0)
             {
@@ -174,7 +174,7 @@ namespace CDC.Objects.Models
 
             for (UInt16 p = 0; p < _polygonCount; p++)
             {
-                ReadPolygon(xReader, p);
+                ReadPolygon(xReader, p, options);
             }
 
             List<Mesh> xMeshes = new List<Mesh>();

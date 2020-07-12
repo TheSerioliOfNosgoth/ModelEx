@@ -28,19 +28,19 @@ namespace CDC.Objects.Models
             _trees = new Tree[_groupCount];
         }
 
-        public static SR1ObjectModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 uVersion)
+        public static SR1ObjectModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 uVersion, CDC.Objects.ExportOptions options)
         {
             xReader.BaseStream.Position = uModelData + (0x00000004 * usIndex);
             uModelData = uDataStart + xReader.ReadUInt32();
             xReader.BaseStream.Position = uModelData;
             SR1ObjectModel xModel = new SR1ObjectModel(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion);
-            xModel.ReadData(xReader);
+            xModel.ReadData(xReader, options);
             return xModel;
         }
 
-        protected override void ReadVertex(BinaryReader xReader, int v)
+        protected override void ReadVertex(BinaryReader xReader, int v, CDC.Objects.ExportOptions options)
         {
-            base.ReadVertex(xReader, v);
+            base.ReadVertex(xReader, v, options);
 
             _geometry.PositionsPhys[v] = _geometry.PositionsRaw[v];
             _geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
@@ -48,9 +48,9 @@ namespace CDC.Objects.Models
             _geometry.Vertices[v].normalID = xReader.ReadUInt16();
         }
 
-        protected override void ReadVertices(BinaryReader xReader)
+        protected override void ReadVertices(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
-            base.ReadVertices(xReader);
+            base.ReadVertices(xReader, options);
 
             ReadArmature(xReader);
             ApplyArmature();
@@ -108,7 +108,7 @@ namespace CDC.Objects.Models
             return;
         }
 
-        protected virtual void ReadPolygon(BinaryReader xReader, int p)
+        protected virtual void ReadPolygon(BinaryReader xReader, int p, CDC.Objects.ExportOptions options)
         {
             UInt32 uPolygonPosition = (UInt32)xReader.BaseStream.Position;
 
@@ -131,7 +131,7 @@ namespace CDC.Objects.Models
                 }
 
                 xReader.BaseStream.Position = uMaterialPosition;
-                ReadMaterial(xReader, p);
+                ReadMaterial(xReader, p, options);
 
                 if (_platform == Platform.Dreamcast)
                 {
@@ -156,7 +156,7 @@ namespace CDC.Objects.Models
             xReader.BaseStream.Position = uPolygonPosition + 0x0C;
         }
 
-        protected override void ReadPolygons(BinaryReader xReader)
+        protected override void ReadPolygons(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             if (_polygonStart == 0 || _polygonCount == 0)
             {
@@ -169,7 +169,7 @@ namespace CDC.Objects.Models
 
             for (UInt16 p = 0; p < _polygonCount; p++)
             {
-                ReadPolygon(xReader, p);
+                ReadPolygon(xReader, p, options);
 
                 if (xMaterialsList == null)
                 {

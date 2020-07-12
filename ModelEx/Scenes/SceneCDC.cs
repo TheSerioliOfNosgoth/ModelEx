@@ -360,7 +360,7 @@ namespace ModelEx
             return textureName;
         }
 
-        public override void ImportFromFile(string fileName)
+        public override void ImportFromFile(string fileName, CDC.Objects.ExportOptions options)
         {
             progressLevel = 0;
             progressLevels = 0;
@@ -373,7 +373,7 @@ namespace ModelEx
             {
                 try
                 {
-                    srFile = new SR1File(fileName);
+                    srFile = new SR1File(fileName, options);
                 }
                 catch
                 {
@@ -384,7 +384,7 @@ namespace ModelEx
             {
                 try
                 {
-                    srFile = new SR2File(fileName);
+                    srFile = new SR2File(fileName, options);
                 }
                 catch
                 {
@@ -395,7 +395,7 @@ namespace ModelEx
             {
                 try
                 {
-                    srFile = new DefianceFile(fileName);
+                    srFile = new DefianceFile(fileName, options);
                 }
                 catch
                 {
@@ -593,11 +593,11 @@ namespace ModelEx
             Thread.Sleep(1000);
         }
 
-        public override void ExportToFile(string fileName)
+        public override void ExportToFile(string fileName, CDC.Objects.ExportOptions options)
         {
             if (_objectFiles[0] != null)
             {
-                _objectFiles[0].ExportToFile(fileName);
+                _objectFiles[0].ExportToFile(fileName, options);
             }
         }
     }

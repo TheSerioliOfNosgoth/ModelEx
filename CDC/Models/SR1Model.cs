@@ -261,7 +261,7 @@ namespace CDC.Objects.Models
         {
         }
 
-        protected virtual void ReadData(BinaryReader xReader)
+        protected virtual void ReadData(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             // Get the normals
             _geometry.Normals = new Vector[s_aiNormals.Length / 3];
@@ -279,18 +279,18 @@ namespace CDC.Objects.Models
             _geometry.PositionsAltPhys = new Vector[_vertexCount];
             _geometry.Colours = new UInt32[_vertexCount];
             _geometry.ColoursAlt = new UInt32[_vertexCount];
-            ReadVertices(xReader);
+            ReadVertices(xReader, options);
 
             // Get the polygons
             _polygons = new Polygon[_polygonCount];
             _geometry.UVs = new UV[_indexCount];
-            ReadPolygons(xReader);
+            ReadPolygons(xReader, options);
 
             // Generate the output
-            GenerateOutput();
+            GenerateOutput(options);
         }
 
-        protected virtual void ReadVertex(BinaryReader xReader, int v)
+        protected virtual void ReadVertex(BinaryReader xReader, int v, CDC.Objects.ExportOptions options)
         {
             _geometry.Vertices[v].positionID = v;
 
@@ -300,7 +300,7 @@ namespace CDC.Objects.Models
             _geometry.PositionsRaw[v].z = (float)xReader.ReadInt16();
         }
 
-        protected virtual void ReadVertices(BinaryReader xReader)
+        protected virtual void ReadVertices(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             if (_vertexStart == 0 || _vertexCount == 0)
             {
@@ -311,15 +311,15 @@ namespace CDC.Objects.Models
 
             for (int v = 0; v < _vertexCount; v++)
             {
-                ReadVertex(xReader, v);
+                ReadVertex(xReader, v, options);
             }
 
             return;
         }
 
-        protected abstract void ReadPolygons(BinaryReader xReader);
+        protected abstract void ReadPolygons(BinaryReader xReader, CDC.Objects.ExportOptions options);
 
-        protected virtual void ReadMaterial(BinaryReader xReader, int p)
+        protected virtual void ReadMaterial(BinaryReader xReader, int p, CDC.Objects.ExportOptions options)
         {
             int v1 = (p * 3) + 0;
             int v2 = (p * 3) + 1;
@@ -393,7 +393,7 @@ namespace CDC.Objects.Models
             return;
         }
 
-        protected virtual void GenerateOutput()
+        protected virtual void GenerateOutput(CDC.Objects.ExportOptions options)
         {
             // Make the vertices unique
             _geometry.Vertices = new Vertex[_indexCount];

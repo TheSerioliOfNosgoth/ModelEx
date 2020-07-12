@@ -14,12 +14,12 @@ namespace CDC.Objects
         public const UInt32 BETA_VERSION = 0x3c204139;
         public const UInt32 RETAIL_VERSION = 0x3C20413B;
 
-        public SR1File(String strFileName)
-            : base(strFileName, Game.SR1)
+        public SR1File(String strFileName, CDC.Objects.ExportOptions options)
+            : base(strFileName, Game.SR1, options)
         {
         }
 
-        protected override void ReadHeaderData(BinaryReader xReader)
+        protected override void ReadHeaderData(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             _dataStart = 0;
 
@@ -41,7 +41,7 @@ namespace CDC.Objects
             //}
         }
 
-        protected override void ReadObjectData(BinaryReader xReader)
+        protected override void ReadObjectData(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             // Object name
             xReader.BaseStream.Position = _dataStart + 0x00000024;
@@ -71,7 +71,7 @@ namespace CDC.Objects
             Platform ePlatform = _platform;
             for (UInt16 m = 0; m < _modelCount; m++)
             {
-                _models[m] = SR1ObjectModel.Load(xReader, _dataStart, _modelStart, _name, _platform, m, _version);
+                _models[m] = SR1ObjectModel.Load(xReader, _dataStart, _modelStart, _name, _platform, m, _version, options);
                 if (_models[m].Platform == Platform.Dreamcast)
                 {
                     ePlatform = _models[m].Platform;
@@ -80,7 +80,7 @@ namespace CDC.Objects
             _platform = ePlatform;
         }
 
-        protected override void ReadUnitData(BinaryReader xReader)
+        protected override void ReadUnitData(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             bool validVersion = false;
 
@@ -269,7 +269,7 @@ namespace CDC.Objects
             UInt32 m_uModelData = _dataStart + xReader.ReadUInt32();
 
             // Material data
-            _models[0] = SR1UnitModel.Load(xReader, _dataStart, m_uModelData, _name, _platform, _version);
+            _models[0] = SR1UnitModel.Load(xReader, _dataStart, m_uModelData, _name, _platform, _version, options);
 
             //if (m_axModels[0].Platform == Platform.Dreamcast ||
             //    m_axModels[1].Platform == Platform.Dreamcast)

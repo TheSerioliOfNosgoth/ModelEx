@@ -37,16 +37,16 @@ namespace CDC.Objects.Models
             _trees = new Tree[_groupCount];
         }
 
-        public static SR2UnitModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
+        public static SR2UnitModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion, CDC.Objects.ExportOptions options)
         {
             SR2UnitModel xModel = new SR2UnitModel(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion);
-            xModel.ReadData(xReader);
+            xModel.ReadData(xReader, options);
             return xModel;
         }
 
-        protected override void ReadVertex(BinaryReader xReader, int v)
+        protected override void ReadVertex(BinaryReader xReader, int v, CDC.Objects.ExportOptions options)
         {
-            base.ReadVertex(xReader, v);
+            base.ReadVertex(xReader, v, options);
 
             _geometry.PositionsPhys[v] = _geometry.PositionsRaw[v];
             _geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
@@ -65,9 +65,9 @@ namespace CDC.Objects.Models
             _geometry.UVs[v].v = Utility.BizarreFloatToNormalFloat(vV);
         }
 
-        protected override void ReadVertices(BinaryReader xReader)
+        protected override void ReadVertices(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
-            base.ReadVertices(xReader);
+            base.ReadVertices(xReader, options);
 
             ReadSpectralData(xReader);
         }
@@ -116,7 +116,7 @@ namespace CDC.Objects.Models
             }
         }
 
-        protected override void ReadPolygons(BinaryReader xReader)
+        protected override void ReadPolygons(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             Material xMaterial = new Material();
             xMaterial.textureID = 0;
