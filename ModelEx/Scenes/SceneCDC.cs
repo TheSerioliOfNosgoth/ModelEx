@@ -20,6 +20,8 @@ namespace ModelEx
 {
     public class SceneCDC : Scene
     {
+        public const string TextureExtension = ".png";
+
         class SRModelParser :
             IModelParser
         {
@@ -454,7 +456,7 @@ namespace ModelEx
                     {
                         String textureName =
                             objectName.TrimEnd(new char[] { '_' }).ToLower() + "-" +
-                            textureFile.TextureDefinitions[t].Flags1.ToString("0000") + ".dds";
+                            textureFile.TextureDefinitions[t].Flags1.ToString("0000") + TextureExtension;
 
                         System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
                         //textureFile.ExportFile(t, "C:\\Users\\A\\Desktop\\" + textureName);
@@ -487,7 +489,7 @@ namespace ModelEx
                                     if (stream != null)
                                     {
                                         String textureName =
-                                            "Texture-" + material.textureID.ToString("00000") + ".dds";
+                                            "Texture-" + material.textureID.ToString("00000") + TextureExtension;
                                         TextureManager.Instance.AddTexture(stream, textureName);
                                     }
                                 }
@@ -516,7 +518,7 @@ namespace ModelEx
                                     if (stream != null)
                                     {
                                         String textureName =
-                                            "Texture-" + material.textureID.ToString("00000") + ".dds";
+                                            "Texture-" + material.textureID.ToString("00000") + TextureExtension;
                                         TextureManager.Instance.AddTexture(stream, textureName);
                                     }
                                 }
@@ -571,7 +573,7 @@ namespace ModelEx
                         for (int t = 0; t < textureFile.TextureCount; t++)
                         {
                             String textureName =
-                                objectName.TrimEnd(new char[] { '_' }).ToLower() + "-" + t.ToString("0000") + ".dds";
+                                objectName.TrimEnd(new char[] { '_' }).ToLower() + "-" + t.ToString("0000") + TextureExtension;
 
                             System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
                             if (stream != null)

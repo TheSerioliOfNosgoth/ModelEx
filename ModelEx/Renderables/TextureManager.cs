@@ -28,6 +28,11 @@ namespace ModelEx
         {
         }
 
+        public void ResetInstance()
+        {
+            instance = new TextureManager();
+        }
+
         Dictionary<string, Texture2D> FileTextureDictionary = new Dictionary<string, Texture2D>();
         Dictionary<string, ShaderResourceView> FileShaderResourceViewDictionary = new Dictionary<string, ShaderResourceView>();
 

@@ -37,7 +37,7 @@ namespace ModelEx
             if (material.TextureFileName != null && material.TextureFileName != "")
             {
                 effect.UseTexture.Set(true);
-                effect.TextureVariable.SetResource(TextureManager.Instance.GetShaderResourceView(material.TextureFileName + ".dds"));
+                effect.TextureVariable.SetResource(TextureManager.Instance.GetShaderResourceView(material.TextureFileName + SceneCDC.TextureExtension));
             }
             else
             {

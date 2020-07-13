@@ -163,6 +163,8 @@ namespace CDC.Objects
 
     public abstract class SRFile
     {
+        public const string TextureExtension = ".png";
+
         protected String _name;
         protected UInt32 _version;
         protected UInt32 _dataStart;
@@ -435,7 +437,7 @@ namespace CDC.Objects
             {
                 Assimp.TextureSlot textureDiffuse = new Assimp.TextureSlot();
                 textureDiffuse.BlendFactor = 1.0f;
-                textureDiffuse.FilePath = model.GetTextureName(materialIndex, options) + ".dds";
+                textureDiffuse.FilePath = model.GetTextureName(materialIndex, options) + TextureExtension;
                 textureDiffuse.TextureIndex = 0;
                 textureDiffuse.TextureType = Assimp.TextureType.Diffuse;
                 textureDiffuse.WrapModeU = Assimp.TextureWrapMode.Clamp;
@@ -445,7 +447,7 @@ namespace CDC.Objects
                 //material.TextureDiffuse = textureDiffuse;
                 // Works, but looks like there might be a better way.
                 //string texturePropName = Assimp.Unmanaged.AiMatKeys.TEXTURE_BASE;
-                //Assimp.MaterialProperty textureProp = new Assimp.MaterialProperty(texturePropName, model.GetTextureName(materialIndex) + ".dds", Assimp.TextureType.Diffuse, 0);
+                //Assimp.MaterialProperty textureProp = new Assimp.MaterialProperty(texturePropName, model.GetTextureName(materialIndex) + SceneCDC.TextureExtension, Assimp.TextureType.Diffuse, 0);
                 //material.AddProperty(textureProp);
                 material.AddMaterialTexture(ref textureDiffuse);
 
