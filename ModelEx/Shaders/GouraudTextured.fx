@@ -41,7 +41,7 @@ BlendState AlphaBlend
 	SrcBlend = SRC_ALPHA;
 	DestBlend = INV_SRC_ALPHA;
 	BlendOp = ADD;
-	//RenderTargetWriteMask[0] = 0x0F;
+	RenderTargetWriteMask[0] = 0x0F;
 };
 
 RasterizerState DefaultRasterizerState
@@ -49,6 +49,8 @@ RasterizerState DefaultRasterizerState
 	FillMode = Solid;
 	CullMode = None;
 	FrontCounterClockwise = false;
+	//CullMode = CCW;
+	//FrontCounterClockwise = false;
 };
 
 RasterizerState SR1RasterizerState
@@ -56,13 +58,17 @@ RasterizerState SR1RasterizerState
 	FillMode = Solid;
 	CullMode = None;
 	FrontCounterClockwise = false;
+	//CullMode = CCW;
+	//FrontCounterClockwise = false;
 };
 
 RasterizerState SR2RasterizerState
 {
 	FillMode = Solid;
-	CullMode = Front;
+	CullMode = None;
 	FrontCounterClockwise = false;
+	//CullMode = CCW;
+	//FrontCounterClockwise = false;
 };
 
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
@@ -101,8 +107,8 @@ technique10 DefaultRender
 		SetVertexShader(CompileShader(vs_4_0, VertexShaderFunction()));
 		SetGeometryShader(NULL);
 		SetPixelShader(CompileShader(ps_4_0, PixelShaderFunction()));
-		SetRasterizerState(DefaultRasterizerState);
-		//SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+		//SetRasterizerState(DefaultRasterizerState);
+		SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 }
 
@@ -113,8 +119,8 @@ technique10 SR1Render
 		SetVertexShader(CompileShader(vs_4_0, VertexShaderFunction()));
 		SetGeometryShader(NULL);
 		SetPixelShader(CompileShader(ps_4_0, PixelShaderFunction()));
-		SetRasterizerState(SR1RasterizerState);
-		//SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+		//SetRasterizerState(SR1RasterizerState);
+		SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 }
 
@@ -126,6 +132,6 @@ technique10 SR2Render
 		SetGeometryShader(NULL);
 		SetPixelShader(CompileShader(ps_4_0, PixelShaderFunction()));
 		SetRasterizerState(SR2RasterizerState);
-		//SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+		SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 }

@@ -45,28 +45,37 @@ BlendState AlphaBlend
 	SrcBlend = SRC_ALPHA;
 	DestBlend = INV_SRC_ALPHA;
 	BlendOp = ADD;
-	//RenderTargetWriteMask[0] = 0x0F;
+	RenderTargetWriteMask[0] = 0x0F;
 };
 
 RasterizerState DefaultRasterizerState
 {
 	FillMode = Solid;
-	CullMode = None;
-	FrontCounterClockwise = false;
+	//CullMode = None;
+	CullMode = Back;
+	FrontCounterClockwise = true;
+	//CullMode = CCW;
+	//FrontCounterClockwise = false;
 };
 
 RasterizerState SR1RasterizerState
 {
 	FillMode = Solid;
-	CullMode = None;
-	FrontCounterClockwise = false;
+	//CullMode = None;
+	CullMode = Back;
+	FrontCounterClockwise = true;
+	//CullMode = CCW;
+	//FrontCounterClockwise = false;
 };
 
 RasterizerState SR2RasterizerState
 {
 	FillMode = Solid;
-	CullMode = Front;
-	FrontCounterClockwise = false;
+	//CullMode = None;
+	CullMode = Back;
+	FrontCounterClockwise = true;
+	//CullMode = CCW;
+	//FrontCounterClockwise = false;
 };
 
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
@@ -81,11 +90,11 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 		input.Color0.r + ((input.Color0.r - input.Color1.r) * RealmBlend),
 		input.Color0.a + ((input.Color0.a - input.Color1.a) * RealmBlend));
 		);*/
-		/*float3 color = float3(
-			input.Color0.b + ((input.Color0.b - input.Color1.b) * RealmBlend),
-			input.Color0.g + ((input.Color0.g - input.Color1.g) * RealmBlend),
-			input.Color0.r + ((input.Color0.r - input.Color1.r) * RealmBlend));*/
-
+	/*float3 color = float3(
+		input.Color0.b + ((input.Color0.b - input.Color1.b) * RealmBlend),
+		input.Color0.g + ((input.Color0.g - input.Color1.g) * RealmBlend),
+		input.Color0.r + ((input.Color0.r - input.Color1.r) * RealmBlend));*/
+	
 	float4 color;
 	color.r = input.Color0.r - ((input.Color0.r - input.Color1.r) * RealmBlend);
 	color.g = input.Color0.g - ((input.Color0.g - input.Color1.g) * RealmBlend);
@@ -109,10 +118,10 @@ float4 PixelShaderFunction(VertexShaderOutput input) : SV_TARGET
 {
 	// Start with diffuse color
 	float4 color = UseTexture == false ? DiffuseColor : Texture.Sample(stateLinear, input.TexCoord);
-	if (color.a < 0.5)
-	{
-		clip(-1);
-	}
+	//if (color.a < 0.5)
+	//{
+	//	clip(-1);
+	//}
 
 	// Calculate final color
 	float3 output = input.Color * color.rgb;

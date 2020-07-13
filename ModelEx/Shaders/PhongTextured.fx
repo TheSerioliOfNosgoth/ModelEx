@@ -49,6 +49,8 @@ RasterizerState DefaultRasterizerState
 	FillMode = Solid;
 	CullMode = None;
 	FrontCounterClockwise = false;
+	//CullMode = CCW;
+	//FrontCounterClockwise = false;
 };
 
 RasterizerState SR1RasterizerState
@@ -56,13 +58,17 @@ RasterizerState SR1RasterizerState
 	FillMode = Solid;
 	CullMode = None;
 	FrontCounterClockwise = false;
+	//CullMode = CCW;
+	//FrontCounterClockwise = false;
 };
 
 RasterizerState SR2RasterizerState
 {
 	FillMode = Solid;
-	CullMode = Front;
+	CullMode = None;
 	FrontCounterClockwise = false;
+	//CullMode = CCW;
+	//FrontCounterClockwise = false;
 };
 
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
