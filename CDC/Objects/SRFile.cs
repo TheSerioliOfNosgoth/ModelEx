@@ -286,13 +286,44 @@ namespace CDC.Objects
                     {
                         continue;
                     }
+                    //if (options.DiscardPortalPolygons && (groupIndex == (model.GroupCount - 1)))
+                    //{
+                    //    continue;
+                    //}
 
                     string groupName = name + "-" + modelIndex + "-" + groupIndex;
+
+                    Console.WriteLine(string.Format("\tDebug: exporting group {0} / {1} ('{2}'), mesh flags {3}", groupIndex, (model.GroupCount - 1), groupName, Convert.ToString(group.mesh.sr1BSPTreeFlags, 2).PadLeft(8, '0')));
+                    if (group.mesh.sr1BSPNodeFlags.Count > 0)
+                    {
+                        //Console.WriteLine(string.Format("\t\t\tDebug: BSP node flags for this mesh:"));
+                        for (int flagNum = 0; flagNum < group.mesh.sr1BSPNodeFlags.Count; flagNum++)
+                        {
+                            //Console.WriteLine(string.Format("\t\t\t\tBSP node flags {0}", Convert.ToString(group.mesh.sr1BSPNodeFlags[flagNum], 2).PadLeft(8, '0')));
+                        }
+                    }
+                    else
+                    {
+                        // Console.WriteLine(string.Format("\t\t\tDebug: No BSP node flags for this mesh"));
+                    }
+                    if (group.mesh.sr1BSPLeafFlags.Count > 0)
+                    {
+                        //Console.WriteLine(string.Format("\t\t\tDebug: BSP leaf flags for this mesh:"));
+                        for (int flagNum = 0; flagNum < group.mesh.sr1BSPLeafFlags.Count; flagNum++)
+                        {
+                            //Console.WriteLine(string.Format("\t\t\t\tBSP leaf flags {0}", Convert.ToString(group.mesh.sr1BSPLeafFlags[flagNum], 2).PadLeft(8, '0')));
+                        }
+                    }
+                    else
+                    {
+                        //Console.WriteLine(string.Format("\t\t\tDebug: No BSP leaf flags for this mesh"));
+                    }
 
                     Assimp.Node groupNode = new Assimp.Node(groupName);
 
                     for (int materialIndex = 0; materialIndex < model.MaterialCount; materialIndex++)
                     {
+                        Console.WriteLine(string.Format("\t\tDebug: exporting material {0} / {1}", materialIndex, (model.MaterialCount - 1)));
                         int totalPolygonCount = (int)group.mesh.polygonCount;
                         List<int> polygonList = new List<int>();
 
@@ -309,7 +340,10 @@ namespace CDC.Objects
                         {
                             #region Mesh
                             string meshName = name + "-" + modelIndex + "-" + groupIndex + "-" + materialIndex;
+                            //string materialNamePrefix = string.Format("{0}-{1}", name, materialIndex);
+                            string materialNamePrefix = meshName;
                             Assimp.Mesh mesh = new Assimp.Mesh(meshName);
+                            bool addMesh = true;
                             mesh.PrimitiveType = Assimp.PrimitiveType.Triangle;
 
                             ref Polygon[] polygons = ref group.mesh.polygons;
@@ -352,14 +386,19 @@ namespace CDC.Objects
                                 mesh.Faces.Add(new Assimp.Face(new int[] { i++, i++, i++ }));
                             }
 
-                            string materialName = name + "-" + modelIndex + "-" + groupIndex + "-" + materialIndex;
-                            Assimp.Material material = GetAssimpMaterial(materialName, model, materialIndex, options);
+                            //string materialName = name + "-" + modelIndex + "-" + groupIndex + "-" + materialIndex;
+                            //Assimp.Material material = GetAssimpMaterial(materialName, model, materialIndex, options);
 
-                            mesh.MaterialIndex = materials.Count;
-                            materials.Add(material);
+                            if (addMesh)
+                            {
+                                Assimp.Material material = GetAssimpMaterial(materialNamePrefix, model, materialIndex, options);
 
-                            groupNode.MeshIndices.Add(meshes.Count);
-                            meshes.Add(mesh);
+                                mesh.MaterialIndex = materials.Count;
+                                materials.Add(material);
+
+                                groupNode.MeshIndices.Add(meshes.Count);
+                                meshes.Add(mesh);
+                            }
                             #endregion
                         }
                     }
@@ -441,10 +480,20 @@ namespace CDC.Objects
 
         protected Assimp.Vector3D GetAssimpUV(UV uv)
         {
+            if (_platform == Platform.Dreamcast)
+            {
+                Assimp.Vector3D uv3DDreamcast = new Assimp.Vector3D()
+                {
+                    X = uv.v,
+                    Y = 1.0f - uv.u,
+                    Z = 0.0f
+                };
+                return uv3DDreamcast;
+            }
             Assimp.Vector3D uv3D = new Assimp.Vector3D()
             {
                 X = uv.u,
-                Y = uv.u,
+                Y = 1.0f - uv.v,
                 Z = 0.0f
             };
 

@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Reflection;
 using System.Threading;
+using System.IO;
+using System.Text;
 using SRFile = CDC.Objects.SRFile;
 using SR1File = CDC.Objects.SR1File;
 using SR2File = CDC.Objects.SR2File;
@@ -40,7 +44,7 @@ namespace ModelEx
                 _srFile = srFile;
             }
 
-            public void BuildModel(int modelIndex)
+            public void BuildModel(int modelIndex, CDC.Objects.ExportOptions options)
             {
                 _srModel = _srFile.Models[modelIndex];
                 String modelName = _objectName + "-" + modelIndex.ToString();
@@ -53,10 +57,13 @@ namespace ModelEx
                     Material material = new Material();
                     Color colorDiffuse = Color.FromArgb((int)unchecked(_srModel.Materials[materialIndex].colour));
                     material.Diffuse = colorDiffuse;
-                    material.TextureFileName = GetTextureName(_srModel, materialIndex);
+                    material.TextureFileName = GetTextureName(_srModel, materialIndex, options);
                     Materials.Add(material);
 
-                    progressLevel += _srModel.IndexCount / _srModel.Groups.Length;
+                    if (_srModel.Groups.Length > 0)
+                    {
+                        progressLevel += _srModel.IndexCount / _srModel.Groups.Length;
+                    }
                 }
                 #endregion
 
@@ -356,7 +363,7 @@ namespace ModelEx
         //    return GetTextureNameDefault(objectName, textureID);
         //}
 
-        protected static String GetTextureName(SRModel srModel, int materialIndex)
+        protected static String GetTextureName(SRModel srModel, int materialIndex, CDC.Objects.ExportOptions options)
         {
             CDC.Material material = srModel.Materials[materialIndex];
             String textureName = "";
@@ -387,6 +394,51 @@ namespace ModelEx
             }
 
             return textureName;
+        }
+
+        protected static bool BitmapHasTransparentPixels(Bitmap b)
+        {
+            for (int y = 0; y < b.Height; y++)
+            {
+                for (int x = 0; x < b.Width; x++)
+                {
+                    Color c = b.GetPixel(x, y);
+                    if (c.A == 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        protected string GetTextureFileLocation(CDC.Objects.ExportOptions options, string defaultTextureFileName, string modelFileName)
+        {
+            string result = "";
+            List<string> possibleLocations = new List<string>();
+            for (int i = 0; i < options.TextureFileLocations.Count; i++)
+            {
+                possibleLocations.Add(options.TextureFileLocations[i]);
+            }
+            string[] searchDirectories = new string[]
+            {
+                System.IO.Path.GetDirectoryName(modelFileName),
+                Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
+            };
+            for (int i = 0; i < searchDirectories.Length; i++)
+            {
+                string textureFileName = Path.Combine(searchDirectories[i], defaultTextureFileName);
+                possibleLocations.Add(textureFileName);
+            }
+            for (int i = 0; i < possibleLocations.Count; i++)
+                if (File.Exists(possibleLocations[i]))
+                {
+                    result = possibleLocations[i];
+                    Console.WriteLine(string.Format("Debug: using texture file '{0}'", result));
+                    break;
+                }
+            return result;
         }
 
         public override void ImportFromFile(string fileName, CDC.Objects.ExportOptions options)
@@ -462,7 +514,7 @@ namespace ModelEx
             for (int modelIndex = 0; modelIndex < srFile.Models.Length; modelIndex++)
             {
                 SRModelParser modelParser = new SRModelParser(objectName, srFile);
-                modelParser.BuildModel(modelIndex);
+                modelParser.BuildModel(modelIndex, options);
                 AddRenderObject(modelParser.Model);
             }
 
@@ -622,10 +674,28 @@ namespace ModelEx
             Thread.Sleep(1000);
         }
 
+        // make sure that overwriting exported files isn't silently failing
+        protected void DeleteExistingFile(string path)
+        {
+            if (File.Exists(path))
+            {
+                try
+                {
+                    File.Delete(path);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(string.Format("Couldn't delete existing file '{0}': {1}", path, ex.Message));
+                }
+            }
+        }
+
         public override void ExportToFile(string fileName, CDC.Objects.ExportOptions options)
         {
-            if (_objectFiles[0] != null)
+            if ((_objectFiles != null) && (_objectFiles.Count > 0) && (_objectFiles[0] != null))
             {
+                string filePath = Path.GetFullPath(fileName);
+                DeleteExistingFile(filePath);
                 _objectFiles[0].ExportToFile(fileName, options);
             }
         }
