@@ -329,6 +329,33 @@ namespace ModelEx
             _game = game;
         }
 
+        //public static string GetTextureNameDefault(string objectName, int textureID)
+        //{
+        //    String textureName = string.Format("{0}_{1:X4}", objectName.TrimEnd(new char[] { '_' }).ToLower(), textureID);
+        //    return textureName;
+        //}
+
+        //public static string GetPlayStationTextureNameDefault(string objectName, int textureID)
+        //{
+        //    return GetTextureNameDefault(objectName, textureID);
+        //}
+
+        //public static string GetPlayStationTextureNameWithCLUT(string objectName, int textureID, ushort clut)
+        //{
+        //    String textureName = string.Format("{0}_{1:X4}_{2:X4}", objectName.TrimEnd(new char[] { '_' }).ToLower(), textureID, clut);
+        //    return textureName;
+        //}
+
+        //public static string GetSoulReaverPCOrDreamcastTextureName(string objectName, int textureID)
+        //{
+        //    return GetTextureNameDefault(objectName, textureID);
+        //}
+
+        //public static string GetPS2TextureName(string objectName, int textureID)
+        //{
+        //    return GetTextureNameDefault(objectName, textureID);
+        //}
+
         protected static String GetTextureName(SRModel srModel, int materialIndex)
         {
             CDC.Material material = srModel.Materials[materialIndex];

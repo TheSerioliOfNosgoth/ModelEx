@@ -164,6 +164,7 @@ namespace CDC.Objects
     public abstract class SRFile
     {
         public const string TextureExtension = ".png";
+        public const float ExportSizeMultiplier = 1.0f;
 
         protected String _name;
         protected UInt32 _version;
@@ -250,14 +251,31 @@ namespace CDC.Objects
         {
             string name = Utility.CleanName(Name).TrimEnd(new char[] { '_' });
 
-            Assimp.Node rootNode = new Assimp.Node(name);
-            List<Assimp.Material> materials = new List<Assimp.Material>();
-            List<Assimp.Mesh> meshes = new List<Assimp.Mesh>();
+            //Assimp.Node rootNode = new Assimp.Node(name);
+            //List<Assimp.Material> materials = new List<Assimp.Material>();
+            //List<Assimp.Mesh> meshes = new List<Assimp.Mesh>();
+            string perModelFilename = fileName;
 
             for (int modelIndex = 0; modelIndex < ModelCount; modelIndex++)
             {
+                Assimp.Node rootNode = new Assimp.Node(name);
+                List<Assimp.Material> materials = new List<Assimp.Material>();
+                List<Assimp.Mesh> meshes = new List<Assimp.Mesh>();
+
                 SRModel model = Models[modelIndex];
+
                 string modelName = name + "-" + modelIndex;
+                Console.WriteLine(string.Format("Debug: exporting model {0} / {1} ('{2}')", modelIndex, (ModelCount - 1), modelName));
+                perModelFilename = fileName;
+                if (ModelCount > 1)
+                {
+                    string extension = Path.GetExtension(fileName);
+                    if ((extension.StartsWith(".")) && (extension.Length > 1))
+                    {
+                        extension = extension.Substring(1);
+                    }
+                    perModelFilename = string.Format("{0}{1}{2}-model_{3:D4}.{4}", Path.GetDirectoryName(fileName), Path.DirectorySeparatorChar, Path.GetFileNameWithoutExtension(fileName), modelIndex, extension);
+                }
 
                 Assimp.Node modelNode = new Assimp.Node(modelName);
 
@@ -313,7 +331,8 @@ namespace CDC.Objects
                                     ref UV[] uvs = ref geometry.UVs;
 
                                     ref Vector pos = ref positions[vert.positionID];
-                                    mesh.Vertices.Add(new Assimp.Vector3D(pos.x, pos.y, pos.z));
+                                    //mesh.Vertices.Add(new Assimp.Vector3D(pos.x, pos.y, pos.z));
+                                    mesh.Vertices.Add(new Assimp.Vector3D((float)pos.x * ExportSizeMultiplier, (float)pos.y * ExportSizeMultiplier, (float)pos.z * ExportSizeMultiplier));
 
                                     if (Asset == Asset.Object)
                                     {
@@ -349,15 +368,23 @@ namespace CDC.Objects
                 }
 
                 rootNode.Children.Add(modelNode);
+
+                Assimp.Scene scene = new Assimp.Scene();
+                scene.RootNode = rootNode;
+                scene.Materials.AddRange(materials);
+                scene.Meshes.AddRange(meshes);
+
+                Assimp.AssimpContext context = new Assimp.AssimpContext();
+                context.ExportFile(scene, perModelFilename, "collada", Assimp.PostProcessSteps.None);
             }
 
-            Assimp.Scene scene = new Assimp.Scene();
-            scene.RootNode = rootNode;
-            scene.Materials.AddRange(materials);
-            scene.Meshes.AddRange(meshes);
+            //Assimp.Scene scene = new Assimp.Scene();
+            //scene.RootNode = rootNode;
+            //scene.Materials.AddRange(materials);
+            //scene.Meshes.AddRange(meshes);
 
-            Assimp.AssimpContext context = new Assimp.AssimpContext();
-            context.ExportFile(scene, fileName, "collada", Assimp.PostProcessSteps.None);
+            //Assimp.AssimpContext context = new Assimp.AssimpContext();
+            //context.ExportFile(scene, fileName, "collada", Assimp.PostProcessSteps.None);
 
             return true;
         }
