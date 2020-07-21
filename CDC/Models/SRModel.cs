@@ -105,24 +105,23 @@ namespace CDC.Objects.Models
                 {
                     if (srModel.Platform == CDC.Platform.PSX)
                     {
-                        if (options.UseEachUniqueTextureCLUTVariation)
-                        {
-                            textureName = GetPlayStationTextureNameWithCLUT(srModel.Name, material.textureID, material.clutValue);
-                        }
-                        else
-                        {
-                            textureName = GetPlayStationTextureNameDefault(srModel.Name, material.textureID);
-                        }
+                        textureName =
+                            srModel.Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
+                            material.textureID.ToString("0000");
                     }
                     else
                     {
-                        textureName = GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID);
+                        textureName =
+                            "Texture-" +
+                            material.textureID.ToString("00000");
                     }
                 }
                 else if (srModel is SR2Model ||
                     srModel is DefianceModel)
                 {
-                    textureName = GetPS2TextureName(srModel.Name, material.textureID);
+                    textureName =
+                        srModel.Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
+                        material.textureID.ToString("0000");
                 }
             }
 
@@ -137,27 +136,28 @@ namespace CDC.Objects.Models
                 Material material = Materials[materialIndex];
                 if (material.textureUsed)
                 {
-                    if (this is SR1Model)
-                    {
-                        if (Platform == Platform.PSX)
-                        {
-                            textureName =
-                                Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
-                                material.textureID.ToString("0000");
-                        }
-                        else
-                        {
-                            textureName =
-                                "Texture-" +
-                                material.textureID.ToString("00000");
-                        }
-                    }
-                    else if (this is SR2Model)
-                    {
-                        textureName =
-                            Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
-                            material.textureID.ToString("0000");
-                    }
+                    //if (this is SR1Model)
+                    //{
+                    //    if (Platform == Platform.PSX)
+                    //    {
+                    //        textureName =
+                    //            Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
+                    //            material.textureID.ToString("0000");
+                    //    }
+                    //    else
+                    //    {
+                    //        textureName =
+                    //            "Texture-" +
+                    //            material.textureID.ToString("00000");
+                    //    }
+                    //}
+                    //else if (this is SR2Model)
+                    //{
+                    //    textureName =
+                    //        Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
+                    //        material.textureID.ToString("0000");
+                    //}
+                    GetTextureName(this, materialIndex, options);
                 }
             }
 

@@ -57,7 +57,7 @@ namespace ModelEx
                     Material material = new Material();
                     Color colorDiffuse = Color.FromArgb((int)unchecked(_srModel.Materials[materialIndex].colour));
                     material.Diffuse = colorDiffuse;
-                    material.TextureFileName = GetTextureName(_srModel, materialIndex, options);
+                    material.TextureFileName = CDC.Objects.Models.SRModel.GetTextureName(_srModel, materialIndex, options);
                     Materials.Add(material);
 
                     if (_srModel.Groups.Length > 0)
@@ -363,38 +363,39 @@ namespace ModelEx
         //    return GetTextureNameDefault(objectName, textureID);
         //}
 
-        protected static String GetTextureName(SRModel srModel, int materialIndex, CDC.Objects.ExportOptions options)
-        {
-            CDC.Material material = srModel.Materials[materialIndex];
-            String textureName = "";
-            if (material.textureUsed)
-            {
-                if (srModel is SR1Model)
-                {
-                    if (srModel.Platform == CDC.Platform.PSX)
-                    {
-                        textureName =
-                            srModel.Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
-                            material.textureID.ToString("0000");
-                    }
-                    else
-                    {
-                        textureName =
-                            "Texture-" +
-                            material.textureID.ToString("00000");
-                    }
-                }
-                else if (srModel is SR2Model ||
-                    srModel is DefianceModel)
-                {
-                    textureName =
-                        srModel.Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
-                        material.textureID.ToString("0000");
-                }
-            }
+        //protected static String GetTextureName(SRModel srModel, int materialIndex, CDC.Objects.ExportOptions options)
+        //{
+        //    CDC.Material material = srModel.Materials[materialIndex];
+        //    String textureName = "";
+        //    if (material.textureUsed)
+        //    {
+        //        if (srModel is SR1Model)
+        //        {
+        //            if (srModel.Platform == CDC.Platform.PSX)
+        //            {
+        //                if (options.UseEachUniqueTextureCLUTVariation)
+        //                {
+        //                    textureName = GetPlayStationTextureNameWithCLUT(srModel.Name, material.textureID, material.clutValue);
+        //                }
+        //                else
+        //                {
+        //                    textureName = GetPlayStationTextureNameDefault(srModel.Name, material.textureID);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                textureName = GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID);
+        //            }
+        //        }
+        //        else if (srModel is SR2Model ||
+        //            srModel is DefianceModel)
+        //        {
+        //            textureName = GetPS2TextureName(srModel.Name, material.textureID);
+        //        }
+        //    }
 
-            return textureName;
-        }
+        //    return textureName;
+        //}
 
         protected static bool BitmapHasTransparentPixels(Bitmap b)
         {
@@ -432,12 +433,14 @@ namespace ModelEx
                 possibleLocations.Add(textureFileName);
             }
             for (int i = 0; i < possibleLocations.Count; i++)
+            {
                 if (File.Exists(possibleLocations[i]))
                 {
                     result = possibleLocations[i];
                     Console.WriteLine(string.Format("Debug: using texture file '{0}'", result));
                     break;
                 }
+            }
             return result;
         }
 
@@ -520,141 +523,27 @@ namespace ModelEx
 
             _objectFiles.Add(srFile);
 
-            ProgressStage = "Loading Textures";
-            Thread.Sleep(1000);
-
-            #region Textures
-            if (srFile.GetType() == typeof(SR2File) ||
-                srFile.GetType() == typeof(DefianceFile))
+            if (options.TextureLoadRequired())
             {
-                String textureFileName = System.IO.Path.ChangeExtension(fileName, "vrm");
-                try
-                {
-                    SR2PCTextureFile textureFile = new SR2PCTextureFile(textureFileName);
-                    for (int t = 0; t < textureFile.TextureCount; t++)
-                    {
-                        String textureName =
-                            objectName.TrimEnd(new char[] { '_' }).ToLower() + "-" +
-                            textureFile.TextureDefinitions[t].Flags1.ToString("0000") + TextureExtension;
+                ProgressStage = "Loading Textures";
+                Thread.Sleep(1000);
 
-                        System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
-                        //textureFile.ExportFile(t, "C:\\Users\\A\\Desktop\\" + textureName);
-                        if (stream != null)
-                        {
-                            TextureManager.Instance.AddTexture(stream, textureName);
-                        }
-                    }
-                }
-                catch (Exception ex)
+                #region Textures
+                if (srFile.GetType() == typeof(SR2File) ||
+                    srFile.GetType() == typeof(DefianceFile))
                 {
-                    Console.Write(ex.ToString());
-                }
-            }
-            else
-            {
-                if (srFile.Platform == CDC.Platform.PC)
-                {
-                    String textureFileName = System.IO.Path.GetDirectoryName(fileName) + "\\textures.big";
+                    String textureFileName = System.IO.Path.ChangeExtension(fileName, "vrm");
                     try
                     {
-                        SR1PCTextureFile textureFile = new SR1PCTextureFile(textureFileName);
-                        foreach (SRModel srModel in srFile.Models)
-                        {
-                            foreach (CDC.Material material in srModel.Materials)
-                            {
-                                if (material.textureUsed)
-                                {
-                                    System.IO.MemoryStream stream = textureFile.GetDataAsStream(material.textureID);
-                                    if (stream != null)
-                                    {
-                                        String textureName =
-                                            "Texture-" + material.textureID.ToString("00000") + TextureExtension;
-                                        TextureManager.Instance.AddTexture(stream, textureName);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.Write(ex.ToString());
-                    }
-                }
-                else if (srFile.Platform == CDC.Platform.Dreamcast)
-                {
-                    String textureFileName = System.IO.Path.GetDirectoryName(fileName) + "\\textures.vq";
-                    try
-                    {
-                        SR1DCTextureFile textureFile = new SR1DCTextureFile(textureFileName);
-                        foreach (SRModel srModel in srFile.Models)
-                        {
-                            foreach (CDC.Material material in srModel.Materials)
-                            {
-                                if (material.textureUsed)
-                                {
-                                    int textureID = material.textureID;
-                                    System.IO.MemoryStream stream = textureFile.GetDataAsStream(textureID);
-                                    if (stream != null)
-                                    {
-                                        String textureName =
-                                            "Texture-" + material.textureID.ToString("00000") + TextureExtension;
-                                        TextureManager.Instance.AddTexture(stream, textureName);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.Write(ex.ToString());
-                    }
-                }
-                else
-                {
-                    String textureFileName = System.IO.Path.ChangeExtension(fileName, "crm");
-                    try
-                    {
-                        SR1PSTextureFile textureFile = new SR1PSTextureFile(textureFileName);
-
-                        UInt32 polygonCountAllModels = 0;
-                        foreach (SRModel srModel in srFile.Models)
-                        {
-                            polygonCountAllModels += srModel.PolygonCount;
-                        }
-
-                        SR1PSTextureFile.SoulReaverPlaystationPolygonTextureData[] polygons =
-                            new SR1PSTextureFile.SoulReaverPlaystationPolygonTextureData[polygonCountAllModels];
-
-                        int polygonNum = 0;
-                        foreach (SRModel srModel in srFile.Models)
-                        {
-                            foreach (CDC.Polygon polygon in srModel.Polygons)
-                            {
-                                polygons[polygonNum].paletteColumn = polygon.paletteColumn;
-                                polygons[polygonNum].paletteRow = polygon.paletteRow;
-                                polygons[polygonNum].u = new int[3];
-                                polygons[polygonNum].v = new int[3];
-
-                                polygons[polygonNum].u[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].u * 255);
-                                polygons[polygonNum].v[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].v * 255);
-                                polygons[polygonNum].u[1] = (int)(srModel.Geometry.UVs[polygon.v2.UVID].u * 255);
-                                polygons[polygonNum].v[1] = (int)(srModel.Geometry.UVs[polygon.v2.UVID].v * 255);
-                                polygons[polygonNum].u[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].u * 255);
-                                polygons[polygonNum].v[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].v * 255);
-
-                                polygons[polygonNum].textureID = polygon.material.textureID;
-
-                                polygonNum++;
-                            }
-                        }
-                        textureFile.BuildTexturesFromPolygonData(polygons, false, true);
-
+                        SR2PCTextureFile textureFile = new SR2PCTextureFile(textureFileName);
                         for (int t = 0; t < textureFile.TextureCount; t++)
                         {
                             String textureName =
-                                objectName.TrimEnd(new char[] { '_' }).ToLower() + "-" + t.ToString("0000") + TextureExtension;
+                                objectName.TrimEnd(new char[] { '_' }).ToLower() + "-" +
+                                textureFile.TextureDefinitions[t].Flags1.ToString("0000") + TextureExtension;
 
                             System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
+                            //textureFile.ExportFile(t, "C:\\Users\\A\\Desktop\\" + textureName);
                             if (stream != null)
                             {
                                 TextureManager.Instance.AddTexture(stream, textureName);
@@ -666,12 +555,129 @@ namespace ModelEx
                         Console.Write(ex.ToString());
                     }
                 }
+                else
+                {
+                    if (srFile.Platform == CDC.Platform.PC)
+                    {
+                        String textureFileName = System.IO.Path.GetDirectoryName(fileName) + "\\textures.big";
+                        try
+                        {
+                            SR1PCTextureFile textureFile = new SR1PCTextureFile(textureFileName);
+                            foreach (SRModel srModel in srFile.Models)
+                            {
+                                foreach (CDC.Material material in srModel.Materials)
+                                {
+                                    if (material.textureUsed)
+                                    {
+                                        System.IO.MemoryStream stream = textureFile.GetDataAsStream(material.textureID);
+                                        if (stream != null)
+                                        {
+                                            String textureName =
+                                                "Texture-" + material.textureID.ToString("00000") + TextureExtension;
+                                            TextureManager.Instance.AddTexture(stream, textureName);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.Write(ex.ToString());
+                        }
+                    }
+                    else if (srFile.Platform == CDC.Platform.Dreamcast)
+                    {
+                        String textureFileName = System.IO.Path.GetDirectoryName(fileName) + "\\textures.vq";
+                        try
+                        {
+                            SR1DCTextureFile textureFile = new SR1DCTextureFile(textureFileName);
+                            foreach (SRModel srModel in srFile.Models)
+                            {
+                                foreach (CDC.Material material in srModel.Materials)
+                                {
+                                    if (material.textureUsed)
+                                    {
+                                        int textureID = material.textureID;
+                                        System.IO.MemoryStream stream = textureFile.GetDataAsStream(textureID);
+                                        if (stream != null)
+                                        {
+                                            String textureName =
+                                                "Texture-" + material.textureID.ToString("00000") + TextureExtension;
+                                            TextureManager.Instance.AddTexture(stream, textureName);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.Write(ex.ToString());
+                        }
+                    }
+                    else
+                    {
+                        String textureFileName = System.IO.Path.ChangeExtension(fileName, "crm");
+                        try
+                        {
+                            SR1PSTextureFile textureFile = new SR1PSTextureFile(textureFileName);
+
+                            UInt32 polygonCountAllModels = 0;
+                            foreach (SRModel srModel in srFile.Models)
+                            {
+                                polygonCountAllModels += srModel.PolygonCount;
+                            }
+
+                            SR1PSTextureFile.SoulReaverPlaystationPolygonTextureData[] polygons =
+                                new SR1PSTextureFile.SoulReaverPlaystationPolygonTextureData[polygonCountAllModels];
+
+                            int polygonNum = 0;
+                            foreach (SRModel srModel in srFile.Models)
+                            {
+                                foreach (CDC.Polygon polygon in srModel.Polygons)
+                                {
+                                    polygons[polygonNum].paletteColumn = polygon.paletteColumn;
+                                    polygons[polygonNum].paletteRow = polygon.paletteRow;
+                                    polygons[polygonNum].u = new int[3];
+                                    polygons[polygonNum].v = new int[3];
+
+                                    polygons[polygonNum].u[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].u * 255);
+                                    polygons[polygonNum].v[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].v * 255);
+                                    polygons[polygonNum].u[1] = (int)(srModel.Geometry.UVs[polygon.v2.UVID].u * 255);
+                                    polygons[polygonNum].v[1] = (int)(srModel.Geometry.UVs[polygon.v2.UVID].v * 255);
+                                    polygons[polygonNum].u[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].u * 255);
+                                    polygons[polygonNum].v[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].v * 255);
+
+                                    polygons[polygonNum].textureID = polygon.material.textureID;
+
+                                    polygonNum++;
+                                }
+                            }
+                            textureFile.BuildTexturesFromPolygonData(polygons, false, true);
+
+                            for (int t = 0; t < textureFile.TextureCount; t++)
+                            {
+                                String textureName =
+                                    objectName.TrimEnd(new char[] { '_' }).ToLower() + "-" + t.ToString("0000") + TextureExtension;
+
+                                System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
+                                if (stream != null)
+                                {
+                                    TextureManager.Instance.AddTexture(stream, textureName);
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.Write(ex.ToString());
+                        }
+                    }
+                }
+                #endregion
             }
-            #endregion
 
             progressLevel = progressLevels;
             ProgressStage = "Done";
-            Thread.Sleep(1000);
+            //Thread.Sleep(1000);
         }
 
         // make sure that overwriting exported files isn't silently failing
