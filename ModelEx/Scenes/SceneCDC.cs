@@ -523,6 +523,9 @@ namespace ModelEx
 
             _objectFiles.Add(srFile);
 
+
+
+
             if (options.TextureLoadRequired())
             {
                 ProgressStage = "Loading Textures";
@@ -559,59 +562,75 @@ namespace ModelEx
                 {
                     if (srFile.Platform == CDC.Platform.PC)
                     {
-                        String textureFileName = System.IO.Path.GetDirectoryName(fileName) + "\\textures.big";
-                        try
+                        String textureFileName = GetTextureFileLocation(options, "textures.big", fileName);
+                        bool gotTextureFile = false;
+                        if (textureFileName != "")
                         {
-                            SR1PCTextureFile textureFile = new SR1PCTextureFile(textureFileName);
-                            foreach (SRModel srModel in srFile.Models)
+                            gotTextureFile = true;
+                        }
+                        if (gotTextureFile)
+                        {
+                            try
                             {
-                                foreach (CDC.Material material in srModel.Materials)
+                                SR1PCTextureFile textureFile = new SR1PCTextureFile(textureFileName);
+                                foreach (SRModel srModel in srFile.Models)
                                 {
-                                    if (material.textureUsed)
+                                    foreach (CDC.Material material in srModel.Materials)
                                     {
-                                        System.IO.MemoryStream stream = textureFile.GetDataAsStream(material.textureID);
-                                        if (stream != null)
+                                        if (material.textureUsed)
                                         {
-                                            String textureName =
-                                                "Texture-" + material.textureID.ToString("00000") + TextureExtension;
-                                            TextureManager.Instance.AddTexture(stream, textureName);
+                                            System.IO.MemoryStream stream = textureFile.GetDataAsStream(material.textureID);
+                                            if (stream != null)
+                                            {
+                                                String textureName =
+                                                    "Texture-" + material.textureID.ToString("00000") + TextureExtension;
+                                                TextureManager.Instance.AddTexture(stream, textureName);
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.Write(ex.ToString());
+                            catch (Exception ex)
+                            {
+                                Console.Write(ex.ToString());
+                            }
                         }
                     }
                     else if (srFile.Platform == CDC.Platform.Dreamcast)
                     {
-                        String textureFileName = System.IO.Path.GetDirectoryName(fileName) + "\\textures.vq";
-                        try
+                        String textureFileName = GetTextureFileLocation(options, "textures.vq", fileName);
+                        bool gotTextureFile = false;
+                        if (textureFileName != "")
                         {
-                            SR1DCTextureFile textureFile = new SR1DCTextureFile(textureFileName);
-                            foreach (SRModel srModel in srFile.Models)
+                            gotTextureFile = true;
+                        }
+                        if (gotTextureFile)
+                        {
+                            try
                             {
-                                foreach (CDC.Material material in srModel.Materials)
+                                SR1DCTextureFile textureFile = new SR1DCTextureFile(textureFileName);
+                                foreach (SRModel srModel in srFile.Models)
                                 {
-                                    if (material.textureUsed)
+                                    foreach (CDC.Material material in srModel.Materials)
                                     {
-                                        int textureID = material.textureID;
-                                        System.IO.MemoryStream stream = textureFile.GetDataAsStream(textureID);
-                                        if (stream != null)
+                                        if (material.textureUsed)
                                         {
-                                            String textureName =
-                                                "Texture-" + material.textureID.ToString("00000") + TextureExtension;
-                                            TextureManager.Instance.AddTexture(stream, textureName);
+                                            int textureID = material.textureID;
+                                            System.IO.MemoryStream stream = textureFile.GetDataAsStream(textureID);
+                                            if (stream != null)
+                                            {
+                                                String textureName =
+                                                    "Texture-" + material.textureID.ToString("00000") + TextureExtension;
+                                                TextureManager.Instance.AddTexture(stream, textureName);
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.Write(ex.ToString());
+                            catch (Exception ex)
+                            {
+                                Console.Write(ex.ToString());
+                            }
                         }
                     }
                     else
