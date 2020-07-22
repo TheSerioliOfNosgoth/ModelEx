@@ -529,8 +529,9 @@ namespace ModelEx
             if (options.TextureLoadRequired())
             {
                 ProgressStage = "Loading Textures";
-                Thread.Sleep(1000);
-
+                // reset the instance so that textures with identical names are not retained from previous models
+                TextureManager.Instance.ResetInstance();
+                //Thread.Sleep(1000);
                 #region Textures
                 if (srFile.GetType() == typeof(SR2File) ||
                     srFile.GetType() == typeof(DefianceFile))
@@ -541,9 +542,7 @@ namespace ModelEx
                         SR2PCTextureFile textureFile = new SR2PCTextureFile(textureFileName);
                         for (int t = 0; t < textureFile.TextureCount; t++)
                         {
-                            String textureName =
-                                objectName.TrimEnd(new char[] { '_' }).ToLower() + "-" +
-                                textureFile.TextureDefinitions[t].Flags1.ToString("0000") + TextureExtension;
+                            String textureName = CDC.Objects.Models.SRModel.GetPS2TextureName(objectName, textureFile.TextureDefinitions[t].Flags1) + TextureExtension;
 
                             System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
                             //textureFile.ExportFile(t, "C:\\Users\\A\\Desktop\\" + textureName);
@@ -582,8 +581,7 @@ namespace ModelEx
                                             System.IO.MemoryStream stream = textureFile.GetDataAsStream(material.textureID);
                                             if (stream != null)
                                             {
-                                                String textureName =
-                                                    "Texture-" + material.textureID.ToString("00000") + TextureExtension;
+                                                String textureName = CDC.Objects.Models.SRModel.GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID) + TextureExtension;
                                                 TextureManager.Instance.AddTexture(stream, textureName);
                                             }
                                         }
@@ -594,6 +592,10 @@ namespace ModelEx
                             {
                                 Console.Write(ex.ToString());
                             }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Error: couldn't find a texture file");
                         }
                     }
                     else if (srFile.Platform == CDC.Platform.Dreamcast)
@@ -619,8 +621,8 @@ namespace ModelEx
                                             System.IO.MemoryStream stream = textureFile.GetDataAsStream(textureID);
                                             if (stream != null)
                                             {
-                                                String textureName =
-                                                    "Texture-" + material.textureID.ToString("00000") + TextureExtension;
+                                                String textureName = CDC.Objects.Models.SRModel.GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID) + TextureExtension;
+ 
                                                 TextureManager.Instance.AddTexture(stream, textureName);
                                             }
                                         }
@@ -631,6 +633,10 @@ namespace ModelEx
                             {
                                 Console.Write(ex.ToString());
                             }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Error: couldn't find a texture file");
                         }
                     }
                     else
@@ -675,8 +681,7 @@ namespace ModelEx
 
                             for (int t = 0; t < textureFile.TextureCount; t++)
                             {
-                                String textureName =
-                                    objectName.TrimEnd(new char[] { '_' }).ToLower() + "-" + t.ToString("0000") + TextureExtension;
+                                String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameDefault(objectName, t) + TextureExtension;
 
                                 System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
                                 if (stream != null)

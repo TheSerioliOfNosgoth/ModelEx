@@ -105,23 +105,17 @@ namespace CDC.Objects.Models
                 {
                     if (srModel.Platform == CDC.Platform.PSX)
                     {
-                        textureName =
-                            srModel.Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
-                            material.textureID.ToString("0000");
+                        textureName = GetPlayStationTextureNameDefault(srModel.Name, material.textureID);
                     }
                     else
                     {
-                        textureName =
-                            "Texture-" +
-                            material.textureID.ToString("00000");
+                        textureName = GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID);
                     }
                 }
                 else if (srModel is SR2Model ||
                     srModel is DefianceModel)
                 {
-                    textureName =
-                        srModel.Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
-                        material.textureID.ToString("0000");
+                    textureName = GetPS2TextureName(srModel.Name, material.textureID);
                 }
             }
 
@@ -141,23 +135,21 @@ namespace CDC.Objects.Models
                     //    if (Platform == Platform.PSX)
                     //    {
                     //        textureName =
-                    //            Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
-                    //            material.textureID.ToString("0000");
+                    //            Name.TrimEnd(new char[] { '_' }).ToLower() + "_" +
+                    //            string.Format("{0:D4}", material.textureID);
                     //    }
                     //    else
                     //    {
-                    //        textureName =
-                    //            "Texture-" +
-                    //            material.textureID.ToString("00000");
+                    //        textureName = string.Format("Texture-{0:D5}", material.textureID);
                     //    }
                     //}
                     //else if (this is SR2Model)
                     //{
                     //    textureName =
-                    //        Name.TrimEnd(new char[] { '_' }).ToLower() + "-" +
-                    //        material.textureID.ToString("0000");
+                    //        Name.TrimEnd(new char[] { '_' }).ToLower() + "_" +
+                    //        string.Format("{0:D4}", material.textureID);
                     //}
-                    GetTextureName(this, materialIndex, options);
+                    return GetTextureName(this, materialIndex, options);
                 }
             }
 
