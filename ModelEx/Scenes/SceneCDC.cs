@@ -550,6 +550,14 @@ namespace ModelEx
                             if (stream != null)
                             {
                                 TextureManager.Instance.AddTexture(stream, textureName);
+                                try
+                                {
+                                    _TexturesAsPNGs.Add(textureName, textureFile.GetTextureAsBitmap(t));
+                                }
+                                catch
+                                {
+
+                                }
                             }
                         }
                     }
@@ -584,6 +592,10 @@ namespace ModelEx
                                             {
                                                 String textureName = CDC.Objects.Models.SRModel.GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID) + TextureExtension;
                                                 TextureManager.Instance.AddTexture(stream, textureName);
+                                                if (!_TexturesAsPNGs.ContainsKey(textureName))
+                                                {
+                                                    _TexturesAsPNGs.Add(textureName, textureFile.GetTextureAsBitmap(material.textureID));
+                                                }
                                             }
                                         }
                                     }
@@ -625,6 +637,11 @@ namespace ModelEx
                                                 String textureName = CDC.Objects.Models.SRModel.GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID) + TextureExtension;
 
                                                 TextureManager.Instance.AddTexture(stream, textureName);
+
+                                                if (!_TexturesAsPNGs.ContainsKey(textureName))
+                                                {
+                                                    _TexturesAsPNGs.Add(textureName, textureFile.GetTextureAsBitmap(material.textureID));
+                                                }
                                             }
                                         }
                                     }
@@ -680,7 +697,7 @@ namespace ModelEx
                             }
                             bool drawGreyscaleFirst = false;
                             bool quantizeBounds = true;
-                            textureFile.BuildTexturesFromPolygonData(polygons, drawGreyscaleFirst, quantizeBounds);
+                            textureFile.BuildTexturesFromPolygonData(polygons, drawGreyscaleFirst, quantizeBounds, options);
 
                             // For all models
                             for (int t = 0; t < textureFile.TextureCount; t++)
@@ -692,6 +709,21 @@ namespace ModelEx
                                 {
                                     TextureManager.Instance.AddTexture(stream, textureName);
                                 }
+                                //string exportedTextureFileName = Path.ChangeExtension(textureName, "png");
+                                //_TexturesAsPNGs.Add(exportedTextureFileName, textureFile.GetTextureAsBitmap(t));
+                                Bitmap b = textureFile.GetTextureAsBitmap(t);
+                                _TexturesAsPNGs.Add(textureName, b);
+
+                                // dump all textures as PNGs for debugging
+                                //Bitmap exportedTexture = textureFile.GetTextureAsBitmap(t);
+                                //string exportedTextureFileName = Path.ChangeExtension(textureName, "png");
+                                //exportedTexture.Save(exportedTextureFileName, ImageFormat.Png);
+                                //texNum = 0;
+                                //foreach (Bitmap tex in _Textures)
+                                //{
+                                //    tex.Save(@"C:\Debug\Tex-" + texNum + ".png", ImageFormat.Png);
+                                //    texNum++;
+                                //}
                             }
                         }
                         catch (Exception ex)
@@ -731,6 +763,13 @@ namespace ModelEx
                 string filePath = Path.GetFullPath(fileName);
                 DeleteExistingFile(filePath);
                 _objectFiles[0].ExportToFile(fileName, options);
+                string baseExportDirectory = Path.GetDirectoryName(fileName);
+                foreach (string textureFileName in _TexturesAsPNGs.Keys)
+                {
+                    string texturePath = Path.Combine(baseExportDirectory, textureFileName);
+                    DeleteExistingFile(texturePath);
+                    _TexturesAsPNGs[textureFileName].Save(texturePath, ImageFormat.Png);
+                }
             }
         }
     }

@@ -128,7 +128,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             return textures;
         }
 
-        public void BuildTexturesFromPolygonData(SoulReaverPlaystationPolygonTextureData[] texData, bool drawGreyScaleFirst, bool quantizeBounds)
+        public void BuildTexturesFromPolygonData(SoulReaverPlaystationPolygonTextureData[] texData, bool drawGreyScaleFirst, bool quantizeBounds, CDC.Objects.ExportOptions options)
         {
             // hashtable to store counts of palette usage
             Hashtable palettes = new Hashtable();
