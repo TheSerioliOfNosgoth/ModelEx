@@ -105,7 +105,14 @@ namespace CDC.Objects.Models
                 {
                     if (srModel.Platform == CDC.Platform.PSX)
                     {
-                        textureName = GetPlayStationTextureNameDefault(srModel.Name, material.textureID);
+                        if (options.UseEachUniqueTextureCLUTVariation)
+                        {
+                            textureName = GetPlayStationTextureNameWithCLUT(srModel.Name, material.textureID, material.clutValue);
+                        }
+                        else
+                        {
+                            textureName = GetPlayStationTextureNameDefault(srModel.Name, material.textureID);
+                        }
                     }
                     else
                     {

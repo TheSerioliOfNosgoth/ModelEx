@@ -533,8 +533,9 @@ namespace ModelEx
                 TextureManager.Instance.ResetInstance();
                 //Thread.Sleep(1000);
                 #region Textures
-                if (srFile.GetType() == typeof(SR2File) ||
-                    srFile.GetType() == typeof(DefianceFile))
+                Type currentFileType = srFile.GetType();
+                if (currentFileType == typeof(SR2File) ||
+                    currentFileType == typeof(DefianceFile))
                 {
                     String textureFileName = System.IO.Path.ChangeExtension(fileName, "vrm");
                     try
@@ -622,7 +623,7 @@ namespace ModelEx
                                             if (stream != null)
                                             {
                                                 String textureName = CDC.Objects.Models.SRModel.GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID) + TextureExtension;
- 
+
                                                 TextureManager.Instance.AddTexture(stream, textureName);
                                             }
                                         }
@@ -677,8 +678,11 @@ namespace ModelEx
                                     polygonNum++;
                                 }
                             }
-                            textureFile.BuildTexturesFromPolygonData(polygons, false, true);
+                            bool drawGreyscaleFirst = false;
+                            bool quantizeBounds = true;
+                            textureFile.BuildTexturesFromPolygonData(polygons, drawGreyscaleFirst, quantizeBounds);
 
+                            // For all models
                             for (int t = 0; t < textureFile.TextureCount; t++)
                             {
                                 String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameDefault(objectName, t) + TextureExtension;
