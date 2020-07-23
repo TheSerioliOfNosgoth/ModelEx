@@ -277,6 +277,7 @@ namespace CDC.Objects
                     perModelFilename = string.Format("{0}{1}{2}-model_{3:D4}.{4}", Path.GetDirectoryName(fileName), Path.DirectorySeparatorChar, Path.GetFileNameWithoutExtension(fileName), modelIndex, extension);
                 }
 
+
                 Assimp.Node modelNode = new Assimp.Node(modelName);
 
                 for (int groupIndex = 0; groupIndex < model.GroupCount; groupIndex++)
@@ -344,7 +345,13 @@ namespace CDC.Objects
                             string materialNamePrefix = meshName;
                             Assimp.Mesh mesh = new Assimp.Mesh(meshName);
                             bool addMesh = true;
+                            // this is a hack :\
+                            int numNonZeroFlagsForMesh = 0;
+                            //bool isTranslucent = false;
+                            //float materialOpacity = 1.0f;
                             mesh.PrimitiveType = Assimp.PrimitiveType.Triangle;
+
+                            Console.WriteLine(string.Format("\t\t\tDebug: exporting mesh '{0}'", meshName));
 
                             ref Polygon[] polygons = ref group.mesh.polygons;
                             int i = 0;
@@ -352,46 +359,92 @@ namespace CDC.Objects
                             {
                                 ref Polygon polygon = ref polygons[polygonList[p]];
 
-                                Vertex[] vertices = { polygon.v1, polygon.v2, polygon.v3 };
-
-                                for (int v = 0; v < vertices.Length; v++)
+                                if (polygon.material.polygonFlags != 0)
                                 {
-                                    ref Vertex vert = ref vertices[v];
-                                    Geometry geometry = vert.isExtraGeometry ? model.ExtraGeometry : model.Geometry;
-
-                                    ref Vector[] positions = ref geometry.PositionsPhys;
-                                    ref Vector[] normals = ref geometry.Normals;
-                                    ref UInt32[] colors = ref geometry.Colours;
-                                    ref UV[] uvs = ref geometry.UVs;
-
-                                    ref Vector pos = ref positions[vert.positionID];
-                                    //mesh.Vertices.Add(new Assimp.Vector3D(pos.x, pos.y, pos.z));
-                                    mesh.Vertices.Add(new Assimp.Vector3D((float)pos.x * ExportSizeMultiplier, (float)pos.y * ExportSizeMultiplier, (float)pos.z * ExportSizeMultiplier));
-
-                                    if (Asset == Asset.Object)
-                                    {
-                                        ref Vector norm = ref normals[vert.normalID];
-                                        mesh.Normals.Add(new Assimp.Vector3D(norm.x, norm.y, norm.z));
-                                    }
-                                    else
-                                    {
-                                        Assimp.Color4D col = GetAssimpColorOpaque(colors[vert.colourID]);
-                                        mesh.VertexColorChannels[0].Add(col);
-                                    }
-
-                                    Assimp.Vector3D uv = GetAssimpUV(uvs[vert.UVID]);
-                                    mesh.TextureCoordinateChannels[0].Add(uv);
+                                    numNonZeroFlagsForMesh++;
                                 }
 
-                                mesh.Faces.Add(new Assimp.Face(new int[] { i++, i++, i++ }));
+                                //uint mAlpha = (polygon.material.colour & 0xFF000000) >> 24;
+                                //if ((mAlpha != 0xFF) && (mAlpha != 0x00))
+                                //{
+                                //    isTranslucent = true;
+                                //    materialOpacity = (float)(mAlpha) / 255.0f;
+                                //}
+
+                                if ((polygon.material.visible) || (!options.DiscardNonVisible))
+                                {
+                                    //Console.WriteLine(string.Format("\t\t\t\tDebug: exporting polygon {0} / {1} - flags: {2}, texture attributes 0x{3:X4}", p, (polygonCount - 1), Convert.ToString(polygon.sr1Flags, 2).PadLeft(8, '0'), polygon.sr1TextureFT3Attributes));
+
+                                    Vertex[] vertices = { polygon.v1, polygon.v2, polygon.v3 };
+                                    for (int v = 0; v < vertices.Length; v++)
+                                    {
+                                        ref Vertex vert = ref vertices[v];
+                                        Geometry geometry = vert.isExtraGeometry ? model.ExtraGeometry : model.Geometry;
+
+                                        ref Vector[] positions = ref geometry.PositionsPhys;
+                                        ref Vector[] normals = ref geometry.Normals;
+                                        ref UInt32[] colors = ref geometry.Colours;
+                                        ref UV[] uvs = ref geometry.UVs;
+
+                                        if (options.ExportSpectral)
+                                        {
+                                            positions = model.Geometry.PositionsAltPhys;
+                                            colors = model.Geometry.ColoursAlt;
+                                        }
+
+                                        ref Vector pos = ref positions[vert.positionID];
+                                        //mesh.Vertices.Add(new Assimp.Vector3D(pos.x, pos.y, pos.z));
+                                        mesh.Vertices.Add(new Assimp.Vector3D((float)pos.x * ExportSizeMultiplier, (float)pos.y * ExportSizeMultiplier, (float)pos.z * ExportSizeMultiplier));
+
+                                        if (Asset == Asset.Object)
+                                        {
+                                            ref Vector norm = ref normals[vert.normalID];
+                                            mesh.Normals.Add(new Assimp.Vector3D(norm.x, norm.y, norm.z));
+                                        }
+                                        else
+                                        {
+                                            Assimp.Color4D col = GetAssimpColorOpaque(colors[vert.colourID]);
+                                            mesh.VertexColorChannels[0].Add(col);
+                                        }
+
+                                        Assimp.Vector3D uv = GetAssimpUV(uvs[vert.UVID]);
+                                        mesh.TextureCoordinateChannels[0].Add(uv);
+                                    }
+
+                                    mesh.Faces.Add(new Assimp.Face(new int[] { i++, i++, i++ }));
+                                }
+                                else
+                                {
+                                    //Console.WriteLine(string.Format("\t\t\t\tDebug: not exporting non-visible polygon {0} / {1} - flags: {2}", p, (polygonCount - 1), Convert.ToString(polygon.sr1Flags, 2).PadLeft(8, '0')));
+                                }
                             }
 
                             //string materialName = name + "-" + modelIndex + "-" + groupIndex + "-" + materialIndex;
-                            //Assimp.Material material = GetAssimpMaterial(materialName, model, materialIndex, options);
+                            //Assimp.Material material = GetAssimpMaterial(materialName, model, materialIndex);
+
+                            if (options.DiscardMeshesWithNoNonZeroFlags && (numNonZeroFlagsForMesh == 0))
+                            {
+                                addMesh = false;
+                                Console.WriteLine(string.Format("\t\t\t\tDebug: not exporting mesh '{0}' because it has no polygons with non-zero flag values", meshName));
+                            }
 
                             if (addMesh)
                             {
                                 Assimp.Material material = GetAssimpMaterial(materialNamePrefix, model, materialIndex, options);
+                                //if (isTranslucent)
+                                //{
+                                //    material.Opacity = materialOpacity;
+                                //}
+
+                                if (options.ExportDoubleSidedMaterials)
+                                {
+                                    material.IsTwoSided = true;
+                                }
+                                else
+                                {
+                                    material.IsTwoSided = false;
+                                }
+                                Console.WriteLine(material.TextureDiffuse.FilePath);
 
                                 mesh.MaterialIndex = materials.Count;
                                 materials.Add(material);
