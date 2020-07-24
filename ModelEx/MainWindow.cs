@@ -87,6 +87,46 @@ namespace ModelEx
             progressWindow.Show();
         }
 
+        protected void EndLoading()
+        {
+            Enabled = true;
+            progressWindow.Hide();
+            progressWindow.Dispose();
+
+            TreeNode sceneTreeNode = new TreeNode("Scene");
+            sceneTreeNode.Checked = true;
+            foreach (Renderable renderable in SceneManager.Instance.CurrentScene.RenderObjects)
+            {
+                if (renderable.GetType().IsSubclassOf(typeof(Model)))
+                {
+                    Node objectNode = ((Model)renderable).Root;
+
+                    TreeNode objectTreeNode = new TreeNode(objectNode.Name);
+                    objectTreeNode.Checked = true;
+                    foreach (Node modelNode in objectNode.Nodes)
+                    {
+                        TreeNode modelTreeNode = new TreeNode(modelNode.Name);
+                        modelTreeNode.Checked = true;
+                        foreach (Node groupNode in modelNode.Nodes)
+                        {
+                            TreeNode groupTreeNode = new TreeNode(groupNode.Name);
+                            groupTreeNode.Checked = true;
+                            modelTreeNode.Nodes.Add(groupTreeNode);
+                        }
+                        objectTreeNode.Nodes.Add(modelTreeNode);
+                    }
+                    sceneTreeNode.Nodes.Add(objectTreeNode);
+                }
+            }
+
+            sceneTree.Nodes.Clear();
+            if (sceneTreeNode.Nodes.Count > 0)
+            {
+                sceneTree.Nodes.Add(sceneTreeNode);
+                sceneTree.ExpandAll();
+            }
+        }
+
         protected void LoadCurrentModel()
         {
             if ((_CurrentModelPath == "") || (!File.Exists(_CurrentModelPath)))
@@ -137,46 +177,6 @@ namespace ModelEx
             progressThread.SetApartmentState(ApartmentState.STA);
             progressThread.Start();
             //progressThread.Join();
-        }
-
-        protected void EndLoading()
-        {
-            Enabled = true;
-            progressWindow.Hide();
-            progressWindow.Dispose();
-
-            TreeNode sceneTreeNode = new TreeNode("Scene");
-            sceneTreeNode.Checked = true;
-            foreach (Renderable renderable in SceneManager.Instance.CurrentScene.RenderObjects)
-            {
-                if (renderable.GetType().IsSubclassOf(typeof(Model)))
-                {
-                    Node objectNode = ((Model)renderable).Root;
-
-                    TreeNode objectTreeNode = new TreeNode(objectNode.Name);
-                    objectTreeNode.Checked = true;
-                    foreach (Node modelNode in objectNode.Nodes)
-                    {
-                        TreeNode modelTreeNode = new TreeNode(modelNode.Name);
-                        modelTreeNode.Checked = true;
-                        foreach (Node groupNode in modelNode.Nodes)
-                        {
-                            TreeNode groupTreeNode = new TreeNode(groupNode.Name);
-                            groupTreeNode.Checked = true;
-                            modelTreeNode.Nodes.Add(groupTreeNode);
-                        }
-                        objectTreeNode.Nodes.Add(modelTreeNode);
-                    }
-                    sceneTreeNode.Nodes.Add(objectTreeNode);
-                }
-            }
-
-            sceneTree.Nodes.Clear();
-            if (sceneTreeNode.Nodes.Count > 0)
-            {
-                sceneTree.Nodes.Add(sceneTreeNode);
-                sceneTree.ExpandAll();
-            }
         }
 
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
