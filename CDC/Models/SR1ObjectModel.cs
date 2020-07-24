@@ -9,6 +9,7 @@ namespace CDC.Objects.Models
         public SR1ObjectModel(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
             : base(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
         {
+            _modelTypePrefix = "o_";
             xReader.BaseStream.Position = _modelData;
             _vertexCount = xReader.ReadUInt32();
             _vertexStart = _dataStart + xReader.ReadUInt32();
@@ -30,7 +31,13 @@ namespace CDC.Objects.Models
 
         public static SR1ObjectModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 uVersion, CDC.Objects.ExportOptions options)
         {
-            xReader.BaseStream.Position = uModelData + (0x00000004 * usIndex);
+            long newPosition = uModelData + (0x00000004 * usIndex);
+            if ((newPosition < 0) || (newPosition > xReader.BaseStream.Length))
+            {
+                Console.WriteLine(string.Format("Error: attempt to read a model with usIndex {0} from a stream with length {1}", usIndex, xReader.BaseStream.Length));
+                return null;
+            }
+            xReader.BaseStream.Position = newPosition;
             uModelData = uDataStart + xReader.ReadUInt32();
             xReader.BaseStream.Position = uModelData;
             SR1ObjectModel xModel = new SR1ObjectModel(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion);
@@ -108,50 +115,154 @@ namespace CDC.Objects.Models
             return;
         }
 
+        //protected virtual void ReadPolygon(BinaryReader xReader, int p, CDC.Objects.ExportOptions options)
+        //{
+        //    UInt32 uPolygonPosition = (UInt32)xReader.BaseStream.Position;
+        //    // struct _MFace
+
+        //    // struct _Face face
+        //    _polygons[p].v1 = _vertices[xReader.ReadUInt16()];
+        //    _polygons[p].v2 = _vertices[xReader.ReadUInt16()];
+        //    _polygons[p].v3 = _vertices[xReader.ReadUInt16()];
+
+        //    _polygons[p].material = new Material();
+        //    _polygons[p].material.visible = true;
+
+        //    _polygons[p].material.textureUsed = (Boolean)(((int)xReader.ReadUInt16() & 0x0200) != 0);
+
+        //    //// unsigned char normal
+        //    //byte polygonNormal = xReader.ReadByte();
+
+        //    //// unsigned char flags
+        //    //byte flags = xReader.ReadByte();
+
+        //    //_polygons[p].material.textureUsed = true;
+
+
+        //    if (_polygons[p].material.textureUsed)
+        //    {
+        //        // WIP
+        //        UInt32 uMaterialPosition = _dataStart + xReader.ReadUInt32();
+        //        if ((((uMaterialPosition - _materialStart) % 0x10) != 0) &&
+        //             ((uMaterialPosition - _materialStart) % 0x18) == 0)
+        //        {
+        //            _platform = Platform.Dreamcast;
+        //        }
+
+        //        xReader.BaseStream.Position = uMaterialPosition;
+        //        ReadMaterial(xReader, p, options);
+
+        //        if (_platform == Platform.Dreamcast)
+        //        {
+        //            xReader.BaseStream.Position += 0x06;
+        //        }
+        //        else
+        //        {
+        //            xReader.BaseStream.Position += 0x02;
+        //        }
+
+        //        _polygons[p].material.colour = xReader.ReadUInt32();
+        //        //_polygons[p].material.colour |= 0xFF000000;   //2019-12-22
+
+        //    }
+        //    else
+        //    {
+        //        _polygons[p].material.colour = xReader.ReadUInt32() | 0xFF000000;
+        //    }
+
+        //    Utility.FlipRedAndBlue(ref _polygons[p].material.colour);
+
+        //    xReader.BaseStream.Position = uPolygonPosition + 0x0C;
+        //}
+
+        protected override void HandleMaterialRead(BinaryReader xReader, int p, CDC.Objects.ExportOptions options, byte flags, UInt32 colourOrMaterialPosition)
+        {
+            // WIP
+            UInt32 uMaterialPosition = _dataStart + colourOrMaterialPosition;
+            if ((((uMaterialPosition - _materialStart) % 0x10) != 0) &&
+                 ((uMaterialPosition - _materialStart) % 0x18) == 0)
+            {
+                _platform = Platform.Dreamcast;
+            }
+
+            xReader.BaseStream.Position = uMaterialPosition;
+            ReadMaterial(xReader, p, options, false);
+
+            if (_platform == Platform.Dreamcast)
+            {
+                xReader.BaseStream.Position += 0x06;
+            }
+            else
+            {
+                xReader.BaseStream.Position += 0x02;
+            }
+
+            _polygons[p].material.colour = xReader.ReadUInt32();
+            //_polygons[p].material.colour |= 0xFF000000;   //2019-12-22
+        }
+
         protected virtual void ReadPolygon(BinaryReader xReader, int p, CDC.Objects.ExportOptions options)
         {
             UInt32 uPolygonPosition = (UInt32)xReader.BaseStream.Position;
+            // struct _MFace
 
+            // struct _Face face
             _polygons[p].v1 = _geometry.Vertices[xReader.ReadUInt16()];
             _polygons[p].v2 = _geometry.Vertices[xReader.ReadUInt16()];
             _polygons[p].v3 = _geometry.Vertices[xReader.ReadUInt16()];
 
             _polygons[p].material = new Material();
             _polygons[p].material.visible = true;
-            _polygons[p].material.textureUsed = (Boolean)(((int)xReader.ReadUInt16() & 0x0200) != 0);
 
+            //// unsigned char normal
+            byte polygonNormal = xReader.ReadByte();
+
+            //// unsigned char flags
+            long flagOffset = xReader.BaseStream.Position + 2048;
+            byte flags = xReader.ReadByte();
+            //Console.WriteLine(string.Format("0x{0:X2} (@0x{1:X4}, D:{1}\t:::", flags, flagOffset));
+            _polygons[p].material.polygonFlags = flags;
+            _polygons[p].material.textureUsed = false;
+
+            if (((flags & 0x01) == 0x01))
+            {
+            }
+            if (((flags & 0x02) == 0x02))
+            {
+                _polygons[p].material.textureUsed = true;
+            }
+            if (((flags & 0x04) == 0x04))
+            {
+            }
+            if (((flags & 0x08) == 0x08))
+            {
+                _polygons[p].material.emissivity = 1.0f;
+            }
+            if (((flags & 0x10) == 0x10))
+            {
+                _polygons[p].material.visible = false;
+            }
+            // 20 is not used in any known version of the game
+            if (((flags & 0x40) == 0x40))
+            {
+            }
+            // 80 is not used in any known version of the game
+
+            // long color;
+            UInt32 colourOrMaterialPosition = xReader.ReadUInt32();
             if (_polygons[p].material.textureUsed)
             {
-                // WIP
-                UInt32 uMaterialPosition = _dataStart + xReader.ReadUInt32();
-                if ((((uMaterialPosition - _materialStart) % 0x10) != 0) &&
-                     ((uMaterialPosition - _materialStart) % 0x18) == 0)
-                {
-                    _platform = Platform.Dreamcast;
-                }
-
-                xReader.BaseStream.Position = uMaterialPosition;
-                ReadMaterial(xReader, p, options);
-
-                if (_platform == Platform.Dreamcast)
-                {
-                    xReader.BaseStream.Position += 0x06;
-                }
-                else
-                {
-                    xReader.BaseStream.Position += 0x02;
-                }
-
-                _polygons[p].material.colour = xReader.ReadUInt32();
-                _polygons[p].material.colour |= 0xFF000000;
-
+                // this seems to be what the game does
+                _polygons[p].material.colour = colourOrMaterialPosition | 0xFF000000;
+                _polygons[p].colour = _polygons[p].material.colour;
             }
             else
             {
-                _polygons[p].material.colour = xReader.ReadUInt32() | 0xFF000000;
+                _polygons[p].material.colour = colourOrMaterialPosition | 0xFF000000;
+                _polygons[p].colour = _polygons[p].material.colour;
             }
-
-            Utility.FlipRedAndBlue(ref _polygons[p].material.colour);
+            _polygons[p].material.UseAlphaMask = true;
+            HandlePolygonInfo(xReader, p, options, flags, colourOrMaterialPosition, false);
 
             xReader.BaseStream.Position = uPolygonPosition + 0x0C;
         }
@@ -162,6 +273,8 @@ namespace CDC.Objects.Models
             {
                 return;
             }
+
+            HandleDebugRendering(options);
 
             xReader.BaseStream.Position = _polygonStart;
 

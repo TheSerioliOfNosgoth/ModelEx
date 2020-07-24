@@ -6,6 +6,9 @@ namespace CDC.Objects.Models
 {
     public abstract class SR1Model : SRModel
     {
+        //public const uint TranslucentMaterial = 0xC0000000;
+        public const uint TransparentMaterial = 0x80000000;
+        //public const uint BarelyVisibleMaterial = 0x40000000;
         #region Normals
         protected static Int32[,] s_aiNormals =
         {
@@ -284,9 +287,8 @@ namespace CDC.Objects.Models
             // Get the polygons
             _polygons = new Polygon[_polygonCount];
             _geometry.UVs = new UV[_indexCount];
+            Console.WriteLine("\tDebug: reading polygons");
             ReadPolygons(xReader, options);
-
-            HandleDebugRendering(options);
 
             // Generate the output
             GenerateOutput();
@@ -321,7 +323,181 @@ namespace CDC.Objects.Models
 
         protected abstract void ReadPolygons(BinaryReader xReader, CDC.Objects.ExportOptions options);
 
-        protected virtual void ReadMaterial(BinaryReader xReader, int p, CDC.Objects.ExportOptions options)
+        protected abstract void HandleMaterialRead(BinaryReader xReader, int p, CDC.Objects.ExportOptions options, byte flags, UInt32 colourOrMaterialPosition);
+
+        protected virtual void HandlePolygonInfo(BinaryReader xReader, int p, CDC.Objects.ExportOptions options, byte flags, UInt32 colourOrMaterialPosition, bool forceTranslucent)
+        {
+            bool isTranslucent = false;
+            if (forceTranslucent)
+            {
+                isTranslucent = true;
+            }
+
+            // unless the user has explicitly requested distinct materials for each flag, remove use of anything ignored at this level
+            if (!options.DistinctMaterialsForAllFlags)
+            {
+                _polygons[p].material.clutValueUsedMask &= 0x3F1F;
+                _polygons[p].material.texturePageUsedMask &= 0x07FF;
+                _polygons[p].material.BSPTreeRootFlagsUsedMask = 0x0000;
+                _polygons[p].material.BSPTreeAllParentNodeFlagsORdUsedMask = 0x0000;
+                _polygons[p].material.BSPTreeParentNodeFlagsUsedMask &= 0x0001;
+                _polygons[p].material.BSPTreeLeafFlagsUsedMask = 0x0000;
+            }
+
+            _polygons[p].material.polygonFlags = flags;
+
+            if (options.MakeAllPolygonsVisible)
+            {
+                _polygons[p].material.visible = true;
+            }
+
+            if (options.RenderMode == RenderMode.NoTextures)
+            {
+                _polygons[p].material.clutValueUsedMask = 0;
+                _polygons[p].material.texturePageUsedMask = 0;
+                _polygons[p].material.BSPTreeRootFlagsUsedMask = 0;
+                _polygons[p].material.BSPTreeAllParentNodeFlagsORdUsedMask = 0;
+                _polygons[p].material.BSPTreeParentNodeFlagsUsedMask = 0;
+                _polygons[p].material.BSPTreeLeafFlagsUsedMask = 0;
+            }
+
+            if (options.MakeAllPolygonsOpaque)
+            {
+                _polygons[p].material.colour |= 0xFF000000;
+            }
+
+            if (options.SetAllPolygonColoursToValue)
+            {
+                //_polygons[p].material.colour |= 0x0000FF00;
+                _polygons[p].material.colour = SRFile.FloatARGBToUInt32ARGB(new float[]{options.PolygonColourAlpha, options.PolygonColourRed, options.PolygonColourGreen, options.PolygonColourBlue});
+                _polygons[p].colour = _polygons[p].material.colour;
+            }
+
+            if (_polygons[p].material.visible)
+            {
+                if (options.UnhideCompletelyTransparentTextures)
+                {
+                    if ((_polygons[p].material.colour & 0xFF000000) == 0x00)
+                    {
+                        _polygons[p].material.colour |= 0xFF000000;
+                    }
+                }
+
+                // these cause big issues for object models, moving them to units
+                if ((flags & 0x08) == 0x08)
+                {
+                    //_polygons[p].material.emissivity = 1.0f;
+                }
+                if ((flags & 0x10) == 0x10)
+                {
+                }
+                if ((flags & 0x20) == 0x20)
+                {
+                    isTranslucent = true;
+                    //_polygons[p].material.opacity = CDC.Material.OPACITY_TRANSLUCENT;
+                }
+
+            }
+
+            //if (!_polygons[p].material.visible)
+            //{
+            //    if (options.DiscardNonVisible)
+            //    {
+            //        isTranslucent = true;
+            //        _polygons[p].material.opacity = 0.0f;
+            //        _polygons[p].material.colour &= 0x00000000;
+            //        _polygons[p].colour &= 0x00000000;
+            //    }
+            //}
+            //if (!_polygons[p].material.visible)
+            //{
+            //    _polygons[p].material.textureUsed = false;
+            //    //_polygons[p].material.colour = (_polygons[p].material.colour & 0x00FFFFFF) | TransparentMaterial;
+            //}
+            //else
+            //{
+            //    _polygons[p].material.textureUsed = true;
+            //}
+            //_polygons[p].sr1TextureFT3Attributes = 0;
+            if (_polygons[p].material.textureUsed)
+            {
+                HandleMaterialRead(xReader, p, options, flags, colourOrMaterialPosition);
+            }
+            else
+            {
+                //_polygons[p].material.textureUsed = false;
+                //_polygons[p].material.colour = 0xFFFFFFFF;        //2019-12-22
+                //_polygons[p].material.visible = false;
+            }
+
+            // 0x1, 2, 4, and 8 are not used in any known version of the game
+            // alphamasked terrain
+            if ((_polygons[p].material.textureAttributes & 0x0010) == 0x0010)
+            {
+                _polygons[p].material.UseAlphaMask = true;
+            }
+            // 20 is not used in any known version of the game
+            // translucent terrain, e.g. water, glass
+            if ((_polygons[p].material.textureAttributes & 0x0040) == 0x0040)
+            {
+                isTranslucent = true;
+                _polygons[p].material.opacity = CDC.Material.OPACITY_TRANSLUCENT;
+            }
+            if ((_polygons[p].material.textureAttributes & 0x0080) == 0x0080)
+            {
+            }
+            if ((_polygons[p].material.textureAttributes & 0x0100) == 0x0100)
+            {
+            }
+            if ((_polygons[p].material.textureAttributes & 0x0200) == 0x0200)
+            {
+            }
+            // 400 and 800 are not used in any known version of the game
+            if ((_polygons[p].material.textureAttributes & 0x1000) == 0x1000)
+            {
+            }
+            if ((_polygons[p].material.textureAttributes & 0x2000) == 0x2000)
+            {
+                isTranslucent = true;
+                _polygons[p].material.opacity = CDC.Material.OPACITY_TRANSLUCENT;
+            }
+            if ((_polygons[p].material.textureAttributes & 0x4000) == 0x4000)
+            {
+                //_polygons[p].material.visible = false;
+            }
+            // lighting effects? i.e. invisible, animated polygon that only affects vertex colours?
+            if ((_polygons[p].material.textureAttributes & 0x8000) == 0x8000)
+            {
+                _polygons[p].material.emissivity = 1.0f;
+                //isTranslucent = true;
+                //_polygons[p].material.opacity = 0.0f;
+            }
+                //if ((_polygons[p].sr1TextureFT3Attributes & 0x2000) == 0x2000)
+                //{
+                //    isTranslucent = true;
+                //    //_polygons[p].colour = (_polygons[p].material.colour & 0x00FFFFFF) | BarelyVisibleMaterial;
+                //    _polygons[p].material.opacity = CDC.Material.OPACITY_BARELY_VISIBLE;
+                //    //_polygons[p].material.HasTranslucentElements = true;
+                //}
+
+            if (isTranslucent)
+            {
+                //_polygons[p].material.HasTranslucentElements = true;
+                //_polygons[p].material.opacity = CDC.Material.OPACITY_TRANSLUCENT;
+                //_polygons[p].material = _polygons[p].material.Clone();
+                //_polygons[p].material.colour = (_polygons[p].material.colour & 0x00FFFFFF) | TranslucentMaterial;
+            }
+            else
+            {
+                //_polygons[p].colour = _polygons[p].material.colour | 0xFF000000;
+            }
+
+
+            
+            Utility.FlipRedAndBlue(ref _polygons[p].material.colour);
+        }
+
+        protected virtual void ReadMaterial(BinaryReader xReader, int p, CDC.Objects.ExportOptions options, bool readTextureFT3Attributes)
         {
             int v1 = (p * 3) + 0;
             int v2 = (p * 3) + 1;
@@ -331,38 +507,103 @@ namespace CDC.Objects.Models
             _polygons[p].v2.UVID = v2;
             _polygons[p].v3.UVID = v3;
 
+            //2019-12-26
+            //_polygons[p].material.colour = 0xFFFFFFFF;
+
+            long texturePageOffset = 0;
+            long textureVal2Offset = 0;
+            long materialAttributesOffset = 0;
+
             if (_platform != Platform.Dreamcast)
             {
+                // struct TextureFT3 
+
+                // unsigned char u0;
                 Byte v1U = xReader.ReadByte();
+                // unsigned char v0;
                 Byte v1V = xReader.ReadByte();
 
                 if (_platform == Platform.PSX)
                 {
+                    // unsigned short clut;
                     ushort paletteVal = xReader.ReadUInt16();
                     ushort rowVal = (ushort)((ushort)(paletteVal << 2) >> 8);
                     ushort colVal = (ushort)((ushort)(paletteVal << 11) >> 11);
+                    ushort clutWithoutRowOrColumn = (ushort)(paletteVal & 0xC0E0);
+                    //Console.WriteLine(string.Format("Debug: rowVal is {0:X4}, colVal is {1:X4}, original clut value is {2:X4}, without row/col bits is {3:X4}", rowVal, colVal, paletteVal, clutWithoutRowOrColumn));
+                    _polygons[p].material.clutValue = paletteVal;
                     _polygons[p].paletteColumn = colVal;
                     _polygons[p].paletteRow = rowVal;
                 }
                 else
                 {
-                    _polygons[p].material.textureID = (UInt16)(xReader.ReadUInt16() & 0x07FF);
+                    // unsigned short tpage; ???
+                    texturePageOffset = xReader.BaseStream.Position + 2048;
+                    UInt16 texID = xReader.ReadUInt16();
+                    //Console.WriteLine(string.Format("Debug: texture ID is {0:X4}", texID));
+                    _polygons[p].material.texturePage = texID;
+                    _polygons[p].material.textureID = (UInt16)(texID & 0x07FF);
                 }
 
+                // unsigned char u1;
                 Byte v2U = xReader.ReadByte();
+                // unsigned char v1;
                 Byte v2V = xReader.ReadByte();
 
+                bool echoAttributes = false;
                 if (_platform == Platform.PSX)
                 {
-                    _polygons[p].material.textureID = (UInt16)(((xReader.ReadUInt16() & 0x07FF) - 8) % 8);
+                    // unsigned short tpage;
+                    _polygons[p].material.texturePage = xReader.ReadUInt16();
+                    _polygons[p].material.textureID = (UInt16)(((_polygons[p].material.texturePage & 0x07FF) - 8) % 8);
+                    
+                    //if ((UInt16)(((_polygons[p].material.texturePage) - 8)) != _polygons[p].material.textureID)
+                    //{
+                    //    Console.WriteLine(string.Format("Debug: texture ID is {0:X4}, interpreting as {1:X4}", _polygons[p].material.texturePage, _polygons[p].material.textureID));
+                    //    echoAttributes = true;
+                    //}
                 }
                 else
                 {
-                    UInt16 usTemp = xReader.ReadUInt16();
+                    textureVal2Offset = xReader.BaseStream.Position + 2048;
+                    _polygons[p].material.textureAttributesA = xReader.ReadUInt16();
                 }
 
+                // unsigned char u2;
                 Byte v3U = xReader.ReadByte();
+                // unsigned char v2;
                 Byte v3V = xReader.ReadByte();
+
+                // unsigned short attr;
+                if (readTextureFT3Attributes)
+                {
+                    materialAttributesOffset = xReader.BaseStream.Position + 2048;
+                    _polygons[p].material.textureAttributes = xReader.ReadUInt16();
+                }
+                //if (echoAttributes)
+                //{
+                //    Console.WriteLine(string.Format("Debug: sr1TextureFT3Attributes = {0:X4}", _polygons[p].sr1TextureFT3Attributes));
+                //}
+
+                // experimental
+                //if ((_polygons[p].sr1TextureFT3Attributes & 0x10) == 0x10)
+                //{
+                //if ((_polygons[p].sr1TextureFT3Attributes & 0x40) == 0x40)
+                //{
+                //    _polygons[p].material.colour = (_polygons[p].material.colour & 0x00FFFFFF) | TranslucentMaterial;
+                //}
+                //else  //2019-12-22
+                //{
+                //    //if ((_polygons[p].material.colour & TranslucentMaterial) != TranslucentMaterial)
+                //    //{
+                //    //    _polygons[p].material.colour |= 0xFF000000;
+                //    //}
+                //}
+                //else
+                //{
+                //    _polygons[p].material.visible = false;
+                //}
+                //}
 
                 _geometry.UVs[v1].u = ((float)v1U) / 255.0f;
                 _geometry.UVs[v1].v = ((float)v1V) / 255.0f;
@@ -370,6 +611,18 @@ namespace CDC.Objects.Models
                 _geometry.UVs[v2].v = ((float)v2V) / 255.0f;
                 _geometry.UVs[v3].u = ((float)v3U) / 255.0f;
                 _geometry.UVs[v3].v = ((float)v3V) / 255.0f;
+
+                if (options.AdjustUVs)
+                {
+                    float fCU = (_geometry.UVs[v1].u + _geometry.UVs[v2].u + _geometry.UVs[v3].u) / 3.0f;
+                    float fCV = (_geometry.UVs[v1].v + _geometry.UVs[v2].v + _geometry.UVs[v3].v) / 3.0f;
+                    float fSizeAdjust = 1.0f / 255.0f;      // 2.0f seems to work better for dreamcast
+                    float fOffsetAdjust = 0.5f / 255.0f;
+
+                    Utility.AdjustUVs(ref _geometry.UVs[v1], fCU, fCV, fSizeAdjust, fOffsetAdjust);
+                    Utility.AdjustUVs(ref _geometry.UVs[v2], fCU, fCV, fSizeAdjust, fOffsetAdjust);
+                    Utility.AdjustUVs(ref _geometry.UVs[v3], fCU, fCV, fSizeAdjust, fOffsetAdjust);
+                }
             }
             else
             {
@@ -387,10 +640,23 @@ namespace CDC.Objects.Models
                 _geometry.UVs[v3].u = Utility.BizarreFloatToNormalFloat(v3U);
                 _geometry.UVs[v3].v = Utility.BizarreFloatToNormalFloat(v3V);
 
-                _polygons[p].material.textureID = (UInt16)((xReader.ReadUInt16() & 0x07FF) - 1);
+                texturePageOffset = xReader.BaseStream.Position;
+                _polygons[p].material.texturePage = xReader.ReadUInt16();
+                _polygons[p].material.textureID = (UInt16)((_polygons[p].material.texturePage & 0x07FF) - 1);
+                //_polygons[p].material.textureID = (UInt16)((_polygons[p].material.texturePage & 0x07FF));
+                //// unsigned short attr;
+                if (readTextureFT3Attributes)
+                {
+                    materialAttributesOffset = xReader.BaseStream.Position + 2048;
+                    _polygons[p].material.textureAttributes = xReader.ReadUInt16();
+                }
             }
 
             _polygons[p].material.colour = 0xFFFFFFFF;
+
+            //Console.WriteLine(string.Format("0x{0:X4} (@0x{1:X4}, D:{1}\t0x{2:X4} (@0x{3:X4}, D:{3}\t0x{4:X4} (@0x{5:X4}, D:{5}", 
+            //    _polygons[p].material.texturePage, texturePageOffset, _polygons[p].material.textureAttributesA, textureVal2Offset,
+            //     _polygons[p].material.textureAttributes, materialAttributesOffset));
 
             return;
         }

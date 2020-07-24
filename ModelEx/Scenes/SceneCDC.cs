@@ -523,9 +523,6 @@ namespace ModelEx
 
             _objectFiles.Add(srFile);
 
-
-
-
             if (options.TextureLoadRequired())
             {
                 ProgressStage = "Loading Textures";
@@ -682,6 +679,8 @@ namespace ModelEx
                                     polygons[polygonNum].paletteRow = polygon.paletteRow;
                                     polygons[polygonNum].u = new int[3];
                                     polygons[polygonNum].v = new int[3];
+                                    //polygons[polygonNum].materialColour = polygon.material.colour;
+                                    polygons[polygonNum].materialColour = polygon.colour;
 
                                     polygons[polygonNum].u[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].u * 255);
                                     polygons[polygonNum].v[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].v * 255);
@@ -691,6 +690,11 @@ namespace ModelEx
                                     polygons[polygonNum].v[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].v * 255);
 
                                     polygons[polygonNum].textureID = polygon.material.textureID;
+                                    polygons[polygonNum].CLUT = polygon.material.clutValue;
+
+                                    polygons[polygonNum].textureUsed = polygon.material.textureUsed;
+                                    polygons[polygonNum].visible = polygon.material.visible;
+                                    //polygons[polygonNum].materialColour = polygon.material.colour;
 
                                     polygonNum++;
                                 }
@@ -712,6 +716,21 @@ namespace ModelEx
                                 //string exportedTextureFileName = Path.ChangeExtension(textureName, "png");
                                 //_TexturesAsPNGs.Add(exportedTextureFileName, textureFile.GetTextureAsBitmap(t));
                                 Bitmap b = textureFile.GetTextureAsBitmap(t);
+                                // this is a hack that's being done here for now because I don't know for sure which of the flags/attributes controls
+                                // textures that should be alpha-masked. Alpha-masking EVERY texture is expensive.
+                                if (options.AlsoInferAlphaMaskingFromTexturePixels)
+                                {
+                                    if (BitmapHasTransparentPixels(b))
+                                    {
+                                        for (int modelNum = 0; modelNum < srFile.Models.Length; modelNum++)
+                                        {
+                                            if (t < srFile.Models[modelNum].Materials.Length)
+                                            {
+                                                srFile.Models[modelNum].Materials[t].UseAlphaMask = true;
+                                            }
+                                        }
+                                    }
+                                }
                                 _TexturesAsPNGs.Add(textureName, b);
 
                                 // dump all textures as PNGs for debugging
@@ -724,6 +743,26 @@ namespace ModelEx
                                 //    tex.Save(@"C:\Debug\Tex-" + texNum + ".png", ImageFormat.Png);
                                 //    texNum++;
                                 //}
+                            }
+
+                            // for models that use index/CLUT textures, if the user has enabled this option
+                            if (options.UseEachUniqueTextureCLUTVariation)
+                            {
+                                foreach (int textureID in textureFile.TexturesByCLUT.Keys)
+                                {
+                                    Dictionary<ushort, Bitmap> textureCLUTCollection = textureFile.TexturesByCLUT[textureID];
+                                    foreach (ushort clut in textureCLUTCollection.Keys)
+                                    {
+                                        String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameWithCLUT(objectName, textureID, clut) + TextureExtension;
+                                        System.IO.MemoryStream stream = textureFile.GetTextureWithCLUTAsStream(textureID, clut);
+                                        if (stream != null)
+                                        {
+                                            TextureManager.Instance.AddTexture(stream, textureName);
+                                        }
+                                        Bitmap b = textureFile.TexturesByCLUT[textureID][clut];
+                                        _TexturesAsPNGs.Add(textureName, b);
+                                    }
+                                }
                             }
                         }
                         catch (Exception ex)
