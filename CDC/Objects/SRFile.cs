@@ -403,7 +403,8 @@ namespace CDC.Objects
                                         }
                                         else
                                         {
-                                            Assimp.Color4D col = GetAssimpColorOpaque(colors[vert.colourID]);
+                                            //Assimp.Color4D col = GetAssimpColorOpaque(colors[vert.colourID]);
+                                            Assimp.Color4D col = GetAssimpColor(colors[vert.colourID]);
                                             mesh.VertexColorChannels[0].Add(col);
                                         }
 
@@ -447,7 +448,18 @@ namespace CDC.Objects
                                 Console.WriteLine(material.TextureDiffuse.FilePath);
 
                                 mesh.MaterialIndex = materials.Count;
-                                materials.Add(material);
+                                bool addMaterial = true;
+                                foreach (Assimp.Material m in materials)
+                                {
+                                    if (m.Name == material.Name)
+                                    {
+                                        addMaterial = false;
+                                    }
+                                }
+                                if (addMaterial)
+                                {
+                                    materials.Add(material);
+                                }
 
                                 groupNode.MeshIndices.Add(meshes.Count);
                                 meshes.Add(mesh);
@@ -514,7 +526,7 @@ namespace CDC.Objects
                 G = ((color & 0x0000FF00) >> 8) / 255.0f,
                 B = ((color & 0x000000FF) >> 0) / 255.0f
             };
-            
+
             return color4D;
         }
 
@@ -557,15 +569,53 @@ namespace CDC.Objects
         {
             Assimp.Material material = new Assimp.Material();
 
+            //material.Opacity = (float)(model.Materials[materialIndex].colour & (uint)0xFF000000 >> 24) / 255.0f;
+            //if (model.Materials[materialIndex].opacity < material.Opacity)
+            //{
+            //    material.Opacity = model.Materials[materialIndex].opacity;
+            //}
+            material.Opacity = model.Materials[materialIndex].opacity;
+
             // Bugged.
             //material.Name = name;
             string namePropName = /*Assimp.Unmanaged.AiMatKeys.NAME_BASE*/ "?mat.name";
-            material.AddProperty(new Assimp.MaterialProperty(namePropName, name));
+            //string materialName = string.Format("{0}_opaque", name);
+            //string materialName = name;
+            //string materialName = string.Format("{0}{1}_x{2:X2}{3:X4}{4:X4}{5:X4}{6:X4}{7:X4}{8:X4}{9:X2}x", model.ModelTypePrefix, name, 
+            //    model.Materials[materialIndex].polygonFlags, 
+            //    model.Materials[materialIndex].textureAttributes, 
+            //    model.Materials[materialIndex].clutValue, model.Materials[materialIndex].texturePage, 
+            //    model.Materials[materialIndex].BSPTreeParentNodeFlags, model.Materials[materialIndex].BSPTreeLeafFlags,
+            //    model.Materials[materialIndex].textureAttributesA, model.Materials[materialIndex].sortPush);
+            string materialName = string.Format("{0}{1}_x{2:X2}{3:X4}{4:X4}{5:X4}{6:X4}{7:X2}x", model.ModelTypePrefix, name,
+                model.Materials[materialIndex].polygonFlagsEffective,
+                model.Materials[materialIndex].textureAttributesEffective,
+                model.Materials[materialIndex].BSPTreeParentNodeFlagsEffective, model.Materials[materialIndex].BSPTreeLeafFlagsEffective,
+                model.Materials[materialIndex].textureAttributesAEffective, model.Materials[materialIndex].sortPushEffective);
+            //if ((opacity < 1.0) || (model.Materials[materialIndex].HasTranslucentElements))
+            // putting the properties in the name is a hack, but I haven't figured out a better way yet
+            if (material.Opacity < 1.0f)
+            {
+                materialName = string.Format("{0}_op_{1}_", materialName, material.Opacity);
+            }
+            else
+            {
+                if (model.Materials[materialIndex].UseAlphaMask)
+                {
+                    materialName = string.Format("{0}_am", materialName);
+                }
+            }
+            if (model.Materials[materialIndex].emissivity > 0.0f)
+            {
+                materialName = string.Format("{0}_gl_{1}_", materialName, model.Materials[materialIndex].emissivity);
+            }
+            material.AddProperty(new Assimp.MaterialProperty(namePropName, materialName));
 
             if (model.Materials[materialIndex].textureUsed)
             {
                 Assimp.TextureSlot textureDiffuse = new Assimp.TextureSlot();
                 textureDiffuse.BlendFactor = 1.0f;
+                //textureDiffuse.BlendFactor = opacity;
                 textureDiffuse.FilePath = model.GetTextureName(materialIndex, options) + TextureExtension;
                 textureDiffuse.TextureIndex = 0;
                 textureDiffuse.TextureType = Assimp.TextureType.Diffuse;
@@ -590,9 +640,11 @@ namespace CDC.Objects
 
                 // Bugged.
                 //material.ColorDiffuse = colorDiffuse;
+                material.ColorDiffuse = colorDiffuse;
                 string diffusePropName = /*Assimp.Unmanaged.AiMatKeys.COLOR_DIFFUSE_BASE*/ "$clr.diffuse";
                 Assimp.MaterialProperty diffuseProp = new Assimp.MaterialProperty(diffusePropName, colorDiffuse);
                 material.AddProperty(diffuseProp);
+                //material.Opacity = opacity;
             }
 
             if (Asset == Asset.Object)
@@ -613,6 +665,8 @@ namespace CDC.Objects
                 shadingProp.SetIntegerValue((int)Assimp.ShadingMode.Gouraud);
                 material.AddProperty(shadingProp);
             }
+
+            //material.Opacity = (float)(model.Materials[materialIndex].colour & (uint)0xFF000000 >> 24) / 255.0f;
 
             return material;
         }
