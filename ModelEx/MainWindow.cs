@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,21 +13,61 @@ namespace ModelEx
         ProgressWindow progressWindow;
         int filterIndex = 1;
         CDC.Objects.ExportOptions ImportExportOptions;
+        int _MainSplitPanelPosition;
+        protected bool _RunUIMonitoringThread;
+        protected bool _ReloadModelOnRenderModeChange;
+        protected bool _ResetCameraOnModelLoad;
+        protected string _CurrentModelPath;
+        protected CDC.Game _CurrentModelType;
+        protected string _LastOpenDirectory;
+        protected string _LastExportDirectory;
+
+        protected void UIMonitor()
+        {
+            while (_RunUIMonitoringThread)
+            {
+                UpdateSplitPanelPosition();
+                Thread.Sleep(1000);
+            }
+        }
+
+        protected void UpdateSplitPanelPosition()
+        {
+            _MainSplitPanelPosition = sceneViewContainer.SplitterDistance;
+            //Console.WriteLine(string.Format("Splitter position is now {0}", _MainSplitPanelPosition));
+        }
+
+        protected void ResetSplitPanelPosition()
+        {
+            sceneViewContainer.SplitterDistance = _MainSplitPanelPosition;
+            //Console.WriteLine(string.Format("Reset splitter position to {0}", _MainSplitPanelPosition));
+        }
 
         public MainWindow()
         {
+            _RunUIMonitoringThread = true;
+            _CurrentModelPath = "";
+            _LastOpenDirectory = "";
+            _LastExportDirectory = "";
             InitializeComponent();
             ImportExportOptions = new CDC.Objects.ExportOptions();
+            UpdateSplitPanelPosition();
+            ThreadStart tsUIMonitor = new ThreadStart(UIMonitor);
+            Thread uiMonitor = new Thread(tsUIMonitor);
+            uiMonitor.Start();
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            _RunUIMonitoringThread = false;
             sceneView.ShutDown();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             sceneView.Initialize();
+            _ReloadModelOnRenderModeChange = false;
+            _ResetCameraOnModelLoad = true;
         }
 
         protected void BeginLoading()
@@ -44,6 +85,58 @@ namespace ModelEx
             progressWindow.ShowInTaskbar = false;
             this.Enabled = false;
             progressWindow.Show();
+        }
+
+        protected void LoadCurrentModel()
+        {
+            if ((_CurrentModelPath == "") || (!File.Exists(_CurrentModelPath)))
+            {
+                return;
+            }
+            Invoke(new MethodInvoker(BeginLoading));
+
+            Thread loadingThread = new Thread((() =>
+            {
+                SceneManager.Instance.ShutDown();
+                SceneManager.Instance.AddScene(new SceneCDC(_CurrentModelType));
+                SceneManager.Instance.CurrentScene.ImportFromFile(_CurrentModelPath, ImportExportOptions);
+
+                if (_ResetCameraOnModelLoad)
+                {
+                    CameraManager.Instance.Reset();
+                }
+
+                Invoke(new MethodInvoker(EndLoading));
+            }));
+
+            loadingThread.Name = "LoadingThread";
+            loadingThread.SetApartmentState(ApartmentState.STA);
+            loadingThread.Start();
+            //loadingThread.Join();
+
+            Thread progressThread = new Thread((() =>
+            {
+                do
+                {
+                    lock (SceneCDC.ProgressStage)
+                    {
+                        progressWindow.SetMessage(SceneCDC.ProgressStage);
+
+                        int oldProgress = progressWindow.GetProgress();
+                        if (oldProgress < SceneCDC.ProgressPercent)
+                        {
+                            progressWindow.SetProgress(oldProgress + 1);
+                        }
+                    }
+                    Thread.Sleep(20);
+                }
+                while (loadingThread.IsAlive);
+            }));
+
+            progressThread.Name = "ProgressThread";
+            progressThread.SetApartmentState(ApartmentState.STA);
+            progressThread.Start();
+            //progressThread.Join();
         }
 
         protected void EndLoading()
@@ -97,72 +190,82 @@ namespace ModelEx
                     "Soul Reaver 2 Mesh Files|*.SRObj;*.drm;*.pcm|" +
                     "Defiance Mesh Files|*.SRObj;*.drm;*.pcm|" +
                     "Collada Mesh Files (*.dae)|*.dae",
-                    //"Soul Reaver DRM Files (*.drm)|*.drm|" +
-                    //"Soul Reaver PCM Files (*.pcm)|*.pcm|" +
-                    //"All Mesh Files|*.SRObj;*.drm;*.pcm|" +
-                    //"All Files (*.*)|*.*";
+                //"Soul Reaver DRM Files (*.drm)|*.drm|" +
+                //"Soul Reaver PCM Files (*.pcm)|*.pcm|" +
+                //"All Mesh Files|*.SRObj;*.drm;*.pcm|" +
+                //"All Files (*.*)|*.*";
                 DefaultExt = "drm",
                 FilterIndex = filterIndex
             };
+            if (_LastOpenDirectory != "")
+            {
+                if (Directory.Exists(_LastOpenDirectory))
+                {
+                    OpenDlg.InitialDirectory = _LastOpenDirectory;
+                }
+            }
 
             if (OpenDlg.ShowDialog() == DialogResult.OK)
             {
+                _LastOpenDirectory = Path.GetDirectoryName(OpenDlg.FileName);
+                _CurrentModelPath = OpenDlg.FileName;
                 filterIndex = OpenDlg.FilterIndex;
 
-                Invoke(new MethodInvoker(BeginLoading));
+                //Invoke(new MethodInvoker(BeginLoading));
 
-                Thread loadingThread = new Thread((() =>
+                //Thread loadingThread = new Thread((() =>
+                //{
+                //    SceneManager.Instance.ShutDown();
+                if (OpenDlg.FilterIndex == 1)
                 {
-                    SceneManager.Instance.ShutDown();
-                    if (OpenDlg.FilterIndex == 1)
-                    {
-                        SceneManager.Instance.AddScene(new SceneCDC(CDC.Game.SR1));
-                        SceneManager.Instance.CurrentScene.ImportFromFile(OpenDlg.FileName, ImportExportOptions);
-                    }
-                    else if (OpenDlg.FilterIndex == 2)
-                    {
-                        SceneManager.Instance.AddScene(new SceneCDC(CDC.Game.SR2));
-                        SceneManager.Instance.CurrentScene.ImportFromFile(OpenDlg.FileName, ImportExportOptions);
-                    }
-                    else
-                    {
-                        SceneManager.Instance.AddScene(new SceneCDC(CDC.Game.Defiance));
-                        SceneManager.Instance.CurrentScene.ImportFromFile(OpenDlg.FileName, ImportExportOptions);
-                    }
+                    _CurrentModelType = CDC.Game.SR1;   // "Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|"
 
-                    CameraManager.Instance.Reset();
-
-                    Invoke(new MethodInvoker(EndLoading));
-                }));
-
-                loadingThread.Name = "LoadingThread";
-                loadingThread.SetApartmentState(ApartmentState.STA);
-                loadingThread.Start();
-                //loadingThread.Join();
-
-                Thread progressThread = new Thread((() =>
+                }
+                else if (OpenDlg.FilterIndex == 2)
                 {
-                    do
-                    {
-                        lock (SceneCDC.ProgressStage)
-                        {
-                            progressWindow.SetMessage(SceneCDC.ProgressStage);
+                    _CurrentModelType = CDC.Game.SR2;   // "Soul Reaver 2 Mesh Files|*.SRObj;*.drm;*.pcm|" +   
+                }
+                else
+                {
+                    _CurrentModelType = CDC.Game.Defiance;  // "Defiance Mesh Files|*.SRObj;*.drm;*.pcm|" +
+                }
+                //    SceneManager.Instance.AddScene(new SceneCDC(_CurrentModelType));
+                //    SceneManager.Instance.CurrentScene.ImportFromFile(_CurrentModelPath, ImportExportOptions);
 
-                            int oldProgress = progressWindow.GetProgress();
-                            if (oldProgress < SceneCDC.ProgressPercent)
-                            {
-                                progressWindow.SetProgress(oldProgress + 1);
-                            }
-                        }
-                        Thread.Sleep(20);
-                    }
-                    while (loadingThread.IsAlive);
-                }));
+                //    //CameraManager.Instance.Reset();
 
-                progressThread.Name = "ProgressThread";
-                progressThread.SetApartmentState(ApartmentState.STA);
-                progressThread.Start();
+                //    Invoke(new MethodInvoker(EndLoading));
+                //}));
+
+                //loadingThread.Name = "LoadingThread";
+                //loadingThread.SetApartmentState(ApartmentState.STA);
+                //loadingThread.Start();
+                ////loadingThread.Join();
+
+                //Thread progressThread = new Thread((() =>
+                //{
+                //    do
+                //    {
+                //        lock (SceneCDC.ProgressStage)
+                //        {
+                //            progressWindow.SetMessage(SceneCDC.ProgressStage);
+
+                //            int oldProgress = progressWindow.GetProgress();
+                //            if (oldProgress < SceneCDC.ProgressPercent)
+                //            {
+                //                progressWindow.SetProgress(oldProgress + 1);
+                //            }
+                //        }
+                //        Thread.Sleep(20);
+                //    }
+                //    while (loadingThread.IsAlive);
+                //}));
+
+                //progressThread.Name = "ProgressThread";
+                //progressThread.SetApartmentState(ApartmentState.STA);
+                //progressThread.Start();
                 //progressThread.Join();
+                LoadCurrentModel();
             }
         }
 
@@ -180,9 +283,17 @@ namespace ModelEx
                 DefaultExt = "dae",
                 FilterIndex = 1
             };
+            if (_LastExportDirectory != "")
+            {
+                if (Directory.Exists(_LastExportDirectory))
+                {
+                    SaveDlg.InitialDirectory = _LastExportDirectory;
+                }
+            }
 
             if (SaveDlg.ShowDialog() == DialogResult.OK)
             {
+                _LastExportDirectory = Path.GetDirectoryName(SaveDlg.FileName);
                 Scene currentScene = SceneManager.Instance.CurrentScene;
                 if (currentScene != null)
                 {
