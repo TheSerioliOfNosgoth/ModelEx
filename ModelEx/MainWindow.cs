@@ -209,6 +209,7 @@ namespace ModelEx
             {
                 _LastOpenDirectory = Path.GetDirectoryName(OpenDlg.FileName);
                 _CurrentModelPath = OpenDlg.FileName;
+                reloadCurrentModelToolStripMenuItem.Enabled = true;
                 filterIndex = OpenDlg.FilterIndex;
 
                 //Invoke(new MethodInvoker(BeginLoading));
@@ -216,18 +217,18 @@ namespace ModelEx
                 //Thread loadingThread = new Thread((() =>
                 //{
                 //    SceneManager.Instance.ShutDown();
-                if (OpenDlg.FilterIndex == 1)
-                {
-                    _CurrentModelType = CDC.Game.SR1;   // "Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|"
+                    if (OpenDlg.FilterIndex == 1)
+                    {
+                        _CurrentModelType = CDC.Game.SR1;   // "Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|"
 
                 }
-                else if (OpenDlg.FilterIndex == 2)
-                {
-                    _CurrentModelType = CDC.Game.SR2;   // "Soul Reaver 2 Mesh Files|*.SRObj;*.drm;*.pcm|" +   
+                    else if (OpenDlg.FilterIndex == 2)
+                    {
+                        _CurrentModelType = CDC.Game.SR2;   // "Soul Reaver 2 Mesh Files|*.SRObj;*.drm;*.pcm|" +   
                 }
-                else
-                {
-                    _CurrentModelType = CDC.Game.Defiance;  // "Defiance Mesh Files|*.SRObj;*.drm;*.pcm|" +
+                    else
+                    {
+                        _CurrentModelType = CDC.Game.Defiance;  // "Defiance Mesh Files|*.SRObj;*.drm;*.pcm|" +
                 }
                 //    SceneManager.Instance.AddScene(new SceneCDC(_CurrentModelType));
                 //    SceneManager.Instance.CurrentScene.ImportFromFile(_CurrentModelPath, ImportExportOptions);
