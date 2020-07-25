@@ -547,14 +547,7 @@ namespace ModelEx
                             if (stream != null)
                             {
                                 TextureManager.Instance.AddTexture(stream, textureName);
-                                try
-                                {
-                                    _TexturesAsPNGs.Add(textureName, textureFile.GetTextureAsBitmap(t));
-                                }
-                                catch
-                                {
-
-                                }
+                                _TexturesAsPNGs.Add(textureName, textureFile.GetTextureAsBitmap(t));
                             }
                         }
                     }
