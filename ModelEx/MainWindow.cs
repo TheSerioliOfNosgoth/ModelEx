@@ -209,7 +209,6 @@ namespace ModelEx
             {
                 _LastOpenDirectory = Path.GetDirectoryName(OpenDlg.FileName);
                 _CurrentModelPath = OpenDlg.FileName;
-                reloadCurrentModelToolStripMenuItem.Enabled = true;
                 filterIndex = OpenDlg.FilterIndex;
 
                 //Invoke(new MethodInvoker(BeginLoading));
