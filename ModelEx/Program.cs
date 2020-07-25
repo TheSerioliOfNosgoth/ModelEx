@@ -18,10 +18,10 @@ namespace ModelEx
         static void Main(string[] args)
         {
             bool guiMode = true;
-            //if (args.Length > 0)
-            //{
-            //    guiMode = false;
-            //}
+            if (args.Length > 0)
+            {
+                guiMode = false;
+            }
 
             if (guiMode)
             {

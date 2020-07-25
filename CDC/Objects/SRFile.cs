@@ -164,7 +164,7 @@ namespace CDC.Objects
     public abstract class SRFile
     {
         public const string TextureExtension = ".png";
-        public const float ExportSizeMultiplier = 1.0f;
+        public const float ExportSizeMultiplier = 0.001f;
 
         protected String _name;
         protected UInt32 _version;
