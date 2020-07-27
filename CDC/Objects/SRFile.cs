@@ -473,6 +473,9 @@ namespace CDC.Objects
 
                 rootNode.Children.Add(modelNode);
 
+                // Done this way so the normals and animation transforms don't need reversing too.
+                rootNode.Transform = Assimp.Matrix4x4.FromRotationX((float)(Math.PI * -0.5));
+
                 Assimp.Scene scene = new Assimp.Scene();
                 scene.RootNode = rootNode;
                 scene.Materials.AddRange(materials);
