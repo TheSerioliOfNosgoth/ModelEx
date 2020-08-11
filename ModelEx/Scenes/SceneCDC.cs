@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using System.IO;
 using System.Text;
+using GexFile = CDC.Objects.GexFile;
 using SRFile = CDC.Objects.SRFile;
 using SR1File = CDC.Objects.SR1File;
 using SR2File = CDC.Objects.SR2File;
@@ -178,7 +179,14 @@ namespace ModelEx
                 if (SubMeshes.Count > 0)
                 {
                     MeshName = meshName;
-                    Technique = _srFile.Game == CDC.Game.SR1 ? "SR1Render" : "SR2Render";
+                    if (_srFile.Game == CDC.Game.Gex || _srFile.Game == CDC.Game.SR1)
+                    {
+                        Technique = "SR1Render";
+                    }
+                    else
+                    {
+                        Technique = "SR2Render";
+                    }
                     if (_srFile.Asset == CDC.Asset.Unit)
                     {
                         //Mesh = new MeshPCT(this);
@@ -453,7 +461,18 @@ namespace ModelEx
             SRFile srFile = null;
 
             #region TryLoad
-            if (_game == CDC.Game.SR1)
+            if (_game == CDC.Game.Gex)
+            {
+                try
+                {
+                    srFile = new GexFile(fileName, options);
+                }
+                catch
+                {
+                    return;
+                }
+            }
+            else if (_game == CDC.Game.SR1)
             {
                 try
                 {

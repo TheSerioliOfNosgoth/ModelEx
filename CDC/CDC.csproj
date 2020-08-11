@@ -67,11 +67,15 @@
   <ItemGroup>
     <Compile Include="CDC.cs" />
     <Compile Include="DDS\DDSImage.cs" />
+    <Compile Include="Models\GexModel.cs" />
+    <Compile Include="Models\GexObjectModel.cs" />
+    <Compile Include="Models\GexUnitModel.cs" />
     <Compile Include="Models\SR1UnitModel.cs" />
     <Compile Include="Models\SR1ObjectModel.cs" />
     <Compile Include="Models\DefianceModel.cs" />
     <Compile Include="Models\DefianceObjectModel.cs" />
     <Compile Include="Models\DefianceUnitModel.cs" />
+    <Compile Include="Objects\GexFile.cs" />
     <Compile Include="Objects\SR1File.cs" />
     <Compile Include="Models\SR2UnitModel.cs" />
     <Compile Include="Models\SR2ObjectModel.cs" />

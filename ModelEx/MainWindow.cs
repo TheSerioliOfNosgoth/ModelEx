@@ -188,6 +188,7 @@ namespace ModelEx
                 CheckFileExists = true,
                 CheckPathExists = true,
                 Filter =
+                    "Gex Mesh Files|*.SRObj;*.drm;*.pcm|" +
                     "Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|" +
                     "Soul Reaver 2 Mesh Files|*.SRObj;*.drm;*.pcm|" +
                     "Defiance Mesh Files|*.SRObj;*.drm;*.pcm|" +
@@ -221,17 +222,20 @@ namespace ModelEx
                 //    SceneManager.Instance.ShutDown();
                     if (OpenDlg.FilterIndex == 1)
                     {
-                        _CurrentModelType = CDC.Game.SR1;   // "Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|"
-
-                }
+                        _CurrentModelType = CDC.Game.Gex;   // "Gex Mesh Files|*.SRObj;*.drm;*.pcm|"
+                    }
                     else if (OpenDlg.FilterIndex == 2)
                     {
+                        _CurrentModelType = CDC.Game.SR1;   // "Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|"
+                    }
+                    else if (OpenDlg.FilterIndex == 3)
+                    {
                         _CurrentModelType = CDC.Game.SR2;   // "Soul Reaver 2 Mesh Files|*.SRObj;*.drm;*.pcm|" +   
-                }
+                    }
                     else
                     {
                         _CurrentModelType = CDC.Game.Defiance;  // "Defiance Mesh Files|*.SRObj;*.drm;*.pcm|" +
-                }
+                    }
                 //    SceneManager.Instance.AddScene(new SceneCDC(_CurrentModelType));
                 //    SceneManager.Instance.CurrentScene.ImportFromFile(_CurrentModelPath, ImportExportOptions);
 
@@ -252,7 +256,6 @@ namespace ModelEx
                 //        lock (SceneCDC.ProgressStage)
                 //        {
                 //            progressWindow.SetMessage(SceneCDC.ProgressStage);
-
                 //            int oldProgress = progressWindow.GetProgress();
                 //            if (oldProgress < SceneCDC.ProgressPercent)
                 //            {
