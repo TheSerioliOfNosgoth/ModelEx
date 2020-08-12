@@ -10,17 +10,18 @@ namespace CDC.Objects.Models
             : base(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
         {
             xReader.BaseStream.Position = _modelData;
-            _vertexCount = xReader.ReadUInt32();
+            _vertexCount = xReader.ReadUInt16();
+            xReader.BaseStream.Position += 0x02;
+            _polygonCount = xReader.ReadUInt16();
+            _boneCount = xReader.ReadUInt16();
             _vertexStart = _dataStart + xReader.ReadUInt32();
             _vertexScale.x = 1.0f;
             _vertexScale.y = 1.0f;
             _vertexScale.z = 1.0f;
+            // Vertex colours here? Objects have them in Gex?
             xReader.BaseStream.Position += 0x08;
-            _polygonCount = xReader.ReadUInt32();
             _polygonStart = _dataStart + xReader.ReadUInt32();
-            _boneCount = xReader.ReadUInt32();
             _boneStart = _dataStart + xReader.ReadUInt32();
-            xReader.BaseStream.Position += 0x10;
             _materialStart = _dataStart + xReader.ReadUInt32();
             _materialCount = 0;
             _groupCount = 1;
@@ -118,7 +119,9 @@ namespace CDC.Objects.Models
 
             _polygons[p].material = new Material();
             _polygons[p].material.visible = true;
-            _polygons[p].material.textureUsed = (Boolean)(((int)xReader.ReadUInt16() & 0x0200) != 0);
+            _polygons[p].material.textureUsed = false; // (Boolean)(((int)xReader.ReadUInt16() & 0x0200) != 0);
+            xReader.ReadByte();
+            _polygons[p].material.polygonFlags = xReader.ReadByte();
 
             if (_polygons[p].material.textureUsed)
             {
@@ -136,6 +139,13 @@ namespace CDC.Objects.Models
             else
             {
                 _polygons[p].material.colour = xReader.ReadUInt32() | 0xFF000000;
+            }
+
+            // Either 0x08 or 0x02 is the textureUsed flag.
+            if ((_polygons[p].material.polygonFlags & 0x0A) == 0x0A)
+            {
+                _polygons[p].material.colour = 0xFFFFFFFF;
+                _polygons[p].material.visible = false;
             }
 
             Utility.FlipRedAndBlue(ref _polygons[p].material.colour);

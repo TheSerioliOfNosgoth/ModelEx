@@ -45,17 +45,9 @@ namespace CDC.Objects
             _name = Utility.CleanName(strModelName);
 
             // Texture type
-            xReader.BaseStream.Position = _dataStart + 0x44;
             if (options.ForcedPlatform == CDC.Platform.None)
             {
-                if (xReader.ReadUInt64() != 0xFFFFFFFFFFFFFFFF)
-                {
-                    _platform = Platform.PSX;
-                }
-                else
-                {
-                    _platform = Platform.PC;
-                }
+                _platform = Platform.PSX;
             }
             else
             {
@@ -75,10 +67,6 @@ namespace CDC.Objects
             {
                 Console.WriteLine(string.Format("Debug: reading object model {0} / {1}", m, (_modelCount - 1)));
                 _models[m] = GexObjectModel.Load(xReader, _dataStart, _modelStart, _name, _platform, m, _version, options);
-                if ((options.ForcedPlatform == CDC.Platform.None) && (_models[m].Platform == Platform.Dreamcast))
-                {
-                    ePlatform = _models[m].Platform;
-                }
             }
             if (options.ForcedPlatform == CDC.Platform.None)
             {
