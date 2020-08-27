@@ -10,27 +10,30 @@ namespace CDC.Objects.Models
         protected UInt32 m_uBspTreeStart;
         protected UInt32 m_uSpectralVertexStart;
         protected UInt32 m_uSpectralColourStart;
+        protected UInt32 _polygonEnd;
 
         public GexUnitModel(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
             : base(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
         {
-            xReader.BaseStream.Position = _modelData + 0x10;
-            _vertexCount = xReader.ReadUInt32();
-            _polygonCount = xReader.ReadUInt32();
-            xReader.BaseStream.Position += 0x04;
-            _vertexStart = _dataStart + xReader.ReadUInt32();
-            _polygonStart = _dataStart + xReader.ReadUInt32();
-            xReader.BaseStream.Position += 0x10;
-            _materialStart = _dataStart + xReader.ReadUInt32();
-            _materialCount = 0;
+            xReader.BaseStream.Position = _modelData;
 
-            xReader.BaseStream.Position += 0x0C;
-
-            m_uSpectralVertexStart = _dataStart + xReader.ReadUInt32();
-            m_uSpectralColourStart = _dataStart + xReader.ReadUInt32();
-            m_uBspTreeCount = xReader.ReadUInt32();
+            m_uBspTreeCount = 1;
             m_uBspTreeStart = _dataStart + xReader.ReadUInt32();
             _groupCount = m_uBspTreeCount;
+
+            xReader.BaseStream.Position += 0x14;
+            _vertexCount = xReader.ReadUInt32();
+            xReader.BaseStream.Position += 0x04;
+            _polygonCount = xReader.ReadUInt32();
+            //_polygonCount = 0x00003CDF;
+            xReader.BaseStream.Position += 0x0C;
+            _vertexStart = _dataStart + xReader.ReadUInt32();
+            UInt32 _vertexColourStart = _dataStart + xReader.ReadUInt32();
+            _polygonStart = _dataStart + xReader.ReadUInt32();
+            UInt32 _otherThing = _dataStart + xReader.ReadUInt32(); // Very short. The 0x1B thing.
+            xReader.BaseStream.Position += 0x04; // Collision
+            _materialStart = _dataStart + xReader.ReadUInt32(); 
+            _materialCount = 0;
 
             _trees = new Tree[_groupCount];
         }
@@ -51,8 +54,10 @@ namespace CDC.Objects.Models
 
             _geometry.Vertices[v].colourID = v;
 
+            // This might be the index of a colour.
             xReader.BaseStream.Position += 2;
-            uint vColour = xReader.ReadUInt32() | 0xFF000000;
+
+            uint vColour = 0xFF000000;
             if (options.IgnoreVertexColours)
             {
                 _geometry.Colours[v] = 0xFFFFFFFF;
@@ -70,52 +75,6 @@ namespace CDC.Objects.Models
         protected override void ReadVertices(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             base.ReadVertices(xReader, options);
-
-            ReadSpectralData(xReader, options);
-        }
-
-        protected virtual void ReadSpectralData(BinaryReader xReader, CDC.Objects.ExportOptions options)
-        {
-            if (m_uSpectralColourStart != 0)
-            {
-                // Spectral Colours
-                xReader.BaseStream.Position = m_uSpectralColourStart;
-                for (int v = 0; v < _vertexCount; v++)
-                {
-                    UInt32 uShiftColour = xReader.ReadUInt16();
-                    UInt32 uAlpha = _geometry.ColoursAlt[v] & 0xFF000000;
-                    UInt32 uRed = ((uShiftColour >> 0) & 0x1F) << 0x13;
-                    UInt32 uGreen = ((uShiftColour >> 5) & 0x1F) << 0x0B;
-                    UInt32 uBlue = ((uShiftColour >> 10) & 0x1F) << 0x03;
-                    _geometry.ColoursAlt[v] = uAlpha | uRed | uGreen | uBlue;
-                }
-            }
-
-            if (m_uSpectralVertexStart != 0)
-            {
-                // Spectral Verticices
-                xReader.BaseStream.Position = m_uSpectralVertexStart + 0x06;
-                int sVertex = xReader.ReadInt16();
-                xReader.BaseStream.Position = m_uSpectralVertexStart;
-                while (sVertex != 0xFFFF)
-                {
-                    ShiftVertex xShiftVertex;
-                    xShiftVertex.basePos.x = (float)xReader.ReadInt16();
-                    xShiftVertex.basePos.y = (float)xReader.ReadInt16();
-                    xShiftVertex.basePos.z = (float)xReader.ReadInt16();
-                    sVertex = xReader.ReadUInt16();
-
-                    if (sVertex == 0xFFFF)
-                    {
-                        break;
-                    }
-
-                    xShiftVertex.offset.x = (float)xReader.ReadInt16();
-                    xShiftVertex.offset.y = (float)xReader.ReadInt16();
-                    xShiftVertex.offset.z = (float)xReader.ReadInt16();
-                    _geometry.PositionsAltPhys[sVertex] = xShiftVertex.offset + xShiftVertex.basePos;
-                }
-            }
         }
 
         protected virtual void ReadPolygon(BinaryReader xReader, int p, CDC.Objects.ExportOptions options)
@@ -127,10 +86,10 @@ namespace CDC.Objects.Models
             _polygons[p].v3 = _geometry.Vertices[xReader.ReadUInt16()];
             _polygons[p].material = new Material();
 
-            _polygons[p].material.textureUsed |= (Boolean)(((int)xReader.ReadUInt16() & 0x0004) == 0);
+            _polygons[p].material.textureUsed = false; // |= (Boolean)(((int)xReader.ReadUInt16() & 0x0004) == 0);
             xReader.BaseStream.Position += 0x02;
             UInt16 uMaterialOffset = xReader.ReadUInt16();
-            _polygons[p].material.textureUsed &= (Boolean)(uMaterialOffset != 0xFFFF);
+            //_polygons[p].material.textureUsed &= (Boolean)(uMaterialOffset != 0xFFFF);
 
             if (_polygons[p].material.textureUsed)
             {
@@ -168,17 +127,7 @@ namespace CDC.Objects.Models
             List<int> xMeshPositions = new List<int>();
             List<UInt32> treePolygons = new List<UInt32>((Int32)_vertexCount * 3);
 
-            for (UInt32 t = 0; t < m_uBspTreeCount; t++)
-            {
-                xReader.BaseStream.Position = m_uBspTreeStart + (t * 0x24);
-                UInt32 uDataPos = _dataStart + xReader.ReadUInt32();
-                xReader.BaseStream.Position += 0x0C;
-                bool drawTester = ((xReader.ReadInt32() & 1) != 1);
-                xReader.BaseStream.Position += 0x06;
-                UInt16 usBspID = xReader.ReadUInt16();
-
-                _trees[t] = ReadBSPTree(xReader, treePolygons, uDataPos, _trees[t], xMeshes, xMeshPositions, 0);
-            }
+            _trees[0] = ReadBSPTree(xReader, treePolygons, m_uBspTreeStart, _trees[0], xMeshes, xMeshPositions, 0);
 
             MaterialList xMaterialsList = null;
 
@@ -220,7 +169,7 @@ namespace CDC.Objects.Models
                 return null;
             }
 
-            xReader.BaseStream.Position = uDataPos + 0x0E;
+            xReader.BaseStream.Position = uDataPos + 0x0C;
             bool isLeaf = ((xReader.ReadByte() & 0x02) == 0x02);
             Int32 iSubTreeCount = 2;
 
@@ -251,12 +200,12 @@ namespace CDC.Objects.Models
             {
                 xTree.isLeaf = true;
 
-                xReader.BaseStream.Position = uDataPos + 0x08;
+                xReader.BaseStream.Position = uDataPos;
                 ReadBSPLeaf(xReader, treePolygons, xMesh);
             }
             else
             {
-                xReader.BaseStream.Position = uDataPos + 0x14;
+                xReader.BaseStream.Position = uDataPos + 0x10;
 
                 UInt32[] auSubTreePositions = new UInt32[2];
                 for (Int32 s = 0; s < iSubTreeCount; s++)
@@ -284,11 +233,24 @@ namespace CDC.Objects.Models
 
         protected virtual void ReadBSPLeaf(BinaryReader xReader, List<UInt32> treePolygons, Mesh xMesh)
         {
-            UInt32 polygonPos = _dataStart + xReader.ReadUInt32();
+            xReader.BaseStream.Position += 0x0D;
+            UInt16 polyCount = xReader.ReadByte();
+            xReader.BaseStream.Position += 0x02;
+            UInt32 polygonPos = xReader.ReadUInt32();
             UInt32 polygonID = (polygonPos - _polygonStart) / 0x0C;
-            UInt16 polyCount = xReader.ReadUInt16();
+
+            if (polygonPos + (polyCount * 0x0C) > _polygonEnd)
+            {
+                _polygonEnd = (UInt32)polygonPos + (UInt32)(polyCount * 0x0C);
+            }
+
             for (UInt16 p = 0; p < polyCount; p++)
             {
+                if (polygonID + p >= _polygons.Length)
+                {
+                    continue;
+                }
+
                 _polygons[polygonID + p].material.visible = true;
 
                 treePolygons.Add(polygonID + p);
