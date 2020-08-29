@@ -8,8 +8,8 @@ namespace CDC.Objects.Models
     {
         protected UInt32 m_uBspTreeCount;
         protected UInt32 m_uBspTreeStart;
-        protected UInt32 m_uSpectralVertexStart;
-        protected UInt32 m_uSpectralColourStart;
+        protected UInt32 _vertexColourCount;
+        protected UInt32 _vertexColourStart;
         protected UInt32 _polygonEnd;
 
         public GexUnitModel(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
@@ -23,12 +23,11 @@ namespace CDC.Objects.Models
 
             xReader.BaseStream.Position += 0x14;
             _vertexCount = xReader.ReadUInt32();
-            xReader.BaseStream.Position += 0x04;
+            _vertexColourCount = xReader.ReadUInt32();
             _polygonCount = xReader.ReadUInt32();
-            //_polygonCount = 0x00003CDF;
             xReader.BaseStream.Position += 0x0C;
             _vertexStart = _dataStart + xReader.ReadUInt32();
-            UInt32 _vertexColourStart = _dataStart + xReader.ReadUInt32();
+            _vertexColourStart = _dataStart + xReader.ReadUInt32();
             _polygonStart = _dataStart + xReader.ReadUInt32();
             UInt32 _otherThing = _dataStart + xReader.ReadUInt32(); // Very short. The 0x1B thing.
             xReader.BaseStream.Position += 0x04; // Collision
@@ -45,6 +44,38 @@ namespace CDC.Objects.Models
             return xModel;
         }
 
+        protected override void ReadData(BinaryReader xReader, CDC.Objects.ExportOptions options)
+        {
+            // Get the normals
+            _geometry.Normals = new Vector[s_aiNormals.Length / 3];
+            for (int n = 0; n < _geometry.Normals.Length; n++)
+            {
+                _geometry.Normals[n].x = ((float)s_aiNormals[n, 0] / 4096.0f);
+                _geometry.Normals[n].y = ((float)s_aiNormals[n, 1] / 4096.0f);
+                _geometry.Normals[n].z = ((float)s_aiNormals[n, 2] / 4096.0f);
+            }
+
+            // Get the vertices
+            _geometry.Vertices = new Vertex[_vertexCount];
+            _geometry.PositionsRaw = new Vector[_vertexCount];
+            _geometry.PositionsPhys = new Vector[_vertexCount];
+            _geometry.PositionsAltPhys = new Vector[_vertexCount];
+            _geometry.Colours = new UInt32[_vertexColourStart];
+            _geometry.ColoursAlt = new UInt32[_vertexColourStart];
+            ReadVertices(xReader, options);
+            ReadVertexColours(xReader, options);
+
+            // Get the polygons
+            _polygons = new Polygon[_polygonCount];
+            _geometry.UVs = new UV[_indexCount];
+            ReadPolygons(xReader, options);
+
+            HandleDebugRendering(options);
+
+            // Generate the output
+            GenerateOutput();
+        }
+
         protected override void ReadVertex(BinaryReader xReader, int v, CDC.Objects.ExportOptions options)
         {
             base.ReadVertex(xReader, v, options);
@@ -52,29 +83,33 @@ namespace CDC.Objects.Models
             _geometry.PositionsPhys[v] = _geometry.PositionsRaw[v];
             _geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
 
-            _geometry.Vertices[v].colourID = v;
-
-            // This might be the index of a colour.
-            xReader.BaseStream.Position += 2;
-
-            uint vColour = 0xFF000000;
-            if (options.IgnoreVertexColours)
-            {
-                _geometry.Colours[v] = 0xFFFFFFFF;
-            }
-            else
-            {
-                _geometry.Colours[v] = vColour;
-            }
-
-            Utility.FlipRedAndBlue(ref _geometry.Colours[v]);
-
-            _geometry.ColoursAlt[v] = _geometry.Colours[v];
+            _geometry.Vertices[v].colourID = xReader.ReadUInt16();
         }
 
         protected override void ReadVertices(BinaryReader xReader, CDC.Objects.ExportOptions options)
         {
             base.ReadVertices(xReader, options);
+        }
+
+        protected void ReadVertexColours(BinaryReader xReader, CDC.Objects.ExportOptions options)
+        {
+            if (_vertexColourStart == 0 || _vertexColourCount == 0)
+            {
+                return;
+            }
+
+            xReader.BaseStream.Position = _vertexColourStart;
+
+            for (int c = 0; c < _vertexColourCount; c++)
+            {
+                _geometry.Colours[c] = xReader.ReadUInt32();
+
+                Utility.FlipRedAndBlue(ref _geometry.Colours[c]);
+
+                _geometry.ColoursAlt[c] = _geometry.Colours[c];
+            }
+
+            return;
         }
 
         protected virtual void ReadPolygon(BinaryReader xReader, int p, CDC.Objects.ExportOptions options)
@@ -239,18 +274,8 @@ namespace CDC.Objects.Models
             UInt32 polygonPos = xReader.ReadUInt32();
             UInt32 polygonID = (polygonPos - _polygonStart) / 0x0C;
 
-            if (polygonPos + (polyCount * 0x0C) > _polygonEnd)
-            {
-                _polygonEnd = (UInt32)polygonPos + (UInt32)(polyCount * 0x0C);
-            }
-
             for (UInt16 p = 0; p < polyCount; p++)
             {
-                if (polygonID + p >= _polygons.Length)
-                {
-                    continue;
-                }
-
                 _polygons[polygonID + p].material.visible = true;
 
                 treePolygons.Add(polygonID + p);
