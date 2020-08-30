@@ -31,7 +31,7 @@ namespace CDC.Objects.Models
             _polygonStart = _dataStart + xReader.ReadUInt32();
             UInt32 _otherThing = _dataStart + xReader.ReadUInt32(); // Very short. The 0x1B thing.
             xReader.BaseStream.Position += 0x04; // Collision
-            _materialStart = _dataStart + xReader.ReadUInt32(); 
+            _materialStart = _dataStart + xReader.ReadUInt32();
             _materialCount = 0;
 
             _trees = new Tree[_groupCount];
@@ -121,10 +121,10 @@ namespace CDC.Objects.Models
             _polygons[p].v3 = _geometry.Vertices[xReader.ReadUInt16()];
             _polygons[p].material = new Material();
 
-            _polygons[p].material.textureUsed = false; // |= (Boolean)(((int)xReader.ReadUInt16() & 0x0004) == 0);
-            xReader.BaseStream.Position += 0x02;
+            _polygons[p].material.textureUsed = true; // |= (Boolean)(((int)xReader.ReadUInt16() & 0x0004) == 0);
+            xReader.BaseStream.Position += 0x04;
             UInt16 uMaterialOffset = xReader.ReadUInt16();
-            //_polygons[p].material.textureUsed &= (Boolean)(uMaterialOffset != 0xFFFF);
+            _polygons[p].material.textureUsed &= (Boolean)(uMaterialOffset != 0xFFFF);
 
             if (_polygons[p].material.textureUsed)
             {

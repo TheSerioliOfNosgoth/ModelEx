@@ -334,18 +334,11 @@ namespace CDC.Objects.Models
             Byte v1U = xReader.ReadByte();
             Byte v1V = xReader.ReadByte();
 
-            if (_platform == Platform.PSX)
-            {
-                ushort paletteVal = xReader.ReadUInt16();
-                ushort rowVal = (ushort)((ushort)(paletteVal << 2) >> 8);
-                ushort colVal = (ushort)((ushort)(paletteVal << 11) >> 11);
-                _polygons[p].paletteColumn = colVal;
-                _polygons[p].paletteRow = rowVal;
-            }
-            else
-            {
-                _polygons[p].material.textureID = (UInt16)(xReader.ReadUInt16() & 0x07FF);
-            }
+            ushort paletteVal = xReader.ReadUInt16();
+            ushort rowVal = (ushort)((ushort)(paletteVal << 2) >> 8);
+            ushort colVal = (ushort)((ushort)(paletteVal << 11) >> 11);
+            _polygons[p].paletteColumn = colVal;
+            _polygons[p].paletteRow = rowVal;
 
             Byte v2U = xReader.ReadByte();
             Byte v2V = xReader.ReadByte();
