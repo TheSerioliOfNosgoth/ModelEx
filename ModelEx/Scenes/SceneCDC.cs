@@ -831,7 +831,8 @@ namespace ModelEx
                         }
                         bool drawGreyscaleFirst = false;
                         bool quantizeBounds = true;
-                        textureFile.BuildTexturesFromPolygonData(polygons, drawGreyscaleFirst, quantizeBounds, options);
+                        textureFile.BuildTexturesFromGreyscalePallete();
+                        //textureFile.BuildTexturesFromPolygonData(polygons, drawGreyscaleFirst, quantizeBounds, options);
 
                         // For all models
                         for (int t = 0; t < textureFile.TextureCount; t++)

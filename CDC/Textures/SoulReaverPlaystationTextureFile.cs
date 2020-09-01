@@ -230,6 +230,14 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             }
         }
 
+        public void BuildTexturesFromGreyscalePallete()
+        {
+            for (int i = 0; i < _TextureCount; i++)
+            {
+                _Textures[i] = GetTextureAsBitmap(i, GetGreyscalePalette());
+            }
+        }
+
         public void BuildTexturesFromPolygonData(SoulReaverPlaystationPolygonTextureData[] texData, bool drawGreyScaleFirst, bool quantizeBounds, CDC.Objects.ExportOptions options)
         {
             // hashtable to store counts of palette usage
@@ -240,10 +248,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             // initialize textures
             if (drawGreyScaleFirst)
             {
-                for (int i = 0; i < _TextureCount; i++)
-                {
-                    _Textures[i] = GetTextureAsBitmap(i, GetGreyscalePalette());
-                }
+                BuildTexturesFromGreyscalePallete();
             }
             else
             {

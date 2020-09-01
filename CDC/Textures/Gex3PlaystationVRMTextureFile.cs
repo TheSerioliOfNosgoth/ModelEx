@@ -164,27 +164,35 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                 textures[textureNum] = new byte[_TextureDataLength];
             }
             int byteNum = 0;
-            for (int y = 0; y < _TotalHeight; y++)
+            int numRows = _TotalHeight / _ImageHeight;
+            int numColumns = (_TotalWidth / 2) / _TextureDataRowLength;
+            for (int textureRow = 0; textureRow < numRows; textureRow++)
             {
-                for (int textureNum = 0; textureNum < numTextures; textureNum++)
+                int startY = _ImageHeight * textureRow;
+                int endY = startY + _ImageHeight;
+                int maxY = _TotalHeight - startY;
+                if (maxY < _ImageHeight)
                 {
-                    int startX = _TextureDataRowLength * textureNum;
-                    int endX = startX + _TextureDataRowLength;
-                    int maxX = ((_TotalWidth / 2) - startX);
-                    int padX = 0;
-                    if (maxX < _TextureDataRowLength)
+                    endY = startY + maxY;
+                }
+                for (int y = startY; y < endY; y++)
+                {
+                    for (int textureColumn = 0; textureColumn < numColumns; textureColumn++)
                     {
-                        padX = _TextureDataRowLength - maxX;
-                        endX = startX + maxX;
-                    }
-                    for (int x = startX; x < endX; x++)
-                    {
-                        textures[textureNum][(y * _TextureDataRowLength) + (x - startX)] = inData[byteNum];
-                        byteNum++;
-                    }
-                    for (int i = 0; i < padX; i++)
-                    {
-                        textures[textureNum][(y * _TextureDataRowLength) + (endX - startX) + i] = (byte)0;
+                        int textureNum = (numColumns * textureRow) + textureColumn;
+
+                        int startX = _TextureDataRowLength * textureColumn;
+                        int endX = startX + _TextureDataRowLength;
+                        int maxX = ((_TotalWidth / 2) - startX);
+                        if (maxX < _TextureDataRowLength)
+                        {
+                            endX = startX + maxX;
+                        }
+                        for (int x = startX; x < endX; x++)
+                        {
+                            textures[textureNum][((y - startY) * _TextureDataRowLength) + (x - startX)] = inData[byteNum];
+                            byteNum++;
+                        }
                     }
                 }
             }
@@ -230,6 +238,14 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             }
         }
 
+        public void BuildTexturesFromGreyscalePallete()
+        {
+            for (int i = 0; i < _TextureCount; i++)
+            {
+                _Textures[i] = GetTextureAsBitmap(i, GetGreyscalePalette());
+            }
+        }
+
         public void BuildTexturesFromPolygonData(Gex3PlaystationPolygonTextureData[] texData, bool drawGreyScaleFirst, bool quantizeBounds, CDC.Objects.ExportOptions options)
         {
             // hashtable to store counts of palette usage
@@ -240,10 +256,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             // initialize textures
             if (drawGreyScaleFirst)
             {
-                for (int i = 0; i < _TextureCount; i++)
-                {
-                    _Textures[i] = GetTextureAsBitmap(i, GetGreyscalePalette());
-                }
+                BuildTexturesFromGreyscalePallete();
             }
             else
             {
