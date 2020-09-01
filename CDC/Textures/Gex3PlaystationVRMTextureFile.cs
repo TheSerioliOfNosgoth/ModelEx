@@ -16,6 +16,11 @@ namespace BenLincoln.TheLostWorlds.CDTextures
         protected int _TotalWidth;
         protected int _TotalHeight;
         protected Dictionary<int, Dictionary<ushort, Bitmap>> _TexturesByCLUT;
+        protected readonly int _HeaderLength = 20;
+        protected readonly int _TextureDataRowLength = 128;
+        protected readonly int _TextureDataLength = 32768;
+        protected readonly int _ImageWidth = 256;
+        protected readonly int _ImageHeight = 256;
 
         public Dictionary<int, Dictionary<ushort, Bitmap>> TexturesByCLUT
         {
@@ -100,17 +105,15 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
         protected override int _GetTextureCount()
         {
-            return 30;
-
-            if (_FileInfo.Length < (20))
+            if (_FileInfo.Length < _HeaderLength)
             {
                 throw new TextureFileException("The file '" + _FilePath + "' does not contain enough data for it to be " +
                     "a texture file for the Playstation version of Soul Reaver.");
             }
             long textureCountLong;
             float textureCountFloat;
-            textureCountLong = (_FileInfo.Length - 20) / 32768;
-            textureCountFloat = ((float)_FileInfo.Length - 20f) / 32768f;
+            textureCountLong = (_FileInfo.Length - _HeaderLength) / _TextureDataLength;
+            textureCountFloat = ((float)_FileInfo.Length - (float)_HeaderLength) / (float)_TextureDataLength;
             if ((float)textureCountLong != textureCountFloat)
             {
                 textureCountLong++;
@@ -129,7 +132,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
                 data = new byte[(_TotalWidth / 2) * _TotalHeight];
 
-                inStream.Seek(20, SeekOrigin.Begin);
+                inStream.Seek(_HeaderLength, SeekOrigin.Begin);
 
                 for (int i = 0; i < data.Length; i++)
                 {
@@ -149,8 +152,8 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
         protected byte[][] ReadTextureData(byte[] inData)
         {
-            int numTextures = (inData.Length / 32768);
-            int remainder = inData.Length % 32768;
+            int numTextures = (inData.Length / _TextureDataLength);
+            int remainder = inData.Length % _TextureDataLength;
             if (remainder > 0)
             {
                 numTextures++;
@@ -158,30 +161,30 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             byte[][] textures = new byte[numTextures][];
             for (int textureNum = 0; textureNum < numTextures; textureNum++)
             {
-                textures[textureNum] = new byte[32768];
+                textures[textureNum] = new byte[_TextureDataLength];
             }
             int byteNum = 0;
             for (int y = 0; y < _TotalHeight; y++)
             {
                 for (int textureNum = 0; textureNum < numTextures; textureNum++)
                 {
-                    int startX = 128 * textureNum;
-                    int endX = startX + 128;
+                    int startX = _TextureDataRowLength * textureNum;
+                    int endX = startX + _TextureDataRowLength;
                     int maxX = ((_TotalWidth / 2) - startX);
                     int padX = 0;
-                    if (maxX < 128)
+                    if (maxX < _TextureDataRowLength)
                     {
-                        padX = 128 - maxX;
+                        padX = _TextureDataRowLength - maxX;
                         endX = startX + maxX;
                     }
                     for (int x = startX; x < endX; x++)
                     {
-                        textures[textureNum][(y * 128) + (x - startX)] = inData[byteNum];
+                        textures[textureNum][(y * _TextureDataRowLength) + (x - startX)] = inData[byteNum];
                         byteNum++;
                     }
                     for (int i = 0; i < padX; i++)
                     {
-                        textures[textureNum][(y * 128) + (endX - startX) + i] = (byte)0;
+                        textures[textureNum][(y * _TextureDataRowLength) + (endX - startX) + i] = (byte)0;
                     }
                 }
             }
@@ -248,10 +251,10 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                 //Color chromaKey = Color.FromArgb(255, 128, 128, 128);
                 for (int i = 0; i < _TextureCount; i++)
                 {
-                    _Textures[i] = new Bitmap(256, 256);
-                    for (int y = 0; y < 256; y++)
+                    _Textures[i] = new Bitmap(_ImageWidth, _ImageHeight);
+                    for (int y = 0; y < _ImageHeight; y++)
                     {
-                        for (int x = 0; x < 256; x++)
+                        for (int x = 0; x < _ImageWidth; x++)
                         {
                             _Textures[i].SetPixel(x, y, chromaKey);
                         }
@@ -436,7 +439,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                 {
                     for (int x = uMin; x < uMax; x += 2)
                     {
-                        int dataOffset = (y * 128) + (x / 2);
+                        int dataOffset = (y * _TextureDataRowLength) + (x / 2);
                         byte currentByte = _TextureData[poly.textureID][dataOffset];
                         int leftPixel = (int)currentByte & 0x0F;
                         int rightPixel = (int)((currentByte & 0xF0) >> 4);
@@ -591,16 +594,16 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                         {
                             Bitmap exportTemp = (Bitmap)_Textures[texNum].Clone();
                             bool exportThisTexture = false;
-                            for (int y = 0; y < 256; y++)
+                            for (int y = 0; y < _ImageHeight; y++)
                             {
-                                for (int x = 0; x < 256; x += 2)
+                                for (int x = 0; x < _ImageWidth; x += 2)
                                 {
                                     bool leftPixChroma = (exportTemp.GetPixel(x, y).A == 1);
                                     bool rightPixChroma = (exportTemp.GetPixel((x + 1), y).A == 1);
                                     if (leftPixChroma || rightPixChroma)
                                     {
                                         exportThisTexture = true;
-                                        int dataOffset = (y * 128) + (x / 2);
+                                        int dataOffset = (y * _TextureDataRowLength) + (x / 2);
                                         byte currentByte = _TextureData[texNum][dataOffset];
                                         int leftPixel = (int)currentByte & 0x0F;
                                         int rightPixel = (int)((currentByte & 0xF0) >> 4);
@@ -699,9 +702,9 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                         commonPalette = GetGreyscalePalette();
                     }
 
-                    for (int y = 0; y < 256; y++)
+                    for (int y = 0; y < _ImageHeight; y++)
                     {
-                        for (int x = 0; x < 256; x += 2)
+                        for (int x = 0; x < _ImageWidth; x += 2)
                         {
                             if (!hasAtLeastOneVisiblePixel)
                             {
@@ -718,7 +721,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                             bool rightPixChroma = (_Textures[texNum].GetPixel((x + 1), y).A == 1);
                             if (leftPixChroma || rightPixChroma)
                             {
-                                int dataOffset = (y * 128) + (x / 2);
+                                int dataOffset = (y * _TextureDataRowLength) + (x / 2);
                                 byte currentByte = _TextureData[texNum][dataOffset];
                                 int leftPixel = (int)currentByte & 0x0F;
                                 int rightPixel = (int)((currentByte & 0xF0) >> 4);
@@ -763,7 +766,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
         protected override Bitmap _GetTextureAsBitmap(int index)
         {
-            //return GetTexture(index, GetGreyscalePalette());
+            //return GetTextureAsBitmap(index, GetGreyscalePalette());
             return _Textures[index];
         }
 
@@ -774,12 +777,12 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
         protected System.Drawing.Bitmap GetTextureAsBitmap(int index, Color[] palette)
         {
-            Bitmap retBitmap = new Bitmap(256, 256);
+            Bitmap retBitmap = new Bitmap(_ImageWidth, _ImageHeight);
 
             int byteNum = 0;
-            for (int y = 0; y < 256; y++)
+            for (int y = 0; y < _ImageHeight; y++)
             {
-                for (int x = 0; x < 256; x += 2)
+                for (int x = 0; x < _ImageWidth; x += 2)
                 {
                     byte currentByte = _TextureData[index][byteNum];
                     int leftPixel = (int)currentByte & 0x0F;
@@ -802,7 +805,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                 //BinaryReader inReader = new BinaryReader(inStream);
                 //inStream.Seek(28, SeekOrigin.Begin);
                 int totalWidth = 512 * 4; // (int)(inReader.ReadUInt32() * 4);
-                int totalHeight = 256; // (int)inReader.ReadUInt32();
+                int totalHeight = 512; // (int)inReader.ReadUInt32();
                 //inReader.Close();
                 //inStream.Close();
                 size = new Point(totalWidth, totalHeight);
