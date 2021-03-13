@@ -360,7 +360,7 @@ namespace CDC.Objects.Models
                 // struct _BSPLeaf *startLeaves;
                 // struct _BSPLeaf *endLeaves; 
                 // struct _Position globalOffset;
-                xReader.BaseStream.Position += 0x12;
+                xReader.BaseStream.Position += 0x0E;
                 //short flags;
                 ushort rootTreeFlags = xReader.ReadUInt16();
                 //Console.WriteLine(string.Format("\t\t\t\t\tDebug: read BSP tree flags {0}", Convert.ToString(flags, 2).PadLeft(8, '0')));
