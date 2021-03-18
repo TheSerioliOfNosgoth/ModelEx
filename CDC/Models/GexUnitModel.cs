@@ -131,6 +131,7 @@ namespace CDC.Objects.Models
                 UInt32 uMaterialPosition = uMaterialOffset + _materialStart;
 
                 xReader.BaseStream.Position = uMaterialPosition;
+
                 ReadMaterial(xReader, p, options);
             }
             else

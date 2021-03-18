@@ -11,7 +11,9 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 {
     public class Gex3PlaystationVRMTextureFile : BenLincoln.TheLostWorlds.CDTextures.TextureFile
     {
-        protected byte[][] _TextureData;
+        protected TexturePage[] _TPages;
+        protected byte[] _RawTextureData;
+        protected ushort[] _TextureData; // Get rid of this once I know what I'm doing with the palletes.
         protected Bitmap[] _Textures;
         protected int _TotalWidth;
         protected int _TotalHeight;
@@ -74,6 +76,24 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             }
         }
 
+        protected struct TexturePage
+        {
+            public ushort tPage;
+            public int tp;
+            public int abr;
+            public int x;
+            public int y;
+            public ushort[,] pixels;
+        }
+
+        protected struct ColourTable
+        {
+            public ushort clut;
+            public int x;
+            public int y;
+            public Color[] colours;
+        }
+
         public struct Gex3PlaystationPolygonTextureData
         {
             public int[] u;               // 0-255 each
@@ -85,6 +105,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             public uint materialColour;
             public bool textureUsed;
             public bool visible;
+            public ushort tPage;
         }
 
         public Gex3PlaystationVRMTextureFile(string path)
@@ -93,32 +114,17 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             _FileType = TextureFileType.Gex3Playstation;
             _FileTypeName = "Gex 3 (Playstation) VRM";
 
-            Point size = GetImageSize();
-            _TotalWidth = size.X;
-            _TotalHeight = size.Y;
+            _TotalWidth = 512;
+            _TotalHeight = 512;
 
-            _TextureCount = _GetTextureCount();
-            _Textures = new Bitmap[_TextureCount];
-            _TextureData = ReadTextureData(LoadTextureData());
+            _RawTextureData = LoadTextureData();
+            _TextureData = LoadTextureData2();
             _TexturesByCLUT = new Dictionary<int, Dictionary<ushort, Bitmap>>();
         }
 
         protected override int _GetTextureCount()
         {
-            if (_FileInfo.Length < _HeaderLength)
-            {
-                throw new TextureFileException("The file '" + _FilePath + "' does not contain enough data for it to be " +
-                    "a texture file for the Playstation version of Soul Reaver.");
-            }
-            long textureCountLong;
-            float textureCountFloat;
-            textureCountLong = (_FileInfo.Length - _HeaderLength) / _TextureDataLength;
-            textureCountFloat = ((float)_FileInfo.Length - (float)_HeaderLength) / (float)_TextureDataLength;
-            if ((float)textureCountLong != textureCountFloat)
-            {
-                textureCountLong++;
-            }
-            return (int)textureCountLong;
+            return _TextureCount;
         }
 
         protected byte[] LoadTextureData()
@@ -130,7 +136,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                 FileStream inStream = new FileStream(_FilePath, FileMode.Open, FileAccess.Read);
                 BinaryReader inReader = new BinaryReader(inStream);
 
-                data = new byte[(_TotalWidth / 2) * _TotalHeight];
+                data = new byte[_TotalWidth * 2 * _TotalHeight];
 
                 inStream.Seek(_HeaderLength, SeekOrigin.Begin);
 
@@ -150,54 +156,33 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             return data;
         }
 
-        protected byte[][] ReadTextureData(byte[] inData)
+        protected ushort[] LoadTextureData2()
         {
-            int numTextures = (inData.Length / _TextureDataLength);
-            int remainder = inData.Length % _TextureDataLength;
-            if (remainder > 0)
-            {
-                numTextures++;
-            }
-            byte[][] textures = new byte[numTextures][];
-            for (int textureNum = 0; textureNum < numTextures; textureNum++)
-            {
-                textures[textureNum] = new byte[_TextureDataLength];
-            }
-            int byteNum = 0;
-            int numRows = _TotalHeight / _ImageHeight;
-            int numColumns = (_TotalWidth / 2) / _TextureDataRowLength;
-            for (int textureRow = 0; textureRow < numRows; textureRow++)
-            {
-                int startY = _ImageHeight * textureRow;
-                int endY = startY + _ImageHeight;
-                int maxY = _TotalHeight - startY;
-                if (maxY < _ImageHeight)
-                {
-                    endY = startY + maxY;
-                }
-                for (int y = startY; y < endY; y++)
-                {
-                    for (int textureColumn = 0; textureColumn < numColumns; textureColumn++)
-                    {
-                        int textureNum = (numColumns * textureRow) + textureColumn;
+            ushort[] data;
 
-                        int startX = _TextureDataRowLength * textureColumn;
-                        int endX = startX + _TextureDataRowLength;
-                        int maxX = ((_TotalWidth / 2) - startX);
-                        if (maxX < _TextureDataRowLength)
-                        {
-                            endX = startX + maxX;
-                        }
-                        for (int x = startX; x < endX; x++)
-                        {
-                            textures[textureNum][((y - startY) * _TextureDataRowLength) + (x - startX)] = inData[byteNum];
-                            byteNum++;
-                        }
-                    }
+            try
+            {
+                FileStream inStream = new FileStream(_FilePath, FileMode.Open, FileAccess.Read);
+                BinaryReader inReader = new BinaryReader(inStream);
+
+                data = new ushort[_TotalWidth * _TotalHeight];
+
+                inStream.Seek(_HeaderLength, SeekOrigin.Begin);
+
+                for (int i = 0; i < data.Length; i++)
+                {
+                    data[i] = inReader.ReadUInt16();
                 }
+
+                inReader.Close();
+                inStream.Close();
+            }
+            catch (Exception ex)
+            {
+                throw new TextureFileException("Error reading texture.", ex);
             }
 
-            return textures;
+            return data;
         }
 
         public static bool ByteArraysAreEqual(byte[] arr1, byte[] arr2)
@@ -238,16 +223,165 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             }
         }
 
-        public void BuildTexturesFromGreyscalePallete()
+        public void BuildTexturesFromGreyscalePallete(ushort[] texturePages)
         {
+            if (_TPages == null)
+            {
+                _TPages = new TexturePage[texturePages.Length];
+                for (int i = 0; i < texturePages.Length; i++)
+                {
+                    _TPages[i] = GetTexturePage(texturePages[i]);
+                }
+
+                _TextureCount = _TPages.Length;
+                _Textures = new Bitmap[_TextureCount];
+            }
+
             for (int i = 0; i < _TextureCount; i++)
             {
-                _Textures[i] = GetTextureAsBitmap(i, GetGreyscalePalette());
+                if (texturePages[i] == 0x0098)
+                {
+                    _Textures[i] = GetTextureAsBitmap(i, GetPalette(i, 0x40A0));
+                }
+                else
+                {
+                    _Textures[i] = GetTextureAsBitmap(i, GetGreyscalePalette(i));
+                }
             }
         }
 
-        public void BuildTexturesFromPolygonData(Gex3PlaystationPolygonTextureData[] texData, bool drawGreyScaleFirst, bool quantizeBounds, CDC.Objects.ExportOptions options)
+        protected TexturePage GetTexturePage(ushort tPage)
         {
+
+            TexturePage texturePage = new TexturePage
+            {
+                tPage = tPage,
+                tp = (tPage >> 7) & 0x001,//(tPage >> 7) & 0x003,
+                abr = 0,//(tPage >> 5) & 0x003,
+                x = (tPage << 6) & 0x1c0,//(tPage << 6) & 0x7c0,
+                y = (tPage << 4) & 0x100,//((tPage << 4) & 0x100) + ((tPage >> 2) & 0x200),
+                pixels = null
+            };
+
+            if (tPage == 0x0098)
+            {
+                Console.WriteLine("Yes it is.");
+            }
+
+            ushort[,] pixels = new ushort[_ImageHeight, _ImageWidth];
+
+            int scaledX = texturePage.x;
+            int scaledY = texturePage.y;
+
+            for (int y = 0; y < _ImageHeight; y++)
+            {
+                int yOffset = (scaledY + y) * _TotalWidth;
+                for (int x = 0; x < _ImageWidth;)
+                {
+                    int xOffset = scaledX; // / 2;
+
+                    try
+                    {
+                        if (texturePage.tp == 0) // 4 bit
+                        {
+                            xOffset += x / 4;
+                            ushort val = _TextureData[yOffset + xOffset];
+                            pixels[y, x++] = (ushort)(val & 0x000F);
+                            pixels[y, x++] = (ushort)((val & 0x00F0) >> 4);
+                            pixels[y, x++] = (ushort)((val & 0x0F00) >> 8);
+                            pixels[y, x++] = (ushort)((val & 0xF000) >> 12);
+                        }
+                        else if (texturePage.tp == 1) // 8 bit
+                        {
+                            xOffset += x;
+                            xOffset /= 2;
+                            ushort val = _TextureData[yOffset + xOffset];
+                            pixels[y, x++] = (ushort)(val & 0x00FF);
+                            pixels[y, x++] = (ushort)((val & 0xFF00) >> 8);
+                        }
+                        else if (texturePage.tp == 2) // 16 bit
+                        {
+                            xOffset += x;
+                            ushort val = _TextureData[yOffset + xOffset];
+                            pixels[y, x++] = val;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
+            }
+
+            texturePage.pixels = pixels;
+            return texturePage;
+        }
+
+        protected ColourTable GetTextureClut(ushort clut, int length)
+        {
+            ColourTable colourTable = new ColourTable
+            {
+                clut = clut,
+                x = (clut & 0x1F) << 4,//(clut & 0x3F) << 4,
+                y = (clut >> 6) & 0x1FF,
+                colours = null
+            };
+
+            Color[] colours = new Color[length];
+
+            int scaledX = colourTable.x;
+            int scaledY = colourTable.y;
+
+            int yOffset = scaledY * _TotalWidth;
+            for (int x = 0; x < length;)
+            {
+                int xOffset = scaledX;
+
+                try
+                {
+                    xOffset += x;
+                    ushort val = _TextureData[yOffset + xOffset];
+
+                    ushort alpha = 255;
+                    ushort red = val;
+                    ushort green = val;
+                    ushort blue = val;
+
+                    alpha = (ushort)(val >> 15);
+                    if (alpha != 0)
+                    {
+                        alpha = 255;
+                    }
+
+                    blue = (ushort)(((ushort)(val << 1) >> 11) << 3);
+                    green = (ushort)(((ushort)(val << 6) >> 11) << 3);
+                    red = (ushort)(((ushort)(val << 11) >> 11) << 3);
+
+
+                    colours[x++] = Color.FromArgb(alpha, red, green, blue);
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+
+            colourTable.colours = colours;
+            return colourTable;
+        }
+
+        public void BuildTexturesFromPolygonData(Gex3PlaystationPolygonTextureData[] texData, ushort[] texturePages, bool drawGreyScaleFirst, bool quantizeBounds, CDC.Objects.ExportOptions options)
+        {
+            if (_TPages == null)
+            {
+                _TPages = new TexturePage[texturePages.Length];
+                for (int i = 0; i < texturePages.Length; i++)
+                {
+                    _TPages[i] = GetTexturePage(texturePages[i]);
+                }
+
+                _TextureCount = _TPages.Length;
+                _Textures = new Bitmap[_TextureCount];
+            }
+
             // hashtable to store counts of palette usage
             Hashtable palettes = new Hashtable();
 
@@ -256,7 +390,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             // initialize textures
             if (drawGreyScaleFirst)
             {
-                BuildTexturesFromGreyscalePallete();
+                BuildTexturesFromGreyscalePallete(texturePages);
             }
             else
             {
@@ -281,6 +415,8 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             // use the polygon data to colour in all possible parts of the textures
             foreach (Gex3PlaystationPolygonTextureData poly in texData)
             {
+                TexturePage texturePage = _TPages[poly.textureID];
+
                 bool dumpPreviousTextureVersion = false;
                 bool wrotePixels = false;
                 List<byte[]> textureHashes = new List<byte[]>();
@@ -295,7 +431,13 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                 int uMax = 0;
                 int vMin = 255;
                 int vMax = 0;
-                Color[] palette = GetPalette(poly.paletteColumn, poly.paletteRow);
+
+                if (poly.textureID == 2)
+                {
+                    Console.WriteLine("Here");
+                }
+
+                Color[] palette = GetPalette(poly.textureID, poly.CLUT);
 
                 //bool exportAllPaletteVariations = false;
                 //if (exportAllPaletteVariations)
@@ -452,10 +594,10 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                 {
                     for (int x = uMin; x < uMax; x += 2)
                     {
-                        int dataOffset = (y * _TextureDataRowLength) + (x / 2);
-                        byte currentByte = _TextureData[poly.textureID][dataOffset];
-                        int leftPixel = (int)currentByte & 0x0F;
-                        int rightPixel = (int)((currentByte & 0xF0) >> 4);
+                        int dataOffset = (_ImageHeight * y) + x;
+                        int leftPixel = texturePage.pixels[y, x];
+                        int rightPixel = texturePage.pixels[y, x + 1];
+
                         Color leftPixelColour = palette[leftPixel];
                         Color rightPixelColour = palette[rightPixel];
                         //uint materialAlpha = (poly.materialColour & 0xFF000000) >> 24;
@@ -537,7 +679,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                 if (wrotePixels)
                 {
                     // add or update palette list
-                    string paletteIDString = poly.textureID.ToString() + "-" + poly.paletteColumn.ToString() + "-" + poly.paletteRow.ToString();
+                    string paletteIDString = poly.textureID.ToString() + "-" + poly.CLUT.ToString();
                     if (palettes.Contains(paletteIDString))
                     {
                         int palCount = (int)palettes[paletteIDString];
@@ -599,12 +741,12 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                         int useCount = (int)palettes[pID];
                         string[] palDecode2 = pID.Split('-');
                         int tID = int.Parse(palDecode2[0]);
-                        int palColumn = int.Parse(palDecode2[1]);
-                        int palRow = int.Parse(palDecode2[2]);
-                        Color[] pal = GetPalette(palColumn, palRow);
+                        ushort clut = ushort.Parse(palDecode2[1]);
+                        Color[] pal = GetPalette(texNum, clut);
 
                         for (texNum = 0; texNum <= _Textures.GetUpperBound(0); texNum++)
                         {
+                            TexturePage texturePage = _TPages[texNum];
                             Bitmap exportTemp = (Bitmap)_Textures[texNum].Clone();
                             bool exportThisTexture = false;
                             for (int y = 0; y < _ImageHeight; y++)
@@ -616,10 +758,8 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                                     if (leftPixChroma || rightPixChroma)
                                     {
                                         exportThisTexture = true;
-                                        int dataOffset = (y * _TextureDataRowLength) + (x / 2);
-                                        byte currentByte = _TextureData[texNum][dataOffset];
-                                        int leftPixel = (int)currentByte & 0x0F;
-                                        int rightPixel = (int)((currentByte & 0xF0) >> 4);
+                                        int leftPixel = texturePage.pixels[y, x];
+                                        int rightPixel = texturePage.pixels[y, x + 1];
                                         Color leftPixelColour = pal[leftPixel];
                                         Color rightPixelColour = pal[rightPixel];
                                         if (leftPixChroma)
@@ -639,7 +779,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                                 {
                                     Directory.CreateDirectory("Texture_Debugging");
                                 }
-                                string fileName = string.Format(@"Texture_Debugging\Texture-{0:X8}-count_{1:X8}-palette_texture_ID_{2:X8}-row_{3:X8}-column_{4:X8}.png", texNum, useCount, tID, palColumn, palRow);
+                                string fileName = string.Format(@"Texture_Debugging\Texture-{0:X8}-count_{1:X8}-palette_texture_ID_{2:X8}-clut_{4:X8}.png", texNum, useCount, tID, clut);
                                 exportTemp.Save(fileName, ImageFormat.Png);
                             }
                         }
@@ -651,26 +791,22 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                 {
                     string[] pd = pID.Split('-');
                     int txID = int.Parse(pd[0]);
-                    int pc = int.Parse(pd[1]);
-                    int pr = int.Parse(pd[2]);
+                    ushort clut = ushort.Parse(pd[1]);
                     if (!allTexturesWithPalettes.Contains(txID))
                     {
-                        if ((pc != 0) && (pr != 0))
+                        if (clut != 0)
                         {
                             allTexturesWithPalettes.Add(txID);
                         }
                     }
                 }
 
-
-
-                for (texNum = 0; texNum <= _Textures.GetUpperBound(0); texNum++)
+                foreach (TexturePage texturePage in _TPages)
                 {
                     // find the most frequently-used palette
                     string palID = "";
                     int palCount = 0;
-                    int mostCommonPaletteColumn = 0;
-                    int mostCommonPaletteRow = 0;
+                    ushort mostCommonPaletteClut = 0;
                     bool hasAtLeastOneVisiblePixel = false;
                     foreach (string pID in palettes.Keys)
                     {
@@ -687,16 +823,14 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                         }
                         if (considerPalette)
                         {
-                            int pc = int.Parse(pd[1]);
-                            int pr = int.Parse(pd[2]);
+                            ushort clut = ushort.Parse(pd[1]);
                             int pCount = (int)palettes[pID];
                             if (pCount > palCount)
                             {
                                 palID = pID;
-                                if ((pc != 0) || (pr != 0))
+                                if (clut != 0)
                                 {
-                                    mostCommonPaletteColumn = pc;
-                                    mostCommonPaletteRow = pr;
+                                    mostCommonPaletteClut = clut;
                                 }
                                 // don't use palettes with column/row zero or with odd column numbers unless there's no other choice
                                 //if ((pc != 0) && (pr != 0) && (pc % 2 == 0))
@@ -706,13 +840,13 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                             }
                         }
                     }
-                    Color[] commonPalette = GetPalette(mostCommonPaletteColumn, mostCommonPaletteRow);
+                    Color[] commonPalette = GetPalette(texNum, mostCommonPaletteClut);
 
                     // use a greyscale palette instead of column 0, row 0, because column 0, row 0 is always garbage that makes 
                     // the texture impossible to view properly, and full of random transparent pixels
-                    if (options.AlwaysUseGreyscaleForMissingPalettes || ((mostCommonPaletteColumn == 0) && (mostCommonPaletteRow == 0)))
+                    if (options.AlwaysUseGreyscaleForMissingPalettes || mostCommonPaletteClut == 0)
                     {
-                        commonPalette = GetGreyscalePalette();
+                        commonPalette = GetGreyscalePalette(texNum);
                     }
 
                     for (int y = 0; y < _ImageHeight; y++)
@@ -734,10 +868,9 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                             bool rightPixChroma = (_Textures[texNum].GetPixel((x + 1), y).A == 1);
                             if (leftPixChroma || rightPixChroma)
                             {
-                                int dataOffset = (y * _TextureDataRowLength) + (x / 2);
-                                byte currentByte = _TextureData[texNum][dataOffset];
-                                int leftPixel = (int)currentByte & 0x0F;
-                                int rightPixel = (int)((currentByte & 0xF0) >> 4);
+                                int dataOffset = (_ImageHeight * y) + x;
+                                int leftPixel = texturePage.pixels[y, x];
+                                int rightPixel = texturePage.pixels[y, x + 1];
                                 Color leftPixelColour = commonPalette[leftPixel];
                                 Color rightPixelColour = commonPalette[rightPixel];
                                 if (leftPixChroma)
@@ -792,91 +925,40 @@ namespace BenLincoln.TheLostWorlds.CDTextures
         {
             Bitmap retBitmap = new Bitmap(_ImageWidth, _ImageHeight);
 
-            int byteNum = 0;
+            TexturePage texturePage = _TPages[index];
             for (int y = 0; y < _ImageHeight; y++)
             {
                 for (int x = 0; x < _ImageWidth; x += 2)
                 {
-                    byte currentByte = _TextureData[index][byteNum];
-                    int leftPixel = (int)currentByte & 0x0F;
-                    int rightPixel = (int)((currentByte & 0xF0) >> 4);
+                    int leftPixel = texturePage.pixels[y, x];
+                    int rightPixel = texturePage.pixels[y, x + 1];
                     retBitmap.SetPixel(x, y, palette[leftPixel]);
                     retBitmap.SetPixel(x + 1, y, palette[rightPixel]);
-                    byteNum++;
                 }
             }
 
             return retBitmap;
         }
 
-        protected Point GetImageSize()
+        protected Color[] GetGreyscalePalette(int index)
         {
-            Point size;
-            try
-            {
-                //FileStream inStream = new FileStream(_FilePath, FileMode.Open, FileAccess.Read);
-                //BinaryReader inReader = new BinaryReader(inStream);
-                //inStream.Seek(28, SeekOrigin.Begin);
-                int totalWidth = 512 * 4; // (int)(inReader.ReadUInt32() * 4);
-                int totalHeight = 512; // (int)inReader.ReadUInt32();
-                //inReader.Close();
-                //inStream.Close();
-                size = new Point(totalWidth, totalHeight);
-            }
-            catch (Exception ex)
-            {
-                throw new TextureFileException("Error getting image size.", ex);
-            }
-            return size;
-        }
+            TexturePage tPage = _TPages[(ushort)index];
 
-        protected Color[] GetGreyscalePalette()
-        {
-            Color[] greyPalette = new Color[16];
-            for (int i = 0; i < 16; i++)
+            int paletteSize = (tPage.tp == 0) ? 16 : 256;
+            Color[] greyPalette = new Color[paletteSize];
+            for (int i = 0; i < paletteSize; i++)
             {
-                int luma = 16 * i;  // 256 / 16 = 16
+                int luma = (i * 256) / paletteSize;
                 greyPalette[i] = Color.FromArgb(luma, luma, luma);
             }
+
             return greyPalette;
         }
 
-        protected Color[] GetPalette(int paletteColumn, int paletteRow)
+        protected Color[] GetPalette(int index, ushort clut)
         {
-            Color[] palette = new Color[16];
-
-            int textureID = paletteColumn / 4;
-            int localColumn = paletteColumn % 4;
-
-            int realOffset = (localColumn * 32) + (paletteRow * 128);
-
-            for (int i = 0; i < 16; i++)
-            {
-                int arrayPos = realOffset + (i * 2);
-                ushort currentVal = (ushort)(
-                    (ushort)(_TextureData[textureID][arrayPos]) |
-                    ((ushort)(_TextureData[textureID][arrayPos + 1]) << 8)
-                    );
-
-                ushort alpha = 255;
-                ushort red = currentVal;
-                ushort green = currentVal;
-                ushort blue = currentVal;
-
-                alpha = (ushort)(currentVal >> 15);
-                if (alpha != 0)
-                {
-                    alpha = 255;
-                }
-
-                blue = (ushort)(((ushort)(currentVal << 1) >> 11) << 3);
-                green = (ushort)(((ushort)(currentVal << 6) >> 11) << 3);
-                red = (ushort)(((ushort)(currentVal << 11) >> 11) << 3);
-
-                palette[i] = Color.FromArgb(alpha, red, green, blue);
-            }
-
-            return palette;
+            TexturePage texturePage = _TPages[index];
+            return GetTextureClut(clut, texturePage.tp == 0 ? 16 : 256).colours;
         }
 
         public override MemoryStream GetDataAsStream(int index)
@@ -884,7 +966,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             Bitmap tex = new Bitmap(1, 1);
             if (_Textures[index] == null)
             {
-                tex = GetTextureAsBitmap(index, GetGreyscalePalette());
+                tex = GetTextureAsBitmap(index, GetGreyscalePalette(index));
             }
             else
             {
@@ -927,7 +1009,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             Bitmap tex = new Bitmap(1, 1);
             if (_Textures[index] == null)
             {
-                tex = GetTextureAsBitmap(index, GetGreyscalePalette());
+                tex = GetTextureAsBitmap(index, GetGreyscalePalette(index));
             }
             else
             {

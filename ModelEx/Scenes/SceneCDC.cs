@@ -12,6 +12,7 @@ using SR1File = CDC.Objects.SR1File;
 using SR2File = CDC.Objects.SR2File;
 using DefianceFile = CDC.Objects.DefianceFile;
 using SRModel = CDC.Objects.Models.SRModel;
+using GexModel = CDC.Objects.Models.GexModel;
 using SR1Model = CDC.Objects.Models.SR1Model;
 using SR2Model = CDC.Objects.Models.SR2Model;
 using DefianceModel = CDC.Objects.Models.DefianceModel;
@@ -826,13 +827,15 @@ namespace ModelEx
                                 polygons[polygonNum].visible = polygon.material.visible;
                                 //polygons[polygonNum].materialColour = polygon.material.colour;
 
+                                polygons[polygonNum].tPage = polygon.material.texturePage;
+
                                 polygonNum++;
                             }
                         }
                         bool drawGreyscaleFirst = false;
                         bool quantizeBounds = true;
-                        textureFile.BuildTexturesFromGreyscalePallete();
-                        //textureFile.BuildTexturesFromPolygonData(polygons, drawGreyscaleFirst, quantizeBounds, options);
+                        //textureFile.BuildTexturesFromGreyscalePallete(((GexModel)srFile.Models[0]).TPages);
+                        textureFile.BuildTexturesFromPolygonData(polygons, ((GexModel)srFile.Models[0]).TPages, drawGreyscaleFirst, quantizeBounds, options);
 
                         // For all models
                         for (int t = 0; t < textureFile.TextureCount; t++)
