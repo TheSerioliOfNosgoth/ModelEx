@@ -181,7 +181,11 @@ namespace ModelEx
                 if (SubMeshes.Count > 0)
                 {
                     MeshName = meshName;
-                    if (_srFile.Game == CDC.Game.Gex || _srFile.Game == CDC.Game.SR1)
+                    if (_srFile.Game == CDC.Game.Gex)
+                    {
+                        Technique = "Gex3Render";
+                    }
+                    else if (_srFile.Game == CDC.Game.SR1)
                     {
                         Technique = "SR1Render";
                     }
@@ -792,50 +796,9 @@ namespace ModelEx
                     {
                         Gex3PSTextureFile textureFile = new Gex3PSTextureFile(textureFileName);
 
-                        UInt32 polygonCountAllModels = 0;
-                        foreach (SRModel srModel in srFile.Models)
-                        {
-                            polygonCountAllModels += srModel.PolygonCount;
-                        }
-
-                        Gex3PSTextureFile.Gex3PlaystationPolygonTextureData[] polygons =
-                            new Gex3PSTextureFile.Gex3PlaystationPolygonTextureData[polygonCountAllModels];
-
-                        int polygonNum = 0;
-                        foreach (SRModel srModel in srFile.Models)
-                        {
-                            foreach (CDC.Polygon polygon in srModel.Polygons)
-                            {
-                                polygons[polygonNum].paletteColumn = polygon.paletteColumn;
-                                polygons[polygonNum].paletteRow = polygon.paletteRow;
-                                polygons[polygonNum].u = new int[3];
-                                polygons[polygonNum].v = new int[3];
-                                //polygons[polygonNum].materialColour = polygon.material.colour;
-                                polygons[polygonNum].materialColour = polygon.colour;
-
-                                polygons[polygonNum].u[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].u * 255);
-                                polygons[polygonNum].v[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].v * 255);
-                                polygons[polygonNum].u[1] = (int)(srModel.Geometry.UVs[polygon.v2.UVID].u * 255);
-                                polygons[polygonNum].v[1] = (int)(srModel.Geometry.UVs[polygon.v2.UVID].v * 255);
-                                polygons[polygonNum].u[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].u * 255);
-                                polygons[polygonNum].v[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].v * 255);
-
-                                polygons[polygonNum].textureID = polygon.material.textureID;
-                                polygons[polygonNum].CLUT = polygon.material.clutValue;
-
-                                polygons[polygonNum].textureUsed = polygon.material.textureUsed;
-                                polygons[polygonNum].visible = polygon.material.visible;
-                                //polygons[polygonNum].materialColour = polygon.material.colour;
-
-                                polygons[polygonNum].tPage = polygon.material.texturePage;
-
-                                polygonNum++;
-                            }
-                        }
                         bool drawGreyscaleFirst = false;
-                        bool quantizeBounds = true;
                         //textureFile.BuildTexturesFromGreyscalePallete(((GexModel)srFile.Models[0]).TPages);
-                        textureFile.BuildTexturesFromPolygonData(polygons, ((GexModel)srFile.Models[0]).TPages, drawGreyscaleFirst, quantizeBounds, options);
+                        textureFile.BuildTexturesFromPolygonData(((GexModel)srFile.Models[0]).TPages, drawGreyscaleFirst, options);
 
                         // For all models
                         for (int t = 0; t < textureFile.TextureCount; t++)
@@ -847,24 +810,7 @@ namespace ModelEx
                             {
                                 TextureManager.Instance.AddTexture(stream, textureName);
                             }
-                            //string exportedTextureFileName = Path.ChangeExtension(textureName, "png");
-                            //_TexturesAsPNGs.Add(exportedTextureFileName, textureFile.GetTextureAsBitmap(t));
                             Bitmap b = textureFile.GetTextureAsBitmap(t);
-                            // this is a hack that's being done here for now because I don't know for sure which of the flags/attributes controls
-                            // textures that should be alpha-masked. Alpha-masking EVERY texture is expensive.
-                            if (options.AlsoInferAlphaMaskingFromTexturePixels)
-                            {
-                                if (BitmapHasTransparentPixels(b))
-                                {
-                                    for (int modelNum = 0; modelNum < srFile.Models.Length; modelNum++)
-                                    {
-                                        if (t < srFile.Models[modelNum].Materials.Length)
-                                        {
-                                            srFile.Models[modelNum].Materials[t].UseAlphaMask = true;
-                                        }
-                                    }
-                                }
-                            }
                             _TexturesAsPNGs.Add(textureName, b);
 
                             // dump all textures as PNGs for debugging
@@ -877,26 +823,6 @@ namespace ModelEx
                             //    tex.Save(@"C:\Debug\Tex-" + texNum + ".png", ImageFormat.Png);
                             //    texNum++;
                             //}
-                        }
-
-                        // for models that use index/CLUT textures, if the user has enabled this option
-                        if (options.UseEachUniqueTextureCLUTVariation)
-                        {
-                            foreach (int textureID in textureFile.TexturesByCLUT.Keys)
-                            {
-                                Dictionary<ushort, Bitmap> textureCLUTCollection = textureFile.TexturesByCLUT[textureID];
-                                foreach (ushort clut in textureCLUTCollection.Keys)
-                                {
-                                    String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameWithCLUT(objectName, textureID, clut) + TextureExtension;
-                                    System.IO.MemoryStream stream = textureFile.GetTextureWithCLUTAsStream(textureID, clut);
-                                    if (stream != null)
-                                    {
-                                        TextureManager.Instance.AddTexture(stream, textureName);
-                                    }
-                                    Bitmap b = textureFile.TexturesByCLUT[textureID][clut];
-                                    _TexturesAsPNGs.Add(textureName, b);
-                                }
-                            }
                         }
                     }
                     catch (Exception ex)

@@ -53,6 +53,16 @@ RasterizerState DefaultRasterizerState
 	//FrontCounterClockwise = false;
 };
 
+RasterizerState Gex3RasterizerState
+{
+	FillMode = Solid;
+	CullMode = None;
+	//CullMode = Back;
+	FrontCounterClockwise = true;
+	//CullMode = CCW;
+	//FrontCounterClockwise = false;
+};
+
 RasterizerState SR1RasterizerState
 {
 	FillMode = Solid;
@@ -72,6 +82,20 @@ RasterizerState SR2RasterizerState
 };
 
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
+{
+	VertexShaderOutput output;
+	float4 worldPosition = mul(input.Position, World);
+	matrix viewProjection = mul(View, Projection);
+
+	output.Position = mul(worldPosition, viewProjection);
+	output.Normal = mul(input.Normal, World);
+	output.ViewDirection = worldPosition - CameraPosition;
+	output.TexCoord = input.TexCoord;
+
+	return output;
+}
+
+VertexShaderOutput Gex3VertexShaderFunction(VertexShaderInput input)
 {
 	VertexShaderOutput output;
 	float4 worldPosition = mul(input.Position, World);
@@ -123,6 +147,18 @@ technique10 DefaultRender
 		SetGeometryShader(NULL);
 		SetPixelShader(CompileShader(ps_4_0, PixelShaderFunction()));
 		SetRasterizerState(DefaultRasterizerState);
+		//SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+	}
+}
+
+technique10 Gex3Render
+{
+	pass P0
+	{
+		SetVertexShader(CompileShader(vs_4_0, Gex3VertexShaderFunction()));
+		SetGeometryShader(NULL);
+		SetPixelShader(CompileShader(ps_4_0, PixelShaderFunction()));
+		SetRasterizerState(Gex3RasterizerState);
 		//SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 }
