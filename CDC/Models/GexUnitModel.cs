@@ -102,7 +102,15 @@ namespace CDC.Objects.Models
 
             for (int c = 0; c < _vertexColourCount; c++)
             {
-                _geometry.Colours[c] = xReader.ReadUInt32();
+                uint vColour = xReader.ReadUInt32() | 0xFF000000;
+                if (options.IgnoreVertexColours)
+                {
+                    _geometry.Colours[c] = 0xFFFFFFFF;
+                }
+                else
+                {
+                    _geometry.Colours[c] = vColour;
+                }
 
                 Utility.FlipRedAndBlue(ref _geometry.Colours[c]);
 
@@ -121,10 +129,42 @@ namespace CDC.Objects.Models
             _polygons[p].v3 = _geometry.Vertices[xReader.ReadUInt16()];
             _polygons[p].material = new Material();
 
-            _polygons[p].material.textureUsed = true; // |= (Boolean)(((int)xReader.ReadUInt16() & 0x0004) == 0);
-            xReader.BaseStream.Position += 0x04;
+            byte flags = xReader.ReadByte();
+            xReader.BaseStream.Position += 3;
+
+            _polygons[p].material.polygonFlags = flags;
+
             UInt16 uMaterialOffset = xReader.ReadUInt16();
-            _polygons[p].material.textureUsed &= (Boolean)(uMaterialOffset != 0xFFFF);
+
+            _polygons[p].material.visible = true;
+            if (uMaterialOffset == 0xFFFF)
+            {
+                _polygons[p].material.visible = false;
+            }
+
+            if ((flags & 0x04) == 0x04)
+            {
+                _polygons[p].material.visible = false;
+            }
+
+            if (!_polygons[p].material.visible)
+            {
+                _polygons[p].material.textureUsed = false;
+            }
+            else
+            {
+                _polygons[p].material.textureUsed = true;
+            }
+
+            if (options.RenderMode == RenderMode.NoTextures)
+            {
+                _polygons[p].material.clutValueUsedMask = 0;
+                _polygons[p].material.texturePageUsedMask = 0;
+                _polygons[p].material.BSPTreeRootFlagsUsedMask = 0;
+                _polygons[p].material.BSPTreeAllParentNodeFlagsORdUsedMask = 0;
+                _polygons[p].material.BSPTreeParentNodeFlagsUsedMask = 0;
+                _polygons[p].material.BSPTreeLeafFlagsUsedMask = 0;
+            }
 
             if (_polygons[p].material.textureUsed)
             {
@@ -133,11 +173,6 @@ namespace CDC.Objects.Models
                 xReader.BaseStream.Position = uMaterialPosition;
 
                 ReadMaterial(xReader, p, options);
-            }
-            else
-            {
-                _polygons[p].material.textureUsed = false;
-                _polygons[p].material.colour = 0xFFFFFFFF;
             }
 
             Utility.FlipRedAndBlue(ref _polygons[p].material.colour);
