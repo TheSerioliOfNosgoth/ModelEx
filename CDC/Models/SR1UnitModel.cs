@@ -274,20 +274,30 @@ namespace CDC.Objects.Models
             {
                 xReader.BaseStream.Position += 2;
                 uMaterialOffset = xReader.ReadUInt32();
-                uMaterialOffset -= _materialStart;
+
+                if (uMaterialOffset >= _materialStart)
+                {
+                    uMaterialOffset -= _materialStart;
+                }
+                else
+                {
+                    // What would this mean?
+                    // It's not an offset in proto, so is there a real material is should point to?
+                    uMaterialOffset = 0xFFFFFFFF;
+                }
             }
             else
             {
                 // unsigned short textoff;
                 uMaterialOffset = xReader.ReadUInt16();
                 //Console.WriteLine(string.Format("\t\t\tDebug: read textoff: 0x{0:X4}", uMaterialOffset));
-                //_polygons[p].material.textureUsed &= (Boolean)(uMaterialOffset != 0xFFFF);
+                //_polygons[p].material.textureUsed &= (Boolean)(uMaterialOffset != 0xFFFF && uMaterialOffset != 0xFFFFFFFF);
             }
 
             bool isTranslucent = false;
 
             _polygons[p].material.visible = true;
-            if (uMaterialOffset == 0xFFFF)
+            if (uMaterialOffset == 0xFFFF || uMaterialOffset == 0xFFFFFFFF)
             {
                 _polygons[p].material.visible = false;
             }
@@ -304,7 +314,7 @@ namespace CDC.Objects.Models
             }
             if (ignoreMaterial0)
             {
-                if (uMaterialOffset == 0x0000)
+                if (uMaterialOffset == 0x00000000)
                 {
                     _polygons[p].material.visible = false;
                 }
