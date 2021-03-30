@@ -6,6 +6,7 @@ namespace ModelEx
     public class Material
     {
         public String Name = "";
+        public bool Visible = true;
         public System.Drawing.Color Diffuse = System.Drawing.Color.White;
         public System.Drawing.Color Ambient = System.Drawing.Color.White;
         public System.Drawing.Color Emissive = System.Drawing.Color.White;

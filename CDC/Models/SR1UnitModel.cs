@@ -16,23 +16,38 @@ namespace CDC.Objects.Models
         {
             _modelTypePrefix = "a_";
             // struct _Terrain
-            // Alpha 1999-02-16:
-            /*
-                long vplLength; // size=0, offset=0
-            	unsigned char *vpList; // size=0, offset=4
-	            long numIntros; // size=0, offset=8
-	            struct Intro *introList; // size=76, offset=12
-             */
 
-            // 1999-07-14
-            /*
-             	short UnitChangeFlags; // size=0, offset=0
-	            short spad; // size=0, offset=2
-	            long lpad2; // size=0, offset=4
-	            long numIntros; // size=0, offset=8
-	            struct Intro *introList; // size=76, offset=12
-             */
-            xReader.BaseStream.Position = _modelData + 0x10;
+            if (_version == SR1File.PROTO_19981025_VERSION)
+            {
+                xReader.BaseStream.Position = _modelData;
+
+                _groupCount = 1;
+                m_uBspTreeCount = 1;
+                m_uBspTreeStart = xReader.ReadUInt32();
+
+                xReader.BaseStream.Position = _modelData + 0x1C;
+            }
+            else
+            {
+                // Alpha 1999-02-16:
+                /*
+                    long vplLength; // size=0, offset=0
+                    unsigned char *vpList; // size=0, offset=4
+                    long numIntros; // size=0, offset=8
+                    struct Intro *introList; // size=76, offset=12
+                 */
+
+                // 1999-07-14
+                /*
+                    short UnitChangeFlags; // size=0, offset=0
+                    short spad; // size=0, offset=2
+                    long lpad2; // size=0, offset=4
+                    long numIntros; // size=0, offset=8
+                    struct Intro *introList; // size=76, offset=12
+                 */
+
+                xReader.BaseStream.Position = _modelData + 0x10;
+            }
 
             // long numVertices;
             _vertexCount = xReader.ReadUInt32();
@@ -55,11 +70,17 @@ namespace CDC.Objects.Models
             // void *StreamUnits;
             uint streamUnitStart = xReader.ReadUInt32();
 
+            if (_version == SR1File.PROTO_19981025_VERSION)
+            {
+                xReader.BaseStream.Position += 0x04;
+            }
+
             // struct TextureFT3 *StartTextureList;
             _materialStart = _dataStart + xReader.ReadUInt32();
             _materialCount = 0;
 
-            if (_version == SR1File.ALPHA_19990123_VERSION_1_X ||
+            if (_version == SR1File.PROTO_19981025_VERSION ||
+                _version == SR1File.ALPHA_19990123_VERSION_1_X ||
                 _version == SR1File.ALPHA_19990123_VERSION_1 ||
                 _version == SR1File.ALPHA_19990204_VERSION_2 ||
                 _version == SR1File.ALPHA_19990216_VERSION_3 ||
@@ -77,17 +98,20 @@ namespace CDC.Objects.Models
                 xReader.BaseStream.Position += 0x04;
             }
 
-            // struct _MorphVertex *MorphDiffList;
-            m_uSpectralVertexStart = _dataStart + xReader.ReadUInt32();
-            // struct _MorphColor *MorphColorList;
-            m_uSpectralColourStart = _dataStart + xReader.ReadUInt32();
-            // long numBSPTrees
-            m_uBspTreeCount = xReader.ReadUInt32();
-            // struct BSPTree *BSPTreeArray;
-            m_uBspTreeStart = _dataStart + xReader.ReadUInt32();
-            _groupCount = m_uBspTreeCount;
-            // short *morphNormalIdx;
-            // struct _MultiSignal *signals;
+            if (_version != SR1File.PROTO_19981025_VERSION)
+            {
+                // struct _MorphVertex *MorphDiffList;
+                m_uSpectralVertexStart = _dataStart + xReader.ReadUInt32();
+                // struct _MorphColor *MorphColorList;
+                m_uSpectralColourStart = _dataStart + xReader.ReadUInt32();
+                // long numBSPTrees
+                m_uBspTreeCount = xReader.ReadUInt32();
+                // struct BSPTree *BSPTreeArray;
+                m_uBspTreeStart = _dataStart + xReader.ReadUInt32();
+                _groupCount = m_uBspTreeCount;
+                // short *morphNormalIdx;
+                // struct _MultiSignal *signals;
+            }
 
             _trees = new Tree[_groupCount];
         }
@@ -245,10 +269,20 @@ namespace CDC.Objects.Models
             _polygons[p].material.polygonFlags = flags;
             _polygons[p].material.sortPush = sortPush;
 
-            // unsigned short textoff;
-            UInt16 uMaterialOffset = xReader.ReadUInt16();
-            //Console.WriteLine(string.Format("\t\t\tDebug: read textoff: 0x{0:X4}", uMaterialOffset));
-            //_polygons[p].material.textureUsed &= (Boolean)(uMaterialOffset != 0xFFFF);
+            UInt32 uMaterialOffset;
+            if (_version == SR1File.PROTO_19981025_VERSION)
+            {
+                xReader.BaseStream.Position += 2;
+                uMaterialOffset = xReader.ReadUInt32();
+                uMaterialOffset -= _materialStart;
+            }
+            else
+            {
+                // unsigned short textoff;
+                uMaterialOffset = xReader.ReadUInt16();
+                //Console.WriteLine(string.Format("\t\t\tDebug: read textoff: 0x{0:X4}", uMaterialOffset));
+                //_polygons[p].material.textureUsed &= (Boolean)(uMaterialOffset != 0xFFFF);
+            }
 
             bool isTranslucent = false;
 
@@ -329,7 +363,14 @@ namespace CDC.Objects.Models
 
             HandlePolygonInfo(xReader, p, options, flags, uMaterialOffset, isTranslucent);
 
-            xReader.BaseStream.Position = uPolygonPosition + 0x0C;
+            if (_version == SR1File.PROTO_19981025_VERSION)
+            {
+                xReader.BaseStream.Position = uPolygonPosition + 0x10;
+            }
+            else
+            {
+                xReader.BaseStream.Position = uPolygonPosition + 0x0C;
+            }
         }
 
         protected override void ReadPolygons(BinaryReader xReader, CDC.Objects.ExportOptions options)
@@ -351,32 +392,39 @@ namespace CDC.Objects.Models
             List<int> xMeshPositions = new List<int>();
             List<UInt32> treePolygons = new List<UInt32>((Int32)_vertexCount * 3);
 
-            for (UInt32 t = 0; t < m_uBspTreeCount; t++)
+            if (_version == SR1File.PROTO_19981025_VERSION)
             {
-                // struct BSPTree
-                xReader.BaseStream.Position = m_uBspTreeStart + (t * 0x24);
-                // struct _BSPNode *bspRoot;
-                UInt32 uDataPos = _dataStart + xReader.ReadUInt32();
-                // struct _BSPLeaf *startLeaves;
-                // struct _BSPLeaf *endLeaves; 
-                // struct _Position globalOffset;
-                xReader.BaseStream.Position += 0x0E;
-                //short flags;
-                ushort rootTreeFlags = xReader.ReadUInt16();
-                //Console.WriteLine(string.Format("\t\t\t\t\tDebug: read BSP tree flags {0}", Convert.ToString(flags, 2).PadLeft(8, '0')));
-                bool drawTester = ((rootTreeFlags & 1) != 1);
-                // struct _Position localOffset;
-                xReader.BaseStream.Position += 0x06;
-                // short ID;
-                UInt16 usBspID = xReader.ReadUInt16();
-                // long splineID;
-                // struct _Instance *instanceSpline;
-                //if (_trees[t] == null)
-                //{
-                //    _trees[t] = new Tree();
-                //}
-                //_trees[t].sr1Flags = flags;
-                _trees[t] = ReadBSPTree(t, t.ToString(), xReader, treePolygons, uDataPos, _trees[t], xMeshes, xMeshPositions, 0, rootTreeFlags, 0, 0);                
+                _trees[0] = ReadBSPTree(0, 0.ToString(), xReader, treePolygons, m_uBspTreeStart, _trees[0], xMeshes, xMeshPositions, 0, 0, 0, 0);
+            }
+            else
+            {
+                for (UInt32 t = 0; t < m_uBspTreeCount; t++)
+                {
+                    // struct BSPTree
+                    xReader.BaseStream.Position = m_uBspTreeStart + (t * 0x24);
+                    // struct _BSPNode *bspRoot;
+                    UInt32 uDataPos = _dataStart + xReader.ReadUInt32();
+                    // struct _BSPLeaf *startLeaves;
+                    // struct _BSPLeaf *endLeaves; 
+                    // struct _Position globalOffset;
+                    xReader.BaseStream.Position += 0x0E;
+                    //short flags;
+                    ushort rootTreeFlags = xReader.ReadUInt16();
+                    //Console.WriteLine(string.Format("\t\t\t\t\tDebug: read BSP tree flags {0}", Convert.ToString(flags, 2).PadLeft(8, '0')));
+                    bool drawTester = ((rootTreeFlags & 1) != 1);
+                    // struct _Position localOffset;
+                    xReader.BaseStream.Position += 0x06;
+                    // short ID;
+                    UInt16 usBspID = xReader.ReadUInt16();
+                    // long splineID;
+                    // struct _Instance *instanceSpline;
+                    //if (_trees[t] == null)
+                    //{
+                    //    _trees[t] = new Tree();
+                    //}
+                    //_trees[t].sr1Flags = flags;
+                    _trees[t] = ReadBSPTree(t, t.ToString(), xReader, treePolygons, uDataPos, _trees[t], xMeshes, xMeshPositions, 0, rootTreeFlags, 0, 0);
+                }
             }
 
             HandleDebugRendering(options);
@@ -422,7 +470,14 @@ namespace CDC.Objects.Models
                 return null;
             }
 
-            xReader.BaseStream.Position = uDataPos + 0x0E;
+            if (_version == SR1File.PROTO_19981025_VERSION)
+            {
+                xReader.BaseStream.Position = uDataPos + 0x12;
+            }
+            else
+            {
+                xReader.BaseStream.Position = uDataPos + 0x0E;
+            }
             bool isLeaf = ((xReader.ReadByte() & 0x02) == 0x02);
             Int32 iSubTreeCount = 2;
 
@@ -454,7 +509,15 @@ namespace CDC.Objects.Models
             {
                 xTree.isLeaf = true;
 
-                xReader.BaseStream.Position = uDataPos + 0x08;
+                if (_version == SR1File.PROTO_19981025_VERSION)
+                {
+                    xReader.BaseStream.Position = uDataPos + 0x0C;
+                }
+                else
+                {
+                    xReader.BaseStream.Position = uDataPos + 0x08;
+                }
+
                 ReadBSPLeaf(xReader, treePolygons, xMesh, treeRootFlags, parentNodeFlags, parentNodeFlagsORd, rootTreeNum, treeNodeID);
             }
             else
@@ -465,14 +528,21 @@ namespace CDC.Objects.Models
                 // short a;
                 // short b;
                 // short c;
-                xReader.BaseStream.Position = uDataPos + 0xE;
+
+                if (_version == SR1File.PROTO_19981025_VERSION)
+                {
+                    xReader.BaseStream.Position = uDataPos + 0x12;
+                }
+                else
+                {
+                    xReader.BaseStream.Position = uDataPos + 0x0E;
+                }
                 UInt16 nodeFlags = xReader.ReadUInt16();
                 UInt16 nodeFlagsORd = (UInt16)(parentNodeFlagsORd | nodeFlags);
                 //Console.WriteLine(string.Format("\t\t\t\t\tDebug: read BSP node flags {0}", Convert.ToString(nodeFlags, 2).PadLeft(8, '0')));
                 //xMesh.sr1BSPNodeFlags.Add(nodeFlags);
                 //long d;
                 xReader.BaseStream.Position += 4;
-
                 // void *front;
                 // void *back; 
                 UInt32[] auSubTreePositions = new UInt32[2];
@@ -504,7 +574,15 @@ namespace CDC.Objects.Models
             // struct _BSPLeaf 
             // struct _TFace *faceList;
             UInt32 polygonPos = _dataStart + xReader.ReadUInt32();
-            UInt32 polygonID = (polygonPos - _polygonStart) / 0x0C;
+            UInt32 polygonID;
+            if (_version == SR1File.PROTO_19981025_VERSION)
+            {
+                polygonID = (polygonPos - _polygonStart) / 0x10;
+            }
+            else
+            {
+                polygonID = (polygonPos - _polygonStart) / 0x0C;
+            }
             // short numFaces;
             UInt16 polyCount = xReader.ReadUInt16();
             // short flags; 

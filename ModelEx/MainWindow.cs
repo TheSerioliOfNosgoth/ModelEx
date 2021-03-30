@@ -11,7 +11,7 @@ namespace ModelEx
     public partial class MainWindow : Form
     {
         ProgressWindow progressWindow;
-        int filterIndex = 1;
+        int filterIndex = 2;
         CDC.Objects.ExportOptions ImportExportOptions;
         int _MainSplitPanelPosition;
         protected bool _RunUIMonitoringThread;
