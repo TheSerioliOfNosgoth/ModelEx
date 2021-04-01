@@ -162,12 +162,17 @@ namespace CDC.Objects.Models
 
             xReader.BaseStream.Position = _polygonStart;
 
+            for (UInt16 p = 0; p < _polygonCount; p++)
+            {
+                ReadPolygon(xReader, p, options);
+            }
+
+            HandleDebugRendering(options);
+
             MaterialList xMaterialsList = null;
 
             for (UInt16 p = 0; p < _polygonCount; p++)
             {
-                ReadPolygon(xReader, p, options);
-
                 if (xMaterialsList == null)
                 {
                     xMaterialsList = new MaterialList(_polygons[p].material);

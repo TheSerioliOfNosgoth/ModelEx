@@ -70,8 +70,6 @@ namespace CDC.Objects.Models
             _geometry.UVs = new UV[_indexCount];
             ReadPolygons(xReader, options);
 
-            HandleDebugRendering(options);
-
             // Generate the output
             GenerateOutput();
         }
@@ -199,6 +197,8 @@ namespace CDC.Objects.Models
             List<UInt32> treePolygons = new List<UInt32>((Int32)_vertexCount * 3);
 
             _trees[0] = ReadBSPTree(xReader, treePolygons, m_uBspTreeStart, _trees[0], xMeshes, xMeshPositions, 0);
+
+            HandleDebugRendering(options);
 
             MaterialList xMaterialsList = null;
 

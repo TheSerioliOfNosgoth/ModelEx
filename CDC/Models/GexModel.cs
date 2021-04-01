@@ -289,8 +289,6 @@ namespace CDC.Objects.Models
             _geometry.UVs = new UV[_indexCount];
             ReadPolygons(xReader, options);
 
-            HandleDebugRendering(options);
-
             // Generate the output
             GenerateOutput();
         }

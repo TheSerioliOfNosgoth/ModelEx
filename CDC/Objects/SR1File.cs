@@ -50,11 +50,24 @@ namespace CDC.Objects
             String strModelName = new String(xReader.ReadChars(8));
             _name = Utility.CleanName(strModelName);
 
+            // Hack to check for lighthouse demo.
+            // The only way the name can be at 0x0000003C is if the Level structure is smaller. Hence it's the demo.
+            xReader.BaseStream.Position = _dataStart + 0x00000024;
+            if (xReader.ReadUInt32() == 0x0000003C)
+            {
+                _version = PROTO_19981025_VERSION;
+            }
+            else
+            {
+                // Assume retail for now. There might be other checks needed.
+                _version = RETAIL_VERSION;
+            }
+
             // Texture type
-            xReader.BaseStream.Position = _dataStart + 0x44;
             if (options.ForcedPlatform == CDC.Platform.None)
             {
-                if (xReader.ReadUInt64() != 0xFFFFFFFFFFFFFFFF)
+                xReader.BaseStream.Position = _dataStart + 0x44;
+                if (_version == PROTO_19981025_VERSION || xReader.ReadUInt64() != 0xFFFFFFFFFFFFFFFF)
                 {
                     _platform = Platform.PSX;
                 }
