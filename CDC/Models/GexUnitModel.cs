@@ -140,7 +140,7 @@ namespace CDC.Objects.Models
                 _polygons[p].material.visible = false;
             }
 
-            if ((flags & 0x04) == 0x04)
+            if ((flags & 0x01) == 0x01)
             {
                 _polygons[p].material.visible = false;
             }
@@ -312,7 +312,7 @@ namespace CDC.Objects.Models
 
             for (UInt16 p = 0; p < polyCount; p++)
             {
-                _polygons[polygonID + p].material.visible = true;
+                //_polygons[polygonID + p].material.visible = true;
 
                 treePolygons.Add(polygonID + p);
 

@@ -24,6 +24,12 @@ namespace CDC
             return name.Trim();
         }
 
+        public static string CleanObjectName(string name)
+        {
+            string trimmedName = CleanName(name);
+            return trimmedName.TrimEnd(new char[] { '_' });
+        }
+
         public static void FlipRedAndBlue(ref UInt32 colour)
         {
             UInt32 tempColour = colour;

@@ -94,7 +94,7 @@ namespace CDC.Objects
             {
                 xReader.BaseStream.Position = _instanceStart + 0x60 * i;
                 String strInstanceName = new String(xReader.ReadChars(8));
-                _instanceNames[i] = Utility.CleanName(strInstanceName);
+                _instanceNames[i] = Utility.CleanObjectName(strInstanceName);
             }
 
             // Instance types
@@ -106,7 +106,7 @@ namespace CDC.Objects
             {
                 xReader.BaseStream.Position--;
                 String strInstanceTypeName = new String(xReader.ReadChars(8));
-                xInstanceList.Add(Utility.CleanName(strInstanceTypeName));
+                xInstanceList.Add(Utility.CleanObjectName(strInstanceTypeName));
                 xReader.BaseStream.Position += 0x08;
             }
             _instanceTypeNames = xInstanceList.ToArray();

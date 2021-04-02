@@ -116,7 +116,7 @@ namespace CDC.Objects
                 xReader.BaseStream.Position = objectAddress + 0x00000024;
                 xReader.BaseStream.Position = xReader.ReadUInt32();
                 String strInstanceTypeName = new String(xReader.ReadChars(8));
-                xInstanceList.Add(Utility.CleanName(strInstanceTypeName));
+                xInstanceList.Add(Utility.CleanObjectName(strInstanceTypeName));
 
                 xReader.BaseStream.Position = oldPos;
             }
@@ -141,7 +141,7 @@ namespace CDC.Objects
                     xReader.BaseStream.Position = objectAddress + 0x00000024;
                     xReader.BaseStream.Position = xReader.ReadUInt32();
                     String strInstanceName = new String(xReader.ReadChars(8));
-                    _instanceNames[i] = Utility.CleanName(strInstanceName);
+                    _instanceNames[i] = Utility.CleanObjectName(strInstanceName);
                 }
             }
 
