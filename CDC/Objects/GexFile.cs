@@ -9,6 +9,19 @@ namespace CDC.Objects
     {
         public const UInt32 RETAIL_VERSION = 0x00000002;
 
+        protected SRFile[] _objects;
+        public SRFile[] Objects { get { return _objects; } }
+
+        protected GexFile(String name, CDC.Objects.ExportOptions options, BinaryReader xReader)
+        {
+            _name = name;
+            _game = Game.Gex;
+            _asset = Asset.Object;
+            _dataStart = (UInt32)xReader.BaseStream.Position;
+
+            ReadObjectData(xReader, options);
+        }
+
         public GexFile(String strFileName, CDC.Objects.ExportOptions options)
             : base(strFileName, Game.Gex, options)
         {
@@ -40,7 +53,7 @@ namespace CDC.Objects
         {
             // Object name
             xReader.BaseStream.Position = _dataStart + 0x00000024;
-            xReader.BaseStream.Position = _dataStart + xReader.ReadUInt32();
+            xReader.BaseStream.Position = xReader.ReadUInt32();
             String strModelName = new String(xReader.ReadChars(8));
             _name = Utility.CleanName(strModelName);
 
@@ -58,8 +71,8 @@ namespace CDC.Objects
             xReader.BaseStream.Position = _dataStart + 0x00000008;
             _modelCount = xReader.ReadUInt16();
             _animCount = xReader.ReadUInt16();
-            _modelStart = _dataStart + xReader.ReadUInt32();
-            _animStart = _dataStart + xReader.ReadUInt32();
+            _modelStart = xReader.ReadUInt32();
+            _animStart = xReader.ReadUInt32();
 
             _models = new GexModel[_modelCount];
             Platform ePlatform = _platform;
@@ -100,9 +113,10 @@ namespace CDC.Objects
 
             // Instance types
             xReader.BaseStream.Position = _dataStart + 0x3C;
-            _instanceTypeStart = _dataStart + xReader.ReadUInt32();
+            _instanceTypeStart = xReader.ReadUInt32();
             xReader.BaseStream.Position = _instanceTypeStart;
             List<String> xInstanceList = new List<String>();
+            List<SRFile> xObjectList = new List<SRFile>();
             while (true)
             {
                 UInt32 objectAddress = xReader.ReadUInt32();
@@ -116,16 +130,23 @@ namespace CDC.Objects
                 xReader.BaseStream.Position = objectAddress + 0x00000024;
                 xReader.BaseStream.Position = xReader.ReadUInt32();
                 String strInstanceTypeName = new String(xReader.ReadChars(8));
-                xInstanceList.Add(Utility.CleanObjectName(strInstanceTypeName));
+                strInstanceTypeName = Utility.CleanObjectName(strInstanceTypeName);
+
+                xReader.BaseStream.Position = objectAddress;
+                GexFile gexObject = new GexFile(strInstanceTypeName, options, xReader);
+
+                xInstanceList.Add(strInstanceTypeName);
+                xObjectList.Add(gexObject);
 
                 xReader.BaseStream.Position = oldPos;
             }
             _instanceTypeNames = xInstanceList.ToArray();
+            _objects = xObjectList.ToArray();
 
             // Instances
             xReader.BaseStream.Position = _dataStart + 0x7C;
             _instanceCount = xReader.ReadUInt32();
-            _instanceStart = _dataStart + xReader.ReadUInt32();
+            _instanceStart = xReader.ReadUInt32();
             _instanceNames = new String[_instanceCount];
             for (int i = 0; i < _instanceCount; i++)
             {
@@ -147,7 +168,7 @@ namespace CDC.Objects
 
             // Unit name. No names in Gex :(
             //xReader.BaseStream.Position = _dataStart + 0x98;
-            //xReader.BaseStream.Position = _dataStart + xReader.ReadUInt32();
+            //xReader.BaseStream.Position = xReader.ReadUInt32();
             //String strModelName = new String(xReader.ReadChars(8));
             //_name = Utility.CleanName(strModelName);
 
@@ -163,7 +184,7 @@ namespace CDC.Objects
             _modelStart = _dataStart;
             _models = new GexModel[_modelCount];
             xReader.BaseStream.Position = _modelStart;
-            UInt32 m_uModelData = _dataStart + xReader.ReadUInt32();
+            UInt32 m_uModelData = xReader.ReadUInt32();
 
             // Material data
             Console.WriteLine("Debug: reading area model 0");

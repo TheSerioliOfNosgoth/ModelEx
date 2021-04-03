@@ -18,7 +18,7 @@ namespace CDC.Objects.Models
             xReader.BaseStream.Position = _modelData;
 
             m_uBspTreeCount = 1;
-            m_uBspTreeStart = _dataStart + xReader.ReadUInt32();
+            m_uBspTreeStart = xReader.ReadUInt32();
             _groupCount = m_uBspTreeCount;
 
             xReader.BaseStream.Position += 0x14;
@@ -26,12 +26,12 @@ namespace CDC.Objects.Models
             _vertexColourCount = xReader.ReadUInt32();
             _polygonCount = xReader.ReadUInt32();
             xReader.BaseStream.Position += 0x0C;
-            _vertexStart = _dataStart + xReader.ReadUInt32();
-            _vertexColourStart = _dataStart + xReader.ReadUInt32();
-            _polygonStart = _dataStart + xReader.ReadUInt32();
-            UInt32 _otherThing = _dataStart + xReader.ReadUInt32(); // Very short. The 0x1B thing.
+            _vertexStart = xReader.ReadUInt32();
+            _vertexColourStart = xReader.ReadUInt32();
+            _polygonStart = xReader.ReadUInt32();
+            UInt32 _otherThing = xReader.ReadUInt32(); // Very short. The 0x1B thing.
             xReader.BaseStream.Position += 0x04; // Collision
-            _materialStart = _dataStart + xReader.ReadUInt32();
+            _materialStart = xReader.ReadUInt32();
             _materialCount = 0;
 
             _trees = new Tree[_groupCount];

@@ -14,15 +14,15 @@ namespace CDC.Objects.Models
             xReader.BaseStream.Position += 0x02;
             _polygonCount = xReader.ReadUInt16();
             _boneCount = xReader.ReadUInt16();
-            _vertexStart = _dataStart + xReader.ReadUInt32();
+            _vertexStart = xReader.ReadUInt32();
             _vertexScale.x = 1.0f;
             _vertexScale.y = 1.0f;
             _vertexScale.z = 1.0f;
             // Vertex colours here? Objects have them in Gex?
             xReader.BaseStream.Position += 0x08;
-            _polygonStart = _dataStart + xReader.ReadUInt32();
-            _boneStart = _dataStart + xReader.ReadUInt32();
-            _materialStart = _dataStart + xReader.ReadUInt32();
+            _polygonStart = xReader.ReadUInt32();
+            _boneStart = xReader.ReadUInt32();
+            _materialStart = xReader.ReadUInt32();
             _materialCount = 0;
             _groupCount = 1;
 
@@ -32,7 +32,7 @@ namespace CDC.Objects.Models
         public static GexObjectModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 uVersion, CDC.Objects.ExportOptions options)
         {
             xReader.BaseStream.Position = uModelData + (0x00000004 * usIndex);
-            uModelData = uDataStart + xReader.ReadUInt32();
+            uModelData = xReader.ReadUInt32();
             xReader.BaseStream.Position = uModelData;
             GexObjectModel xModel = new GexObjectModel(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion);
             xModel.ReadData(xReader, options);
@@ -125,7 +125,7 @@ namespace CDC.Objects.Models
 
             if (_polygons[p].material.textureUsed)
             {
-                UInt32 uMaterialPosition = _dataStart + xReader.ReadUInt32();
+                UInt32 uMaterialPosition = xReader.ReadUInt32();
 
                 xReader.BaseStream.Position = uMaterialPosition;
                 ReadMaterial(xReader, p, options);

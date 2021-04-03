@@ -19,6 +19,7 @@ namespace ModelEx
         protected bool _ResetCameraOnModelLoad;
         protected string _CurrentModelPath;
         protected CDC.Game _CurrentModelType;
+        protected int _CurrentModelChild;
         protected string _LastOpenDirectory;
         protected string _LastExportDirectory;
 
@@ -142,7 +143,8 @@ namespace ModelEx
             {
                 SceneManager.Instance.ShutDown();
                 SceneManager.Instance.AddScene(new SceneCDC(_CurrentModelType));
-                SceneManager.Instance.CurrentScene.ImportFromFile(_CurrentModelPath, ImportExportOptions);
+                SceneCDC sceneCDC = (SceneCDC)SceneManager.Instance.CurrentScene;
+                sceneCDC.ImportFromFile(_CurrentModelPath, ImportExportOptions, _CurrentModelChild);
 
                 if (_ResetCameraOnModelLoad)
                 {
@@ -216,13 +218,13 @@ namespace ModelEx
             if (OpenDlg.FilterIndex == 1)
             {
                 CDC.Objects.GexFile gexFile;
+                ObjectSelectWindow objectSelectDlg = new ObjectSelectWindow();
 
                 try
                 {
                     gexFile = new CDC.Objects.GexFile(OpenDlg.FileName, ImportExportOptions);
                     if (gexFile.Asset == CDC.Asset.Unit)
                     {
-                        ObjectSelectWindow objectSelectDlg = new ObjectSelectWindow();
                         objectSelectDlg.SetObjectNames(gexFile.InstanceTypeNames);
                         if (objectSelectDlg.ShowDialog() != DialogResult.OK)
                         {
@@ -236,18 +238,22 @@ namespace ModelEx
                 }
 
                 _CurrentModelType = CDC.Game.Gex;   // "Gex Mesh Files|*.SRObj;*.drm;*.pcm|"
+                _CurrentModelChild = objectSelectDlg.SelectedObject;
             }
             else if (OpenDlg.FilterIndex == 2)
             {
                 _CurrentModelType = CDC.Game.SR1;   // "Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|"
+                _CurrentModelChild = -1;
             }
             else if (OpenDlg.FilterIndex == 3)
             {
-                _CurrentModelType = CDC.Game.SR2;   // "Soul Reaver 2 Mesh Files|*.SRObj;*.drm;*.pcm|" +   
+                _CurrentModelType = CDC.Game.SR2;   // "Soul Reaver 2 Mesh Files|*.SRObj;*.drm;*.pcm|" +
+                _CurrentModelChild = -1;
             }
             else
             {
                 _CurrentModelType = CDC.Game.Defiance;  // "Defiance Mesh Files|*.SRObj;*.drm;*.pcm|" +
+                _CurrentModelChild = -1;
             }
 
             _LastOpenDirectory = Path.GetDirectoryName(OpenDlg.FileName);

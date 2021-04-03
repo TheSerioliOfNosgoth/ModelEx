@@ -461,6 +461,11 @@ namespace ModelEx
 
         public override void ImportFromFile(string fileName, CDC.Objects.ExportOptions options)
         {
+            ImportFromFile(fileName, options, -1);
+        }
+
+        public void ImportFromFile(string fileName, CDC.Objects.ExportOptions options, int childIndex)
+        {
             progressLevel = 0;
             progressLevels = 0;
             ProgressStage = "Reading file";
@@ -472,7 +477,15 @@ namespace ModelEx
             {
                 try
                 {
-                    srFile = new GexFile(fileName, options);
+                    GexFile gexFile = new GexFile(fileName, options);
+                    if (gexFile.Asset == CDC.Asset.Unit && childIndex >= 0)
+                    {
+                        srFile = gexFile.Objects[childIndex];
+                    }
+                    else
+                    {
+                        srFile = gexFile;
+                    }
                 }
                 catch
                 {
