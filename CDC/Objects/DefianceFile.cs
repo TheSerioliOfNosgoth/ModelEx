@@ -33,7 +33,7 @@ namespace CDC.Objects
             //xReader.BaseStream.Position = _dataStart + 0x00000024;
             //xReader.BaseStream.Position = _dataStart + xReader.ReadUInt32();
             //String strModelName = new String(xReader.ReadChars(8));
-            //_name = Utility.CleanName(strModelName);
+            //_name = Utility.CleanObjectName(strModelName);
 
             // Texture type
             //xReader.BaseStream.Position = m_uDataStart + 0x44;

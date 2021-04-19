@@ -551,11 +551,9 @@ namespace ModelEx
             }
             #endregion
 
-            String objectName = System.IO.Path.GetFileNameWithoutExtension(fileName);
-
             for (int modelIndex = 0; modelIndex < srFile.Models.Length; modelIndex++)
             {
-                SRModelParser modelParser = new SRModelParser(objectName, srFile);
+                SRModelParser modelParser = new SRModelParser(srFile.Name, srFile);
                 modelParser.BuildModel(modelIndex, options);
                 AddRenderObject(modelParser.Model);
             }
@@ -579,7 +577,7 @@ namespace ModelEx
                         SR2PCTextureFile textureFile = new SR2PCTextureFile(textureFileName);
                         for (int t = 0; t < textureFile.TextureCount; t++)
                         {
-                            String textureName = CDC.Objects.Models.SRModel.GetPS2TextureName(objectName, textureFile.TextureDefinitions[t].Flags1) + TextureExtension;
+                            String textureName = CDC.Objects.Models.SRModel.GetPS2TextureName(srFile.Name, textureFile.TextureDefinitions[t].Flags1) + TextureExtension;
 
                             System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
                             //textureFile.ExportFile(t, "C:\\Users\\A\\Desktop\\" + textureName);
@@ -738,7 +736,7 @@ namespace ModelEx
                             // For all models
                             for (int t = 0; t < textureFile.TextureCount; t++)
                             {
-                                String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameDefault(objectName, t) + TextureExtension;
+                                String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameDefault(srFile.Name, t) + TextureExtension;
 
                                 System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
                                 if (stream != null)
@@ -785,7 +783,7 @@ namespace ModelEx
                                     Dictionary<ushort, Bitmap> textureCLUTCollection = textureFile.TexturesByCLUT[textureID];
                                     foreach (ushort clut in textureCLUTCollection.Keys)
                                     {
-                                        String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameWithCLUT(objectName, textureID, clut) + TextureExtension;
+                                        String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameWithCLUT(srFile.Name, textureID, clut) + TextureExtension;
                                         System.IO.MemoryStream stream = textureFile.GetTextureWithCLUTAsStream(textureID, clut);
                                         if (stream != null)
                                         {
@@ -817,7 +815,7 @@ namespace ModelEx
                         // For all models
                         for (int t = 0; t < textureFile.TextureCount; t++)
                         {
-                            String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameDefault(objectName, t) + TextureExtension;
+                            String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameDefault(srFile.Name, t) + TextureExtension;
 
                             System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
                             if (stream != null)

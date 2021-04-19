@@ -48,7 +48,7 @@ namespace CDC.Objects
             xReader.BaseStream.Position = _dataStart + 0x00000024;
             xReader.BaseStream.Position = _dataStart + xReader.ReadUInt32();
             String strModelName = new String(xReader.ReadChars(8));
-            _name = Utility.CleanName(strModelName);
+            _name = Utility.CleanObjectName(strModelName);
 
             // Hack to check for lighthouse demo.
             // The only way the name can be at 0x0000003C is if the Level structure is smaller. Hence it's the demo.

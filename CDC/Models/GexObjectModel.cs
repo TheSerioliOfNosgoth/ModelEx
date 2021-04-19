@@ -119,9 +119,14 @@ namespace CDC.Objects.Models
 
             _polygons[p].material = new Material();
             _polygons[p].material.visible = true;
-            _polygons[p].material.textureUsed = false; // (Boolean)(((int)xReader.ReadUInt16() & 0x0200) != 0);
+            _polygons[p].material.textureUsed = false;
             xReader.ReadByte();
             _polygons[p].material.polygonFlags = xReader.ReadByte();
+
+            if ((_polygons[p].material.polygonFlags & 0x02) == 0x02)
+            {
+                _polygons[p].material.textureUsed = true;
+            }
 
             if (_polygons[p].material.textureUsed)
             {
@@ -132,20 +137,11 @@ namespace CDC.Objects.Models
 
                 xReader.BaseStream.Position += 0x02;
 
-                _polygons[p].material.colour = xReader.ReadUInt32();
-                _polygons[p].material.colour |= 0xFF000000;
-
+                _polygons[p].material.colour = xReader.ReadUInt32() | 0xFF000000;
             }
             else
             {
                 _polygons[p].material.colour = xReader.ReadUInt32() | 0xFF000000;
-            }
-
-            // Either 0x08 or 0x02 is the textureUsed flag.
-            if ((_polygons[p].material.polygonFlags & 0x0A) == 0x0A)
-            {
-                _polygons[p].material.colour = 0xFFFFFFFF;
-                _polygons[p].material.visible = false;
             }
 
             Utility.FlipRedAndBlue(ref _polygons[p].material.colour);
