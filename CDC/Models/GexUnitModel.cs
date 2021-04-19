@@ -127,10 +127,11 @@ namespace CDC.Objects.Models
             _polygons[p].v3 = _geometry.Vertices[xReader.ReadUInt16()];
             _polygons[p].material = new Material();
 
-            byte flags = xReader.ReadByte();
-            xReader.BaseStream.Position += 3;
+            byte flags0 = xReader.ReadByte();
+            byte flags1 = xReader.ReadByte();
+            xReader.BaseStream.Position += 2;
 
-            _polygons[p].material.polygonFlags = flags;
+            _polygons[p].material.polygonFlags = flags0;
 
             UInt16 uMaterialOffset = xReader.ReadUInt16();
 
@@ -140,7 +141,7 @@ namespace CDC.Objects.Models
                 _polygons[p].material.visible = false;
             }
 
-            if ((flags & 0x01) == 0x01)
+            if ((flags0 & 0x01) == 0x01)
             {
                 _polygons[p].material.visible = false;
             }
@@ -176,6 +177,13 @@ namespace CDC.Objects.Models
             Utility.FlipRedAndBlue(ref _polygons[p].material.colour);
 
             xReader.BaseStream.Position = uPolygonPosition + 0x0C;
+
+            if ((flags1 & 0x04) != 0)
+            {
+                Vertex tempVertex = _polygons[p].v2;
+                _polygons[p].v2 = _polygons[p].v3;
+                _polygons[p].v3 = tempVertex;
+            }
         }
 
         protected override void ReadPolygons(BinaryReader xReader, CDC.Objects.ExportOptions options)

@@ -61,8 +61,8 @@ RasterizerState DefaultRasterizerState
 RasterizerState Gex3RasterizerState
 {
 	FillMode = Solid;
-	CullMode = None;
-	//CullMode = Back;
+	//CullMode = None;
+	CullMode = Back;
 	FrontCounterClockwise = true;
 	//CullMode = CCW;
 	//FrontCounterClockwise = false;
