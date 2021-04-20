@@ -575,27 +575,22 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
                 for (int y = vMin; y < vMax; y++)
                 {
-                    for (int x = uMin; x < uMax; x += 2)
+                    for (int x = uMin; x < uMax; x++)
                     {
                         int dataOffset = (_ImageHeight * y) + x;
-                        int leftPixel = texturePage.pixels[y, x];
-                        int rightPixel = texturePage.pixels[y, x + 1];
+                        int pixel = texturePage.pixels[y, x];
 
-                        Color leftPixelColour = palette[leftPixel];
-                        Color rightPixelColour = palette[rightPixel];
-                        //uint materialAlpha = (poly.materialColour & 0xFF000000) >> 24;
-                        ////materialAlpha = 255;
+                        Color pixelColour = palette[pixel];
+                        uint materialAlpha = (poly.materialColour & 0xFF000000) >> 24;
+                        //materialAlpha = 255;
                         //if (materialAlpha < 255)
                         //{
-                        //    leftPixelColour = Color.FromArgb((byte)materialAlpha, palette[leftPixel].R, palette[leftPixel].G, palette[leftPixel].B);
-                        //    rightPixelColour = Color.FromArgb((byte)materialAlpha, palette[rightPixel].R, palette[leftPixel].G, palette[leftPixel].B);
+                        //    pixelColour = Color.FromArgb((byte)materialAlpha, palette[pixel].R, palette[pixel].G, palette[pixel].B);
                         //}
-                        //ulong checkPixels = ((ulong)materialAlpha << 56) | ((ulong)palette[leftPixel].R << 48) | ((ulong)palette[leftPixel].G << 40)
-                        //    | ((ulong)palette[leftPixel].B << 32) | ((ulong)materialAlpha << 24) | ((ulong)palette[rightPixel].R << 16)
-                        //    | ((ulong)palette[rightPixel].G << 8) | ((ulong)palette[rightPixel].B);
-                        ulong checkPixels = ((ulong)palette[leftPixel].A << 56) | ((ulong)palette[leftPixel].R << 48) | ((ulong)palette[leftPixel].G << 40)
-                            | ((ulong)palette[leftPixel].B << 32) | ((ulong)palette[rightPixel].A << 24) | ((ulong)palette[rightPixel].R << 16)
-                            | ((ulong)palette[rightPixel].G << 8) | ((ulong)palette[rightPixel].B);
+                        //ulong checkPixels = ((ulong)materialAlpha << 56) | ((ulong)palette[pixel].R << 48) | ((ulong)palette[pixel].G << 40)
+                        //    | ((ulong)palette[pixel].B << 32) | ((ulong)materialAlpha << 24);
+                        ulong checkPixels = ((ulong)palette[pixel].A << 56) | ((ulong)palette[pixel].R << 48) | ((ulong)palette[pixel].G << 40)
+                            | ((ulong)palette[pixel].B << 32);
                         bool writePixels = true;
                         if (polyPixelList.ContainsKey(dataOffset))
                         {
@@ -644,8 +639,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
                         if (writePixels)
                         {
-                            _Textures[poly.textureID].SetPixel(x, y, leftPixelColour);
-                            _Textures[poly.textureID].SetPixel((x + 1), y, rightPixelColour);
+                            _Textures[poly.textureID].SetPixel(x, y, pixelColour);
                             wrotePixels = true;
                         }
                     }
