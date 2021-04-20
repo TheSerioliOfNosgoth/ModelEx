@@ -8,49 +8,6 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 {
     public class Gex3PlaystationVRMTextureFile : BenLincoln.TheLostWorlds.CDTextures.TextureFile
     {
-        protected TexturePage[] _TPages;
-        protected ushort[] _TextureData; // Get rid of this once I know what I'm doing with the palletes.
-        protected Bitmap[] _Textures;
-        protected int _TotalWidth;
-        protected int _TotalHeight;
-        protected Dictionary<int, Dictionary<ushort, Bitmap>> _TexturesByCLUT;
-        protected readonly int _HeaderLength = 20;
-        protected readonly int _ImageWidth = 256;
-        protected readonly int _ImageHeight = 256;
-
-        public Dictionary<int, Dictionary<ushort, Bitmap>> TexturesByCLUT
-        {
-            get
-            {
-                return _TexturesByCLUT;
-            }
-        }
-
-        protected void AddTextureWithCLUT(int textureID, ushort clut, Bitmap texture)
-        {
-            Dictionary<ushort, Bitmap> textureEntry = new Dictionary<ushort, Bitmap>();
-            if (_TexturesByCLUT.ContainsKey(textureID))
-            {
-                textureEntry = _TexturesByCLUT[textureID];
-            }
-            if (textureEntry.ContainsKey(clut))
-            {
-                Console.WriteLine(string.Format("Debug: texture {0:X8}, CLUT {1:X4} already exists in the collection", textureID, clut));
-            }
-            else
-            {
-                textureEntry.Add(clut, texture);
-            }
-            if (_TexturesByCLUT.ContainsKey(textureID))
-            {
-                _TexturesByCLUT[textureID] = textureEntry;
-            }
-            else
-            {
-                _TexturesByCLUT.Add(textureID, textureEntry);
-            }
-        }
-
         protected class TexturePage
         {
             public ushort tPage;
@@ -71,17 +28,29 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
         public struct Gex3PlaystationPolygonTextureData
         {
-            public int[] u;               // 0-255 each
-            public int[] v;               // 0-255 each 
-            public int textureID;          // 0-8
+            public int[] u;             // 0-255 each
+            public int[] v;             // 0-255 each 
+            public int textureID;       // 0-8
             public ushort CLUT;
-            public int paletteColumn;      // 0-32
-            public int paletteRow;         // 0-255
+            public int paletteColumn;   // 0-32
+            public int paletteRow;      // 0-255
             public uint materialColour;
             public bool textureUsed;
             public bool visible;
             public ushort tPage;
         }
+
+        protected TexturePage[] _TPages;
+        protected ushort[] _TextureData; // Get rid of this once I know what I'm doing with the palletes.
+        protected Bitmap[] _Textures;
+        protected int _TotalWidth;
+        protected int _TotalHeight;
+        protected Dictionary<int, Dictionary<ushort, Bitmap>> _TexturesByCLUT;
+        protected readonly int _HeaderLength = 20;
+        protected readonly int _ImageWidth = 256;
+        protected readonly int _ImageHeight = 256;
+
+        public Dictionary<int, Dictionary<ushort, Bitmap>> TexturesByCLUT { get { return _TexturesByCLUT; } }
 
         public Gex3PlaystationVRMTextureFile(string path)
             : base(path)
@@ -260,6 +229,31 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             }
 
             return greyPalette;
+        }
+
+        protected void AddTextureWithCLUT(int textureID, ushort clut, Bitmap texture)
+        {
+            Dictionary<ushort, Bitmap> textureEntry = new Dictionary<ushort, Bitmap>();
+            if (_TexturesByCLUT.ContainsKey(textureID))
+            {
+                textureEntry = _TexturesByCLUT[textureID];
+            }
+            if (textureEntry.ContainsKey(clut))
+            {
+                Console.WriteLine(string.Format("Debug: texture {0:X8}, CLUT {1:X4} already exists in the collection", textureID, clut));
+            }
+            else
+            {
+                textureEntry.Add(clut, texture);
+            }
+            if (_TexturesByCLUT.ContainsKey(textureID))
+            {
+                _TexturesByCLUT[textureID] = textureEntry;
+            }
+            else
+            {
+                _TexturesByCLUT.Add(textureID, textureEntry);
+            }
         }
 
         public void BuildTexturesFromGreyscalePallete(uint[] texturePages)

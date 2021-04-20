@@ -10,68 +10,6 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 {
     public class Gex3PlaystationVRMTextureFile2 : BenLincoln.TheLostWorlds.CDTextures.TextureFile
     {
-        protected TexturePage[] _TPages;
-        protected ushort[] _TextureData; // Get rid of this once I know what I'm doing with the palletes.
-        protected Bitmap[] _Textures;
-        protected int _TotalWidth;
-        protected int _TotalHeight;
-        protected Dictionary<int, Dictionary<ushort, Bitmap>> _TexturesByCLUT;
-        protected readonly int _HeaderLength = 20;
-        protected readonly int _ImageWidth = 256;
-        protected readonly int _ImageHeight = 256;
-
-        public Dictionary<int, Dictionary<ushort, Bitmap>> TexturesByCLUT
-        {
-            get
-            {
-                return _TexturesByCLUT;
-            }
-        }
-
-        protected void AddTextureWithCLUT(int textureID, ushort clut, Bitmap texture)
-        {
-            Dictionary<ushort, Bitmap> textureEntry = new Dictionary<ushort, Bitmap>();
-            if (_TexturesByCLUT.ContainsKey(textureID))
-            {
-                textureEntry = _TexturesByCLUT[textureID];
-            }
-            if (textureEntry.ContainsKey(clut))
-            {
-                Console.WriteLine(string.Format("Debug: texture {0:X8}, CLUT {1:X4} already exists in the collection", textureID, clut));
-            }
-            else
-            {
-                textureEntry.Add(clut, texture);
-            }
-            if (_TexturesByCLUT.ContainsKey(textureID))
-            {
-                _TexturesByCLUT[textureID] = textureEntry;
-            }
-            else
-            {
-                _TexturesByCLUT.Add(textureID, textureEntry);
-            }
-        }
-
-        protected void CreateARGBTextureFromCLUTIfNew(int textureID, ushort clut, Color[] palette)
-        {
-            bool createTexture = true;
-            if (_TexturesByCLUT.ContainsKey(textureID))
-            {
-                Dictionary<ushort, Bitmap> textureEntry = _TexturesByCLUT[textureID];
-                if (textureEntry.ContainsKey(clut))
-                {
-                    createTexture = false;
-                    //Console.WriteLine(string.Format("Debug: texture {0:X8}, CLUT {1:X4} already exists in the collection - will not recreate", textureID, clut));
-                }
-            }
-            if (createTexture)
-            {
-                Bitmap tex = GetTextureAsBitmap(textureID, palette);
-                AddTextureWithCLUT(textureID, clut, tex);
-            }
-        }
-
         protected class TexturePage
         {
             public ushort tPage;
@@ -92,17 +30,29 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
         public struct Gex3PlaystationPolygonTextureData2
         {
-            public int[] u;               // 0-255 each
-            public int[] v;               // 0-255 each 
-            public int textureID;          // 0-8
+            public int[] u;             // 0-255 each
+            public int[] v;             // 0-255 each 
+            public int textureID;       // 0-8
             public ushort CLUT;
-            public int paletteColumn;      // 0-32
-            public int paletteRow;         // 0-255
+            public int paletteColumn;   // 0-32
+            public int paletteRow;      // 0-255
             public uint materialColour;
             public bool textureUsed;
             public bool visible;
             public ushort tPage;
         }
+
+        protected TexturePage[] _TPages;
+        protected ushort[] _TextureData; // Get rid of this once I know what I'm doing with the palletes.
+        protected Bitmap[] _Textures;
+        protected int _TotalWidth;
+        protected int _TotalHeight;
+        protected Dictionary<int, Dictionary<ushort, Bitmap>> _TexturesByCLUT;
+        protected readonly int _HeaderLength = 20;
+        protected readonly int _ImageWidth = 256;
+        protected readonly int _ImageHeight = 256;
+
+        public Dictionary<int, Dictionary<ushort, Bitmap>> TexturesByCLUT { get { return _TexturesByCLUT; } }
 
         public Gex3PlaystationVRMTextureFile2(string path)
             : base(path)
@@ -283,6 +233,12 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             return greyPalette;
         }
 
+        protected Color[] GetPalette(int index, ushort clut)
+        {
+            TexturePage texturePage = _TPages[index];
+            return GetTextureClut(clut, texturePage.tp == 0 ? 16 : 256).colours;
+        }
+
         public static bool ByteArraysAreEqual(byte[] arr1, byte[] arr2)
         {
             if (arr1.Length != arr2.Length)
@@ -318,6 +274,50 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             {
                 img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
                 return stream.ToArray();
+            }
+        }
+
+        protected void AddTextureWithCLUT(int textureID, ushort clut, Bitmap texture)
+        {
+            Dictionary<ushort, Bitmap> textureEntry = new Dictionary<ushort, Bitmap>();
+            if (_TexturesByCLUT.ContainsKey(textureID))
+            {
+                textureEntry = _TexturesByCLUT[textureID];
+            }
+            if (textureEntry.ContainsKey(clut))
+            {
+                Console.WriteLine(string.Format("Debug: texture {0:X8}, CLUT {1:X4} already exists in the collection", textureID, clut));
+            }
+            else
+            {
+                textureEntry.Add(clut, texture);
+            }
+            if (_TexturesByCLUT.ContainsKey(textureID))
+            {
+                _TexturesByCLUT[textureID] = textureEntry;
+            }
+            else
+            {
+                _TexturesByCLUT.Add(textureID, textureEntry);
+            }
+        }
+
+        protected void CreateARGBTextureFromCLUTIfNew(int textureID, ushort clut, Color[] palette)
+        {
+            bool createTexture = true;
+            if (_TexturesByCLUT.ContainsKey(textureID))
+            {
+                Dictionary<ushort, Bitmap> textureEntry = _TexturesByCLUT[textureID];
+                if (textureEntry.ContainsKey(clut))
+                {
+                    createTexture = false;
+                    //Console.WriteLine(string.Format("Debug: texture {0:X8}, CLUT {1:X4} already exists in the collection - will not recreate", textureID, clut));
+                }
+            }
+            if (createTexture)
+            {
+                Bitmap tex = GetTextureAsBitmap(textureID, palette);
+                AddTextureWithCLUT(textureID, clut, tex);
             }
         }
 
@@ -871,16 +871,10 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
         protected override Bitmap _GetTextureAsBitmap(int index)
         {
-            //return GetTextureAsBitmap(index, GetGreyscalePalette());
             return _Textures[index];
         }
 
-        //public Bitmap GetTexture(int index)
-        //{
-        //    return _Textures[index];
-        //}
-
-        protected System.Drawing.Bitmap GetTextureAsBitmap(int index, Color[] palette)
+        protected Bitmap GetTextureAsBitmap(int index, Color[] palette)
         {
             Bitmap retBitmap = new Bitmap(_ImageWidth, _ImageHeight);
 
@@ -895,12 +889,6 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             }
 
             return retBitmap;
-        }
-
-        protected Color[] GetPalette(int index, ushort clut)
-        {
-            TexturePage texturePage = _TPages[index];
-            return GetTextureClut(clut, texturePage.tp == 0 ? 16 : 256).colours;
         }
 
         public override MemoryStream GetDataAsStream(int index)
