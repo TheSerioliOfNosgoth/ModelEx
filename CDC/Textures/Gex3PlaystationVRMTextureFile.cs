@@ -267,7 +267,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
             if (_TPages == null)
             {
                 List<TexturePage> tPages = new List<TexturePage>();
-                _TPages = new TexturePage[texturePages.Length];
+
                 for (int i = 0; i < texturePages.Length; i++)
                 {
                     ushort tPage = (ushort)(texturePages[i] & 0x0000FFFFu);
@@ -305,10 +305,6 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                         texturePage = GetTexturePage(tPage);
                         tPages.Add(texturePage);
                     }
-                    else
-                    {
-                        texturePage = tPages.Find(x => x.tPage == tPage);
-                    }
 
                     if (!_TexturesByCLUT.ContainsKey(tPage))
                     {
@@ -337,7 +333,6 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                 }
 
                 _TPages = tPages.ToArray();
-
                 _Textures = textures.ToArray();
                 _TextureCount = _Textures.Length;
             }
