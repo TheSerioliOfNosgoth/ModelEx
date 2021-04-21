@@ -7,6 +7,7 @@ namespace CDC.Objects
 {
     public class SR1File : SRFile
     {
+        public const UInt32 PROTO_19981025_VERSION = 0x00000000;
         public const UInt32 ALPHA_19990123_VERSION_1_X = 0x3c204127;
         public const UInt32 ALPHA_19990123_VERSION_1 = 0x3c204128;
         public const UInt32 ALPHA_19990204_VERSION_2 = 0x3c204129;
@@ -47,13 +48,26 @@ namespace CDC.Objects
             xReader.BaseStream.Position = _dataStart + 0x00000024;
             xReader.BaseStream.Position = _dataStart + xReader.ReadUInt32();
             String strModelName = new String(xReader.ReadChars(8));
-            _name = Utility.CleanName(strModelName);
+            _name = Utility.CleanObjectName(strModelName);
+
+            // Hack to check for lighthouse demo.
+            // The only way the name can be at 0x0000003C is if the Level structure is smaller. Hence it's the demo.
+            xReader.BaseStream.Position = _dataStart + 0x00000024;
+            if (xReader.ReadUInt32() == 0x0000003C)
+            {
+                _version = PROTO_19981025_VERSION;
+            }
+            else
+            {
+                // Assume retail for now. There might be other checks needed.
+                _version = RETAIL_VERSION;
+            }
 
             // Texture type
-            xReader.BaseStream.Position = _dataStart + 0x44;
             if (options.ForcedPlatform == CDC.Platform.None)
             {
-                if (xReader.ReadUInt64() != 0xFFFFFFFFFFFFFFFF)
+                xReader.BaseStream.Position = _dataStart + 0x44;
+                if (_version == PROTO_19981025_VERSION || xReader.ReadUInt64() != 0xFFFFFFFFFFFFFFFF)
                 {
                     _platform = Platform.PSX;
                 }
@@ -141,6 +155,13 @@ namespace CDC.Objects
 
             if (!validVersion)
             {
+                // Lighthouse
+                _version = PROTO_19981025_VERSION;
+                validVersion = true;
+            }
+
+            if (!validVersion)
+            {
                 throw new Exception("Wrong version number for level x");
             }
 
@@ -149,7 +170,16 @@ namespace CDC.Objects
             // Portals
             xReader.BaseStream.Position = _dataStart;
             UInt32 m_uConnectionData = _dataStart + xReader.ReadUInt32(); // Same as m_uModelData?
-            xReader.BaseStream.Position = m_uConnectionData + 0x30;
+
+            if (_version == PROTO_19981025_VERSION)
+            {
+                xReader.BaseStream.Position = m_uConnectionData + 0x3C;
+            }
+            else
+            {
+                xReader.BaseStream.Position = m_uConnectionData + 0x30;
+            }
+
             xReader.BaseStream.Position = _dataStart + xReader.ReadUInt32();
             portalCount = xReader.ReadUInt32();
             _portalNames = new String[portalCount];
@@ -157,11 +187,23 @@ namespace CDC.Objects
             {
                 String strUnitName = new String(xReader.ReadChars(12));
                 _portalNames[i] = Utility.CleanName(strUnitName);
-                xReader.BaseStream.Position += 0x50;
+
+                if (_version == PROTO_19981025_VERSION)
+                {
+                    xReader.BaseStream.Position += 0x4C;
+                }
+                else
+                {
+                    xReader.BaseStream.Position += 0x50;
+                }
             }
 
             // Instances
-            if (_version == ALPHA_19990123_VERSION_1_X ||
+            if (_version == PROTO_19981025_VERSION)
+            {
+                xReader.BaseStream.Position = _dataStart + 0x84;
+            }
+            else if (_version == ALPHA_19990123_VERSION_1_X ||
                 _version == ALPHA_19990123_VERSION_1 ||
                 _version == ALPHA_19990204_VERSION_2)
             {
@@ -181,7 +223,11 @@ namespace CDC.Objects
             _instanceNames = new String[_instanceCount];
             for (int i = 0; i < _instanceCount; i++)
             {
-                if (_version == ALPHA_19990123_VERSION_1_X ||
+                if (_version == PROTO_19981025_VERSION)
+                {
+                    xReader.BaseStream.Position = _instanceStart + 0x48 * i;
+                }
+                else if (_version == ALPHA_19990123_VERSION_1_X ||
                     _version == ALPHA_19990123_VERSION_1 ||
                     _version == ALPHA_19990204_VERSION_2)
                 {
@@ -192,11 +238,15 @@ namespace CDC.Objects
                     xReader.BaseStream.Position = _instanceStart + 0x4C * i;
                 }
                 String strInstanceName = new String(xReader.ReadChars(8));
-                _instanceNames[i] = Utility.CleanName(strInstanceName);
+                _instanceNames[i] = Utility.CleanObjectName(strInstanceName);
             }
 
             // Instance types
-            if (_version == ALPHA_19990123_VERSION_1_X ||
+            if (_version == PROTO_19981025_VERSION)
+            {
+                xReader.BaseStream.Position = _dataStart + 0x98;
+            }
+            else if (_version == ALPHA_19990123_VERSION_1_X ||
                 _version == ALPHA_19990123_VERSION_1 ||
                 _version == ALPHA_19990204_VERSION_2)
             {
@@ -217,13 +267,17 @@ namespace CDC.Objects
             {
                 xReader.BaseStream.Position--;
                 String strInstanceTypeName = new String(xReader.ReadChars(8));
-                xInstanceList.Add(Utility.CleanName(strInstanceTypeName));
+                xInstanceList.Add(Utility.CleanObjectName(strInstanceTypeName));
                 xReader.BaseStream.Position += 0x08;
             }
             _instanceTypeNames = xInstanceList.ToArray();
 
             // Unit name
-            if (_version == ALPHA_19990123_VERSION_1_X ||
+            if (_version == PROTO_19981025_VERSION)
+            {
+                xReader.BaseStream.Position = _dataStart + 0xA4;
+            }
+            else if (_version == ALPHA_19990123_VERSION_1_X ||
                 _version == ALPHA_19990123_VERSION_1 ||
                 _version == ALPHA_19990204_VERSION_2)
             {
@@ -243,7 +297,8 @@ namespace CDC.Objects
 
             // Texture type
             bool handledSpecificVersion = false;
-            if (_version == ALPHA_19990123_VERSION_1_X ||
+            if (_version == PROTO_19981025_VERSION ||
+                _version == ALPHA_19990123_VERSION_1_X ||
                 _version == ALPHA_19990123_VERSION_1 ||
                 _version == ALPHA_19990204_VERSION_2 ||
                 _version == ALPHA_19990216_VERSION_3)

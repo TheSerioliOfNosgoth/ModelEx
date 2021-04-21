@@ -15,6 +15,7 @@ namespace CDC
 
     public enum Game
     {
+        Gex,
         SR1,
         SR2,
         Defiance

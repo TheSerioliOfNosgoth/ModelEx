@@ -10,6 +10,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
     public enum TextureFileType
     {
         Unknown,
+        Gex3Playstation,
         SoulReaverPlaystation,
         SoulReaverPC,
         SoulReaverDreamcast,

@@ -33,7 +33,7 @@ namespace CDC.Objects
             //xReader.BaseStream.Position = _dataStart + 0x00000024;
             //xReader.BaseStream.Position = _dataStart + xReader.ReadUInt32();
             //String strModelName = new String(xReader.ReadChars(8));
-            //_name = Utility.CleanName(strModelName);
+            //_name = Utility.CleanObjectName(strModelName);
 
             // Texture type
             //xReader.BaseStream.Position = m_uDataStart + 0x44;
@@ -95,7 +95,7 @@ namespace CDC.Objects
             //{
             //    xReader.BaseStream.Position = _instanceStart + 0x60 * i;
             //    String strInstanceName = new String(xReader.ReadChars(8));
-            //    _instanceNames[i] = Utility.CleanName(strInstanceName);
+            //    _instanceNames[i] = Utility.CleanObjectName(strInstanceName);
             //}
 
             // Instance types
@@ -107,7 +107,7 @@ namespace CDC.Objects
             //{
             //    xReader.BaseStream.Position--;
             //    String strInstanceTypeName = new String(xReader.ReadChars(8));
-            //    xInstanceList.Add(Utility.CleanName(strInstanceTypeName));
+            //    xInstanceList.Add(Utility.CleanObjectName(strInstanceTypeName));
             //    xReader.BaseStream.Position += 0x08;
             //}
             //_instanceTypeNames = xInstanceList.ToArray();

@@ -44,10 +44,13 @@ namespace ModelEx
                 SubMesh subMesh = SubMeshes[subMeshIndex];
                 Mesh mesh = Meshes[subMesh.MeshIndex];
                 Material material = Materials[subMesh.MaterialIndex];
-                mesh.ApplyMaterial(material);
-                mesh.ApplyTransform(localTransform);
-                mesh.ApplyBuffers();
-                mesh.Render(subMesh.indexCount, subMesh.startIndexLocation, subMesh.baseVertexLocation);
+                //if (material.Visible)
+                //{
+                    mesh.ApplyMaterial(material);
+                    mesh.ApplyTransform(localTransform);
+                    mesh.ApplyBuffers();
+                    mesh.Render(subMesh.indexCount, subMesh.startIndexLocation, subMesh.baseVertexLocation);
+                //}
             }
 
             foreach (Node child in node.Nodes)

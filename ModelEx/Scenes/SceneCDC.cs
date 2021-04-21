@@ -6,15 +6,18 @@ using System.Reflection;
 using System.Threading;
 using System.IO;
 using System.Text;
+using GexFile = CDC.Objects.GexFile;
 using SRFile = CDC.Objects.SRFile;
 using SR1File = CDC.Objects.SR1File;
 using SR2File = CDC.Objects.SR2File;
 using DefianceFile = CDC.Objects.DefianceFile;
 using SRModel = CDC.Objects.Models.SRModel;
+using GexModel = CDC.Objects.Models.GexModel;
 using SR1Model = CDC.Objects.Models.SR1Model;
 using SR2Model = CDC.Objects.Models.SR2Model;
 using DefianceModel = CDC.Objects.Models.DefianceModel;
 using Tree = CDC.Tree;
+using Gex3PSTextureFile = BenLincoln.TheLostWorlds.CDTextures.Gex3PlaystationVRMTextureFile;
 using SR1PCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPCTextureFile;
 using SR1PSTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPlaystationTextureFile;
 using SR1DCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverDreamcastTextureFile;
@@ -55,6 +58,7 @@ namespace ModelEx
                 for (int materialIndex = 0; materialIndex < _srModel.MaterialCount; materialIndex++)
                 {
                     Material material = new Material();
+                    material.Visible = _srModel.Materials[materialIndex].visible;
                     Color colorDiffuse = Color.FromArgb((int)unchecked(_srModel.Materials[materialIndex].colour));
                     material.Diffuse = colorDiffuse;
                     material.TextureFileName = CDC.Objects.Models.SRModel.GetTextureName(_srModel, materialIndex, options);
@@ -178,7 +182,18 @@ namespace ModelEx
                 if (SubMeshes.Count > 0)
                 {
                     MeshName = meshName;
-                    Technique = _srFile.Game == CDC.Game.SR1 ? "SR1Render" : "SR2Render";
+                    if (_srFile.Game == CDC.Game.Gex)
+                    {
+                        Technique = "Gex3Render";
+                    }
+                    else if (_srFile.Game == CDC.Game.SR1)
+                    {
+                        Technique = "SR1Render";
+                    }
+                    else
+                    {
+                        Technique = "SR2Render";
+                    }
                     if (_srFile.Asset == CDC.Asset.Unit)
                     {
                         //Mesh = new MeshPCT(this);
@@ -446,6 +461,11 @@ namespace ModelEx
 
         public override void ImportFromFile(string fileName, CDC.Objects.ExportOptions options)
         {
+            ImportFromFile(fileName, options, -1);
+        }
+
+        public void ImportFromFile(string fileName, CDC.Objects.ExportOptions options, int childIndex)
+        {
             progressLevel = 0;
             progressLevels = 0;
             ProgressStage = "Reading file";
@@ -453,7 +473,26 @@ namespace ModelEx
             SRFile srFile = null;
 
             #region TryLoad
-            if (_game == CDC.Game.SR1)
+            if (_game == CDC.Game.Gex)
+            {
+                try
+                {
+                    GexFile gexFile = new GexFile(fileName, options);
+                    if (gexFile.Asset == CDC.Asset.Unit && childIndex >= 0)
+                    {
+                        srFile = gexFile.Objects[childIndex];
+                    }
+                    else
+                    {
+                        srFile = gexFile;
+                    }
+                }
+                catch
+                {
+                    return;
+                }
+            }
+            else if (_game == CDC.Game.SR1)
             {
                 try
                 {
@@ -512,11 +551,9 @@ namespace ModelEx
             }
             #endregion
 
-            String objectName = System.IO.Path.GetFileNameWithoutExtension(fileName);
-
             for (int modelIndex = 0; modelIndex < srFile.Models.Length; modelIndex++)
             {
-                SRModelParser modelParser = new SRModelParser(objectName, srFile);
+                SRModelParser modelParser = new SRModelParser(srFile.Name, srFile);
                 modelParser.BuildModel(modelIndex, options);
                 AddRenderObject(modelParser.Model);
             }
@@ -540,7 +577,7 @@ namespace ModelEx
                         SR2PCTextureFile textureFile = new SR2PCTextureFile(textureFileName);
                         for (int t = 0; t < textureFile.TextureCount; t++)
                         {
-                            String textureName = CDC.Objects.Models.SRModel.GetPS2TextureName(objectName, textureFile.TextureDefinitions[t].Flags1) + TextureExtension;
+                            String textureName = CDC.Objects.Models.SRModel.GetPS2TextureName(srFile.Name, textureFile.TextureDefinitions[t].Flags1) + TextureExtension;
 
                             System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
                             //textureFile.ExportFile(t, "C:\\Users\\A\\Desktop\\" + textureName);
@@ -556,7 +593,7 @@ namespace ModelEx
                         Console.Write(ex.ToString());
                     }
                 }
-                else
+                else if (currentFileType == typeof(SR1File))
                 {
                     if (srFile.Platform == CDC.Platform.PC)
                     {
@@ -699,7 +736,7 @@ namespace ModelEx
                             // For all models
                             for (int t = 0; t < textureFile.TextureCount; t++)
                             {
-                                String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameDefault(objectName, t) + TextureExtension;
+                                String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameDefault(srFile.Name, t) + TextureExtension;
 
                                 System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
                                 if (stream != null)
@@ -746,7 +783,7 @@ namespace ModelEx
                                     Dictionary<ushort, Bitmap> textureCLUTCollection = textureFile.TexturesByCLUT[textureID];
                                     foreach (ushort clut in textureCLUTCollection.Keys)
                                     {
-                                        String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameWithCLUT(objectName, textureID, clut) + TextureExtension;
+                                        String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameWithCLUT(srFile.Name, textureID, clut) + TextureExtension;
                                         System.IO.MemoryStream stream = textureFile.GetTextureWithCLUTAsStream(textureID, clut);
                                         if (stream != null)
                                         {
@@ -762,6 +799,122 @@ namespace ModelEx
                         {
                             Console.Write(ex.ToString());
                         }
+                    }
+                }
+                else
+                {
+                    String textureFileName = System.IO.Path.ChangeExtension(fileName, "vrm");
+                    try
+                    {
+                        Gex3PSTextureFile textureFile = new Gex3PSTextureFile(textureFileName);
+
+                        UInt32 polygonCountAllModels = 0;
+                        foreach (SRModel srModel in srFile.Models)
+                        {
+                            polygonCountAllModels += srModel.PolygonCount;
+                        }
+
+                        Gex3PSTextureFile.Gex3PlaystationPolygonTextureData[] polygons =
+                            new Gex3PSTextureFile.Gex3PlaystationPolygonTextureData[polygonCountAllModels];
+
+                        int polygonNum = 0;
+                        foreach (SRModel srModel in srFile.Models)
+                        {
+                            foreach (CDC.Polygon polygon in srModel.Polygons)
+                            {
+                                polygons[polygonNum].paletteColumn = polygon.paletteColumn;
+                                polygons[polygonNum].paletteRow = polygon.paletteRow;
+                                polygons[polygonNum].u = new int[3];
+                                polygons[polygonNum].v = new int[3];
+                                //polygons[polygonNum].materialColour = polygon.material.colour;
+                                polygons[polygonNum].materialColour = polygon.colour;
+
+                                polygons[polygonNum].u[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].u * 255);
+                                polygons[polygonNum].v[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].v * 255);
+                                polygons[polygonNum].u[1] = (int)(srModel.Geometry.UVs[polygon.v2.UVID].u * 255);
+                                polygons[polygonNum].v[1] = (int)(srModel.Geometry.UVs[polygon.v2.UVID].v * 255);
+                                polygons[polygonNum].u[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].u * 255);
+                                polygons[polygonNum].v[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].v * 255);
+
+                                polygons[polygonNum].textureID = polygon.material.textureID;
+                                polygons[polygonNum].CLUT = polygon.material.clutValue;
+
+                                polygons[polygonNum].textureUsed = polygon.material.textureUsed;
+                                polygons[polygonNum].visible = polygon.material.visible;
+                                //polygons[polygonNum].materialColour = polygon.material.colour;
+
+                                polygonNum++;
+                            }
+                        }
+                        bool drawGreyscaleFirst = false;
+                        bool quantizeBounds = true;
+                        textureFile.BuildTexturesFromPolygonData(polygons, ((GexFile)srFile).TPages, drawGreyscaleFirst, quantizeBounds, options);
+
+                        // For all models
+                        for (int t = 0; t < textureFile.TextureCount; t++)
+                        {
+                            String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameDefault(srFile.Name, t) + TextureExtension;
+
+                            System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
+                            if (stream != null)
+                            {
+                                TextureManager.Instance.AddTexture(stream, textureName);
+                            }
+                            //string exportedTextureFileName = Path.ChangeExtension(textureName, "png");
+                            //_TexturesAsPNGs.Add(exportedTextureFileName, textureFile.GetTextureAsBitmap(t));
+                            Bitmap b = textureFile.GetTextureAsBitmap(t);
+                            // this is a hack that's being done here for now because I don't know for sure which of the flags/attributes controls
+                            // textures that should be alpha-masked. Alpha-masking EVERY texture is expensive.
+                            if (options.AlsoInferAlphaMaskingFromTexturePixels)
+                            {
+                                if (BitmapHasTransparentPixels(b))
+                                {
+                                    for (int modelNum = 0; modelNum < srFile.Models.Length; modelNum++)
+                                    {
+                                        if (t < srFile.Models[modelNum].Materials.Length)
+                                        {
+                                            srFile.Models[modelNum].Materials[t].UseAlphaMask = true;
+                                        }
+                                    }
+                                }
+                            }
+                            _TexturesAsPNGs.Add(textureName, b);
+
+                            // dump all textures as PNGs for debugging
+                            //Bitmap exportedTexture = textureFile.GetTextureAsBitmap(t);
+                            //string exportedTextureFileName = Path.ChangeExtension(textureName, "png");
+                            //exportedTexture.Save(exportedTextureFileName, ImageFormat.Png);
+                            //texNum = 0;
+                            //foreach (Bitmap tex in _Textures)
+                            //{
+                            //    tex.Save(@"C:\Debug\Tex-" + texNum + ".png", ImageFormat.Png);
+                            //    texNum++;
+                            //}
+                        }
+
+                        // for models that use index/CLUT textures, if the user has enabled this option
+                        if (options.UseEachUniqueTextureCLUTVariation)
+                        {
+                            foreach (int textureID in textureFile.TexturesByCLUT.Keys)
+                            {
+                                Dictionary<ushort, Bitmap> textureCLUTCollection = textureFile.TexturesByCLUT[textureID];
+                                foreach (ushort clut in textureCLUTCollection.Keys)
+                                {
+                                    String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameWithCLUT(srFile.Name, textureID, clut) + TextureExtension;
+                                    System.IO.MemoryStream stream = textureFile.GetTextureWithCLUTAsStream(textureID, clut);
+                                    if (stream != null)
+                                    {
+                                        TextureManager.Instance.AddTexture(stream, textureName);
+                                    }
+                                    Bitmap b = textureFile.TexturesByCLUT[textureID][clut];
+                                    _TexturesAsPNGs.Add(textureName, b);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Write(ex.ToString());
                     }
                 }
                 #endregion

@@ -58,6 +58,16 @@ RasterizerState DefaultRasterizerState
 	//FrontCounterClockwise = false;
 };
 
+RasterizerState Gex3RasterizerState
+{
+	FillMode = Solid;
+	//CullMode = None;
+	CullMode = Back;
+	FrontCounterClockwise = true;
+	//CullMode = CCW;
+	//FrontCounterClockwise = false;
+};
+
 RasterizerState SR1RasterizerState
 {
 	FillMode = Solid;
@@ -114,14 +124,51 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 	return output;
 }
 
+VertexShaderOutput Gex3VertexShaderFunction(VertexShaderInput input)
+{
+	//float4 position = RealmBlend < 0.5 ? input.Position0 : input.Position1;
+	//float3 color = RealmBlend < 0.5 ? input.Color0 : input.Color1;
+
+	float4 position = input.Position0 - ((input.Position0 - input.Position1) * RealmBlend);
+	/*float4 color = float4(
+		input.Color0.b + ((input.Color0.b - input.Color1.b) * RealmBlend),
+		input.Color0.g + ((input.Color0.g - input.Color1.g) * RealmBlend),
+		input.Color0.r + ((input.Color0.r - input.Color1.r) * RealmBlend),
+		input.Color0.a + ((input.Color0.a - input.Color1.a) * RealmBlend));
+		);*/
+		/*float3 color = float3(
+			input.Color0.b + ((input.Color0.b - input.Color1.b) * RealmBlend),
+			input.Color0.g + ((input.Color0.g - input.Color1.g) * RealmBlend),
+			input.Color0.r + ((input.Color0.r - input.Color1.r) * RealmBlend));*/
+
+	float4 color;
+	color.r = input.Color0.r - ((input.Color0.r - input.Color1.r) * RealmBlend);
+	color.g = input.Color0.g - ((input.Color0.g - input.Color1.g) * RealmBlend);
+	color.b = input.Color0.b - ((input.Color0.b - input.Color1.b) * RealmBlend);
+	//color.a = input.Color0.a + ((input.Color0.a - input.Color1.a) * RealmBlend);
+	color.a = 1.0;
+	color.rbg *= 2.0;
+
+	VertexShaderOutput output;
+	float4 worldPosition = mul(position, World);
+	matrix viewProjection = mul(View, Projection);
+
+	output.Position = mul(worldPosition, viewProjection);
+	output.Color = color;
+	output.ViewDirection = worldPosition - CameraPosition;
+	output.TexCoord = input.TexCoord;
+
+	return output;
+}
+
 float4 PixelShaderFunction(VertexShaderOutput input) : SV_TARGET
 {
 	// Start with diffuse color
 	float4 color = UseTexture == false ? DiffuseColor : Texture.Sample(stateLinear, input.TexCoord);
-	//if (color.a < 0.5)
-	//{
-	//	clip(-1);
-	//}
+	if (color.a < 0.5)
+	{
+		clip(-1);
+	}
 
 	// Calculate final color
 	float3 output = input.Color * color.rgb;
@@ -137,6 +184,18 @@ technique10 DefaultRender
 		SetGeometryShader(NULL);
 		SetPixelShader(CompileShader(ps_4_0, PixelShaderFunction()));
 		SetRasterizerState(DefaultRasterizerState);
+		//SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+	}
+}
+
+technique10 Gex3Render
+{
+	pass P0
+	{
+		SetVertexShader(CompileShader(vs_4_0, Gex3VertexShaderFunction()));
+		SetGeometryShader(NULL);
+		SetPixelShader(CompileShader(ps_4_0, PixelShaderFunction()));
+		SetRasterizerState(Gex3RasterizerState);
 		//SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 }

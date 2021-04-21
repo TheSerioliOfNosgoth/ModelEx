@@ -52,7 +52,15 @@ namespace CDC.Objects.Models
             _geometry.PositionsPhys[v] = _geometry.PositionsRaw[v];
             _geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
 
-            _geometry.Vertices[v].normalID = xReader.ReadUInt16();
+            if (_version == SR1File.PROTO_19981025_VERSION)
+            {
+                _geometry.Vertices[v].normalID = xReader.ReadUInt16();
+                xReader.BaseStream.Position += 4;
+            }
+            else
+            {
+                _geometry.Vertices[v].normalID = xReader.ReadUInt16();
+            }
         }
 
         protected override void ReadVertices(BinaryReader xReader, CDC.Objects.ExportOptions options)
@@ -274,16 +282,19 @@ namespace CDC.Objects.Models
                 return;
             }
 
-            HandleDebugRendering(options);
-
             xReader.BaseStream.Position = _polygonStart;
+
+            for (UInt16 p = 0; p < _polygonCount; p++)
+            {
+                ReadPolygon(xReader, p, options);
+            }
+
+            HandleDebugRendering(options);
 
             MaterialList xMaterialsList = null;
 
             for (UInt16 p = 0; p < _polygonCount; p++)
             {
-                ReadPolygon(xReader, p, options);
-
                 if (xMaterialsList == null)
                 {
                     xMaterialsList = new MaterialList(_polygons[p].material);

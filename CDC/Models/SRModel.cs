@@ -101,7 +101,18 @@ namespace CDC.Objects.Models
             String textureName = "";
             if (material.textureUsed)
             {
-                if (srModel is SR1Model)
+                if (srModel is GexModel)
+                {
+                    if (options.UseEachUniqueTextureCLUTVariation)
+                    {
+                        textureName = GetPlayStationTextureNameWithCLUT(srModel.Name, material.textureID, material.clutValue);
+                    }
+                    else
+                    {
+                        textureName = GetPlayStationTextureNameDefault(srModel.Name, material.textureID);
+                    }
+                }
+                else if (srModel is SR1Model)
                 {
                     if (srModel.Platform == CDC.Platform.PSX)
                     {

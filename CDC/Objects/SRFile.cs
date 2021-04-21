@@ -202,6 +202,11 @@ namespace CDC.Objects
 
         public static StreamWriter m_xLogFile = null;
 
+        protected SRFile()
+        {
+
+        }
+
         protected SRFile(String strFileName, Game game, CDC.Objects.ExportOptions options)
         {
             _name = Path.GetFileNameWithoutExtension(strFileName);

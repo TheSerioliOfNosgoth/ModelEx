@@ -505,7 +505,12 @@ namespace ModelEx
                     Thread loadingThread = new Thread((() =>
                     {
                         SceneManager.Instance.ShutDown();
-                        if (mode == "sr1")
+                        if (mode == "gex")
+                        {
+                            SceneManager.Instance.AddScene(new SceneCDC(CDC.Game.Gex));
+                            SceneManager.Instance.CurrentScene.ImportFromFile(inputFilePath, options);
+                        }
+                        else if (mode == "sr1")
                         {
                             SceneManager.Instance.AddScene(new SceneCDC(CDC.Game.SR1));
                             SceneManager.Instance.CurrentScene.ImportFromFile(inputFilePath, options);
