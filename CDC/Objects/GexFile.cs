@@ -9,6 +9,9 @@ namespace CDC.Objects
     {
         public const UInt32 RETAIL_VERSION = 0x00000002;
 
+        protected List<ushort> _tPages = new List<ushort>();
+        public ushort[] TPages { get { return _tPages.ToArray(); } }
+
         protected SRFile[] _objects;
         public SRFile[] Objects { get { return _objects; } }
 
@@ -79,7 +82,7 @@ namespace CDC.Objects
             for (UInt16 m = 0; m < _modelCount; m++)
             {
                 Console.WriteLine(string.Format("Debug: reading object model {0} / {1}", m, (_modelCount - 1)));
-                _models[m] = GexObjectModel.Load(xReader, _dataStart, _modelStart, _name, _platform, m, _version, options);
+                _models[m] = GexObjectModel.Load(xReader, _dataStart, _modelStart, _name, _platform, m, _version, _tPages, options);
             }
             if (options.ForcedPlatform == CDC.Platform.None)
             {
@@ -188,7 +191,7 @@ namespace CDC.Objects
 
             // Material data
             Console.WriteLine("Debug: reading area model 0");
-            _models[0] = GexUnitModel.Load(xReader, _dataStart, m_uModelData, _name, _platform, _version, options);
+            _models[0] = GexUnitModel.Load(xReader, _dataStart, m_uModelData, _name, _platform, _version, _tPages, options);
         }
 
         protected override void ResolvePointers(BinaryReader xReader, BinaryWriter xWriter)

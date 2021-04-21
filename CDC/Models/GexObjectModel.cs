@@ -6,8 +6,8 @@ namespace CDC.Objects.Models
 {
     public class GexObjectModel : GexModel
     {
-        public GexObjectModel(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
-            : base(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
+        public GexObjectModel(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion, List<ushort> tPages)
+            : base(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion, tPages)
         {
             xReader.BaseStream.Position = _modelData;
             _vertexCount = xReader.ReadUInt16();
@@ -29,12 +29,12 @@ namespace CDC.Objects.Models
             _trees = new Tree[_groupCount];
         }
 
-        public static GexObjectModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 uVersion, CDC.Objects.ExportOptions options)
+        public static GexObjectModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 uVersion, List<ushort> tPages, CDC.Objects.ExportOptions options)
         {
             xReader.BaseStream.Position = uModelData + (0x00000004 * usIndex);
             uModelData = xReader.ReadUInt32();
             xReader.BaseStream.Position = uModelData;
-            GexObjectModel xModel = new GexObjectModel(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion);
+            GexObjectModel xModel = new GexObjectModel(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion, tPages);
             xModel.ReadData(xReader, options);
             return xModel;
         }

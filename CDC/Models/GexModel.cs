@@ -256,12 +256,12 @@ namespace CDC.Objects.Models
         };
         #endregion
 
-        protected List<uint> _tPages = new List<uint>();
-        public uint[] TPages { get { return _tPages.ToArray(); } }
+        protected List<ushort> _tPages = null;
 
-        protected GexModel(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion) :
+        protected GexModel(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion, List<ushort> tPages) :
             base(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
         {
+            _tPages = tPages;
         }
 
         protected virtual void ReadData(BinaryReader xReader, CDC.Objects.ExportOptions options)
@@ -347,12 +347,11 @@ namespace CDC.Objects.Models
 
             _polygons[p].material.texturePage = (ushort)(xReader.ReadUInt16() & 0x0097);
 
-            uint textureHash = (uint)_polygons[p].material.texturePage | (uint)(_polygons[p].material.clutValue << 16);
-            _polygons[p].material.textureID = (ushort)_tPages.FindIndex(x => x == textureHash);
+            _polygons[p].material.textureID = (ushort)_tPages.FindIndex(x => x == _polygons[p].material.texturePage);
             if (_polygons[p].material.textureID == 0xFFFF)
             {
                 _polygons[p].material.textureID = (ushort)_tPages.Count;
-                _tPages.Add(textureHash);
+                _tPages.Add(_polygons[p].material.texturePage);
             }
 
             Byte v3U = xReader.ReadByte();

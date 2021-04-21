@@ -85,7 +85,6 @@
     <Compile Include="Objects\SR2File.cs" />
     <Compile Include="Objects\SRFile.cs" />
     <Compile Include="Models\SRModel.cs" />
-    <Compile Include="Textures\Gex3PlaystationVRMTextureFile2.cs" />
     <Compile Include="Textures\Gex3PlaystationVRMTextureFile.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

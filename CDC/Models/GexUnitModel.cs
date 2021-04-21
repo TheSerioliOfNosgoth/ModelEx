@@ -12,8 +12,8 @@ namespace CDC.Objects.Models
         protected UInt32 _vertexColourStart;
         protected UInt32 _polygonEnd;
 
-        public GexUnitModel(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
-            : base(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
+        public GexUnitModel(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion, List<ushort> tPages)
+            : base(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion, tPages)
         {
             xReader.BaseStream.Position = _modelData;
 
@@ -37,9 +37,9 @@ namespace CDC.Objects.Models
             _trees = new Tree[_groupCount];
         }
 
-        public static GexUnitModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion, CDC.Objects.ExportOptions options)
+        public static GexUnitModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion, List<ushort> tPages, CDC.Objects.ExportOptions options)
         {
-            GexUnitModel xModel = new GexUnitModel(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion);
+            GexUnitModel xModel = new GexUnitModel(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion, tPages);
             xModel.ReadData(xReader, options);
             return xModel;
         }
