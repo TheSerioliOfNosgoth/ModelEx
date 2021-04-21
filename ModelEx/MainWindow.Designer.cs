@@ -1433,7 +1433,7 @@
             this.Controls.Add(this.menuBar);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainWindow";
-            this.Text = "ModelEx v5.1";
+            this.Text = "ModelEx v5.2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Enter += new System.EventHandler(this.MainWindow_Enter);

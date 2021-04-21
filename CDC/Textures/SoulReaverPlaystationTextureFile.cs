@@ -855,15 +855,19 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                 ushort green = currentVal;
                 ushort blue = currentVal;
 
-                alpha = (ushort)(currentVal >> 15);
-                if (alpha != 0)
-                {
-                    alpha = 255;
-                }
-
                 blue = (ushort)(((ushort)(currentVal << 1) >> 11) << 3);
                 green = (ushort)(((ushort)(currentVal << 6) >> 11) << 3);
                 red = (ushort)(((ushort)(currentVal << 11) >> 11) << 3);
+
+                alpha = (ushort)(currentVal >> 15);
+                if (alpha != 0 || blue != 0 || green != 0 || red != 0)
+                {
+                    alpha = 255;
+                }
+                else
+                {
+                    alpha = 0;
+                }
 
                 palette[i] = Color.FromArgb(alpha, red, green, blue);
             }

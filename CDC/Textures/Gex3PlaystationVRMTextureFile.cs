@@ -206,7 +206,6 @@ namespace BenLincoln.TheLostWorlds.CDTextures
                         alpha = 0;
                     }
 
-
                     colours[x++] = Color.FromArgb(alpha, red, green, blue);
                 }
                 catch (Exception ex)

@@ -165,10 +165,10 @@ float4 PixelShaderFunction(VertexShaderOutput input) : SV_TARGET
 {
 	// Start with diffuse color
 	float4 color = UseTexture == false ? DiffuseColor : Texture.Sample(stateLinear, input.TexCoord);
-	//if (color.a < 0.5)
-	//{
-	//	clip(-1);
-	//}
+	if (color.a < 0.5)
+	{
+		clip(-1);
+	}
 
 	// Calculate final color
 	float3 output = input.Color * color.rgb;
