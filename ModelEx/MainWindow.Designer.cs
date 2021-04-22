@@ -167,9 +167,10 @@
             this.optionTabs = new System.Windows.Forms.TabControl();
             this.meshGroupsTab = new System.Windows.Forms.TabPage();
             this.scControls = new System.Windows.Forms.SplitContainer();
-            this.scBlend = new System.Windows.Forms.SplitContainer();
-            this.planeBlendLabel = new System.Windows.Forms.Label();
+            this.bgColourPanel = new System.Windows.Forms.Panel();
             this.realmBlendBar = new System.Windows.Forms.TrackBar();
+            this.planeBlendLabel = new System.Windows.Forms.Label();
+            this.bgColourLabel = new System.Windows.Forms.Label();
             this.sceneTree = new System.Windows.Forms.TreeView();
             this.sceneView = new ModelEx.RenderControl();
             this.sceneTreeContainer = new System.Windows.Forms.SplitContainer();
@@ -185,10 +186,6 @@
             this.scControls.Panel1.SuspendLayout();
             this.scControls.Panel2.SuspendLayout();
             this.scControls.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.scBlend)).BeginInit();
-            this.scBlend.Panel1.SuspendLayout();
-            this.scBlend.Panel2.SuspendLayout();
-            this.scBlend.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.realmBlendBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.sceneTreeContainer)).BeginInit();
             this.sceneTreeContainer.Panel2.SuspendLayout();
@@ -1329,54 +1326,56 @@
             // 
             // scControls.Panel1
             // 
-            this.scControls.Panel1.Controls.Add(this.scBlend);
+            this.scControls.Panel1.Controls.Add(this.bgColourPanel);
+            this.scControls.Panel1.Controls.Add(this.realmBlendBar);
+            this.scControls.Panel1.Controls.Add(this.planeBlendLabel);
+            this.scControls.Panel1.Controls.Add(this.bgColourLabel);
             // 
             // scControls.Panel2
             // 
             this.scControls.Panel2.Controls.Add(this.sceneTree);
             this.scControls.Size = new System.Drawing.Size(253, 579);
-            this.scControls.SplitterDistance = 81;
+            this.scControls.SplitterDistance = 78;
             this.scControls.TabIndex = 4;
             // 
-            // scBlend
+            // bgColourPanel
             // 
-            this.scBlend.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.scBlend.Location = new System.Drawing.Point(0, 0);
-            this.scBlend.Name = "scBlend";
-            this.scBlend.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.bgColourPanel.BackColor = System.Drawing.Color.Gray;
+            this.bgColourPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.bgColourPanel.Location = new System.Drawing.Point(101, 3);
+            this.bgColourPanel.Name = "bgColourPanel";
+            this.bgColourPanel.Size = new System.Drawing.Size(24, 21);
+            this.bgColourPanel.TabIndex = 6;
+            this.bgColourPanel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.bgColorPanel_MouseClick);
             // 
-            // scBlend.Panel1
+            // realmBlendBar
             // 
-            this.scBlend.Panel1.Controls.Add(this.planeBlendLabel);
-            // 
-            // scBlend.Panel2
-            // 
-            this.scBlend.Panel2.Controls.Add(this.realmBlendBar);
-            this.scBlend.Size = new System.Drawing.Size(253, 81);
-            this.scBlend.SplitterDistance = 25;
-            this.scBlend.TabIndex = 1;
+            this.realmBlendBar.LargeChange = 1;
+            this.realmBlendBar.Location = new System.Drawing.Point(6, 45);
+            this.realmBlendBar.Maximum = 100;
+            this.realmBlendBar.Name = "realmBlendBar";
+            this.realmBlendBar.Size = new System.Drawing.Size(244, 45);
+            this.realmBlendBar.TabIndex = 4;
+            this.realmBlendBar.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.realmBlendBar.Scroll += new System.EventHandler(this.RealmBlendBar_Scroll);
             // 
             // planeBlendLabel
             // 
             this.planeBlendLabel.AutoSize = true;
-            this.planeBlendLabel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.planeBlendLabel.Location = new System.Drawing.Point(0, 0);
+            this.planeBlendLabel.Location = new System.Drawing.Point(5, 29);
             this.planeBlendLabel.Name = "planeBlendLabel";
             this.planeBlendLabel.Size = new System.Drawing.Size(64, 13);
-            this.planeBlendLabel.TabIndex = 0;
+            this.planeBlendLabel.TabIndex = 3;
             this.planeBlendLabel.Text = "Plane Blend";
             // 
-            // realmBlendBar
+            // bgColourLabel
             // 
-            this.realmBlendBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.realmBlendBar.LargeChange = 1;
-            this.realmBlendBar.Location = new System.Drawing.Point(0, 0);
-            this.realmBlendBar.Maximum = 100;
-            this.realmBlendBar.Name = "realmBlendBar";
-            this.realmBlendBar.Size = new System.Drawing.Size(253, 52);
-            this.realmBlendBar.TabIndex = 1;
-            this.realmBlendBar.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.realmBlendBar.Scroll += new System.EventHandler(this.RealmBlendBar_Scroll);
+            this.bgColourLabel.AutoSize = true;
+            this.bgColourLabel.Location = new System.Drawing.Point(3, 3);
+            this.bgColourLabel.Name = "bgColourLabel";
+            this.bgColourLabel.Size = new System.Drawing.Size(92, 13);
+            this.bgColourLabel.TabIndex = 5;
+            this.bgColourLabel.Text = "Background Color";
             // 
             // sceneTree
             // 
@@ -1384,7 +1383,7 @@
             this.sceneTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.sceneTree.Location = new System.Drawing.Point(0, 0);
             this.sceneTree.Name = "sceneTree";
-            this.sceneTree.Size = new System.Drawing.Size(253, 494);
+            this.sceneTree.Size = new System.Drawing.Size(253, 497);
             this.sceneTree.TabIndex = 3;
             this.sceneTree.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.TreeView1_AfterCheck);
             // 
@@ -1448,15 +1447,10 @@
             this.optionTabs.ResumeLayout(false);
             this.meshGroupsTab.ResumeLayout(false);
             this.scControls.Panel1.ResumeLayout(false);
+            this.scControls.Panel1.PerformLayout();
             this.scControls.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.scControls)).EndInit();
             this.scControls.ResumeLayout(false);
-            this.scBlend.Panel1.ResumeLayout(false);
-            this.scBlend.Panel1.PerformLayout();
-            this.scBlend.Panel2.ResumeLayout(false);
-            this.scBlend.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.scBlend)).EndInit();
-            this.scBlend.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.realmBlendBar)).EndInit();
             this.sceneTreeContainer.Panel2.ResumeLayout(false);
             this.sceneTreeContainer.Panel2.PerformLayout();
@@ -1487,8 +1481,6 @@
         private System.Windows.Forms.TabControl optionTabs;
         private System.Windows.Forms.TabPage meshGroupsTab;
         private System.Windows.Forms.TreeView sceneTree;
-        private System.Windows.Forms.Label planeBlendLabel;
-        private System.Windows.Forms.TrackBar realmBlendBar;
         private System.Windows.Forms.ToolStripMenuItem renderModeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem standardToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
@@ -1499,7 +1491,6 @@
         private System.Windows.Forms.ToolStripMenuItem exportDoubleSidedMaterialsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportSpectralVersionOfAreaFilesToolStripMenuItem;
         private System.Windows.Forms.SplitContainer scControls;
-        private System.Windows.Forms.SplitContainer scBlend;
         private System.Windows.Forms.ToolStripMenuItem makeAllPolygonsVisibleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem makeAllPolygonsOpaqueToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem oRAllPolygonColoursWithGreenToolStripMenuItem;
@@ -1614,5 +1605,9 @@
         private System.Windows.Forms.ToolStripMenuItem createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem adjustUVCoordinatesForBilinearFilteringToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ignoreVertexColoursToolStripMenuItem;
+        private System.Windows.Forms.TrackBar realmBlendBar;
+        private System.Windows.Forms.Label planeBlendLabel;
+        private System.Windows.Forms.Label bgColourLabel;
+        private System.Windows.Forms.Panel bgColourPanel;
     }
 }

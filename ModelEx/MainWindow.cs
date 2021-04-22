@@ -1349,5 +1349,20 @@ namespace ModelEx
             ImportExportOptions.ForcedPlatform = CDC.Platform.Xbox;
         }
 
+        private void bgColorPanel_MouseClick(object sender, MouseEventArgs e)
+        {
+            ColorDialog colorDialog = new ColorDialog();
+            colorDialog.AllowFullOpen = true;
+            colorDialog.AnyColor = true;
+            colorDialog.SolidColorOnly = true;
+            colorDialog.FullOpen = true;
+
+            colorDialog.Color = RenderManager.Instance.BackgroundColour;
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+            {
+                ((Control)sender).BackColor = colorDialog.Color;
+                RenderManager.Instance.BackgroundColour = colorDialog.Color;
+            }
+        }
     }
 }

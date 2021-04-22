@@ -14,6 +14,8 @@ namespace ModelEx
     {
         protected Thread renderThread;
 
+        public Color BackgroundColour = Color.Gray;
+
         private static RenderManager instance = null;
         public static RenderManager Instance
         {
@@ -74,7 +76,7 @@ namespace ModelEx
 
                 DeviceManager dm = DeviceManager.Instance;
                 dm.context.ClearDepthStencilView(dm.depthStencil, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
-                dm.context.ClearRenderTargetView(dm.renderTarget, new Color4(Color.Gray));
+                dm.context.ClearRenderTargetView(dm.renderTarget, new Color4(BackgroundColour));
 
                 CameraManager.Instance.UpdateFrameCamera();
 
