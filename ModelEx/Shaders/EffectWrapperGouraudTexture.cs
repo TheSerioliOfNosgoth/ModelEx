@@ -7,10 +7,10 @@ using System.Runtime.InteropServices;
 
 namespace ModelEx
 {
-    public class EffectWrapperGouraudTexture
+    public class EffectWrapperGouraudTexture : Effect
     {
         public ShaderBytecode effectByteCode;
-        public Effect effect;
+        public SlimDX.Direct3D11.Effect effect;
         public ShaderSignature inputSignature;
         public EffectTechnique technique;
         public EffectPass pass;
@@ -40,8 +40,10 @@ namespace ModelEx
                 new InputElement("TEXCOORD", 0, Format.R32G32_Float, 24, 0) 
             };
 
-        public void Load()
+        public override void Initialize()
         {
+            base.Initialize();
+
             try
             {
                 using (ShaderBytecode effectByteCode = ShaderBytecode.CompileFromFile(
@@ -51,7 +53,7 @@ namespace ModelEx
                     ShaderFlags.EnableStrictness,
                     EffectFlags.None))
                 {
-                    effect = new Effect(DeviceManager.Instance.device, effectByteCode);
+                    effect = new SlimDX.Direct3D11.Effect(DeviceManager.Instance.device, effectByteCode);
                     technique = effect.GetTechniqueByIndex(0);
                     pass = technique.GetPassByIndex(0);
                     inputSignature = pass.Description.Signature;
@@ -84,7 +86,7 @@ namespace ModelEx
             }
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             effect?.Dispose();
             layout?.Dispose();

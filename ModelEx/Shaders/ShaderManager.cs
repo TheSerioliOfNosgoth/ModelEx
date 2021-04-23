@@ -42,12 +42,12 @@ namespace ModelEx
             effectMorphingUnit?.Dispose();
         }
 
-        public void LoadShaders()
+        public void InitShaders()
         {
-            transformEffectWireFrame.Load();
-            effectPhongTexture.Load();
-            effectGouraudTexture.Load();
-            effectMorphingUnit.Load();
+            transformEffectWireFrame.Initialize();
+            effectPhongTexture.Initialize();
+            effectGouraudTexture.Initialize();
+            effectMorphingUnit.Initialize();
         }
     }
 }

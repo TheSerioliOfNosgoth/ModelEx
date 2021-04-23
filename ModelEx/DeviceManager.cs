@@ -15,7 +15,6 @@ namespace ModelEx
         public DepthStencilView depthStencil;
         Texture2D depthStencilTexture;
         Texture2D backBufferTexture;
-        DepthStencilState depthStencilState;
 
         public DeviceContext context;
 
@@ -111,25 +110,11 @@ namespace ModelEx
               }
              );
 
-            depthStencilState?.Dispose();
-            depthStencilState = DepthStencilState.FromDescription(
-             device,
-             new DepthStencilStateDescription()
-             {
-                 DepthComparison = Comparison.Less,
-                 DepthWriteMask = DepthWriteMask.All,
-                 IsDepthEnabled = true,
-                 IsStencilEnabled = false
-             }
-           );
-
-            context.OutputMerger.DepthStencilState = depthStencilState;
             context.OutputMerger.SetTargets(depthStencil, renderTarget);
         }
 
         public void ShutDown()
         {
-            depthStencilState.Dispose();
             depthStencil.Dispose();
             depthStencilTexture.Dispose();
             renderTarget.Dispose();

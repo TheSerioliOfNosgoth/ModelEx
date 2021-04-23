@@ -567,6 +567,10 @@ namespace CDC.Objects.Models
                 {
                     textureVal2Offset = xReader.BaseStream.Position + 2048;
                     _polygons[p].material.textureAttributesA = xReader.ReadUInt16();
+                    if ((_polygons[p].material.textureAttributesA & 0x0020) != 0)
+                    {
+                        _polygons[p].material.blendMode = 1;
+                    }
                 }
 
                 // unsigned char u2;
@@ -579,6 +583,11 @@ namespace CDC.Objects.Models
                 {
                     materialAttributesOffset = xReader.BaseStream.Position + 2048;
                     _polygons[p].material.textureAttributes = xReader.ReadUInt16();
+
+                    if ((_polygons[p].material.textureAttributes & 0x0040) != 0)
+                    {
+                        _polygons[p].material.blendMode = 1;
+                    }
                 }
                 //if (echoAttributes)
                 //{

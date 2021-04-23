@@ -132,6 +132,7 @@ namespace CDC
 
         public UInt16 ID;               // The ID of the material
         public Boolean visible;         // Flag specifying if this material is visible
+        public int blendMode;           // The type of operation used to handle transparency
         public Boolean textureUsed;     // Flag specifying if this material has a texture
         public UInt16 textureID;        // ID of the texture file
         public UInt16 texturePage;      // raw "tpage" value from the DRM
@@ -287,6 +288,7 @@ namespace CDC
             Material clone = new Material();
             clone.ID = ID;
             clone.visible = visible;
+            clone.blendMode = blendMode;
             clone.textureUsed = textureUsed;
             clone.texturePage = texturePage;
             clone.textureID = textureID;
@@ -350,7 +352,8 @@ namespace CDC
                 (material.BSPTreeRootFlagsEffective == this.material.BSPTreeRootFlagsEffective) &&
                 (material.BSPTreeParentNodeFlagsEffective == this.material.BSPTreeParentNodeFlagsEffective) &&
                 (material.BSPTreeLeafFlagsEffective == this.material.BSPTreeLeafFlagsEffective) &&
-                (material.UseAlphaMask == this.material.UseAlphaMask)
+                (material.UseAlphaMask == this.material.UseAlphaMask) &&
+                (material.blendMode == this.material.blendMode)
                 )
             {
                 return this.material;
@@ -370,7 +373,8 @@ namespace CDC
             //    (material.BSPTreeParentNodeFlags == this.material.BSPTreeParentNodeFlags) &&
             //    (material.BSPTreeAllParentNodeFlagsORd == this.material.BSPTreeAllParentNodeFlagsORd) &&
             //    (material.BSPTreeLeafFlags == this.material.BSPTreeLeafFlags) &&
-            //    (material.UseAlphaMask == this.material.UseAlphaMask)
+            //    (material.UseAlphaMask == this.material.UseAlphaMask) &&
+            //    (material.blendMode == this.material.blendMode)
             //    )
             //{
             //    return this.material;

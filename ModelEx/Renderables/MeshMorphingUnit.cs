@@ -64,6 +64,8 @@ namespace ModelEx
                 }
             }
 
+            effect.BlendMode = material.BlendMode;
+
             if (effect.effect != null)
             {
                 effect.technique = effect.effect.GetTechniqueByName(technique);
@@ -98,6 +100,7 @@ namespace ModelEx
                 for (int p = 0; p < techDesc.PassCount; p++)
                 {
                     effect.technique.GetPassByIndex(p).Apply(DeviceManager.Instance.context);
+                    effect.ApplyBlendState();
                     DeviceManager.Instance.context.DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
                 }
             }

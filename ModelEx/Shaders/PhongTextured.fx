@@ -35,15 +35,6 @@ SamplerState stateLinear
 	AddressV = Wrap;
 };
 
-BlendState AlphaBlend
-{
-	BlendEnable[0] = TRUE;
-	SrcBlend = SRC_ALPHA;
-	DestBlend = INV_SRC_ALPHA;
-	BlendOp = ADD;
-	//RenderTargetWriteMask[0] = 0x0F;
-};
-
 RasterizerState DefaultRasterizerState
 {
 	FillMode = Solid;
@@ -147,7 +138,6 @@ technique10 DefaultRender
 		SetGeometryShader(NULL);
 		SetPixelShader(CompileShader(ps_4_0, PixelShaderFunction()));
 		SetRasterizerState(DefaultRasterizerState);
-		//SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 }
 
@@ -159,7 +149,6 @@ technique10 Gex3Render
 		SetGeometryShader(NULL);
 		SetPixelShader(CompileShader(ps_4_0, PixelShaderFunction()));
 		SetRasterizerState(Gex3RasterizerState);
-		//SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 }
 
@@ -171,7 +160,6 @@ technique10 SR1Render
 		SetGeometryShader(NULL);
 		SetPixelShader(CompileShader(ps_4_0, PixelShaderFunction()));
 		SetRasterizerState(SR1RasterizerState);
-		//SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 }
 
@@ -183,6 +171,5 @@ technique10 SR2Render
 		SetGeometryShader(NULL);
 		SetPixelShader(CompileShader(ps_4_0, PixelShaderFunction()));
 		SetRasterizerState(SR2RasterizerState);
-		//SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 }

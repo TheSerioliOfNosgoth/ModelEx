@@ -30,7 +30,7 @@ namespace ModelEx
         {
             DeviceManager.Instance.Initialize(this);
             ShaderManager.Instance.Initialize();
-            ShaderManager.Instance.LoadShaders();
+            ShaderManager.Instance.InitShaders();
             RenderManager.Instance.Initialize();
 
             Timer.Instance.Reset();

@@ -59,6 +59,7 @@ namespace ModelEx
                 {
                     Material material = new Material();
                     material.Visible = _srModel.Materials[materialIndex].visible;
+                    //material.BlendMode = _srModel.Materials[materialIndex].blendMode;
                     Color colorDiffuse = Color.FromArgb((int)unchecked(_srModel.Materials[materialIndex].colour));
                     material.Diffuse = colorDiffuse;
                     material.TextureFileName = CDC.Objects.Models.SRModel.GetTextureName(_srModel, materialIndex, options);

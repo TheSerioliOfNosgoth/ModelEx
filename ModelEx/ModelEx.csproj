@@ -122,6 +122,7 @@
     <Compile Include="Scenes\Scene.cs" />
     <Compile Include="Scenes\SceneCDC.cs" />
     <Compile Include="Scenes\SceneManager.cs" />
+    <Compile Include="Shaders\Effect.cs" />
     <Compile Include="Shaders\EffectMorphingUnit.cs" />
     <Compile Include="Shaders\EffectWrapperGouraudTexture.cs" />
     <Compile Include="Shaders\EffectWrapperPhongTexture.cs" />
