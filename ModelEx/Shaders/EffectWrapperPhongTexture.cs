@@ -34,6 +34,9 @@ namespace ModelEx
         public EffectScalarVariable UseTexture;
         public EffectResourceVariable TextureVariable;
 
+        // Rasterizer
+        public EffectScalarVariable DepthBias;
+
         InputElement[] elements = new[] { 
                 new InputElement("POSITION", 0, Format.R32G32B32_Float, 0),
                 new InputElement("NORMAL", 0, Format.R32G32B32_Float, 12, 0),
@@ -79,6 +82,8 @@ namespace ModelEx
 
                 UseTexture = effect.GetVariableByName("UseTexture").AsScalar();
                 TextureVariable = effect.GetVariableByName("Texture").AsResource();
+
+                DepthBias = effect.GetVariableByName("DepthBias").AsScalar();
             }
             catch (Exception ex)
             {

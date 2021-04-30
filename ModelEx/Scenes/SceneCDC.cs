@@ -59,7 +59,9 @@ namespace ModelEx
                 {
                     Material material = new Material();
                     material.Visible = _srModel.Materials[materialIndex].visible;
+                    // Breaks early SR1 builds.
                     //material.BlendMode = _srModel.Materials[materialIndex].blendMode;
+                    //material.IsDecal = ((_srModel.Materials[materialIndex].sortPush & 0x0040) != 0 || _srModel.Materials[materialIndex].sortPush == 0);
                     Color colorDiffuse = Color.FromArgb((int)unchecked(_srModel.Materials[materialIndex].colour));
                     material.Diffuse = colorDiffuse;
                     material.TextureFileName = CDC.Objects.Models.SRModel.GetTextureName(_srModel, materialIndex, options);
@@ -183,18 +185,7 @@ namespace ModelEx
                 if (SubMeshes.Count > 0)
                 {
                     MeshName = meshName;
-                    if (_srFile.Game == CDC.Game.Gex)
-                    {
-                        Technique = "Gex3Render";
-                    }
-                    else if (_srFile.Game == CDC.Game.SR1)
-                    {
-                        Technique = "SR1Render";
-                    }
-                    else
-                    {
-                        Technique = "SR2Render";
-                    }
+                    Technique = "DefaultRender";
                     if (_srFile.Asset == CDC.Asset.Unit)
                     {
                         //Mesh = new MeshPCT(this);

@@ -396,6 +396,7 @@ namespace ModelEx
         protected void resetRenderModeMenu()
         {
             standardToolStripMenuItem.Checked = false;
+            wireframeToolStripMenuItem.Checked = false;
             noTexturemapsToolStripMenuItem.Checked = false;
             debugPolygonFlags1ToolStripMenuItem.Checked = false;
             debugPolygonFlags2ToolStripMenuItem.Checked = false;
@@ -477,6 +478,8 @@ namespace ModelEx
 
         protected void HandleRenderModeChange()
         {
+            RenderManager.Instance.Wireframe = ImportExportOptions.RenderMode == CDC.Objects.RenderMode.Wireframe;
+
             if (_ReloadModelOnRenderModeChange)
             {
                 LoadCurrentModel();
@@ -488,6 +491,14 @@ namespace ModelEx
             resetRenderModeMenu();
             standardToolStripMenuItem.Checked = true;
             ImportExportOptions.RenderMode = CDC.Objects.RenderMode.Standard;
+            HandleRenderModeChange();
+        }
+
+        private void wireframeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            resetRenderModeMenu();
+            wireframeToolStripMenuItem.Checked = true;
+            ImportExportOptions.RenderMode = CDC.Objects.RenderMode.Wireframe;
             HandleRenderModeChange();
         }
 

@@ -34,6 +34,9 @@ namespace ModelEx
         public EffectScalarVariable UseTexture;
         public EffectResourceVariable TextureVariable;
 
+        // Rasterizer
+        public EffectScalarVariable DepthBias;
+
         // Realm
         public EffectScalarVariable RealmBlend;
 
@@ -84,6 +87,8 @@ namespace ModelEx
 
                 UseTexture = effect.GetVariableByName("UseTexture").AsScalar();
                 TextureVariable = effect.GetVariableByName("Texture").AsResource();
+
+                DepthBias = effect.GetVariableByName("DepthBias").AsScalar();
 
                 RealmBlend = effect.GetVariableByName("RealmBlend").AsScalar();
             }

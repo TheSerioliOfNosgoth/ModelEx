@@ -43,7 +43,9 @@ namespace ModelEx
             {
                 effect.UseTexture.Set(false);
             }
+            effect.DepthBias.Set((material.IsDecal) ? 0.0f : 0.0f);
 
+            effect.IsDecal = material.IsDecal;
             effect.BlendMode = material.BlendMode;
 
             effect.technique = effect.effect.GetTechniqueByName(technique);

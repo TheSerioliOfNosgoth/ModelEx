@@ -43,6 +43,7 @@
             this.resetPositionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renderModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.standardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.wireframeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noTexturemapsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.polygonFlagsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugPolygonFlagsHashToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -297,6 +298,7 @@
             // 
             this.renderModeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.standardToolStripMenuItem,
+            this.wireframeToolStripMenuItem,
             this.noTexturemapsToolStripMenuItem,
             this.polygonFlagsToolStripMenuItem,
             this.colourLookupTableToolStripMenuItem,
@@ -319,6 +321,13 @@
             this.standardToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
             this.standardToolStripMenuItem.Text = "&Standard";
             this.standardToolStripMenuItem.Click += new System.EventHandler(this.standardToolStripMenuItem_Click);
+            // 
+            // wireframeToolStripMenuItem
+            // 
+            this.wireframeToolStripMenuItem.Name = "wireframeToolStripMenuItem";
+            this.wireframeToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
+            this.wireframeToolStripMenuItem.Text = "&Wireframe";
+            this.wireframeToolStripMenuItem.Click += new System.EventHandler(this.wireframeToolStripMenuItem_Click);
             // 
             // noTexturemapsToolStripMenuItem
             // 
@@ -1483,6 +1492,7 @@
         private System.Windows.Forms.TreeView sceneTree;
         private System.Windows.Forms.ToolStripMenuItem renderModeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem standardToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem wireframeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem unhide100InvisibleTexturesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem discardHiddenPolygonsToolStripMenuItem;

@@ -150,14 +150,13 @@ namespace CDC.Objects
 
         public bool TextureLoadRequired()
         {
-            bool result = true;
-
-            if (RenderMode != RenderMode.Standard)
+            if (RenderMode == RenderMode.Standard ||
+                RenderMode == RenderMode.Wireframe)
             {
-                result = false;
+                return true;
             }
 
-            return result;
+            return false;
         }
     }
 

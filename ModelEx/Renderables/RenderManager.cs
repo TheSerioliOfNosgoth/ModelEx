@@ -15,6 +15,7 @@ namespace ModelEx
         protected Thread renderThread;
 
         public Color BackgroundColour = Color.Gray;
+        public bool Wireframe = false;
 
         private static RenderManager instance = null;
         public static RenderManager Instance

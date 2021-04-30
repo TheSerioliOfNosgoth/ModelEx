@@ -642,11 +642,21 @@ namespace CDC.Objects.Models
                 _polygons[polygonID + p].RootBSPTreeNumber = rootBSPTreeNum;
                 _polygons[polygonID + p].BSPNodeID = parentNodeID;
 
+                //BSP Tree material handling.
+                // 1 = Hidden?
+                // 2 = No collisions?
+                //if ((_polygons[polygonID + p].material.BSPTreeRootFlags & 0x3) == 0x01)
+                //{
+                    // See EVENT_GetTGroupValue, WARPGATE_DrawWarpGateRim
+                    //_polygons[polygonID + p].material.visible = false;
+                    //_polygons[polygonID + p].material.textureUsed = false;
+                //}
+
                 //BSP Tree material handling
-                if ((_polygons[polygonID + p].material.BSPTreeParentNodeFlags & 0x1) != 0x1)
-                {
-                    _polygons[polygonID + p].material.visible = false;
-                }
+                //if ((_polygons[polygonID + p].material.BSPTreeParentNodeFlags & 0x1) != 0x1)
+                //{
+                    //_polygons[polygonID + p].material.visible = false;
+                //}
 
                 treePolygons.Add(polygonID + p);
 

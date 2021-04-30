@@ -63,7 +63,12 @@ namespace ModelEx
                     effect.UseTexture.Set(false);
                 }
             }
+            if (effect.DepthBias != null)
+            {
+                effect.DepthBias.Set((material.IsDecal) ? 0.0f : 0.0f);
+            }
 
+            effect.IsDecal = material.IsDecal;
             effect.BlendMode = material.BlendMode;
 
             if (effect.effect != null)

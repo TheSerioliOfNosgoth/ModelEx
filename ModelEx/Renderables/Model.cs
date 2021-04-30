@@ -25,11 +25,12 @@ namespace ModelEx
         {
             if (SubMeshes.Count > 0)
             {
-                RenderNode(Root, Transform);
+                RenderNode(Root, Transform, false);
+                RenderNode(Root, Transform, true);
             }
         }
 
-        public void RenderNode(Node node, SlimDX.Matrix transform)
+        public void RenderNode(Node node, SlimDX.Matrix transform, bool isTransparent)
         {
             //node.Visible = false;
             if (node.Visible == false)
@@ -46,16 +47,19 @@ namespace ModelEx
                 Material material = Materials[subMesh.MaterialIndex];
                 //if (material.Visible)
                 //{
-                    mesh.ApplyMaterial(material);
-                    mesh.ApplyTransform(localTransform);
-                    mesh.ApplyBuffers();
-                    mesh.Render(subMesh.indexCount, subMesh.startIndexLocation, subMesh.baseVertexLocation);
+                    if ((material.BlendMode == 0 && !isTransparent) || (material.BlendMode != 0 && isTransparent))
+                    {
+                        mesh.ApplyMaterial(material);
+                        mesh.ApplyTransform(localTransform);
+                        mesh.ApplyBuffers();
+                        mesh.Render(subMesh.indexCount, subMesh.startIndexLocation, subMesh.baseVertexLocation);
+                    }
                 //}
             }
 
             foreach (Node child in node.Nodes)
             {
-                RenderNode(child, localTransform);
+                RenderNode(child, localTransform, isTransparent);
             }
         }
 

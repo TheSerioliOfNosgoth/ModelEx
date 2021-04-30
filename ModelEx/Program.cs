@@ -133,6 +133,9 @@ namespace ModelEx
                                     case "standard":
                                         options.RenderMode = CDC.Objects.RenderMode.Standard;
                                         break;
+                                    case "wireframe":
+                                        options.RenderMode = CDC.Objects.RenderMode.Wireframe;
+                                        break;
                                     case "notextures":
                                         options.RenderMode = CDC.Objects.RenderMode.NoTextures;
                                         break;
