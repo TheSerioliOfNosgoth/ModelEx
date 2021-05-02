@@ -1,21 +1,4 @@
-﻿matrix World;
-matrix View;
-matrix Projection;
-float3 CameraPosition;
-float3 LightDirection = float3(1, 1, 1);
-
-bool UseTexture = false;
-Texture2D Texture;
-
-float DepthBias = 0;
-
-float4 DiffuseColor = float4(0, 1, 0, 1);
-float4 AmbientColor = float4(0.2, 0.2, 0.2, 1);
-float4 LightColor = float4(0.9, 0.9, 0.9, 1);
-float SpecularPower = 32;
-float4 SpecularColor = float4(1, 1, 1, 1);
-
-float RealmBlend = 0.0f;
+#include "Parameters.fx"
 
 struct VertexShaderInput
 {
@@ -53,11 +36,11 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 		input.Color0.r + ((input.Color0.r - input.Color1.r) * RealmBlend),
 		input.Color0.a + ((input.Color0.a - input.Color1.a) * RealmBlend));
 		);*/
-	/*float3 color = float3(
-		input.Color0.b + ((input.Color0.b - input.Color1.b) * RealmBlend),
-		input.Color0.g + ((input.Color0.g - input.Color1.g) * RealmBlend),
-		input.Color0.r + ((input.Color0.r - input.Color1.r) * RealmBlend));*/
-	
+		/*float3 color = float3(
+			input.Color0.b + ((input.Color0.b - input.Color1.b) * RealmBlend),
+			input.Color0.g + ((input.Color0.g - input.Color1.g) * RealmBlend),
+			input.Color0.r + ((input.Color0.r - input.Color1.r) * RealmBlend));*/
+
 	float4 color;
 	color.r = input.Color0.r - ((input.Color0.r - input.Color1.r) * RealmBlend);
 	color.g = input.Color0.g - ((input.Color0.g - input.Color1.g) * RealmBlend);

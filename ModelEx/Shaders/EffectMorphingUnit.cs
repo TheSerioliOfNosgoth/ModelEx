@@ -59,7 +59,9 @@ namespace ModelEx
                     "Render",
                     "fx_5_0",
                     ShaderFlags.EnableStrictness,
-                    EffectFlags.None))
+                    EffectFlags.None,
+                    null,
+                    new IncludeFX("Shaders")))
                 {
                     effect = new SlimDX.Direct3D11.Effect(DeviceManager.Instance.device, effectByteCode);
                     technique = effect.GetTechniqueByIndex(0);
