@@ -31,50 +31,27 @@ namespace ModelEx
 
         public override void ApplyMaterial(Material material)
         {
-            if (effect.DiffuseColor != null)
+            effect.Constants.DiffuseColor = ColorToVector4(material.Diffuse);
+            effect.Constants.AmbientColor = ColorToVector4(material.Ambient);
+            effect.Constants.SpecularColor = ColorToVector4(material.Specular);
+            effect.Constants.LightColor = new Vector4(1, 1, 1, 1);
+            effect.Constants.SpecularPower = 128;
+
+            if (material.TextureFileName != null && material.TextureFileName != "")
             {
-                effect.DiffuseColor.Set(ColorToVector4(material.Diffuse));
-            }
-            if (effect.AmbientColor != null)
-            {
-                effect.AmbientColor.Set(ColorToVector4(material.Ambient));
-            }
-            if (effect.SpecularColor != null)
-            {
-                effect.SpecularColor.Set(ColorToVector4(material.Specular));
-            }
-            if (effect.LightColor != null)
-            {
-                effect.LightColor.Set(new Vector4(1, 1, 1, 1));
-            }
-            if (effect.SpecularPower != null)
-            {
-                effect.SpecularPower.Set(128);
-            }
-            if (material.TextureFileName != null && material.TextureFileName != "" && effect.UseTexture != null && effect.TextureVariable != null)
-            {
-                effect.UseTexture.Set(true);
-                effect.TextureVariable.SetResource(TextureManager.Instance.GetShaderResourceView(material.TextureFileName + SceneCDC.TextureExtension));
+                effect.Constants.UseTexture = true;
+                effect.Texture = TextureManager.Instance.GetShaderResourceView(material.TextureFileName + SceneCDC.TextureExtension);
             }
             else
             {
-                if (effect.UseTexture != null)
-                {
-                    effect.UseTexture.Set(false);
-                }
+                effect.Constants.UseTexture = false;
             }
-            if (effect.DepthBias != null)
-            {
-                effect.DepthBias.Set((material.IsDecal) ? 0.0f : 0.0f);
-            }
+
+            effect.Constants.DepthBias = material.IsDecal ? 0.0f : 0.0f;
 
             effect.IsDecal = material.IsDecal;
             effect.BlendMode = material.BlendMode;
-
-            if (effect.effect != null)
-            {
-                effect.technique = effect.effect.GetTechniqueByName(technique);
-            }
+            effect.Constants.VertexColorFactor = 1.0f; // 2.0f for Gex
         }
 
         public override void ApplyTransform(Matrix transform)
@@ -83,32 +60,21 @@ namespace ModelEx
             Matrix WorldViewPerspective = transform * ViewPerspective;
             Vector3 viewDir = CameraManager.Instance.frameCamera.eye - CameraManager.Instance.frameCamera.target;
 
-            if (effect.World != null && effect.View != null && effect.Projection != null && effect.CameraPosition != null && effect.LightDirection != null && effect.RealmBlend != null)
-            {
-                effect.World.SetMatrix(transform);
-                //ewu.World.SetMatrix(Matrix.Scaling(-1, 1, 1) *  this.transform);
-                effect.View.SetMatrix(CameraManager.Instance.frameCamera.View);
-                effect.Projection.SetMatrix(CameraManager.Instance.frameCamera.Perspective);
+            effect.Constants.World = Matrix.Transpose(transform);
+            //effect.Constants.World = Matrix.Scaling(-1, 1, 1) * transform;
+            effect.Constants.View = Matrix.Transpose(CameraManager.Instance.frameCamera.View);
+            effect.Constants.Projection = Matrix.Transpose(CameraManager.Instance.frameCamera.Perspective);
 
-                effect.CameraPosition.Set(CameraManager.Instance.frameCamera.eye);
-                effect.LightDirection.Set(viewDir);
+            effect.Constants.CameraPosition = CameraManager.Instance.frameCamera.eye;
+            effect.Constants.LightDirection = viewDir;
 
-                effect.RealmBlend.Set(RealmBlend);
-            }
+            effect.Constants.RealmBlend = RealmBlend;
         }
 
         public override void Render(int indexCount, int startIndexLocation, int baseVertexLocation)
         {
-            if (effect.technique != null)
-            {
-                EffectTechniqueDescription techDesc = effect.technique.Description;
-                for (int p = 0; p < techDesc.PassCount; p++)
-                {
-                    effect.technique.GetPassByIndex(p).Apply(DeviceManager.Instance.context);
-                    effect.ApplyBlendState();
-                    DeviceManager.Instance.context.DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
-                }
-            }
+            effect.ApplyBlendState();
+            DeviceManager.Instance.context.DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
         }
     }
 }

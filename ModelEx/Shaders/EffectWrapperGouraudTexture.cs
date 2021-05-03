@@ -9,38 +9,19 @@ namespace ModelEx
 {
     public class EffectWrapperGouraudTexture : Effect
     {
-        public ShaderBytecode effectByteCode;
-        public SlimDX.Direct3D11.Effect effect;
+        public VertexShader vertexShader;
+        public PixelShader pixelShader;
         public ShaderSignature inputSignature;
-        public EffectTechnique technique;
-        public EffectPass pass;
         public InputLayout layout;
 
-        public EffectMatrixVariable World;
-        public EffectMatrixVariable View;
-        public EffectMatrixVariable Projection;
-        public EffectVectorVariable CameraPosition;
-        public EffectVectorVariable LightDirection;
+        public EffectConstants Constants;
+        SlimDX.Direct3D11.Buffer ConstantsBuffer;
+        public ShaderResourceView Texture;
 
-        // Colors
-        public EffectVectorVariable AmbientColor;
-        public EffectVectorVariable DiffuseColor;
-        public EffectVectorVariable SpecularColor;
-        public EffectVectorVariable LightColor;
-
-        public EffectScalarVariable SpecularPower;
-
-        // Texture
-        public EffectScalarVariable UseTexture;
-        public EffectResourceVariable TextureVariable;
-
-        // Rasterizer
-        public EffectScalarVariable DepthBias;
-
-        InputElement[] elements = new[] { 
+        InputElement[] elements = new[] {
                 new InputElement("POSITION", 0, Format.R32G32B32_Float, 0),
                 new InputElement("COLOR", 0, Format.R32G32B32_Float, 12, 0),
-                new InputElement("TEXCOORD", 0, Format.R32G32_Float, 24, 0) 
+                new InputElement("TEXCOORD", 0, Format.R32G32_Float, 24, 0)
             };
 
         public override void Initialize()
@@ -49,43 +30,42 @@ namespace ModelEx
 
             try
             {
-                using (ShaderBytecode effectByteCode = ShaderBytecode.CompileFromFile(
+                using (ShaderBytecode vertexShaderByteCode = ShaderBytecode.CompileFromFile(
                     "Shaders/GouraudTextured.fx",
-                    "Render",
-                    "fx_5_0",
-                    ShaderFlags.EnableStrictness,
+                    "VShader",
+                    "vs_4_0",
+                    ShaderFlags.None,
                     EffectFlags.None,
                     null,
                     new IncludeFX("Shaders")))
                 {
-                    effect = new SlimDX.Direct3D11.Effect(DeviceManager.Instance.device, effectByteCode);
-                    technique = effect.GetTechniqueByIndex(0);
-                    pass = technique.GetPassByIndex(0);
-                    inputSignature = pass.Description.Signature;
+                    vertexShader = new VertexShader(DeviceManager.Instance.device, vertexShaderByteCode);
+                    inputSignature = ShaderSignature.GetInputSignature(vertexShaderByteCode);
+                }
+
+                using (ShaderBytecode pixelShaderByteCode = ShaderBytecode.CompileFromFile(
+                    "Shaders/GouraudTextured.fx",
+                    "PShader",
+                    "ps_4_0",
+                    ShaderFlags.None,
+                    EffectFlags.None,
+                    null,
+                    new IncludeFX("Shaders")))
+                {
+                    pixelShader = new PixelShader(DeviceManager.Instance.device, pixelShaderByteCode);
                 }
 
                 layout = new InputLayout(DeviceManager.Instance.device, inputSignature, elements);
 
-                //WorldViewProjection = effect.GetVariableByName("matWorldViewProj").AsMatrix();
-                World = effect.GetVariableByName("World").AsMatrix();
-                View = effect.GetVariableByName("View").AsMatrix();
-                Projection = effect.GetVariableByName("Projection").AsMatrix();
-
-                //LightDir = effect.GetVariableByName("vecLightDir").AsVector();
-                CameraPosition = effect.GetVariableByName("CameraPosition").AsVector();
-                LightDirection = effect.GetVariableByName("LightDirection").AsVector();
-
-                DiffuseColor = effect.GetVariableByName("DiffuseColor").AsVector();
-                AmbientColor = effect.GetVariableByName("AmbientColor").AsVector();
-                SpecularColor = effect.GetVariableByName("SpecularColor").AsVector();
-                LightColor = effect.GetVariableByName("LightColor").AsVector();
-
-                SpecularPower = effect.GetVariableByName("SpecularPower").AsScalar();
-
-                UseTexture = effect.GetVariableByName("UseTexture").AsScalar();
-                TextureVariable = effect.GetVariableByName("Texture").AsResource();
-
-                DepthBias = effect.GetVariableByName("DepthBias").AsScalar();
+                ConstantsBuffer = new SlimDX.Direct3D11.Buffer(
+                    DeviceManager.Instance.device,
+                    0x140,//Marshal.SizeOf(Constants),
+                    ResourceUsage.Dynamic,
+                    BindFlags.ConstantBuffer,
+                    CpuAccessFlags.Write,
+                    ResourceOptionFlags.None,
+                    0
+                );
             }
             catch (Exception ex)
             {
@@ -95,8 +75,30 @@ namespace ModelEx
 
         public override void Dispose()
         {
-            effect?.Dispose();
+            vertexShader?.Dispose();
+            pixelShader?.Dispose();
+            inputSignature?.Dispose();
             layout?.Dispose();
+            ConstantsBuffer?.Dispose();
+            Texture?.Dispose();
+        }
+
+        public override void ApplyBlendState()
+        {
+            base.ApplyBlendState();
+
+            DeviceManager.Instance.context.VertexShader.Set(vertexShader);
+            DeviceManager.Instance.context.PixelShader.Set(pixelShader);
+
+            DataBox box = DeviceManager.Instance.context.MapSubresource(ConstantsBuffer, 0, MapMode.WriteDiscard, SlimDX.Direct3D11.MapFlags.None);
+            box.Data.Write(Constants);
+            box.Data.Position = 0;
+            DeviceManager.Instance.context.UnmapSubresource(ConstantsBuffer, 0);
+
+            DeviceManager.Instance.context.VertexShader.SetConstantBuffer(ConstantsBuffer, 0);
+            DeviceManager.Instance.context.PixelShader.SetConstantBuffer(ConstantsBuffer, 0);
+            DeviceManager.Instance.context.PixelShader.SetShaderResource(Texture, 0);
+            //DeviceManager.Instance.context.PixelShader.SetSampler(SamplerState, 0);
         }
     }
 }

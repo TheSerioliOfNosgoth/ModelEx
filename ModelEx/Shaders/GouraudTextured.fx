@@ -1,4 +1,4 @@
-#include "Parameters.fx"
+#include "Constants.fx"
 
 struct VertexShaderInput
 {
@@ -15,6 +15,15 @@ struct VertexShaderOutput
 	float2 TexCoord : TEXCOORD2;
 };
 
+struct MorphingUnitShaderInput
+{
+	float4 Position0 : POSITION0;
+	float4 Position1 : POSITION1;
+	float3 Color0 : COLOR0;
+	float3 Color1 : COLOR1;
+	float2 TexCoord : TEXCOORD;
+};
+
 SamplerState stateLinear
 {
 	Filter = MIN_MAG_MIP_LINEAR;
@@ -22,7 +31,7 @@ SamplerState stateLinear
 	AddressV = Wrap;
 };
 
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
+VertexShaderOutput VShader(VertexShaderInput input)
 {
 	VertexShaderOutput output;
 	float4 worldPosition = mul(input.Position, World);
@@ -30,27 +39,14 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 
 	output.Position = mul(worldPosition, viewProjection);
 	output.Color = input.Color;
+	output.Color *= VertexColorFactor;
 	output.ViewDirection = worldPosition - CameraPosition;
 	output.TexCoord = input.TexCoord;
 
 	return output;
 }
 
-VertexShaderOutput Gex3VertexShaderFunction(VertexShaderInput input)
-{
-	VertexShaderOutput output;
-	float4 worldPosition = mul(input.Position, World);
-	matrix viewProjection = mul(View, Projection);
-
-	output.Position = mul(worldPosition, viewProjection);
-	output.Color = input.Color;
-	output.ViewDirection = worldPosition - CameraPosition;
-	output.TexCoord = input.TexCoord;
-
-	return output;
-}
-
-float4 PixelShaderFunction(VertexShaderOutput input) : SV_TARGET
+float4 PShader(VertexShaderOutput input) : SV_TARGET
 {
 	// Start with diffuse color
 	float4 color = UseTexture == false ? DiffuseColor : Texture.Sample(stateLinear, input.TexCoord);
@@ -65,12 +61,15 @@ float4 PixelShaderFunction(VertexShaderOutput input) : SV_TARGET
 	return float4(output, color.a);
 }
 
-technique10 DefaultRender
+VertexShaderOutput MorphingUnitVShader(MorphingUnitShaderInput muInput)
 {
-	pass P0
-	{
-		SetVertexShader(CompileShader(vs_4_0, VertexShaderFunction()));
-		SetGeometryShader(NULL);
-		SetPixelShader(CompileShader(ps_4_0, PixelShaderFunction()));
-	}
+	VertexShaderInput vsInput;
+
+	vsInput.Position = muInput.Position0 - ((muInput.Position0 - muInput.Position1) * RealmBlend);
+	vsInput.Color = muInput.Color0 - ((muInput.Color0 - muInput.Color1) * RealmBlend);
+	vsInput.TexCoord = muInput.TexCoord;
+
+	VertexShaderOutput output = VShader(vsInput);
+
+	return output;
 }

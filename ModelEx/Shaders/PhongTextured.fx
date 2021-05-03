@@ -1,4 +1,4 @@
-#include "Parameters.fx"
+#include "Constants.fx"
 
 struct VertexShaderInput
 {
@@ -22,7 +22,7 @@ SamplerState stateLinear
 	AddressV = Wrap;
 };
 
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
+VertexShaderOutput VShader(VertexShaderInput input)
 {
 	VertexShaderOutput output;
 	float4 worldPosition = mul(input.Position, World);
@@ -36,21 +36,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 	return output;
 }
 
-VertexShaderOutput Gex3VertexShaderFunction(VertexShaderInput input)
-{
-	VertexShaderOutput output;
-	float4 worldPosition = mul(input.Position, World);
-	matrix viewProjection = mul(View, Projection);
-
-	output.Position = mul(worldPosition, viewProjection);
-	output.Normal = mul(input.Normal, World);
-	output.ViewDirection = worldPosition - CameraPosition;
-	output.TexCoord = input.TexCoord;
-
-	return output;
-}
-
-float4 PixelShaderFunction(VertexShaderOutput input) : SV_TARGET
+float4 PShader(VertexShaderOutput input) : SV_TARGET
 {
 	// Start with diffuse color
 	float4 color = UseTexture == false ? DiffuseColor : Texture.Sample(stateLinear, input.TexCoord);
@@ -78,14 +64,4 @@ float4 PixelShaderFunction(VertexShaderOutput input) : SV_TARGET
 	float3 output = saturate(lighting) * color.rgb;
 
 	return float4(output, color.a);
-}
-
-technique10 DefaultRender
-{
-	pass P0
-	{
-		SetVertexShader(CompileShader(vs_4_0, VertexShaderFunction()));
-		SetGeometryShader(NULL);
-		SetPixelShader(CompileShader(ps_4_0, PixelShaderFunction()));
-	}
 }

@@ -28,6 +28,51 @@ namespace ModelEx
         }
     }
 
+
+    [StructLayout(LayoutKind.Explicit, Size = 0x140)]
+    public struct EffectConstants
+    {
+        [FieldOffset(0)]
+        public Matrix World;
+        [FieldOffset(0x40)]
+        public Matrix View;
+        [FieldOffset(0x80)]
+        public Matrix Projection;
+        [FieldOffset(0xC0)]
+        public Vector3 CameraPosition;
+
+        // Lights
+        [FieldOffset(0xD0)]
+        public Vector3 LightDirection;
+        [FieldOffset(0xE0)]
+        public Vector4 LightColor;
+
+        // Colors
+        [FieldOffset(0xF0)]
+        public Vector4 AmbientColor;
+        [FieldOffset(0x100)]
+        public Vector4 DiffuseColor;
+        [FieldOffset(0x110)]
+        public Vector4 SpecularColor;
+
+        [FieldOffset(0x120)]
+        public float SpecularPower;
+
+        // Texture
+        [FieldOffset(0x124)]
+        public bool UseTexture;
+        [FieldOffset(0x128)]
+        public float VertexColorFactor;
+
+        // Rasterizer
+        [FieldOffset(0x12C)]
+        public float DepthBias;
+
+        // Realm
+        [FieldOffset(0x130)]
+        public float RealmBlend;
+    }
+
     public abstract class Effect
     {
         protected RasterizerState rasterizerStateDefault;

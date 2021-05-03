@@ -43,6 +43,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -53,6 +54,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>DimensionSymbol.ico</ApplicationIcon>
@@ -123,7 +125,6 @@
     <Compile Include="Scenes\SceneCDC.cs" />
     <Compile Include="Scenes\SceneManager.cs" />
     <Compile Include="Shaders\Effect.cs" />
-    <Compile Include="Shaders\EffectMorphingUnit2.cs" />
     <Compile Include="Shaders\EffectMorphingUnit.cs" />
     <Compile Include="Shaders\EffectWrapperGouraudTexture.cs" />
     <Compile Include="Shaders\EffectWrapperPhongTexture.cs" />
@@ -172,19 +173,7 @@
     <Content Include="Shaders\Constants.fx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\Parameters.fx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Shaders\MorphingUnit.fx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Shaders\GouraudTextured.fx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Shaders\MorphingUnitPS.fx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Shaders\MorphingUnitVS.fx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Shaders\PhongTextured.fx">
