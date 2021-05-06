@@ -45,9 +45,8 @@ namespace ModelEx
                 effect.Constants.UseTexture = false;
             }
 
-            effect.Constants.DepthBias = material.IsDecal ? 0.0f : 0.0f;
+            effect.Constants.DepthBias = material.DepthBias;
 
-            effect.IsDecal = material.IsDecal;
             effect.BlendMode = material.BlendMode;
         }
 
@@ -70,7 +69,7 @@ namespace ModelEx
 
         public override void Render(int indexCount, int startIndexLocation, int baseVertexLocation)
         {
-            effect.ApplyBlendState();
+            effect.Apply(1);
             DeviceManager.Instance.context.DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
         }
     }

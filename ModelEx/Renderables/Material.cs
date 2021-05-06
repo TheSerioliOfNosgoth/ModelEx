@@ -7,7 +7,7 @@ namespace ModelEx
     {
         public String Name = "";
         public bool Visible = true;
-        public bool IsDecal = false;
+        public float DepthBias = 0.0f;
         public int BlendMode = 0;
         public System.Drawing.Color Diffuse = System.Drawing.Color.White;
         public System.Drawing.Color Ambient = System.Drawing.Color.White;

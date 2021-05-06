@@ -83,22 +83,30 @@ namespace ModelEx
             Texture?.Dispose();
         }
 
-        public override void ApplyBlendState()
+        public override void Apply(int pass)
         {
-            base.ApplyBlendState();
-
-            DeviceManager.Instance.context.VertexShader.Set(vertexShader);
-            DeviceManager.Instance.context.PixelShader.Set(pixelShader);
+            base.Apply(pass);
 
             DataBox box = DeviceManager.Instance.context.MapSubresource(ConstantsBuffer, 0, MapMode.WriteDiscard, SlimDX.Direct3D11.MapFlags.None);
             box.Data.Write(Constants);
             box.Data.Position = 0;
             DeviceManager.Instance.context.UnmapSubresource(ConstantsBuffer, 0);
 
-            DeviceManager.Instance.context.VertexShader.SetConstantBuffer(ConstantsBuffer, 0);
-            DeviceManager.Instance.context.PixelShader.SetConstantBuffer(ConstantsBuffer, 0);
-            DeviceManager.Instance.context.PixelShader.SetShaderResource(Texture, 0);
             //DeviceManager.Instance.context.PixelShader.SetSampler(SamplerState, 0);
+
+            DeviceManager.Instance.context.VertexShader.Set(vertexShader);
+            DeviceManager.Instance.context.VertexShader.SetConstantBuffer(ConstantsBuffer, 0);
+
+            if (pass == 0)
+            {
+                DeviceManager.Instance.context.PixelShader.Set(null);
+            }
+            else
+            {
+                DeviceManager.Instance.context.PixelShader.Set(pixelShader);
+                DeviceManager.Instance.context.PixelShader.SetConstantBuffer(ConstantsBuffer, 0);
+                DeviceManager.Instance.context.PixelShader.SetShaderResource(Texture, 0);
+            }
         }
     }
 }

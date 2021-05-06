@@ -33,6 +33,8 @@ VertexShaderOutput VShader(VertexShaderInput input)
 	output.ViewDirection = worldPosition - CameraPosition;
 	output.TexCoord = input.TexCoord;
 
+	output.Position.z -= DepthBias;
+
 	return output;
 }
 
@@ -40,9 +42,13 @@ float4 PShader(VertexShaderOutput input) : SV_TARGET
 {
 	// Start with diffuse color
 	float4 color = UseTexture == false ? DiffuseColor : Texture.Sample(stateLinear, input.TexCoord);
-	if (color.a < 0.75)
+	if (color.a < 0.5)
 	{
 		clip(-1);
+	}
+	else
+	{
+		color.a = 1;
 	}
 
 	// Start with ambient lighting
