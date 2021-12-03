@@ -8,98 +8,98 @@ namespace CDC.Objects.Models
 	{
 		protected UInt32 m_uColourStart;
 
-		protected SR2ObjectModel(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
-			: base(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
+		protected SR2ObjectModel(BinaryReader reader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
+			: base(reader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
 		{
-			xReader.BaseStream.Position = _modelData + 0x04;
-			UInt32 uBoneCount1 = xReader.ReadUInt32();
-			UInt32 uBoneCount2 = xReader.ReadUInt32();
+			reader.BaseStream.Position = _modelData + 0x04;
+			UInt32 uBoneCount1 = reader.ReadUInt32();
+			UInt32 uBoneCount2 = reader.ReadUInt32();
 			_boneCount = uBoneCount1 + uBoneCount2;
-			_boneStart = xReader.ReadUInt32();
-			_vertexScale.x = xReader.ReadSingle();
-			_vertexScale.y = xReader.ReadSingle();
-			_vertexScale.z = xReader.ReadSingle();
-			xReader.BaseStream.Position += 0x04;
-			_vertexCount = xReader.ReadUInt32();
-			_vertexStart = _dataStart + xReader.ReadUInt32();
-			xReader.BaseStream.Position += 0x08;
-			_polygonCount = 0; // xReader.ReadUInt32();
-			_polygonStart = 0; // m_uDataStart + xReader.ReadUInt32();
-			xReader.BaseStream.Position += 0x18;
-			m_uColourStart = _dataStart + xReader.ReadUInt32();
-			xReader.BaseStream.Position += 0x0C;
-			_materialStart = _dataStart + xReader.ReadUInt32();
+			_boneStart = reader.ReadUInt32();
+			_vertexScale.x = reader.ReadSingle();
+			_vertexScale.y = reader.ReadSingle();
+			_vertexScale.z = reader.ReadSingle();
+			reader.BaseStream.Position += 0x04;
+			_vertexCount = reader.ReadUInt32();
+			_vertexStart = _dataStart + reader.ReadUInt32();
+			reader.BaseStream.Position += 0x08;
+			_polygonCount = 0; // reader.ReadUInt32();
+			_polygonStart = 0; // m_uDataStart + reader.ReadUInt32();
+			reader.BaseStream.Position += 0x18;
+			m_uColourStart = _dataStart + reader.ReadUInt32();
+			reader.BaseStream.Position += 0x0C;
+			_materialStart = _dataStart + reader.ReadUInt32();
 			_materialCount = 0;
 			_groupCount = 1;
 
 			_trees = new Tree[_groupCount];
 		}
 
-		public static SR2ObjectModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 uVersion, CDC.Objects.ExportOptions options)
+		public static SR2ObjectModel Load(BinaryReader reader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 uVersion, CDC.Objects.ExportOptions options)
 		{
-			xReader.BaseStream.Position = uModelData + (0x00000004 * usIndex);
-			uModelData = uDataStart + xReader.ReadUInt32();
-			xReader.BaseStream.Position = uModelData;
-			SR2ObjectModel xModel = new SR2ObjectModel(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion);
-			xModel.ReadData(xReader, options);
+			reader.BaseStream.Position = uModelData + (0x00000004 * usIndex);
+			uModelData = uDataStart + reader.ReadUInt32();
+			reader.BaseStream.Position = uModelData;
+			SR2ObjectModel xModel = new SR2ObjectModel(reader, uDataStart, uModelData, strModelName, ePlatform, uVersion);
+			xModel.ReadData(reader, options);
 			return xModel;
 		}
 
-		protected override void ReadVertex(BinaryReader xReader, int v, CDC.Objects.ExportOptions options)
+		protected override void ReadVertex(BinaryReader reader, int v, CDC.Objects.ExportOptions options)
 		{
-			base.ReadVertex(xReader, v, options);
+			base.ReadVertex(reader, v, options);
 
 			_geometry.PositionsPhys[v] = _geometry.PositionsRaw[v] * _vertexScale;
 			_geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
 
-			_geometry.Vertices[v].normalID = xReader.ReadUInt16();
-			xReader.BaseStream.Position += 0x02;
+			_geometry.Vertices[v].normalID = reader.ReadUInt16();
+			reader.BaseStream.Position += 0x02;
 
 			_geometry.Vertices[v].UVID = v;
 
-			UInt16 vU = xReader.ReadUInt16();
-			UInt16 vV = xReader.ReadUInt16();
+			UInt16 vU = reader.ReadUInt16();
+			UInt16 vV = reader.ReadUInt16();
 
 			_geometry.UVs[v].u = Utility.BizarreFloatToNormalFloat(vU);
 			_geometry.UVs[v].v = Utility.BizarreFloatToNormalFloat(vV);
 		}
 
-		protected override void ReadVertices(BinaryReader xReader, CDC.Objects.ExportOptions options)
+		protected override void ReadVertices(BinaryReader reader, CDC.Objects.ExportOptions options)
 		{
-			base.ReadVertices(xReader, options);
+			base.ReadVertices(reader, options);
 
-			xReader.BaseStream.Position = m_uColourStart;
+			reader.BaseStream.Position = m_uColourStart;
 			for (UInt16 v = 0; v < _vertexCount; v++)
 			{
-				_geometry.Colours[v] = xReader.ReadUInt32();
+				_geometry.Colours[v] = reader.ReadUInt32();
 				_geometry.ColoursAlt[v] = _geometry.Colours[v];
 			}
 
-			ReadArmature(xReader);
+			ReadArmature(reader);
 			ApplyArmature();
 		}
 
-		protected virtual void ReadArmature(BinaryReader xReader)
+		protected virtual void ReadArmature(BinaryReader reader)
 		{
 			if (_boneStart == 0 || _boneCount == 0) return;
 
-			xReader.BaseStream.Position = _boneStart;
+			reader.BaseStream.Position = _boneStart;
 			_bones = new Bone[_boneCount];
 			for (UInt16 b = 0; b < _boneCount; b++)
 			{
 				// Get the bone data
-				_bones[b].localPos.x = xReader.ReadSingle();
-				_bones[b].localPos.y = xReader.ReadSingle();
-				_bones[b].localPos.z = xReader.ReadSingle();
+				_bones[b].localPos.x = reader.ReadSingle();
+				_bones[b].localPos.y = reader.ReadSingle();
+				_bones[b].localPos.z = reader.ReadSingle();
 
-				float unknown = xReader.ReadSingle();
-				_bones[b].flags = xReader.ReadUInt32();
+				float unknown = reader.ReadSingle();
+				_bones[b].flags = reader.ReadUInt32();
 
-				_bones[b].vFirst = xReader.ReadUInt16();
-				_bones[b].vLast = xReader.ReadUInt16();
+				_bones[b].vFirst = reader.ReadUInt16();
+				_bones[b].vLast = reader.ReadUInt16();
 
-				_bones[b].parentID1 = xReader.ReadUInt16();
-				_bones[b].parentID2 = xReader.ReadUInt16();
+				_bones[b].parentID1 = reader.ReadUInt16();
+				_bones[b].parentID2 = reader.ReadUInt16();
 
 				//if (parent1 != 0xFFFF && parent2 != 0xFFFF &&
 				//    parent2 != 0)
@@ -108,7 +108,7 @@ namespace CDC.Objects.Models
 					_bones[b].parentID1 = _bones[b].parentID2;
 				}
 
-				xReader.BaseStream.Position += 0x04;
+				reader.BaseStream.Position += 0x04;
 			}
 
 			for (UInt16 b = 0; b < _boneCount; b++)
@@ -163,7 +163,7 @@ namespace CDC.Objects.Models
 			return;
 		}
 
-		protected override void ReadPolygons(BinaryReader xReader, CDC.Objects.ExportOptions options)
+		protected override void ReadPolygons(BinaryReader reader, CDC.Objects.ExportOptions options)
 		{
 			if (_materialStart == 0)
 			{
@@ -175,10 +175,10 @@ namespace CDC.Objects.Models
 			_groupCount = 0;
 			while (uMaterialPosition != 0)
 			{
-				xReader.BaseStream.Position = uMaterialPosition;
+				reader.BaseStream.Position = uMaterialPosition;
 				SR2TriangleList xTriangleList = new SR2TriangleList();
 
-				if (ReadTriangleList(xReader, ref xTriangleList)/* && xTriangleList.m_usGroupID == 0*/)
+				if (ReadTriangleList(reader, ref xTriangleList)/* && xTriangleList.m_usGroupID == 0*/)
 				{
 					xTriangleListList.Add(xTriangleList);
 					_polygonCount += xTriangleList.m_uPolygonCount;
@@ -226,12 +226,12 @@ namespace CDC.Objects.Models
 						continue;
 					}
 
-					xReader.BaseStream.Position = xTriangleList.m_uPolygonStart;
+					reader.BaseStream.Position = xTriangleList.m_uPolygonStart;
 					for (int pl = 0; pl < xTriangleList.m_uPolygonCount; pl++)
 					{
-						_trees[t].mesh.polygons[tp].v1 = _geometry.Vertices[xReader.ReadUInt16()];
-						_trees[t].mesh.polygons[tp].v2 = _geometry.Vertices[xReader.ReadUInt16()];
-						_trees[t].mesh.polygons[tp].v3 = _geometry.Vertices[xReader.ReadUInt16()];
+						_trees[t].mesh.polygons[tp].v1 = _geometry.Vertices[reader.ReadUInt16()];
+						_trees[t].mesh.polygons[tp].v2 = _geometry.Vertices[reader.ReadUInt16()];
+						_trees[t].mesh.polygons[tp].v3 = _geometry.Vertices[reader.ReadUInt16()];
 						_trees[t].mesh.polygons[tp].material = xTriangleList.m_xMaterial;
 						tp++;
 					}
@@ -249,26 +249,26 @@ namespace CDC.Objects.Models
 			UInt32 p = 0;
 			foreach (SR2TriangleList xTriangleList in xTriangleListList)
 			{
-				xReader.BaseStream.Position = xTriangleList.m_uPolygonStart;
+				reader.BaseStream.Position = xTriangleList.m_uPolygonStart;
 				for (int pl = 0; pl < xTriangleList.m_uPolygonCount; pl++)
 				{
-					_polygons[p].v1 = _geometry.Vertices[xReader.ReadUInt16()];
-					_polygons[p].v2 = _geometry.Vertices[xReader.ReadUInt16()];
-					_polygons[p].v3 = _geometry.Vertices[xReader.ReadUInt16()];
+					_polygons[p].v1 = _geometry.Vertices[reader.ReadUInt16()];
+					_polygons[p].v2 = _geometry.Vertices[reader.ReadUInt16()];
+					_polygons[p].v3 = _geometry.Vertices[reader.ReadUInt16()];
 					_polygons[p].material = xTriangleList.m_xMaterial;
 					p++;
 				}
 			}
 		}
 
-		protected virtual bool ReadTriangleList(BinaryReader xReader, ref SR2TriangleList xTriangleList)
+		protected virtual bool ReadTriangleList(BinaryReader reader, ref SR2TriangleList xTriangleList)
 		{
-			xTriangleList.m_uPolygonCount = (UInt32)xReader.ReadUInt16() / 3;
-			xTriangleList.m_usGroupID = xReader.ReadUInt16(); // Used by MON_SetAccessories and INSTANCE_UnhideAllDrawGroups
-			xTriangleList.m_uPolygonStart = (UInt32)(xReader.BaseStream.Position) + 0x0C;
-			UInt16 xWord0 = xReader.ReadUInt16();
-			UInt16 xWord1 = xReader.ReadUInt16();
-			UInt32 xDWord0 = xReader.ReadUInt32();
+			xTriangleList.m_uPolygonCount = (UInt32)reader.ReadUInt16() / 3;
+			xTriangleList.m_usGroupID = reader.ReadUInt16(); // Used by MON_SetAccessories and INSTANCE_UnhideAllDrawGroups
+			xTriangleList.m_uPolygonStart = (UInt32)(reader.BaseStream.Position) + 0x0C;
+			UInt16 xWord0 = reader.ReadUInt16();
+			UInt16 xWord1 = reader.ReadUInt16();
+			UInt32 xDWord0 = reader.ReadUInt32();
 			xTriangleList.m_xMaterial = new Material();
 			xTriangleList.m_xMaterial.visible = ((xWord1 & 0x0800) == 0);
 			xTriangleList.m_xMaterial.textureID = (UInt16)(xWord0 & 0x0FFF);
@@ -282,7 +282,7 @@ namespace CDC.Objects.Models
 				xTriangleList.m_xMaterial.textureUsed = false;
 				//xMaterial.colour = 0x00000000;
 			}
-			xTriangleList.m_uNext = xReader.ReadUInt32();
+			xTriangleList.m_uNext = reader.ReadUInt32();
 
 			return (xTriangleList.m_xMaterial.visible);
 		}

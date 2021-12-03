@@ -48,7 +48,7 @@ namespace CDC.Objects.Models
 		public Material[] Materials { get { return _materials; } }
 		public Platform Platform { get { return _platform; } }
 
-		protected SRModel(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
+		protected SRModel(BinaryReader reader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
 		{
 			_name = strModelName;
 			_modelTypePrefix = "";

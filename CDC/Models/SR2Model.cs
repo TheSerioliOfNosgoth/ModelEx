@@ -273,12 +273,12 @@ namespace CDC.Objects.Models
 			public UInt32 m_uNext;
 		}
 
-		protected SR2Model(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion) :
-			base(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
+		protected SR2Model(BinaryReader reader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion) :
+			base(reader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
 		{
 		}
 
-		protected virtual void ReadData(BinaryReader xReader, CDC.Objects.ExportOptions options)
+		protected virtual void ReadData(BinaryReader reader, CDC.Objects.ExportOptions options)
 		{
 			// Get the normals
 			_geometry.Normals = new Vector[s_aiNormals.Length / 3];
@@ -302,11 +302,11 @@ namespace CDC.Objects.Models
 			_geometry.Colours = new UInt32[_vertexCount];
 			_geometry.ColoursAlt = new UInt32[_vertexCount];
 			_geometry.UVs = new UV[_vertexCount];
-			ReadVertices(xReader, options);
+			ReadVertices(reader, options);
 
 			// Get the polygons
 			_polygons = new Polygon[_polygonCount];
-			ReadPolygons(xReader, options);
+			ReadPolygons(reader, options);
 
 			HandleDebugRendering(options);
 
@@ -314,35 +314,35 @@ namespace CDC.Objects.Models
 			GenerateOutput();
 		}
 
-		protected virtual void ReadVertex(BinaryReader xReader, int v, CDC.Objects.ExportOptions options)
+		protected virtual void ReadVertex(BinaryReader reader, int v, CDC.Objects.ExportOptions options)
 		{
 			_geometry.Vertices[v].positionID = v;
 
 			// Read the local coordinates
-			_geometry.PositionsRaw[v].x = (float)xReader.ReadInt16();
-			_geometry.PositionsRaw[v].y = (float)xReader.ReadInt16();
-			_geometry.PositionsRaw[v].z = (float)xReader.ReadInt16();
-			xReader.BaseStream.Position += 0x02;
+			_geometry.PositionsRaw[v].x = (float)reader.ReadInt16();
+			_geometry.PositionsRaw[v].y = (float)reader.ReadInt16();
+			_geometry.PositionsRaw[v].z = (float)reader.ReadInt16();
+			reader.BaseStream.Position += 0x02;
 		}
 
-		protected virtual void ReadVertices(BinaryReader xReader, CDC.Objects.ExportOptions options)
+		protected virtual void ReadVertices(BinaryReader reader, CDC.Objects.ExportOptions options)
 		{
 			if (_vertexStart == 0 || _vertexCount == 0)
 			{
 				return;
 			}
 
-			xReader.BaseStream.Position = _vertexStart;
+			reader.BaseStream.Position = _vertexStart;
 
 			for (int v = 0; v < _vertexCount; v++)
 			{
-				ReadVertex(xReader, v, options);
+				ReadVertex(reader, v, options);
 			}
 
 			return;
 		}
 
-		protected abstract void ReadPolygons(BinaryReader xReader, CDC.Objects.ExportOptions options);
+		protected abstract void ReadPolygons(BinaryReader reader, CDC.Objects.ExportOptions options);
 
 		protected virtual void GenerateOutput()
 		{

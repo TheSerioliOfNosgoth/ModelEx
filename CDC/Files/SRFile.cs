@@ -212,29 +212,29 @@ namespace CDC.Objects
 			_game = game;
 
 			FileStream xFile = new FileStream(strFileName, FileMode.Open, FileAccess.Read);
-			BinaryReader xReader = new BinaryReader(xFile, System.Text.Encoding.ASCII);
+			BinaryReader reader = new BinaryReader(xFile, System.Text.Encoding.ASCII);
 			MemoryStream xStream = new MemoryStream((int)xFile.Length);
-			BinaryWriter xWriter = new BinaryWriter(xStream, System.Text.Encoding.ASCII);
+			BinaryWriter writer = new BinaryWriter(xStream, System.Text.Encoding.ASCII);
 
 			//String strDebugFileName = Path.GetDirectoryName(strFileName) + "\\" + Path.GetFileNameWithoutExtension(strFileName) + "-Debug.txt";
 			//m_xLogFile = File.CreateText(strDebugFileName);
 
-			ResolvePointers(xReader, xWriter);
-			xReader.Close();
-			xReader = new BinaryReader(xStream, System.Text.Encoding.ASCII);
+			ResolvePointers(reader, writer);
+			reader.Close();
+			reader = new BinaryReader(xStream, System.Text.Encoding.ASCII);
 
-			ReadHeaderData(xReader, options);
+			ReadHeaderData(reader, options);
 
 			if (_asset == Asset.Object)
 			{
-				ReadObjectData(xReader, options);
+				ReadObjectData(reader, options);
 			}
 			else
 			{
-				ReadUnitData(xReader, options);
+				ReadUnitData(reader, options);
 			}
 
-			xReader.Close();
+			reader.Close();
 
 			if (m_xLogFile != null)
 			{
@@ -243,13 +243,13 @@ namespace CDC.Objects
 			}
 		}
 
-		protected abstract void ReadHeaderData(BinaryReader xReader, CDC.Objects.ExportOptions options);
+		protected abstract void ReadHeaderData(BinaryReader reader, CDC.Objects.ExportOptions options);
 
-		protected abstract void ReadObjectData(BinaryReader xReader, CDC.Objects.ExportOptions options);
+		protected abstract void ReadObjectData(BinaryReader reader, CDC.Objects.ExportOptions options);
 
-		protected abstract void ReadUnitData(BinaryReader xReader, CDC.Objects.ExportOptions options);
+		protected abstract void ReadUnitData(BinaryReader reader, CDC.Objects.ExportOptions options);
 
-		protected abstract void ResolvePointers(BinaryReader xReader, BinaryWriter xWriter);
+		protected abstract void ResolvePointers(BinaryReader reader, BinaryWriter writer);
 
 		public bool ExportToFile(String fileName, ExportOptions options)
 		{

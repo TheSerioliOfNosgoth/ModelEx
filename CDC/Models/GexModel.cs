@@ -258,13 +258,13 @@ namespace CDC.Objects.Models
 
 		protected List<ushort> _tPages = null;
 
-		protected GexModel(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion, List<ushort> tPages) :
-			base(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
+		protected GexModel(BinaryReader reader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion, List<ushort> tPages) :
+			base(reader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
 		{
 			_tPages = tPages;
 		}
 
-		protected virtual void ReadData(BinaryReader xReader, CDC.Objects.ExportOptions options)
+		protected virtual void ReadData(BinaryReader reader, CDC.Objects.ExportOptions options)
 		{
 			// Get the normals
 			_geometry.Normals = new Vector[s_aiNormals.Length / 3];
@@ -282,47 +282,47 @@ namespace CDC.Objects.Models
 			_geometry.PositionsAltPhys = new Vector[_vertexCount];
 			_geometry.Colours = new UInt32[_vertexCount];
 			_geometry.ColoursAlt = new UInt32[_vertexCount];
-			ReadVertices(xReader, options);
+			ReadVertices(reader, options);
 
 			// Get the polygons
 			_polygons = new Polygon[_polygonCount];
 			_geometry.UVs = new UV[_indexCount];
-			ReadPolygons(xReader, options);
+			ReadPolygons(reader, options);
 
 			// Generate the output
 			GenerateOutput();
 		}
 
-		protected virtual void ReadVertex(BinaryReader xReader, int v, CDC.Objects.ExportOptions options)
+		protected virtual void ReadVertex(BinaryReader reader, int v, CDC.Objects.ExportOptions options)
 		{
 			_geometry.Vertices[v].positionID = v;
 
 			// Read the local coordinates
-			_geometry.PositionsRaw[v].x = (float)xReader.ReadInt16();
-			_geometry.PositionsRaw[v].y = (float)xReader.ReadInt16();
-			_geometry.PositionsRaw[v].z = (float)xReader.ReadInt16();
+			_geometry.PositionsRaw[v].x = (float)reader.ReadInt16();
+			_geometry.PositionsRaw[v].y = (float)reader.ReadInt16();
+			_geometry.PositionsRaw[v].z = (float)reader.ReadInt16();
 		}
 
-		protected virtual void ReadVertices(BinaryReader xReader, CDC.Objects.ExportOptions options)
+		protected virtual void ReadVertices(BinaryReader reader, CDC.Objects.ExportOptions options)
 		{
 			if (_vertexStart == 0 || _vertexCount == 0)
 			{
 				return;
 			}
 
-			xReader.BaseStream.Position = _vertexStart;
+			reader.BaseStream.Position = _vertexStart;
 
 			for (int v = 0; v < _vertexCount; v++)
 			{
-				ReadVertex(xReader, v, options);
+				ReadVertex(reader, v, options);
 			}
 
 			return;
 		}
 
-		protected abstract void ReadPolygons(BinaryReader xReader, CDC.Objects.ExportOptions options);
+		protected abstract void ReadPolygons(BinaryReader reader, CDC.Objects.ExportOptions options);
 
-		protected virtual void ReadMaterial(BinaryReader xReader, int p, CDC.Objects.ExportOptions options)
+		protected virtual void ReadMaterial(BinaryReader reader, int p, CDC.Objects.ExportOptions options)
 		{
 			int v1 = (p * 3) + 0;
 			int v2 = (p * 3) + 1;
@@ -332,20 +332,20 @@ namespace CDC.Objects.Models
 			_polygons[p].v2.UVID = v2;
 			_polygons[p].v3.UVID = v3;
 
-			Byte v1U = xReader.ReadByte();
-			Byte v1V = xReader.ReadByte();
+			Byte v1U = reader.ReadByte();
+			Byte v1V = reader.ReadByte();
 
-			ushort paletteVal = (ushort)(xReader.ReadUInt16() & 0x7FDF);
+			ushort paletteVal = (ushort)(reader.ReadUInt16() & 0x7FDF);
 			ushort rowVal = (ushort)((ushort)(paletteVal << 2) >> 8);
 			ushort colVal = (ushort)((ushort)(paletteVal << 11) >> 11);
 			_polygons[p].material.clutValue = paletteVal;
 			_polygons[p].paletteColumn = colVal;
 			_polygons[p].paletteRow = rowVal;
 
-			Byte v2U = xReader.ReadByte();
-			Byte v2V = xReader.ReadByte();
+			Byte v2U = reader.ReadByte();
+			Byte v2V = reader.ReadByte();
 
-			_polygons[p].material.texturePage = (ushort)(xReader.ReadUInt16() & 0x0097);
+			_polygons[p].material.texturePage = (ushort)(reader.ReadUInt16() & 0x0097);
 
 			_polygons[p].material.textureID = (ushort)_tPages.FindIndex(x => x == _polygons[p].material.texturePage);
 			if (_polygons[p].material.textureID == 0xFFFF)
@@ -354,8 +354,8 @@ namespace CDC.Objects.Models
 				_tPages.Add(_polygons[p].material.texturePage);
 			}
 
-			Byte v3U = xReader.ReadByte();
-			Byte v3V = xReader.ReadByte();
+			Byte v3U = reader.ReadByte();
+			Byte v3V = reader.ReadByte();
 
 			_geometry.UVs[v1].u = ((float)v1U) / 255.0f;
 			_geometry.UVs[v1].v = ((float)v1V) / 255.0f;

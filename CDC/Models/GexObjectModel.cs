@@ -6,74 +6,74 @@ namespace CDC.Objects.Models
 {
 	public class GexObjectModel : GexModel
 	{
-		public GexObjectModel(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion, List<ushort> tPages)
-			: base(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion, tPages)
+		public GexObjectModel(BinaryReader reader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion, List<ushort> tPages)
+			: base(reader, uDataStart, uModelData, strModelName, ePlatform, uVersion, tPages)
 		{
-			xReader.BaseStream.Position = _modelData;
-			_vertexCount = xReader.ReadUInt16();
-			xReader.BaseStream.Position += 0x02;
-			_polygonCount = xReader.ReadUInt16();
-			_boneCount = xReader.ReadUInt16();
-			_vertexStart = xReader.ReadUInt32();
+			reader.BaseStream.Position = _modelData;
+			_vertexCount = reader.ReadUInt16();
+			reader.BaseStream.Position += 0x02;
+			_polygonCount = reader.ReadUInt16();
+			_boneCount = reader.ReadUInt16();
+			_vertexStart = reader.ReadUInt32();
 			_vertexScale.x = 1.0f;
 			_vertexScale.y = 1.0f;
 			_vertexScale.z = 1.0f;
 			// Vertex colours here? Objects have them in Gex?
-			xReader.BaseStream.Position += 0x08;
-			_polygonStart = xReader.ReadUInt32();
-			_boneStart = xReader.ReadUInt32();
-			_materialStart = xReader.ReadUInt32();
+			reader.BaseStream.Position += 0x08;
+			_polygonStart = reader.ReadUInt32();
+			_boneStart = reader.ReadUInt32();
+			_materialStart = reader.ReadUInt32();
 			_materialCount = 0;
 			_groupCount = 1;
 
 			_trees = new Tree[_groupCount];
 		}
 
-		public static GexObjectModel Load(BinaryReader xReader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 uVersion, List<ushort> tPages, CDC.Objects.ExportOptions options)
+		public static GexObjectModel Load(BinaryReader reader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 uVersion, List<ushort> tPages, CDC.Objects.ExportOptions options)
 		{
-			xReader.BaseStream.Position = uModelData + (0x00000004 * usIndex);
-			uModelData = xReader.ReadUInt32();
-			xReader.BaseStream.Position = uModelData;
-			GexObjectModel xModel = new GexObjectModel(xReader, uDataStart, uModelData, strModelName, ePlatform, uVersion, tPages);
-			xModel.ReadData(xReader, options);
+			reader.BaseStream.Position = uModelData + (0x00000004 * usIndex);
+			uModelData = reader.ReadUInt32();
+			reader.BaseStream.Position = uModelData;
+			GexObjectModel xModel = new GexObjectModel(reader, uDataStart, uModelData, strModelName, ePlatform, uVersion, tPages);
+			xModel.ReadData(reader, options);
 			return xModel;
 		}
 
-		protected override void ReadVertex(BinaryReader xReader, int v, CDC.Objects.ExportOptions options)
+		protected override void ReadVertex(BinaryReader reader, int v, CDC.Objects.ExportOptions options)
 		{
-			base.ReadVertex(xReader, v, options);
+			base.ReadVertex(reader, v, options);
 
 			_geometry.PositionsPhys[v] = _geometry.PositionsRaw[v];
 			_geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
 
-			_geometry.Vertices[v].normalID = xReader.ReadUInt16();
+			_geometry.Vertices[v].normalID = reader.ReadUInt16();
 		}
 
-		protected override void ReadVertices(BinaryReader xReader, CDC.Objects.ExportOptions options)
+		protected override void ReadVertices(BinaryReader reader, CDC.Objects.ExportOptions options)
 		{
-			base.ReadVertices(xReader, options);
+			base.ReadVertices(reader, options);
 
-			ReadArmature(xReader);
+			ReadArmature(reader);
 			ApplyArmature();
 		}
 
-		protected virtual void ReadArmature(BinaryReader xReader)
+		protected virtual void ReadArmature(BinaryReader reader)
 		{
 			if (_boneStart == 0 || _boneCount == 0) return;
 
-			xReader.BaseStream.Position = _boneStart;
+			reader.BaseStream.Position = _boneStart;
 			_bones = new Bone[_boneCount];
 			_bones = new Bone[_boneCount];
 			for (UInt16 b = 0; b < _boneCount; b++)
 			{
 				// Get the bone data
-				xReader.BaseStream.Position += 8;
-				_bones[b].vFirst = xReader.ReadUInt16();
-				_bones[b].vLast = xReader.ReadUInt16();
-				_bones[b].localPos.x = (float)xReader.ReadInt16();
-				_bones[b].localPos.y = (float)xReader.ReadInt16();
-				_bones[b].localPos.z = (float)xReader.ReadInt16();
-				_bones[b].parentID1 = xReader.ReadUInt16();
+				reader.BaseStream.Position += 8;
+				_bones[b].vFirst = reader.ReadUInt16();
+				_bones[b].vLast = reader.ReadUInt16();
+				_bones[b].localPos.x = (float)reader.ReadInt16();
+				_bones[b].localPos.y = (float)reader.ReadInt16();
+				_bones[b].localPos.z = (float)reader.ReadInt16();
+				_bones[b].parentID1 = reader.ReadUInt16();
 
 				// Combine this bone with it's ancestors is there are any
 				if ((_bones[b].vFirst != 0xFFFF) && (_bones[b].vLast != 0xFFFF))
@@ -85,7 +85,7 @@ namespace CDC.Objects.Models
 						ancestorID = _bones[ancestorID].parentID1;
 					}
 				}
-				xReader.BaseStream.Position += 4;
+				reader.BaseStream.Position += 4;
 			}
 			return;
 		}
@@ -109,19 +109,19 @@ namespace CDC.Objects.Models
 			return;
 		}
 
-		protected virtual void ReadPolygon(BinaryReader xReader, int p, CDC.Objects.ExportOptions options)
+		protected virtual void ReadPolygon(BinaryReader reader, int p, CDC.Objects.ExportOptions options)
 		{
-			UInt32 uPolygonPosition = (UInt32)xReader.BaseStream.Position;
+			UInt32 uPolygonPosition = (UInt32)reader.BaseStream.Position;
 
-			_polygons[p].v1 = _geometry.Vertices[xReader.ReadUInt16()];
-			_polygons[p].v2 = _geometry.Vertices[xReader.ReadUInt16()];
-			_polygons[p].v3 = _geometry.Vertices[xReader.ReadUInt16()];
+			_polygons[p].v1 = _geometry.Vertices[reader.ReadUInt16()];
+			_polygons[p].v2 = _geometry.Vertices[reader.ReadUInt16()];
+			_polygons[p].v3 = _geometry.Vertices[reader.ReadUInt16()];
 
 			_polygons[p].material = new Material();
 			_polygons[p].material.visible = true;
 			_polygons[p].material.textureUsed = false;
-			xReader.ReadByte();
-			_polygons[p].material.polygonFlags = xReader.ReadByte();
+			reader.ReadByte();
+			_polygons[p].material.polygonFlags = reader.ReadByte();
 
 			if ((_polygons[p].material.polygonFlags & 0x02) == 0x02)
 			{
@@ -130,37 +130,37 @@ namespace CDC.Objects.Models
 
 			if (_polygons[p].material.textureUsed)
 			{
-				UInt32 uMaterialPosition = xReader.ReadUInt32();
+				UInt32 uMaterialPosition = reader.ReadUInt32();
 
-				xReader.BaseStream.Position = uMaterialPosition;
-				ReadMaterial(xReader, p, options);
+				reader.BaseStream.Position = uMaterialPosition;
+				ReadMaterial(reader, p, options);
 
-				xReader.BaseStream.Position += 0x02;
+				reader.BaseStream.Position += 0x02;
 
-				_polygons[p].material.colour = xReader.ReadUInt32() | 0xFF000000;
+				_polygons[p].material.colour = reader.ReadUInt32() | 0xFF000000;
 			}
 			else
 			{
-				_polygons[p].material.colour = xReader.ReadUInt32() | 0xFF000000;
+				_polygons[p].material.colour = reader.ReadUInt32() | 0xFF000000;
 			}
 
 			Utility.FlipRedAndBlue(ref _polygons[p].material.colour);
 
-			xReader.BaseStream.Position = uPolygonPosition + 0x0C;
+			reader.BaseStream.Position = uPolygonPosition + 0x0C;
 		}
 
-		protected override void ReadPolygons(BinaryReader xReader, CDC.Objects.ExportOptions options)
+		protected override void ReadPolygons(BinaryReader reader, CDC.Objects.ExportOptions options)
 		{
 			if (_polygonStart == 0 || _polygonCount == 0)
 			{
 				return;
 			}
 
-			xReader.BaseStream.Position = _polygonStart;
+			reader.BaseStream.Position = _polygonStart;
 
 			for (UInt16 p = 0; p < _polygonCount; p++)
 			{
-				ReadPolygon(xReader, p, options);
+				ReadPolygon(reader, p, options);
 			}
 
 			HandleDebugRendering(options);
