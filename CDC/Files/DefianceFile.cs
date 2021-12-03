@@ -54,10 +54,11 @@ namespace CDC.Objects
             //}
 
             // Model data
-            xReader.BaseStream.Position = _dataStart + 0x0000002C;
-            //xReader.BaseStream.Position = _dataStart + xReader.ReadUInt32();
-            _modelCount = 1; //xReader.ReadUInt16();
+            xReader.BaseStream.Position = _dataStart + 0x00000028;
+            _modelCount = xReader.ReadUInt16();
+            _modelCount = 1; // There are multiple models, but Defiance might have too many. Override for now.
             _animCount = 0; //xReader.ReadUInt16();
+            xReader.BaseStream.Position += 0x02;
             _modelStart = _dataStart + xReader.ReadUInt32();
             _animStart = 0; //m_uDataStart + xReader.ReadUInt32();
 
@@ -157,10 +158,29 @@ namespace CDC.Objects
 
         protected override void ResolvePointers(BinaryReader xReader, BinaryWriter xWriter)
         {
+/*
+ * BlockInfo // AKA SectionInfo
+ * {
+ *      uint32 size;
+ *      uint32 type;
+ *      uint32 id;
+ *  }
+ *  
+ *  BlockList // AKA SectionList
+ *  {
+ *      uint32 versionNumber;
+ *      uint32 numBlocks;
+ *      BlockInfo blockList[0];
+ *  }
+ */
+
             xReader.BaseStream.Position = 0;
             xWriter.BaseStream.Position = 0;
 
+            // This should be 11, otherwise it gives:
+            // "Wrong mkloadob version %s %x\nrebuild needed\n"
             xReader.BaseStream.Position += 0x04;
+
             UInt32 uRegionCount = xReader.ReadUInt32();
 
             UInt32 uTotal = 0;

@@ -185,6 +185,19 @@ namespace ModelEx
 
                 blendStateAddColour = BlendState.FromDescription(DeviceManager.Instance.device, bBlendStateAddColour);
 
+                // UseAlphaMask = textureAttributes & 0x0010
+                /*RenderTargetBlendDescription rtBlendSubstactColour = new RenderTargetBlendDescription()
+                {
+                    BlendEnable = true,
+                    BlendOperation = BlendOperation.ReverseSubtract,
+                    RenderTargetWriteMask = ColorWriteMaskFlags.All,
+                    SourceBlend = BlendOption.SourceColor, // One works too
+                    DestinationBlend = BlendOption.InverseSourceColor, // One works too
+                    BlendOperationAlpha = BlendOperation.Add,
+                    SourceBlendAlpha = BlendOption.One,
+                    DestinationBlendAlpha = BlendOption.Zero
+                };*/
+
                 RenderTargetBlendDescription rtBlendDepth = new RenderTargetBlendDescription()
                 {
                     BlendEnable = false,

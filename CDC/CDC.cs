@@ -72,6 +72,7 @@ namespace CDC
         public UInt16 parentID1;        // ID of parent bone 1
         public UInt16 parentID2;        // ID of parent bone 2
         public UInt32 flags;            // Flags including which parent to use.
+        public float weight;
     }
 
     public struct Normal

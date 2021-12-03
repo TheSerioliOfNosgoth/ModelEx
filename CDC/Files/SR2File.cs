@@ -54,9 +54,11 @@ namespace CDC.Objects
             //}
 
             // Model data
-            xReader.BaseStream.Position = _dataStart + 0x0000000C;
-            _modelCount = 1; //xReader.ReadUInt16();
+            xReader.BaseStream.Position = _dataStart + 0x00000008;
+            _modelCount = xReader.ReadUInt16();
+            _modelCount = 1; // There are multiple models, but Defiance might have too many. Override for now.
             _animCount = 0; //xReader.ReadUInt16();
+            xReader.BaseStream.Position += 0x02;
             _modelStart = _dataStart + xReader.ReadUInt32();
             _animStart = 0; //m_uDataStart + xReader.ReadUInt32();
 
