@@ -8,185 +8,185 @@ using System.Runtime.InteropServices;
 
 namespace ModelEx
 {
-    public class IncludeFX : Include
-    {
-        string _includeDirectory = "";
+	public class IncludeFX : Include
+	{
+		string _includeDirectory = "";
 
-        public IncludeFX(string includeDirectory)
-        {
-            _includeDirectory = includeDirectory;
-        }
+		public IncludeFX(string includeDirectory)
+		{
+			_includeDirectory = includeDirectory;
+		}
 
-        public void Close(Stream stream)
-        {
-            stream.Close();
-            stream.Dispose();
-        }
-        public void Open(IncludeType type, string fileName, Stream parentStream, out Stream stream)
-        {
-            stream = new FileStream(Path.Combine(_includeDirectory, fileName), FileMode.Open);
-        }
-    }
+		public void Close(Stream stream)
+		{
+			stream.Close();
+			stream.Dispose();
+		}
+		public void Open(IncludeType type, string fileName, Stream parentStream, out Stream stream)
+		{
+			stream = new FileStream(Path.Combine(_includeDirectory, fileName), FileMode.Open);
+		}
+	}
 
 
-    [StructLayout(LayoutKind.Explicit, Size = 0x140)]
-    public struct EffectConstants
-    {
-        [FieldOffset(0)]
-        public Matrix World;
-        [FieldOffset(0x40)]
-        public Matrix View;
-        [FieldOffset(0x80)]
-        public Matrix Projection;
-        [FieldOffset(0xC0)]
-        public Vector3 CameraPosition;
+	[StructLayout(LayoutKind.Explicit, Size = 0x140)]
+	public struct EffectConstants
+	{
+		[FieldOffset(0)]
+		public Matrix World;
+		[FieldOffset(0x40)]
+		public Matrix View;
+		[FieldOffset(0x80)]
+		public Matrix Projection;
+		[FieldOffset(0xC0)]
+		public Vector3 CameraPosition;
 
-        // Lights
-        [FieldOffset(0xD0)]
-        public Vector3 LightDirection;
-        [FieldOffset(0xE0)]
-        public Vector4 LightColor;
+		// Lights
+		[FieldOffset(0xD0)]
+		public Vector3 LightDirection;
+		[FieldOffset(0xE0)]
+		public Vector4 LightColor;
 
-        // Colors
-        [FieldOffset(0xF0)]
-        public Vector4 AmbientColor;
-        [FieldOffset(0x100)]
-        public Vector4 DiffuseColor;
-        [FieldOffset(0x110)]
-        public Vector4 SpecularColor;
+		// Colors
+		[FieldOffset(0xF0)]
+		public Vector4 AmbientColor;
+		[FieldOffset(0x100)]
+		public Vector4 DiffuseColor;
+		[FieldOffset(0x110)]
+		public Vector4 SpecularColor;
 
-        [FieldOffset(0x120)]
-        public float SpecularPower;
+		[FieldOffset(0x120)]
+		public float SpecularPower;
 
-        // Texture
-        [FieldOffset(0x124)]
-        public bool UseTexture;
-        [FieldOffset(0x128)]
-        public float VertexColorFactor;
+		// Texture
+		[FieldOffset(0x124)]
+		public bool UseTexture;
+		[FieldOffset(0x128)]
+		public float VertexColorFactor;
 
-        // Rasterizer
-        [FieldOffset(0x12C)]
-        public float DepthBias;
+		// Rasterizer
+		[FieldOffset(0x12C)]
+		public float DepthBias;
 
-        // Realm
-        [FieldOffset(0x130)]
-        public float RealmBlend;
-    }
+		// Realm
+		[FieldOffset(0x130)]
+		public float RealmBlend;
+	}
 
-    public abstract class Effect
-    {
-        protected RasterizerState rasterizerStateDefault;
-        protected RasterizerState rasterizerStateDefaultNC;
-        protected RasterizerState rasterizerStateWireframe;
+	public abstract class Effect
+	{
+		protected RasterizerState rasterizerStateDefault;
+		protected RasterizerState rasterizerStateDefaultNC;
+		protected RasterizerState rasterizerStateWireframe;
 
-        protected BlendState blendStateDefault;
-        protected BlendState blendStateAddColour;
-        protected BlendState blendStateDepth;
+		protected BlendState blendStateDefault;
+		protected BlendState blendStateAddColour;
+		protected BlendState blendStateDepth;
 
-        protected DepthStencilState depthStencilStateSolid;
-        protected DepthStencilState depthStencilStateTranslucent;
-        protected DepthStencilState depthStencilStateDepth;
+		protected DepthStencilState depthStencilStateSolid;
+		protected DepthStencilState depthStencilStateTranslucent;
+		protected DepthStencilState depthStencilStateDepth;
 
-        protected bool useBackfaceCulling = true;
+		protected bool useBackfaceCulling = true;
 
-        // Render modes
-        public int BlendMode;
+		// Render modes
+		public int BlendMode;
 
-        public virtual void Dispose()
-        {
-            rasterizerStateDefault?.Dispose();
-            rasterizerStateDefaultNC?.Dispose();
-            rasterizerStateWireframe?.Dispose();
+		public virtual void Dispose()
+		{
+			rasterizerStateDefault?.Dispose();
+			rasterizerStateDefaultNC?.Dispose();
+			rasterizerStateWireframe?.Dispose();
 
-            blendStateDefault?.Dispose();
-            blendStateAddColour?.Dispose();
-            blendStateDepth?.Dispose();
+			blendStateDefault?.Dispose();
+			blendStateAddColour?.Dispose();
+			blendStateDepth?.Dispose();
 
-            depthStencilStateSolid?.Dispose();
-            depthStencilStateTranslucent?.Dispose();
-            depthStencilStateDepth?.Dispose();
-        }
+			depthStencilStateSolid?.Dispose();
+			depthStencilStateTranslucent?.Dispose();
+			depthStencilStateDepth?.Dispose();
+		}
 
-        public virtual void Initialize()
-        {
-            try
-            {
-                #region Rasterizer States
+		public virtual void Initialize()
+		{
+			try
+			{
+				#region Rasterizer States
 
-                RasterizerStateDescription rStateDefault = new RasterizerStateDescription()
-                {
-                    FillMode = FillMode.Solid,
-                    CullMode = CullMode.Back,
-                    IsFrontCounterclockwise = true,
-                    DepthBias = 0,
-                    DepthBiasClamp = 0,
-                    //SlopeScaledDepthBias = 0.0f,
-                    //IsDepthClipEnabled = true
-                };
+				RasterizerStateDescription rStateDefault = new RasterizerStateDescription()
+				{
+					FillMode = FillMode.Solid,
+					CullMode = CullMode.Back,
+					IsFrontCounterclockwise = true,
+					DepthBias = 0,
+					DepthBiasClamp = 0,
+					//SlopeScaledDepthBias = 0.0f,
+					//IsDepthClipEnabled = true
+				};
 
-                rasterizerStateDefault = RasterizerState.FromDescription(DeviceManager.Instance.device, rStateDefault);
+				rasterizerStateDefault = RasterizerState.FromDescription(DeviceManager.Instance.device, rStateDefault);
 
-                RasterizerStateDescription rStateDefaultNC = rStateDefault;
-                rStateDefaultNC.CullMode = CullMode.None;
-                rasterizerStateDefaultNC = RasterizerState.FromDescription(DeviceManager.Instance.device, rStateDefaultNC);
+				RasterizerStateDescription rStateDefaultNC = rStateDefault;
+				rStateDefaultNC.CullMode = CullMode.None;
+				rasterizerStateDefaultNC = RasterizerState.FromDescription(DeviceManager.Instance.device, rStateDefaultNC);
 
-                RasterizerStateDescription rStateWireframe = new RasterizerStateDescription()
-                {
-                    FillMode = FillMode.Wireframe,
-                    CullMode = CullMode.None,
-                    IsFrontCounterclockwise = true,
-                    DepthBias = 0,
-                    DepthBiasClamp = 0,
-                    //SlopeScaledDepthBias = 0.0f,
-                    //IsDepthClipEnabled = true
-                };
+				RasterizerStateDescription rStateWireframe = new RasterizerStateDescription()
+				{
+					FillMode = FillMode.Wireframe,
+					CullMode = CullMode.None,
+					IsFrontCounterclockwise = true,
+					DepthBias = 0,
+					DepthBiasClamp = 0,
+					//SlopeScaledDepthBias = 0.0f,
+					//IsDepthClipEnabled = true
+				};
 
-                rasterizerStateWireframe = RasterizerState.FromDescription(DeviceManager.Instance.device, rStateWireframe);
+				rasterizerStateWireframe = RasterizerState.FromDescription(DeviceManager.Instance.device, rStateWireframe);
 
-                #endregion
+				#endregion
 
-                #region Blend States
+				#region Blend States
 
-                RenderTargetBlendDescription rtBlendDefault = new RenderTargetBlendDescription()
-                {
-                    BlendEnable = true,
-                    BlendOperation = BlendOperation.Add,
-                    RenderTargetWriteMask = ColorWriteMaskFlags.All,
-                    SourceBlend = BlendOption.SourceAlpha,
-                    DestinationBlend = BlendOption.InverseSourceAlpha,
-                    BlendOperationAlpha = BlendOperation.Add,
-                    SourceBlendAlpha = BlendOption.One,
-                    DestinationBlendAlpha = BlendOption.Zero
-                };
+				RenderTargetBlendDescription rtBlendDefault = new RenderTargetBlendDescription()
+				{
+					BlendEnable = true,
+					BlendOperation = BlendOperation.Add,
+					RenderTargetWriteMask = ColorWriteMaskFlags.All,
+					SourceBlend = BlendOption.SourceAlpha,
+					DestinationBlend = BlendOption.InverseSourceAlpha,
+					BlendOperationAlpha = BlendOperation.Add,
+					SourceBlendAlpha = BlendOption.One,
+					DestinationBlendAlpha = BlendOption.Zero
+				};
 
-                BlendStateDescription bBlendStateDefault = new BlendStateDescription();
-                bBlendStateDefault.AlphaToCoverageEnable = false;
-                bBlendStateDefault.IndependentBlendEnable = false;
-                bBlendStateDefault.RenderTargets[0] = rtBlendDefault;
+				BlendStateDescription bBlendStateDefault = new BlendStateDescription();
+				bBlendStateDefault.AlphaToCoverageEnable = false;
+				bBlendStateDefault.IndependentBlendEnable = false;
+				bBlendStateDefault.RenderTargets[0] = rtBlendDefault;
 
-                blendStateDefault = BlendState.FromDescription(DeviceManager.Instance.device, bBlendStateDefault);
+				blendStateDefault = BlendState.FromDescription(DeviceManager.Instance.device, bBlendStateDefault);
 
-                RenderTargetBlendDescription rtBlendAddColour = new RenderTargetBlendDescription()
-                {
-                    BlendEnable = true,
-                    BlendOperation = BlendOperation.Add,
-                    RenderTargetWriteMask = ColorWriteMaskFlags.All,
-                    SourceBlend = BlendOption.One,
-                    DestinationBlend = BlendOption.One,
-                    BlendOperationAlpha = BlendOperation.Add,
-                    SourceBlendAlpha = BlendOption.One,
-                    DestinationBlendAlpha = BlendOption.Zero
-                };
+				RenderTargetBlendDescription rtBlendAddColour = new RenderTargetBlendDescription()
+				{
+					BlendEnable = true,
+					BlendOperation = BlendOperation.Add,
+					RenderTargetWriteMask = ColorWriteMaskFlags.All,
+					SourceBlend = BlendOption.One,
+					DestinationBlend = BlendOption.One,
+					BlendOperationAlpha = BlendOperation.Add,
+					SourceBlendAlpha = BlendOption.One,
+					DestinationBlendAlpha = BlendOption.Zero
+				};
 
-                BlendStateDescription bBlendStateAddColour = new BlendStateDescription();
-                bBlendStateAddColour.AlphaToCoverageEnable = false;
-                bBlendStateAddColour.IndependentBlendEnable = false;
-                bBlendStateAddColour.RenderTargets[0] = rtBlendAddColour;
+				BlendStateDescription bBlendStateAddColour = new BlendStateDescription();
+				bBlendStateAddColour.AlphaToCoverageEnable = false;
+				bBlendStateAddColour.IndependentBlendEnable = false;
+				bBlendStateAddColour.RenderTargets[0] = rtBlendAddColour;
 
-                blendStateAddColour = BlendState.FromDescription(DeviceManager.Instance.device, bBlendStateAddColour);
+				blendStateAddColour = BlendState.FromDescription(DeviceManager.Instance.device, bBlendStateAddColour);
 
-                // UseAlphaMask = textureAttributes & 0x0010
-                /*RenderTargetBlendDescription rtBlendSubstactColour = new RenderTargetBlendDescription()
+				// UseAlphaMask = textureAttributes & 0x0010
+				/*RenderTargetBlendDescription rtBlendSubstactColour = new RenderTargetBlendDescription()
                 {
                     BlendEnable = true,
                     BlendOperation = BlendOperation.ReverseSubtract,
@@ -198,119 +198,119 @@ namespace ModelEx
                     DestinationBlendAlpha = BlendOption.Zero
                 };*/
 
-                RenderTargetBlendDescription rtBlendDepth = new RenderTargetBlendDescription()
-                {
-                    BlendEnable = false,
-                    RenderTargetWriteMask = ColorWriteMaskFlags.None
-                };
+				RenderTargetBlendDescription rtBlendDepth = new RenderTargetBlendDescription()
+				{
+					BlendEnable = false,
+					RenderTargetWriteMask = ColorWriteMaskFlags.None
+				};
 
-                BlendStateDescription bBlendStateDepth = new BlendStateDescription();
-                bBlendStateDepth.AlphaToCoverageEnable = false;
-                bBlendStateDepth.IndependentBlendEnable = false;
-                bBlendStateDepth.RenderTargets[0] = rtBlendDepth;
+				BlendStateDescription bBlendStateDepth = new BlendStateDescription();
+				bBlendStateDepth.AlphaToCoverageEnable = false;
+				bBlendStateDepth.IndependentBlendEnable = false;
+				bBlendStateDepth.RenderTargets[0] = rtBlendDepth;
 
-                blendStateDepth = BlendState.FromDescription(DeviceManager.Instance.device, bBlendStateDepth);
+				blendStateDepth = BlendState.FromDescription(DeviceManager.Instance.device, bBlendStateDepth);
 
-                #endregion
+				#endregion
 
-                #region Depth Stencils
+				#region Depth Stencils
 
-                DepthStencilOperationDescription frontFace = new DepthStencilOperationDescription()
-                {
-                    FailOperation = StencilOperation.Keep,
-                    DepthFailOperation = StencilOperation.Increment,
-                    PassOperation = StencilOperation.Keep,
-                    Comparison = Comparison.Always
-                };
+				DepthStencilOperationDescription frontFace = new DepthStencilOperationDescription()
+				{
+					FailOperation = StencilOperation.Keep,
+					DepthFailOperation = StencilOperation.Increment,
+					PassOperation = StencilOperation.Keep,
+					Comparison = Comparison.Always
+				};
 
-                DepthStencilOperationDescription backFace = new DepthStencilOperationDescription()
-                {
-                    FailOperation = StencilOperation.Keep,
-                    DepthFailOperation = StencilOperation.Decrement,
-                    PassOperation = StencilOperation.Keep,
-                    Comparison = Comparison.Always
-                };
+				DepthStencilOperationDescription backFace = new DepthStencilOperationDescription()
+				{
+					FailOperation = StencilOperation.Keep,
+					DepthFailOperation = StencilOperation.Decrement,
+					PassOperation = StencilOperation.Keep,
+					Comparison = Comparison.Always
+				};
 
-                DepthStencilStateDescription dsStateSolid = new DepthStencilStateDescription
-                {
-                    DepthComparison = Comparison.LessEqual,
-                    DepthWriteMask = DepthWriteMask.All,
-                    IsDepthEnabled = true,
-                    IsStencilEnabled = false,
-                    StencilReadMask = 0xFF,
-                    StencilWriteMask = 0xFF,
-                    FrontFace = frontFace,
-                    BackFace = backFace
-                };
+				DepthStencilStateDescription dsStateSolid = new DepthStencilStateDescription
+				{
+					DepthComparison = Comparison.LessEqual,
+					DepthWriteMask = DepthWriteMask.All,
+					IsDepthEnabled = true,
+					IsStencilEnabled = false,
+					StencilReadMask = 0xFF,
+					StencilWriteMask = 0xFF,
+					FrontFace = frontFace,
+					BackFace = backFace
+				};
 
-                depthStencilStateSolid = DepthStencilState.FromDescription(DeviceManager.Instance.device, dsStateSolid);
+				depthStencilStateSolid = DepthStencilState.FromDescription(DeviceManager.Instance.device, dsStateSolid);
 
-                DepthStencilStateDescription dsStateTranslucent = new DepthStencilStateDescription
-                {
-                    DepthComparison = Comparison.LessEqual,
-                    DepthWriteMask = DepthWriteMask.Zero,
-                    IsDepthEnabled = true,
-                    IsStencilEnabled = false,
-                    StencilReadMask = 0xFF,
-                    StencilWriteMask = 0xFF,
-                    FrontFace = frontFace,
-                    BackFace = backFace
-                };
+				DepthStencilStateDescription dsStateTranslucent = new DepthStencilStateDescription
+				{
+					DepthComparison = Comparison.LessEqual,
+					DepthWriteMask = DepthWriteMask.Zero,
+					IsDepthEnabled = true,
+					IsStencilEnabled = false,
+					StencilReadMask = 0xFF,
+					StencilWriteMask = 0xFF,
+					FrontFace = frontFace,
+					BackFace = backFace
+				};
 
-                depthStencilStateTranslucent = DepthStencilState.FromDescription(DeviceManager.Instance.device, dsStateTranslucent);
+				depthStencilStateTranslucent = DepthStencilState.FromDescription(DeviceManager.Instance.device, dsStateTranslucent);
 
-                DepthStencilStateDescription dsStateDepth = new DepthStencilStateDescription
-                {
-                    DepthComparison = Comparison.LessEqual,
-                    DepthWriteMask = DepthWriteMask.All,
-                    IsDepthEnabled = true,
-                    IsStencilEnabled = false,
-                    StencilReadMask = 0xFF,
-                    StencilWriteMask = 0xFF,
-                    FrontFace = frontFace,
-                    BackFace = backFace
-                };
+				DepthStencilStateDescription dsStateDepth = new DepthStencilStateDescription
+				{
+					DepthComparison = Comparison.LessEqual,
+					DepthWriteMask = DepthWriteMask.All,
+					IsDepthEnabled = true,
+					IsStencilEnabled = false,
+					StencilReadMask = 0xFF,
+					StencilWriteMask = 0xFF,
+					FrontFace = frontFace,
+					BackFace = backFace
+				};
 
-                depthStencilStateDepth = DepthStencilState.FromDescription(DeviceManager.Instance.device, dsStateDepth);
+				depthStencilStateDepth = DepthStencilState.FromDescription(DeviceManager.Instance.device, dsStateDepth);
 
-                #endregion
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-        }
+				#endregion
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+			}
+		}
 
-        public virtual void Apply(int pass)
-        {
-            if (pass == 0)
-            {
-                DeviceManager.Instance.context.OutputMerger.BlendState = blendStateDepth;
-                DeviceManager.Instance.context.OutputMerger.DepthStencilState = depthStencilStateDepth;
-            }
-            else
-            {
-                switch (BlendMode)
-                {
-                    case 1:
-                        DeviceManager.Instance.context.OutputMerger.BlendState = blendStateAddColour;
-                        DeviceManager.Instance.context.OutputMerger.DepthStencilState = depthStencilStateTranslucent;
-                        break;
-                    default:
-                        DeviceManager.Instance.context.OutputMerger.BlendState = blendStateDefault;
-                        DeviceManager.Instance.context.OutputMerger.DepthStencilState = depthStencilStateSolid;
-                        break;
-                }
-            }
+		public virtual void Apply(int pass)
+		{
+			if (pass == 0)
+			{
+				DeviceManager.Instance.context.OutputMerger.BlendState = blendStateDepth;
+				DeviceManager.Instance.context.OutputMerger.DepthStencilState = depthStencilStateDepth;
+			}
+			else
+			{
+				switch (BlendMode)
+				{
+					case 1:
+						DeviceManager.Instance.context.OutputMerger.BlendState = blendStateAddColour;
+						DeviceManager.Instance.context.OutputMerger.DepthStencilState = depthStencilStateTranslucent;
+						break;
+					default:
+						DeviceManager.Instance.context.OutputMerger.BlendState = blendStateDefault;
+						DeviceManager.Instance.context.OutputMerger.DepthStencilState = depthStencilStateSolid;
+						break;
+				}
+			}
 
-            if (RenderManager.Instance.Wireframe)
-            {
-                DeviceManager.Instance.context.Rasterizer.State = rasterizerStateWireframe;
-            }
-            else
-            {
-                DeviceManager.Instance.context.Rasterizer.State = useBackfaceCulling ? rasterizerStateDefault : rasterizerStateDefaultNC;
-            }
-        }
-    }
+			if (RenderManager.Instance.Wireframe)
+			{
+				DeviceManager.Instance.context.Rasterizer.State = rasterizerStateWireframe;
+			}
+			else
+			{
+				DeviceManager.Instance.context.Rasterizer.State = useBackfaceCulling ? rasterizerStateDefault : rasterizerStateDefaultNC;
+			}
+		}
+	}
 }

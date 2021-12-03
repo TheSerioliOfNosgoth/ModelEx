@@ -4,11 +4,11 @@ using SlimDX;
 
 namespace ModelEx
 {
-    public class Unit : Model
-    {
-        public Unit(IModelParser modelParser)
-            : base(modelParser)
-        {
-        }
-    }
+	public class Unit : Model
+	{
+		public Unit(IModelParser modelParser)
+			: base(modelParser)
+		{
+		}
+	}
 }

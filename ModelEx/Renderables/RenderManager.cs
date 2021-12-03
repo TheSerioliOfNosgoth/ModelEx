@@ -10,82 +10,82 @@ using SlimDX.DXGI;
 
 namespace ModelEx
 {
-    public class RenderManager
-    {
-        protected Thread renderThread;
+	public class RenderManager
+	{
+		protected Thread renderThread;
 
-        public Color BackgroundColour = Color.Gray;
-        public bool Wireframe = false;
+		public Color BackgroundColour = Color.Gray;
+		public bool Wireframe = false;
 
-        private static RenderManager instance = null;
-        public static RenderManager Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new RenderManager();
-                }
-                return instance;
-            }
-        }
+		private static RenderManager instance = null;
+		public static RenderManager Instance
+		{
+			get
+			{
+				if (instance == null)
+				{
+					instance = new RenderManager();
+				}
+				return instance;
+			}
+		}
 
-        private RenderManager() { }
-        public void Initialize()
-        {
-            renderThread = new Thread(new ThreadStart(RenderScene));
-            renderThread.Name = "RenderThread";
-            renderThread.Start();
-        }
+		private RenderManager() { }
+		public void Initialize()
+		{
+			renderThread = new Thread(new ThreadStart(RenderScene));
+			renderThread.Name = "RenderThread";
+			renderThread.Start();
+		}
 
-        public void ShutDown()
-        {
-            renderThread.Abort();
-        }
+		public void ShutDown()
+		{
+			renderThread.Abort();
+		}
 
-        int syncInterval = 1;
+		int syncInterval = 1;
 
-        public void SwitchSyncInterval()
-        {
-            if (syncInterval == 0)
-            {
-                syncInterval = 1;
-            }
-            else if (syncInterval == 1)
-            {
-                syncInterval = 0;
-            }
-        }
+		public void SwitchSyncInterval()
+		{
+			if (syncInterval == 0)
+			{
+				syncInterval = 1;
+			}
+			else if (syncInterval == 1)
+			{
+				syncInterval = 0;
+			}
+		}
 
-        FrameCounter fc = FrameCounter.Instance;
+		FrameCounter fc = FrameCounter.Instance;
 
-        public bool resize = false;
+		public bool resize = false;
 
-        protected void RenderScene()
-        {
-            while (true)
-            {
-                Timer.Instance.Tick();
+		protected void RenderScene()
+		{
+			while (true)
+			{
+				Timer.Instance.Tick();
 
-                if (resize)
-                {
-                    DeviceManager.Instance.Resize();
-                    resize = false;
-                }
+				if (resize)
+				{
+					DeviceManager.Instance.Resize();
+					resize = false;
+				}
 
-                fc.Count();
+				fc.Count();
 
-                DeviceManager dm = DeviceManager.Instance;
-                dm.context.ClearDepthStencilView(dm.depthStencil, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
-                dm.context.ClearRenderTargetView(dm.renderTarget, new Color4(BackgroundColour));
+				DeviceManager dm = DeviceManager.Instance;
+				dm.context.ClearDepthStencilView(dm.depthStencil, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
+				dm.context.ClearRenderTargetView(dm.renderTarget, new Color4(BackgroundColour));
 
-                CameraManager.Instance.UpdateFrameCamera();
+				CameraManager.Instance.UpdateFrameCamera();
 
-                SceneManager.Instance.Render();
+				SceneManager.Instance.Render();
 
-                // syncInterval can be 0
-                dm.swapChain.Present(syncInterval, PresentFlags.None);
-            }
-        }
-    }
+				// syncInterval can be 0
+				dm.swapChain.Present(syncInterval, PresentFlags.None);
+			}
+		}
+	}
 }

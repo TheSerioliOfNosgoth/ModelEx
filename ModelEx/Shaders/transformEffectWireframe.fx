@@ -4,7 +4,7 @@ float4 colorWireframe;
 
 float4 VShader(float4 position : POSITION) : SV_POSITION
 {
-	return mul( position, gWVP);
+	return mul(position, gWVP);
 }
 
 float4 PShader(float4 position : SV_POSITION) : SV_Target
@@ -24,8 +24,8 @@ RasterizerState SolidState
 
 RasterizerState WireframeState
 {
-    FillMode = Wireframe;
-    SlopeScaledDepthBias = -0.5f;
+	FillMode = Wireframe;
+	SlopeScaledDepthBias = -0.5f;
 };
 
 technique10 Render
@@ -33,7 +33,7 @@ technique10 Render
 	pass P0
 	{
 		SetVertexShader(CompileShader(vs_4_0, VShader()));
-		SetGeometryShader(NULL );
+		SetGeometryShader(NULL);
 		SetPixelShader(CompileShader(ps_4_0, PShader()));
 		SetRasterizerState(SolidState);
 	}
