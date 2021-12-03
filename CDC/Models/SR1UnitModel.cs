@@ -11,8 +11,8 @@ namespace CDC.Objects.Models
 		protected UInt32 m_uSpectralVertexStart;
 		protected UInt32 m_uSpectralColourStart;
 
-		public SR1UnitModel(BinaryReader reader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
-			: base(reader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
+		public SR1UnitModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
+			: base(reader, dataStart, modelData, strModelName, ePlatform, version)
 		{
 			_modelTypePrefix = "a_";
 			// struct _Terrain
@@ -116,9 +116,9 @@ namespace CDC.Objects.Models
 			_trees = new Tree[_groupCount];
 		}
 
-		public static SR1UnitModel Load(BinaryReader reader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion, CDC.Objects.ExportOptions options)
+		public static SR1UnitModel Load(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, CDC.Objects.ExportOptions options)
 		{
-			SR1UnitModel xModel = new SR1UnitModel(reader, uDataStart, uModelData, strModelName, ePlatform, uVersion);
+			SR1UnitModel xModel = new SR1UnitModel(reader, dataStart, modelData, strModelName, ePlatform, version);
 			xModel.ReadData(reader, options);
 			return xModel;
 		}

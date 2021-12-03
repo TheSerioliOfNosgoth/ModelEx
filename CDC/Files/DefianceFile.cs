@@ -36,10 +36,10 @@ namespace CDC.Objects
 			//_name = Utility.CleanObjectName(strModelName);
 
 			// Texture type
-			//reader.BaseStream.Position = m_uDataStart + 0x44;
+			//reader.BaseStream.Position = _dataStart + 0x44;
 			//if (reader.ReadUInt64() != 0xFFFFFFFFFFFFFFFF)
 			//{
-			//    m_ePlatform = Platform.PSX;
+			//    _platform = Platform.PSX;
 			//}
 			//else
 			//{
@@ -60,7 +60,7 @@ namespace CDC.Objects
 			_animCount = 0; //reader.ReadUInt16();
 			reader.BaseStream.Position += 0x02;
 			_modelStart = _dataStart + reader.ReadUInt32();
-			_animStart = 0; //m_uDataStart + reader.ReadUInt32();
+			_animStart = 0; //_dataStart + reader.ReadUInt32();
 
 			_models = new DefianceModel[_modelCount];
 			for (UInt16 m = 0; m < _modelCount; m++)
@@ -120,10 +120,10 @@ namespace CDC.Objects
 			_name = Utility.CleanName(strModelName);
 
 			// Texture type
-			//reader.BaseStream.Position = m_uDataStart + 0x9C;
+			//reader.BaseStream.Position = _dataStart + 0x9C;
 			//if (reader.ReadUInt64() != 0xFFFFFFFFFFFFFFFF)
 			//{
-			//    m_ePlatform = Platform.PSX;
+			//    _platform = Platform.PSX;
 			//}
 			//else
 			//{
@@ -152,7 +152,7 @@ namespace CDC.Objects
 			//if (m_axModels[0].Platform == Platform.Dreamcast ||
 			//    m_axModels[1].Platform == Platform.Dreamcast)
 			//{
-			//    m_ePlatform = Platform.Dreamcast;
+			//    _platform = Platform.Dreamcast;
 			//}
 		}
 

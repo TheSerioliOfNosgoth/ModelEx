@@ -26,7 +26,7 @@ namespace CDC.Objects
 
 			// Could use unit version number instead of thing below.
 			// Check that's what SR2 does.
-			//reader.BaseStream.Position = m_uDataStart + 0xF0;
+			//reader.BaseStream.Position = _dataStart + 0xF0;
 			//UInt32 unitVersionNumber = reader.ReadUInt32();
 			//if (unitVersionNumber != 0x3C20413B)
 
@@ -332,8 +332,8 @@ namespace CDC.Objects
 			}
 
 			// Connected unit list. (unreferenced?)
-			//reader.BaseStream.Position = m_uDataStart + 0xC0;
-			//m_uConnectedUnitsStart = m_uDataStart + reader.ReadUInt32() + 0x08;
+			//reader.BaseStream.Position = _dataStart + 0xC0;
+			//m_uConnectedUnitsStart = _dataStart + reader.ReadUInt32() + 0x08;
 			//reader.BaseStream.Position = m_uConnectedUnitsStart;
 			//reader.BaseStream.Position += 0x18;
 			//String strUnitName0 = new String(reader.ReadChars(16));
@@ -360,13 +360,13 @@ namespace CDC.Objects
 			//if (m_axModels[0].Platform == Platform.Dreamcast ||
 			//    m_axModels[1].Platform == Platform.Dreamcast)
 			//{
-			//    m_ePlatform = Platform.Dreamcast;
+			//    _platform = Platform.Dreamcast;
 			//}
 		}
 
 		protected override void ResolvePointers(BinaryReader reader, BinaryWriter writer)
 		{
-			UInt32 uDataStart = ((reader.ReadUInt32() >> 9) << 11) + 0x00000800;
+			UInt32 dataStart = ((reader.ReadUInt32() >> 9) << 11) + 0x00000800;
 			if (reader.ReadUInt32() == 0x00000000)
 			{
 				_asset = Asset.Unit;
@@ -376,7 +376,7 @@ namespace CDC.Objects
 				_asset = Asset.Object;
 			}
 
-			reader.BaseStream.Position = uDataStart;
+			reader.BaseStream.Position = dataStart;
 			writer.BaseStream.Position = 0;
 
 			reader.BaseStream.CopyTo(writer.BaseStream);

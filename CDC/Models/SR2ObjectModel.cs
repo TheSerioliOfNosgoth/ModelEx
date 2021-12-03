@@ -8,8 +8,8 @@ namespace CDC.Objects.Models
 	{
 		protected UInt32 m_uColourStart;
 
-		protected SR2ObjectModel(BinaryReader reader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
-			: base(reader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
+		protected SR2ObjectModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
+			: base(reader, dataStart, modelData, strModelName, ePlatform, version)
 		{
 			reader.BaseStream.Position = _modelData + 0x04;
 			UInt32 uBoneCount1 = reader.ReadUInt32();
@@ -24,7 +24,7 @@ namespace CDC.Objects.Models
 			_vertexStart = _dataStart + reader.ReadUInt32();
 			reader.BaseStream.Position += 0x08;
 			_polygonCount = 0; // reader.ReadUInt32();
-			_polygonStart = 0; // m_uDataStart + reader.ReadUInt32();
+			_polygonStart = 0; // _dataStart + reader.ReadUInt32();
 			reader.BaseStream.Position += 0x18;
 			m_uColourStart = _dataStart + reader.ReadUInt32();
 			reader.BaseStream.Position += 0x0C;
@@ -35,12 +35,12 @@ namespace CDC.Objects.Models
 			_trees = new Tree[_groupCount];
 		}
 
-		public static SR2ObjectModel Load(BinaryReader reader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 uVersion, CDC.Objects.ExportOptions options)
+		public static SR2ObjectModel Load(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 version, CDC.Objects.ExportOptions options)
 		{
-			reader.BaseStream.Position = uModelData + (0x00000004 * usIndex);
-			uModelData = uDataStart + reader.ReadUInt32();
-			reader.BaseStream.Position = uModelData;
-			SR2ObjectModel xModel = new SR2ObjectModel(reader, uDataStart, uModelData, strModelName, ePlatform, uVersion);
+			reader.BaseStream.Position = modelData + (0x00000004 * usIndex);
+			modelData = dataStart + reader.ReadUInt32();
+			reader.BaseStream.Position = modelData;
+			SR2ObjectModel xModel = new SR2ObjectModel(reader, dataStart, modelData, strModelName, ePlatform, version);
 			xModel.ReadData(reader, options);
 			return xModel;
 		}

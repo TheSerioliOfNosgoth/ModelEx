@@ -11,12 +11,12 @@ namespace CDC.Objects.Models
 		protected UInt32 m_uSpectralVertexStart;
 		protected UInt32 m_uSpectralColourStart;
 
-		protected DefianceUnitModel(BinaryReader reader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
-			: base(reader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
+		protected DefianceUnitModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
+			: base(reader, dataStart, modelData, strModelName, ePlatform, version)
 		{
 			// reader.BaseStream.Position += 0x04;
 			// m_uInstanceCount = reader.ReadUInt32();
-			// m_uInstanceStart = m_uDataStart + reader.ReadUInt32();
+			// m_uInstanceStart = _dataStart + reader.ReadUInt32();
 			reader.BaseStream.Position = _modelData + 0x0C;
 			_vertexCount = reader.ReadUInt32();
 			_polygonCount = 0; // reader.ReadUInt32(); // Length = 0x14
@@ -49,9 +49,9 @@ namespace CDC.Objects.Models
 			_trees = new Tree[_groupCount];
 		}
 
-		public static DefianceUnitModel Load(BinaryReader reader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion, CDC.Objects.ExportOptions options)
+		public static DefianceUnitModel Load(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, CDC.Objects.ExportOptions options)
 		{
-			DefianceUnitModel xModel = new DefianceUnitModel(reader, uDataStart, uModelData, strModelName, ePlatform, uVersion);
+			DefianceUnitModel xModel = new DefianceUnitModel(reader, dataStart, modelData, strModelName, ePlatform, version);
 			xModel.ReadData(reader, options);
 			return xModel;
 		}

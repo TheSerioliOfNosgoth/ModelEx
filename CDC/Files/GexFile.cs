@@ -36,7 +36,7 @@ namespace CDC.Objects
 
 			// Could use unit version number instead of thing below.
 			// Check that's what SR2 does.
-			//reader.BaseStream.Position = m_uDataStart + 0xF0;
+			//reader.BaseStream.Position = _dataStart + 0xF0;
 			//UInt32 unitVersionNumber = reader.ReadUInt32();
 			//if (unitVersionNumber != 0x3C20413B)
 
@@ -196,7 +196,7 @@ namespace CDC.Objects
 
 		protected override void ResolvePointers(BinaryReader reader, BinaryWriter writer)
 		{
-			UInt32 uDataStart = ((reader.ReadUInt32() >> 9) << 11) + 0x00000800;
+			UInt32 dataStart = ((reader.ReadUInt32() >> 9) << 11) + 0x00000800;
 			if (reader.ReadUInt32() == 0x00000000)
 			{
 				_asset = Asset.Unit;
@@ -206,7 +206,7 @@ namespace CDC.Objects
 				_asset = Asset.Object;
 			}
 
-			reader.BaseStream.Position = uDataStart;
+			reader.BaseStream.Position = dataStart;
 			writer.BaseStream.Position = 0;
 
 			reader.BaseStream.CopyTo(writer.BaseStream);

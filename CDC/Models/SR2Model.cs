@@ -273,8 +273,8 @@ namespace CDC.Objects.Models
 			public UInt32 m_uNext;
 		}
 
-		protected SR2Model(BinaryReader reader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion) :
-			base(reader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
+		protected SR2Model(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version) :
+			base(reader, dataStart, modelData, strModelName, ePlatform, version)
 		{
 		}
 

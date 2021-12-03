@@ -258,8 +258,8 @@ namespace CDC.Objects.Models
 
 		protected List<ushort> _tPages = null;
 
-		protected GexModel(BinaryReader reader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion, List<ushort> tPages) :
-			base(reader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
+		protected GexModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, List<ushort> tPages) :
+			base(reader, dataStart, modelData, strModelName, ePlatform, version)
 		{
 			_tPages = tPages;
 		}

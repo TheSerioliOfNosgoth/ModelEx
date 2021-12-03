@@ -6,8 +6,8 @@ namespace CDC.Objects.Models
 {
 	public class SR1ObjectModel : SR1Model
 	{
-		public SR1ObjectModel(BinaryReader reader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
-			: base(reader, uDataStart, uModelData, strModelName, ePlatform, uVersion)
+		public SR1ObjectModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
+			: base(reader, dataStart, modelData, strModelName, ePlatform, version)
 		{
 			_modelTypePrefix = "o_";
 			reader.BaseStream.Position = _modelData;
@@ -29,18 +29,18 @@ namespace CDC.Objects.Models
 			_trees = new Tree[_groupCount];
 		}
 
-		public static SR1ObjectModel Load(BinaryReader reader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 uVersion, CDC.Objects.ExportOptions options)
+		public static SR1ObjectModel Load(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 version, CDC.Objects.ExportOptions options)
 		{
-			long newPosition = uModelData + (0x00000004 * usIndex);
+			long newPosition = modelData + (0x00000004 * usIndex);
 			if ((newPosition < 0) || (newPosition > reader.BaseStream.Length))
 			{
 				Console.WriteLine(string.Format("Error: attempt to read a model with usIndex {0} from a stream with length {1}", usIndex, reader.BaseStream.Length));
 				return null;
 			}
 			reader.BaseStream.Position = newPosition;
-			uModelData = uDataStart + reader.ReadUInt32();
-			reader.BaseStream.Position = uModelData;
-			SR1ObjectModel xModel = new SR1ObjectModel(reader, uDataStart, uModelData, strModelName, ePlatform, uVersion);
+			modelData = dataStart + reader.ReadUInt32();
+			reader.BaseStream.Position = modelData;
+			SR1ObjectModel xModel = new SR1ObjectModel(reader, dataStart, modelData, strModelName, ePlatform, version);
 			xModel.ReadData(reader, options);
 			return xModel;
 		}

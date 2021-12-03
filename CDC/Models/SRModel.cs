@@ -48,14 +48,14 @@ namespace CDC.Objects.Models
 		public Material[] Materials { get { return _materials; } }
 		public Platform Platform { get { return _platform; } }
 
-		protected SRModel(BinaryReader reader, UInt32 uDataStart, UInt32 uModelData, String strModelName, Platform ePlatform, UInt32 uVersion)
+		protected SRModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
 		{
 			_name = strModelName;
 			_modelTypePrefix = "";
 			_platform = ePlatform;
-			_version = uVersion;
-			_dataStart = uDataStart;
-			_modelData = uModelData;
+			_version = version;
+			_dataStart = dataStart;
+			_modelData = modelData;
 			_vertexCount = 0;
 			_vertexStart = 0;
 			_polygonCount = 0;
