@@ -29,6 +29,150 @@ namespace ModelEx
 	{
 		public const string TextureExtension = ".png";
 
+		class ModelParser :
+			IModelParser
+		{
+			public Model Model;
+			public string ModelName { get; private set; }
+			public List<Material> Materials { get; } = new List<Material>();
+			public List<Mesh> Meshes { get; } = new List<Mesh>();
+			public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
+			public List<Node> Groups { get; } = new List<Node>();
+
+			public ModelParser(string modelName)
+			{
+				ModelName = modelName;
+			}
+
+			public void BuildModel()
+			{
+				Material material = new Material();
+				material.Visible = true;
+				Color colorDiffuse = Color.FromArgb(unchecked((int)0xFF0000FF));
+				material.Diffuse = colorDiffuse;
+				material.TextureFileName = "";
+				Materials.Add(material);
+
+				Node group = new Node();
+				group.Name = "group";
+
+				MeshParser meshParser = new MeshParser(ModelName);
+				meshParser.BuildMesh();
+				foreach (SubMesh subMesh in meshParser.SubMeshes)
+				{
+					// If the mesh parser knew the total submeshes for the model,
+					// then this could be done inside BuildMesh.
+					subMesh.MeshIndex = Meshes.Count;
+					group.SubMeshIndices.Add(SubMeshes.Count);
+					SubMeshes.Add(subMesh);
+				}
+
+				Meshes.Add(meshParser.Mesh);
+				Groups.Add(group);
+				Model = new Physical(this);
+			}
+		}
+
+		class MeshParser :
+			IMeshParser<PositionColorTexturedVertex, short>
+		{
+			struct BasicVertex
+			{
+				public float X;
+				public float Y;
+				public float Z;
+			}
+
+			List<BasicVertex> _vertexList = new List<BasicVertex>();
+			List<int> _indexList = new List<int>();
+			public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
+			public Mesh Mesh;
+			public string MeshName { get; private set; }
+			public string Technique { get; private set; }
+			public int VertexCount { get { return _vertexList.Count; } }
+			public int IndexCount { get { return _indexList.Count; } }
+
+			public MeshParser(string meshName)
+			{
+				MeshName = meshName;
+			}
+
+			public void BuildMesh()
+			{
+				float v = 1.2f;
+				float h = 1.0f;
+
+				BasicVertex[] vertices =
+				{
+					new BasicVertex { X =  0, Y =  v, Z =  0 },
+					new BasicVertex { X = -h, Y =  0, Z =  h },
+					new BasicVertex { X = -h, Y =  0, Z = -h },
+					new BasicVertex { X =  h, Y =  0, Z = -h },
+					new BasicVertex { X =  h, Y =  0, Z =  h },
+					new BasicVertex { X =  0, Y = -v, Z =  0 }
+				};
+
+				_vertexList.AddRange(vertices);
+
+				int[] indices = {
+					0, 1, 2,
+					0, 2, 3,
+					0, 3, 4,
+					0, 4, 1,
+					5, 1, 2,
+					5, 2, 3,
+					5, 3, 4,
+					5, 4, 1
+				};
+
+				_indexList.AddRange(indices);
+
+				Technique = "DefaultRender";
+
+				Mesh = new MeshPCT(this);
+
+				SubMesh subMesh = new SubMesh
+				{
+					Name = MeshName,
+					MaterialIndex = 0,
+					indexCount = IndexCount,
+					startIndexLocation = 0,
+					baseVertexLocation = 0
+				};
+
+				SubMeshes.Add(subMesh);
+			}
+
+			public void FillVertex(int v, out PositionColorTexturedVertex vertex)
+			{
+				vertex.Position = new SlimDX.Vector3()
+				{
+					X = _vertexList[v].X,
+					Y = _vertexList[v].Y,
+					Z = _vertexList[v].Z
+				};
+
+				vertex.Color = new SlimDX.Color3()
+				{
+					//Alpha = 1.0f,
+					Red = 1.0f,
+					Green = 1.0f,
+					Blue = 1.0f
+				};
+
+				vertex.TextureCoordinates = new SlimDX.Vector2()
+				{
+					X = 0.0f,
+					Y = 0.0f
+				};
+			}
+
+			public void FillIndex(int i, out short index)
+			{
+				index = (short)_indexList[i];
+			}
+		}
+
 		class SRModelParser :
 			IModelParser
 		{
@@ -36,6 +180,7 @@ namespace ModelEx
 			SRFile _srFile;
 			SRModel _srModel;
 			public Model Model;
+			public string ModelName { get; private set; }
 			public List<Material> Materials { get; } = new List<Material>();
 			public List<Mesh> Meshes { get; } = new List<Mesh>();
 			public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
@@ -116,12 +261,6 @@ namespace ModelEx
 				{
 					Model = new Physical(this);
 				}
-			}
-
-			public string ModelName
-			{
-				get;
-				private set;
 			}
 		}
 
@@ -552,6 +691,11 @@ namespace ModelEx
 				modelParser.BuildModel(modelIndex, options);
 				AddRenderObject(modelParser.Model);
 			}
+
+			// Use Octahedron to show positions of stuff.
+			/*ModelParser modelParser1 = new ModelParser("octahedron");
+			modelParser1.BuildModel();
+			AddRenderObject(modelParser1.Model);*/
 
 			_objectFiles.Add(srFile);
 
