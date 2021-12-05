@@ -99,11 +99,11 @@ namespace ModelEx
 
 			TreeNode sceneTreeNode = new TreeNode("Scene");
 			sceneTreeNode.Checked = true;
-			foreach (Renderable renderable in SceneManager.Instance.CurrentScene.RenderObjects)
+			foreach (Renderable renderable in SceneManager.Instance.CurrentScene.RenderInstances)
 			{
-				if (renderable.GetType().IsSubclassOf(typeof(Model)))
+				if (renderable is Physical)
 				{
-					Node objectNode = ((Model)renderable).Root;
+					Node objectNode = ((Physical)renderable).Model.Root;
 
 					TreeNode objectTreeNode = new TreeNode(objectNode.Name);
 					objectTreeNode.Checked = true;
@@ -225,7 +225,7 @@ namespace ModelEx
 					gexFile = new CDC.Objects.GexFile(OpenDlg.FileName, ImportExportOptions);
 					if (gexFile.Asset == CDC.Asset.Unit)
 					{
-						objectSelectDlg.SetObjectNames(gexFile.InstanceTypeNames);
+						objectSelectDlg.SetObjectNames(gexFile.ObjectNames);
 						if (objectSelectDlg.ShowDialog() != DialogResult.OK)
 						{
 							return;
@@ -345,11 +345,11 @@ namespace ModelEx
 			Scene currentScene = SceneManager.Instance.CurrentScene;
 			if (currentScene != null)
 			{
-				foreach (Renderable renderable in currentScene.RenderObjects)
+				foreach (Renderable renderable in currentScene.RenderInstances)
 				{
-					if (renderable.GetType().IsSubclassOf(typeof(Model)))
+					if (renderable is Physical)
 					{
-						Node node = ((Model)renderable).FindNode(e.Node.Text);
+						Node node = ((Physical)renderable).Model.FindNode(e.Node.Text);
 						if (node != null)
 						{
 							node.Visible = e.Node.Checked;

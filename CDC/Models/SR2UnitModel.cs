@@ -15,8 +15,8 @@ namespace CDC.Objects.Models
 			: base(reader, dataStart, modelData, strModelName, ePlatform, version)
 		{
 			// reader.BaseStream.Position += 0x04;
-			// m_uInstanceCount = reader.ReadUInt32();
-			// m_uInstanceStart = _dataStart + reader.ReadUInt32();
+			// _introCount = reader.ReadUInt32();
+			// _introStart = _dataStart + reader.ReadUInt32();
 			reader.BaseStream.Position = _modelData + 0x0C;
 
 			_vertexCount = reader.ReadUInt32();

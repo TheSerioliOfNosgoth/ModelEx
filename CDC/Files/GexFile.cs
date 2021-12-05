@@ -114,16 +114,16 @@ namespace CDC.Objects
 				throw new Exception("Wrong version number for level x");
 			}
 
-			// Instance types
+			// Object Names
 			reader.BaseStream.Position = _dataStart + 0x3C;
-			_instanceTypeStart = reader.ReadUInt32();
-			reader.BaseStream.Position = _instanceTypeStart;
-			List<String> xInstanceList = new List<String>();
+			_objectNameStart = reader.ReadUInt32();
+			reader.BaseStream.Position = _objectNameStart;
+			List<String> introList = new List<String>();
 			List<SRFile> xObjectList = new List<SRFile>();
 			while (true)
 			{
 				UInt32 objectAddress = reader.ReadUInt32();
-				if (objectAddress == _instanceTypeStart)
+				if (objectAddress == _objectNameStart)
 				{
 					break;
 				}
@@ -132,40 +132,40 @@ namespace CDC.Objects
 
 				reader.BaseStream.Position = objectAddress + 0x00000024;
 				reader.BaseStream.Position = reader.ReadUInt32();
-				String strInstanceTypeName = new String(reader.ReadChars(8));
-				strInstanceTypeName = Utility.CleanObjectName(strInstanceTypeName);
+				String strObjectName = new String(reader.ReadChars(8));
+				strObjectName = Utility.CleanObjectName(strObjectName);
 
 				reader.BaseStream.Position = objectAddress;
-				GexFile gexObject = new GexFile(strInstanceTypeName, options, reader);
+				GexFile gexObject = new GexFile(strObjectName, options, reader);
 
-				xInstanceList.Add(strInstanceTypeName);
+				introList.Add(strObjectName);
 				xObjectList.Add(gexObject);
 
 				reader.BaseStream.Position = oldPos;
 			}
-			_instanceTypeNames = xInstanceList.ToArray();
+			_objectNames = introList.ToArray();
 			_objects = xObjectList.ToArray();
 
-			// Instances
+			// In
 			reader.BaseStream.Position = _dataStart + 0x7C;
-			_instanceCount = reader.ReadUInt32();
-			_instanceStart = reader.ReadUInt32();
-			_instanceNames = new String[_instanceCount];
-			for (int i = 0; i < _instanceCount; i++)
+			_introCount = reader.ReadUInt32();
+			_introStart = reader.ReadUInt32();
+			_intros = new Intro[_introCount];
+			for (int i = 0; i < _introCount; i++)
 			{
-				reader.BaseStream.Position = _instanceStart + 0x34 * i;
+				reader.BaseStream.Position = _introStart + 0x34 * i;
 
 				UInt32 objectAddress = reader.ReadUInt32();
 				if (objectAddress == 0)
 				{
-					_instanceNames[i] = "[Unknown]";
+					_intros[i].name = "Unknown-" + _intros[i].ID;
 				}
 				else
 				{
 					reader.BaseStream.Position = objectAddress + 0x00000024;
 					reader.BaseStream.Position = reader.ReadUInt32();
-					String strInstanceName = new String(reader.ReadChars(8));
-					_instanceNames[i] = Utility.CleanObjectName(strInstanceName);
+					String strIntroName = new String(reader.ReadChars(8));
+					_intros[i].name = Utility.CleanObjectName(strIntroName) + "-" + _intros[i].ID;
 				}
 			}
 

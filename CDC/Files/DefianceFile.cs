@@ -87,31 +87,31 @@ namespace CDC.Objects
 				reader.BaseStream.Position += 0x90;
 			}
 
-			// Instances
+			// Intros
 			//reader.BaseStream.Position = _dataStart + 0x44;
-			//_instanceCount = reader.ReadUInt32();
-			//_instanceStart = _dataStart + reader.ReadUInt32();
-			//_instanceNames = new String[_instanceCount];
-			//for (int i = 0; i < _instanceCount; i++)
+			//_introCount = reader.ReadUInt32();
+			//_introStart = _dataStart + reader.ReadUInt32();
+			//_intros = new Intro[_introCount];
+			//for (int i = 0; i < _introCount; i++)
 			//{
-			//    reader.BaseStream.Position = _instanceStart + 0x60 * i;
-			//    String strInstanceName = new String(reader.ReadChars(8));
-			//    _instanceNames[i] = Utility.CleanObjectName(strInstanceName);
+			//	reader.BaseStream.Position = _introStart + 0x60 * i;
+			//	String strIntroName = new String(reader.ReadChars(8));
+			//	_intros[i].name = Utility.CleanObjectName(strIntroName) + "-" + _intros[i].ID;
 			//}
 
-			// Instance types
+			// Object Names
 			//reader.BaseStream.Position = _dataStart + 0x4C;
-			//_instanceTypeStart = _dataStart + reader.ReadUInt32();
-			//reader.BaseStream.Position = _instanceTypeStart;
-			//List<String> xInstanceList = new List<String>();
+			//_objectNameStart = _dataStart + reader.ReadUInt32();
+			//reader.BaseStream.Position = _objectNameStart;
+			//List<String> introList = new List<String>();
 			//while (reader.ReadByte() != 0xFF)
 			//{
-			//    reader.BaseStream.Position--;
-			//    String strInstanceTypeName = new String(reader.ReadChars(8));
-			//    xInstanceList.Add(Utility.CleanObjectName(strInstanceTypeName));
-			//    reader.BaseStream.Position += 0x08;
+			//	reader.BaseStream.Position--;
+			//	String strObjectName = new String(reader.ReadChars(8));
+			//	introList.Add(Utility.CleanObjectName(strObjectName));
+			//	reader.BaseStream.Position += 0x08;
 			//}
-			//_instanceTypeNames = xInstanceList.ToArray();
+			//_objectNames = introList.ToArray();
 
 			// Unit name
 			reader.BaseStream.Position = _dataStart + 0x84;

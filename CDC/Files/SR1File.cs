@@ -198,7 +198,7 @@ namespace CDC.Objects
 				}
 			}
 
-			// Instances
+			// Intros
 			if (_version == PROTO_19981025_VERSION)
 			{
 				reader.BaseStream.Position = _dataStart + 0x84;
@@ -218,30 +218,38 @@ namespace CDC.Objects
 				reader.BaseStream.Position = _dataStart + 0x78;
 			}
 
-			_instanceCount = reader.ReadUInt32();
-			_instanceStart = _dataStart + reader.ReadUInt32();
-			_instanceNames = new String[_instanceCount];
-			for (int i = 0; i < _instanceCount; i++)
+			_introCount = reader.ReadUInt32();
+			_introStart = _dataStart + reader.ReadUInt32();
+			_intros = new Intro[_introCount];
+			for (int i = 0; i < _introCount; i++)
 			{
 				if (_version == PROTO_19981025_VERSION)
 				{
-					reader.BaseStream.Position = _instanceStart + 0x48 * i;
+					reader.BaseStream.Position = _introStart + 0x48 * i;
 				}
 				else if (_version == ALPHA_19990123_VERSION_1_X ||
 					_version == ALPHA_19990123_VERSION_1 ||
 					_version == ALPHA_19990204_VERSION_2)
 				{
-					reader.BaseStream.Position = _instanceStart + 0x50 * i;
+					reader.BaseStream.Position = _introStart + 0x50 * i;
 				}
 				else
 				{
-					reader.BaseStream.Position = _instanceStart + 0x4C * i;
+					reader.BaseStream.Position = _introStart + 0x4C * i;
 				}
-				String strInstanceName = new String(reader.ReadChars(8));
-				_instanceNames[i] = Utility.CleanObjectName(strInstanceName);
+
+				String strIntroName = new String(reader.ReadChars(8));
+				_intros[i].name = Utility.CleanObjectName(strIntroName) + "-" + _intros[i].ID;
+				reader.BaseStream.Position += 0x08;
+				int introNum = reader.ReadInt32();
+				int uniqueID = reader.ReadInt32();
+				reader.BaseStream.Position += 0x08;
+				_intros[i].position.x = (float)reader.ReadInt16();
+				_intros[i].position.y = (float)reader.ReadInt16();
+				_intros[i].position.z = (float)reader.ReadInt16();
 			}
 
-			// Instance types
+			// Object Names
 			if (_version == PROTO_19981025_VERSION)
 			{
 				reader.BaseStream.Position = _dataStart + 0x98;
@@ -260,17 +268,17 @@ namespace CDC.Objects
 			{
 				reader.BaseStream.Position = _dataStart + 0x8C;
 			}
-			_instanceTypeStart = _dataStart + reader.ReadUInt32();
-			reader.BaseStream.Position = _instanceTypeStart;
-			List<String> xInstanceList = new List<String>();
+			_objectNameStart = _dataStart + reader.ReadUInt32();
+			reader.BaseStream.Position = _objectNameStart;
+			List<String> introList = new List<String>();
 			while (reader.ReadByte() != 0xFF)
 			{
 				reader.BaseStream.Position--;
-				String strInstanceTypeName = new String(reader.ReadChars(8));
-				xInstanceList.Add(Utility.CleanObjectName(strInstanceTypeName));
+				String strObjectName = new String(reader.ReadChars(8));
+				introList.Add(Utility.CleanObjectName(strObjectName));
 				reader.BaseStream.Position += 0x08;
 			}
-			_instanceTypeNames = xInstanceList.ToArray();
+			_objectNames = introList.ToArray();
 
 			// Unit name
 			if (_version == PROTO_19981025_VERSION)

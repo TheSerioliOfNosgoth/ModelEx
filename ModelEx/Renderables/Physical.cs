@@ -4,10 +4,10 @@ using SlimDX;
 
 namespace ModelEx
 {
-	public class Physical : Model
+	public class Physical : RenderInstance
 	{
-		public Physical(IModelParser modelParser)
-			: base(modelParser)
+		public Physical(Model model)
+			: base(model)
 		{
 		}
 	}

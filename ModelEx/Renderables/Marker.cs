@@ -4,10 +4,10 @@ using SlimDX;
 
 namespace ModelEx
 {
-	public class Unit : Model
+	public class Marker : RenderInstance
 	{
-		public Unit(IModelParser modelParser)
-			: base(modelParser)
+		public Marker(Model model)
+			: base(model)
 		{
 		}
 	}

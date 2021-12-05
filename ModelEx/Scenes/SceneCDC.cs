@@ -46,12 +46,18 @@ namespace ModelEx
 
 			public void BuildModel()
 			{
-				Material material = new Material();
-				material.Visible = true;
-				Color colorDiffuse = Color.FromArgb(unchecked((int)0xFF0000FF));
-				material.Diffuse = colorDiffuse;
-				material.TextureFileName = "";
-				Materials.Add(material);
+				Material materialA = new Material();
+				materialA.Visible = true;
+				Color colorDiffuseA = Color.FromArgb(unchecked((int)0xFF0000FF));
+				materialA.Diffuse = colorDiffuseA;
+				materialA.TextureFileName = "";
+				Materials.Add(materialA);
+				Material materialB = new Material();
+				materialB.Visible = true;
+				Color colorDiffuseB = Color.FromArgb(unchecked((int)0xFF00FF00));
+				materialB.Diffuse = colorDiffuseB;
+				materialB.TextureFileName = "";
+				Materials.Add(materialB);
 
 				Node group = new Node();
 				group.Name = "group";
@@ -69,7 +75,7 @@ namespace ModelEx
 
 				Meshes.Add(meshParser.Mesh);
 				Groups.Add(group);
-				Model = new Physical(this);
+				Model = new Model(this);
 			}
 		}
 
@@ -116,13 +122,13 @@ namespace ModelEx
 
 				int[] indices = {
 					0, 1, 2,
-					0, 2, 3,
+					5, 3, 2,
 					0, 3, 4,
-					0, 4, 1,
-					5, 1, 2,
-					5, 2, 3,
-					5, 3, 4,
-					5, 4, 1
+					5, 1, 4,
+					5, 2, 1,
+					0, 2, 3,
+					5, 4, 3,
+					0, 4, 1
 				};
 
 				_indexList.AddRange(indices);
@@ -131,16 +137,27 @@ namespace ModelEx
 
 				Mesh = new MeshPCT(this);
 
-				SubMesh subMesh = new SubMesh
+				SubMesh subMeshA = new SubMesh
 				{
-					Name = MeshName,
+					Name = MeshName + "-0",
 					MaterialIndex = 0,
-					indexCount = IndexCount,
+					indexCount = 12,
 					startIndexLocation = 0,
 					baseVertexLocation = 0
 				};
 
-				SubMeshes.Add(subMesh);
+				SubMeshes.Add(subMeshA);
+
+				SubMesh subMeshB = new SubMesh
+				{
+					Name = MeshName + "-1",
+					MaterialIndex = 1,
+					indexCount = 12,
+					startIndexLocation = 12,
+					baseVertexLocation = 0
+				};
+
+				SubMeshes.Add(subMeshB);
 			}
 
 			public void FillVertex(int v, out PositionColorTexturedVertex vertex)
@@ -252,15 +269,7 @@ namespace ModelEx
 				#endregion
 
 				ModelName = modelName;
-
-				if (_srFile.Asset == CDC.Asset.Unit)
-				{
-					Model = new Unit(this);
-				}
-				else
-				{
-					Model = new Physical(this);
-				}
+				Model = new Model(this);
 			}
 		}
 
@@ -689,13 +698,37 @@ namespace ModelEx
 			{
 				SRModelParser modelParser = new SRModelParser(srFile.Name, srFile);
 				modelParser.BuildModel(modelIndex, options);
-				AddRenderObject(modelParser.Model);
+				if (srFile.Asset == CDC.Asset.Unit)
+				{
+					Physical physical = new Physical(modelParser.Model);
+					renderables.Add(physical.Model);
+					renderInstances.Add(physical);
+				}
+				else
+				{
+					Physical physical = new Physical(modelParser.Model);
+					renderables.Add(physical.Model);
+					renderInstances.Add(physical);
+				}
 			}
 
 			// Use Octahedron to show positions of stuff.
-			/*ModelParser modelParser1 = new ModelParser("octahedron");
-			modelParser1.BuildModel();
-			AddRenderObject(modelParser1.Model);*/
+			ModelParser octaParser = new ModelParser("octahedron");
+			octaParser.BuildModel();
+			renderables.Add(octaParser.Model);
+
+			/*foreach(CDC.Intro intro in srFile.Intros)
+			{
+				Marker marker = new Marker(octaParser.Model);
+				float height = marker.GetBoundingSphere().Radius;
+				marker.Name = intro.name;
+				marker.Transform = SlimDX.Matrix.Translation(
+					0.01f * intro.position.x,
+					0.01f * intro.position.z + height,
+					0.01f * intro.position.y
+				);
+				renderInstances.Add(marker);
+			}*/
 
 			_objectFiles.Add(srFile);
 

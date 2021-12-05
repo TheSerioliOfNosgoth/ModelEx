@@ -30,6 +30,15 @@ namespace ModelEx
 			}
 		}
 
+		public void Render(Matrix transform)
+		{
+			if (SubMeshes.Count > 0)
+			{
+				RenderNode(Root, transform, false);
+				RenderNode(Root, transform, true);
+			}
+		}
+
 		public void RenderNode(Node node, SlimDX.Matrix transform, bool isTransparent)
 		{
 			//node.Visible = false;

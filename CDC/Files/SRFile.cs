@@ -173,11 +173,11 @@ namespace CDC.Objects
 		protected UInt32 _modelStart;
 		protected SRModel[] _models;
 		protected UInt32 _animStart;
-		protected UInt32 _instanceCount;
-		protected UInt32 _instanceStart;
-		protected String[] _instanceNames;
-		protected UInt32 _instanceTypeStart;
-		protected String[] _instanceTypeNames;
+		protected UInt32 _introCount;
+		protected UInt32 _introStart;
+		protected Intro[] _intros;
+		protected UInt32 _objectNameStart;
+		protected String[] _objectNames;
 		protected UInt32 portalCount;
 		protected UInt32 _connectedUnitStart;
 		protected String[] _portalNames;
@@ -190,9 +190,9 @@ namespace CDC.Objects
 		public UInt16 ModelCount { get { return _modelCount; } }
 		public UInt16 AnimCount { get { return _animCount; } }
 		public SRModel[] Models { get { return _models; } }
-		public UInt32 InstanceCount { get { return _instanceCount; } }
-		public String[] Instances { get { return _instanceNames; } }
-		public String[] InstanceTypeNames { get { return _instanceTypeNames; } }
+		public UInt32 IntroCount { get { return _introCount; } }
+		public Intro[] Intros { get { return _intros; } }
+		public String[] ObjectNames { get { return _objectNames; } }
 		public UInt32 ConectedUnitCount { get { return portalCount; } }
 		public String[] ConnectedUnit { get { return _portalNames; } }
 		public Game Game { get { return _game; } }

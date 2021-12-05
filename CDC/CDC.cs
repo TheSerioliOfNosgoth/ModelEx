@@ -126,6 +126,13 @@ namespace CDC
 		public bool useExtraGeometry;
 	}
 
+	public struct Intro
+	{
+		public string name;
+		public int ID;
+		public Vector position;
+	}
+
 	public class Material
 	{
 		public const float OPACITY_TRANSLUCENT = 0.6f;         // 0.3

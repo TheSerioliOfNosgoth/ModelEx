@@ -9,44 +9,34 @@ namespace ModelEx
 {
 	public abstract class Scene
 	{
-		private List<Renderable> renderObjects;
-		public readonly ReadOnlyCollection<Renderable> RenderObjects;
-		public Renderable CurrentObject { get { return RenderObjects.Count > 0 ? renderObjects[0] : null; } }
+		protected List<Renderable> renderables;
+		protected List<RenderInstance> renderInstances;
+		public readonly ReadOnlyCollection<RenderInstance> RenderInstances;
+		public Renderable CurrentObject { get { return renderInstances.Count > 0 ? renderInstances[0] : null; } }
 		protected Dictionary<string, Bitmap> _TexturesAsPNGs;
 
 		protected Scene()
 		{
-			renderObjects = new List<Renderable>();
-			RenderObjects = new ReadOnlyCollection<Renderable>(renderObjects);
+			renderables = new List<Renderable>();
+			renderInstances = new List<RenderInstance>();
+			RenderInstances = new ReadOnlyCollection<RenderInstance>(renderInstances);
 			_TexturesAsPNGs = new Dictionary<string, Bitmap>();
 		}
 
 		public virtual void Dispose()
 		{
-			while (renderObjects.Count > 0)
-			{
-				renderObjects[0].Dispose();
-				renderObjects.Remove(renderObjects[0]);
-			}
-		}
+			renderInstances.Clear();
 
-		protected void AddRenderObject(Renderable renderObject)
-		{
-			renderObjects.Add(renderObject);
-		}
-
-		protected void RemoveRenderObject(Renderable renderObject)
-		{
-			if (renderObjects.Contains(renderObject))
+			while (renderables.Count > 0)
 			{
-				renderObject.Dispose();
-				renderObjects.Remove(renderObject);
+				renderables[0].Dispose();
+				renderables.Remove(renderables[0]);
 			}
 		}
 
 		public virtual void Render()
 		{
-			// handle attempts to render where the renderObjects collection is modified by another threads
+			// handle attempts to render where the renderInstances collection is modified by another threads
 			int retryCount = 0;
 			int maxTries = 5;
 			int retryDelay = 1000;
@@ -55,7 +45,7 @@ namespace ModelEx
 			{
 				try
 				{
-					foreach (Renderable renderable in renderObjects)
+					foreach (Renderable renderable in renderInstances)
 					{
 						renderable.Render();
 					}
