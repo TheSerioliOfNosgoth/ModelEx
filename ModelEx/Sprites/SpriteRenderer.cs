@@ -59,6 +59,8 @@ namespace SpriteTextRenderer
     /// </summary>
     public class SpriteRenderer : IDisposable
     {
+        protected ModelEx.EffectSprite effect = ModelEx.ShaderManager.Instance.effectSprite;
+
         private Device device;
         /// <summary>
         /// Returns the Direct3D device that this SpriteRenderer was created for.
@@ -66,10 +68,6 @@ namespace SpriteTextRenderer
         public Device Device { get { return device; } }
         private DeviceContext context;
 
-        private Effect Fx;
-        private EffectPass pass;
-        private InputLayout inputLayout;
-        private EffectResourceVariable textureVariable;
         private int bufferSize;
         private Viewport viewport;
 
@@ -181,17 +179,6 @@ namespace SpriteTextRenderer
 
         private void Initialize()
         {
-            using (var code = ShaderBytecode.CompileFromFile("Shaders/Sprite.fx", "fx_5_0"))
-            {
-                Fx = new Effect(device, code);
-            }
-
-            pass = Fx.GetTechniqueByIndex(0).GetPassByIndex(0);
-            inputLayout = new InputLayout(device, pass.Description.Signature, SpriteVertexLayout.Description);
-            inputLayout.DebugName = "Input Layout for Sprites";
-
-            textureVariable = Fx.GetVariableByName("Tex").AsResource();
-
             vb = new Buffer(device, bufferSize * SpriteVertexLayout.Struct.SizeInBytes, ResourceUsage.Dynamic, BindFlags.VertexBuffer, CpuAccessFlags.Write, ResourceOptionFlags.None, SpriteVertexLayout.Struct.SizeInBytes);
             vb.DebugName = "Sprites Vertexbuffer";
 
@@ -390,7 +377,7 @@ namespace SpriteTextRenderer
 
             //Initialize render calls
  
-            device.ImmediateContext.InputAssembler.InputLayout = inputLayout;
+            device.ImmediateContext.InputAssembler.InputLayout = effect.layout;
             device.ImmediateContext.InputAssembler.PrimitiveTopology = PrimitiveTopology.PointList;
             device.ImmediateContext.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(vb, SpriteVertexLayout.Struct.SizeInBytes, 0));
 
@@ -399,8 +386,8 @@ namespace SpriteTextRenderer
             foreach (var segment in sprites)
             {
                 int count = segment.Sprites.Count;
-                textureVariable.SetResource(segment.Texture);
-                pass.Apply(context);
+                effect.Texture = segment.Texture;
+                effect.Apply(0);
                 device.ImmediateContext.Draw(count, offset);
                 offset += count;
             }
@@ -435,8 +422,6 @@ namespace SpriteTextRenderer
                     //There are no managed resources to dispose
                 }
 
-                Fx.Dispose();
-                inputLayout.Dispose();
                 dSState.Dispose();
                 blendState.Dispose();
 

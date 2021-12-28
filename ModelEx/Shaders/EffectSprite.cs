@@ -48,7 +48,6 @@ namespace ModelEx
 					new IncludeFX("Shaders")))
 				{
 					geometryShader = new GeometryShader(DeviceManager.Instance.device, geometryShaderByteCode);
-					inputSignature = ShaderSignature.GetInputSignature(geometryShaderByteCode);
 				}
 
 				using (ShaderBytecode vertexShaderByteCode = ShaderBytecode.CompileFromFile(
@@ -61,6 +60,7 @@ namespace ModelEx
 					new IncludeFX("Shaders")))
 				{
 					vertexShader = new VertexShader(DeviceManager.Instance.device, vertexShaderByteCode);
+					inputSignature = ShaderSignature.GetInputSignature(vertexShaderByteCode);
 				}
 
 				using (ShaderBytecode pixelShaderByteCode = ShaderBytecode.CompileFromFile(
