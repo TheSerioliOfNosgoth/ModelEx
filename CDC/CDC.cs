@@ -129,6 +129,7 @@ namespace CDC
 	public struct Intro
 	{
 		public string name;
+		public int index;
 		public int ID;
 		public Vector position;
 	}

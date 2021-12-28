@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace ModelEx
 {
-	public class EffectWrapperTransformEffectWireframe : Effect
+	public class EffectWrapperTransformEffectWireframe : Effect3D
 	{
 		public ShaderSignature inputSignature;
 		public EffectTechnique technique;

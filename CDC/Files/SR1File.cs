@@ -239,14 +239,14 @@ namespace CDC.Objects
 				}
 
 				String strIntroName = new String(reader.ReadChars(8));
-				_intros[i].name = Utility.CleanObjectName(strIntroName) + "-" + _intros[i].ID;
 				reader.BaseStream.Position += 0x08;
-				int introNum = reader.ReadInt32();
-				int uniqueID = reader.ReadInt32();
+				_intros[i].index = reader.ReadInt32();
+				_intros[i].ID = reader.ReadInt32();
 				reader.BaseStream.Position += 0x08;
 				_intros[i].position.x = (float)reader.ReadInt16();
 				_intros[i].position.y = (float)reader.ReadInt16();
 				_intros[i].position.z = (float)reader.ReadInt16();
+				_intros[i].name = Utility.CleanObjectName(strIntroName) + "-" + _intros[i].ID;
 			}
 
 			// Object Names

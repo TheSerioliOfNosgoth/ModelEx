@@ -96,6 +96,15 @@ namespace CDC.Objects
 			{
 				reader.BaseStream.Position = _introStart + 0x60 * i;
 				String strIntroName = new String(reader.ReadChars(8));
+				reader.BaseStream.Position += 0x08;
+				reader.BaseStream.Position += 0x10;
+				_intros[i].position.x = reader.ReadSingle();
+				_intros[i].position.y = reader.ReadSingle();
+				_intros[i].position.z = reader.ReadSingle();
+				reader.BaseStream.Position += 0x04;
+				reader.BaseStream.Position += 0x10;
+				_intros[i].index = reader.ReadInt32();
+				_intros[i].ID = reader.ReadInt32();
 				_intros[i].name = Utility.CleanObjectName(strIntroName) + "-" + _intros[i].ID;
 			}
 

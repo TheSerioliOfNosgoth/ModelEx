@@ -125,13 +125,19 @@
     <Compile Include="Scenes\Scene.cs" />
     <Compile Include="Scenes\SceneCDC.cs" />
     <Compile Include="Scenes\SceneManager.cs" />
+    <Compile Include="Shaders\EffectSprite.cs" />
     <Compile Include="Shaders\Effect.cs" />
+    <Compile Include="Shaders\Effect3D.cs" />
     <Compile Include="Shaders\EffectMorphingUnit.cs" />
     <Compile Include="Shaders\EffectWrapperGouraudTexture.cs" />
     <Compile Include="Shaders\EffectWrapperPhongTexture.cs" />
     <Compile Include="Shaders\EffectWrapperTransformEffectWireframe.cs" />
     <Compile Include="Shaders\ShaderManager.cs" />
     <Compile Include="Shaders\VertexLayouts.cs" />
+    <Compile Include="Sprites\Helpers.cs" />
+    <Compile Include="Sprites\SpriteRenderer.cs" />
+    <Compile Include="Sprites\Structs.cs" />
+    <Compile Include="Sprites\TextBlockRenderer.cs" />
     <Compile Include="Timer.cs" />
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
@@ -181,6 +187,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Shaders\transformEffectWireframe.fx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Shaders\Sprite.fx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

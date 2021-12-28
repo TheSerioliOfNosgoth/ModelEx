@@ -23,6 +23,8 @@ using SR1PSTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPlaystati
 using SR1DCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverDreamcastTextureFile;
 using SR2PCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaver2PCVRMTextureFile;
 
+using SpriteTextRenderer;
+
 namespace ModelEx
 {
 	public class SceneCDC : Scene
@@ -488,10 +490,76 @@ namespace ModelEx
 		CDC.Game _game = CDC.Game.SR1;
 		List<SRFile> _objectFiles = new List<SRFile>();
 
+		SpriteRenderer sprite;
+		TextBlockRenderer textBlock;
+
 		public SceneCDC(CDC.Game game)
 			: base()
 		{
 			_game = game;
+			sprite = new SpriteRenderer(DeviceManager.Instance.device);
+			textBlock = new TextBlockRenderer(sprite, "Arial", SlimDX.DirectWrite.FontWeight.Bold, SlimDX.DirectWrite.FontStyle.Normal, SlimDX.DirectWrite.FontStretch.Normal, 16);
+		}
+
+		public override void Render()
+		{
+			SlimDX.Direct3D11.DepthStencilState oldDSState = DeviceManager.Instance.context.OutputMerger.DepthStencilState;
+			SlimDX.Direct3D11.BlendState oldBlendState = DeviceManager.Instance.context.OutputMerger.BlendState;
+			SlimDX.Direct3D11.RasterizerState oldRasterizerState = DeviceManager.Instance.context.Rasterizer.State;
+			SlimDX.Direct3D11.VertexShader oldVertexShader = DeviceManager.Instance.context.VertexShader.Get();
+			SlimDX.Direct3D11.Buffer[] oldVSCBuffers = DeviceManager.Instance.context.VertexShader.GetConstantBuffers(0, 10);
+			SlimDX.Direct3D11.PixelShader oldPixelShader = DeviceManager.Instance.context.PixelShader.Get();
+			SlimDX.Direct3D11.Buffer[] oldPSCBuffers = DeviceManager.Instance.context.PixelShader.GetConstantBuffers(0, 10);
+			SlimDX.Direct3D11.ShaderResourceView[] oldShaderResources = DeviceManager.Instance.context.PixelShader.GetShaderResources(0, 10);
+			SlimDX.Direct3D11.GeometryShader oldGeometryShader = DeviceManager.Instance.context.GeometryShader.Get();
+
+			base.Render();
+
+			DeviceManager.Instance.context.OutputMerger.DepthStencilState = oldDSState;
+			DeviceManager.Instance.context.OutputMerger.BlendState = oldBlendState;
+			DeviceManager.Instance.context.Rasterizer.State = oldRasterizerState;
+			DeviceManager.Instance.context.VertexShader.Set(oldVertexShader);
+			DeviceManager.Instance.context.VertexShader.SetConstantBuffers(oldVSCBuffers, 0, 10);
+			DeviceManager.Instance.context.PixelShader.Set(oldPixelShader);
+			DeviceManager.Instance.context.PixelShader.SetConstantBuffers(oldPSCBuffers, 0, 10);
+			DeviceManager.Instance.context.PixelShader.SetShaderResources(oldShaderResources, 0, 10);
+			DeviceManager.Instance.context.GeometryShader.Set(oldGeometryShader);
+
+			System.Threading.Monitor.Enter(DeviceManager.Instance.device);
+			foreach (RenderInstance instance in renderInstances)
+			{
+				if (instance.Name == null)
+				{
+					continue;
+				}
+
+				SlimDX.Matrix world = instance.Transform;
+				SlimDX.Matrix view = CameraManager.Instance.frameCamera.View;
+				SlimDX.Matrix projection = CameraManager.Instance.frameCamera.Perspective;
+
+				//SlimDX.Matrix viewProj = view * projection;
+				SlimDX.Matrix worldViewProjection = world * view * projection;
+				SlimDX.Direct3D11.Viewport vp = DeviceManager.Instance.context.Rasterizer.GetViewports()[0];
+				SlimDX.Vector3 position3D = SlimDX.Vector3.Project(SlimDX.Vector3.Zero, vp.X, vp.Y, vp.Width, vp.Height, vp.MinZ, vp.MaxZ, worldViewProjection);
+				SlimDX.Vector2 position2D = new SlimDX.Vector2(position3D.X, position3D.Y);
+
+				if (position3D.Z < vp.MaxZ)
+				{
+					textBlock.DrawString(instance.Name, position2D, new SlimDX.Color4(1.0f, 1.0f, 1.0f));
+				}
+			}
+			sprite.Flush();
+			System.Threading.Monitor.Exit(DeviceManager.Instance.device);
+
+			DeviceManager.Instance.context.OutputMerger.DepthStencilState = oldDSState;
+			DeviceManager.Instance.context.OutputMerger.BlendState = oldBlendState;
+			DeviceManager.Instance.context.Rasterizer.State = oldRasterizerState;
+			DeviceManager.Instance.context.VertexShader.Set(oldVertexShader);
+			DeviceManager.Instance.context.VertexShader.SetConstantBuffers(oldVSCBuffers, 0, 10);
+			DeviceManager.Instance.context.PixelShader.Set(oldPixelShader);
+			DeviceManager.Instance.context.PixelShader.SetConstantBuffers(oldPSCBuffers, 0, 10);
+			DeviceManager.Instance.context.PixelShader.SetShaderResources(oldShaderResources, 0, 10);
+			DeviceManager.Instance.context.GeometryShader.Set(oldGeometryShader);
 		}
 
 		//public static string GetTextureNameDefault(string objectName, int textureID)
@@ -717,18 +785,21 @@ namespace ModelEx
 			octaParser.BuildModel();
 			renderables.Add(octaParser.Model);
 
-			/*foreach(CDC.Intro intro in srFile.Intros)
+			if (srFile.Asset == CDC.Asset.Unit)
 			{
-				Marker marker = new Marker(octaParser.Model);
-				float height = marker.GetBoundingSphere().Radius;
-				marker.Name = intro.name;
-				marker.Transform = SlimDX.Matrix.Translation(
-					0.01f * intro.position.x,
-					0.01f * intro.position.z + height,
-					0.01f * intro.position.y
-				);
-				renderInstances.Add(marker);
-			}*/
+				foreach (CDC.Intro intro in srFile.Intros)
+				{
+					Marker marker = new Marker(octaParser.Model);
+					float height = marker.GetBoundingSphere().Radius;
+					marker.Name = intro.name;
+					marker.Transform = SlimDX.Matrix.Translation(
+						0.01f * intro.position.x,
+						0.01f * intro.position.z + height,
+						0.01f * intro.position.y
+					);
+					renderInstances.Add(marker);
+				}
+			}
 
 			_objectFiles.Add(srFile);
 

@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace ModelEx
 {
-	public class EffectWrapperPhongTexture : Effect
+	public class EffectWrapperPhongTexture : Effect3D
 	{
 		public VertexShader vertexShader;
 		public PixelShader pixelShader;

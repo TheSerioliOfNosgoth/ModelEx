@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace ModelEx
 {
-	public class EffectWrapperGouraudTexture : Effect
+	public class EffectWrapperGouraudTexture : Effect3D
 	{
 		public VertexShader vertexShader;
 		public PixelShader pixelShader;
