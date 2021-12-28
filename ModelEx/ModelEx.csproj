@@ -134,7 +134,6 @@
     <Compile Include="Shaders\EffectWrapperTransformEffectWireframe.cs" />
     <Compile Include="Shaders\ShaderManager.cs" />
     <Compile Include="Shaders\VertexLayouts.cs" />
-    <Compile Include="Sprites\Helpers.cs" />
     <Compile Include="Sprites\SpriteRenderer.cs" />
     <Compile Include="Sprites\Structs.cs" />
     <Compile Include="Sprites\TextBlockRenderer.cs" />
