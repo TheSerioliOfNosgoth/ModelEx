@@ -1,5 +1,5 @@
 ﻿Texture2D Tex;
-							
+
 struct VS_IN
 {
 	float2 TexCoord		: TEXCOORD;
@@ -25,18 +25,18 @@ struct PS_IN
 SamplerState sam
 {
 	Filter = MIN_MAG_MIP_LINEAR;
-	AddressU  = Wrap;
-	AddressV  = Wrap;
+	AddressU = Wrap;
+	AddressV = Wrap;
 };
 
 DepthStencilState DisableDepth
 {
-    DepthEnable = FALSE;
-    DepthWriteMask = ZERO;
+	DepthEnable = FALSE;
+	DepthWriteMask = ZERO;
 };
 
 [maxvertexcount(4)]
-void mainGS( point VS_IN input[1], inout TriangleStream<GS_OUT> TriStream )
+void mainGS(point VS_IN input[1], inout TriangleStream<GS_OUT> TriStream)
 {
 	/*
 
@@ -72,20 +72,20 @@ void mainGS( point VS_IN input[1], inout TriangleStream<GS_OUT> TriStream )
 VS_IN mainVS(VS_IN vs_in)
 {
 	return vs_in;
-}			
+}
 
 float4 mainPS(PS_IN ps_in) : SV_TARGET
 {
 	return Tex.Sample(sam, ps_in.TexCoord) * ps_in.Color;
 }
 
-technique10 Render 
+technique10 Render
 {
-	pass p0 
-	{	
-		SetVertexShader		( CompileShader( vs_4_0 , mainVS() ) );
-		SetGeometryShader	( CompileShader( gs_4_0 , mainGS() ) );
-		SetPixelShader		( CompileShader( ps_4_0 , mainPS() ) );
+	pass p0
+	{
+		SetVertexShader(CompileShader(vs_4_0, mainVS()));
+		SetGeometryShader(CompileShader(gs_4_0, mainGS()));
+		SetPixelShader(CompileShader(ps_4_0, mainPS()));
 
 		//SetDepthStencilState( DisableDepth, 0 );
 	}
