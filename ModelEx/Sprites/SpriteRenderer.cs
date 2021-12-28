@@ -9,62 +9,19 @@ using Buffer = SlimDX.Direct3D11.Buffer;
 
 namespace SpriteTextRenderer
 {
-	/// <summary>
-	/// Specifies, how coordinates are interpreted.
-	/// </summary>
-	/// <remarks>
-	/// <para>Sprites (and with that text) can be drawn in several coordinate systems. The user can choose, which system
-	/// fits his needs best. There are basically two types of coordinate system:</para>
-	/// <para><b>Type 1 systems</b><br/>
-	/// <img src="../Coordinate1.jpg" alt="Type 1 coordinate system"/><br/>
-	/// The origin of T1 systems is located at the top left corner of the screen. The x-axis points to the right,
-	/// the y-axis points downwards. All T1 systems differ in the axes' scaling. <see cref="CoordinateType.UNorm"/>
-	/// uses unsigned normalized coordinates. <see cref="CoordinateType.Absolute"/> uses the screen's pixel coordinates.
-	/// Therefore, the SpriteRenderer needs the D3DDevice's viewport. For performance reasons the viewport will not be
-	/// queried repeatedly, but only once at the construction of the <see cref="SpriteRenderer"/> or on a call to 
-	/// <see cref="SpriteRenderer.RefreshViewport"/>. <see cref="CoordinateType.Relative"/> uses a T1 coordinate 
-	/// system of custom size.
-	/// </para>
-	/// <para><b>Type 2 systems</b><br/>
-	/// <img src="../Coordinate2.jpg" alt="Type 2 coordinate system"/><br/>
-	/// The origin of T2 systems is at the screen center. The x-axis points to the right, the y-axis points upwards.
-	/// I.e. this coordinate system uses a flipped y-axis. Because the bottom coordinate is calculated with Top + Size,
-	/// T2 coordinates usually have negative vertical sizes. <see cref="CoordinateType.SNorm"/> uses signed normalized
-	/// coordinates.
-	/// </para>
-	/// 
-	/// </remarks>
 	public enum CoordinateType
 	{
-		/// <summary>
-		/// Coordinates are in the range from 0 to 1. (0, 0) is the top left corner; (1, 1) is the bottom right corner.
-		/// </summary>
 		UNorm,
-		/// <summary>
-		/// Coordinates are in the range from -1 to 1. (-1, -1) is the bottom left corner; (1, 1) is the top right corner. This is the DirectX standard interpretation.
-		/// </summary>
 		SNorm,
-		/// <summary>
-		/// Coordinates are in the range of the relative screen size. (0, 0) is the top left corner; (ScreenSize.X, ScreenSize.Y) is the bottom right corner. A variable screen size is used. Use <see cref="SpriteRenderer.ScreenSize"/>.
-		/// </summary>
 		Relative,
-		/// <summary>
-		/// Coordinates are in the range of the actual screen size. (0, 0) is the top left corner; (Viewport.Width, Viewport.Height) is the bottom right corner. Use <see cref="SpriteRenderer.RefreshViewport"/> for updates to the used viewport.
-		/// </summary>
 		Absolute
 	}
 
-	/// <summary>
-	/// This class is responsible for rendering 2D sprites. Typically, only one instance of this class is necessary.
-	/// </summary>
 	public class SpriteRenderer : IDisposable
 	{
 		protected ModelEx.EffectSprite effect = ModelEx.ShaderManager.Instance.effectSprite;
 
 		private Device device;
-		/// <summary>
-		/// Returns the Direct3D device that this SpriteRenderer was created for.
-		/// </summary>
 		public Device Device { get { return device; } }
 		private DeviceContext context;
 
@@ -74,94 +31,21 @@ namespace SpriteTextRenderer
 		DepthStencilState dSState;
 		BlendState blendState;
 
-		/// <summary>
-		/// Gets or sets, if this SpriteRenderer handles DepthStencilState
-		/// </summary>
-		/// <remarks>
-		/// <para>
-		/// Sprites have to be drawn with depth test disabled. If HandleDepthStencilState is set to true, the
-		/// SpriteRenderer sets the DepthStencilState to a predefined state before drawing and resets it to
-		/// the previous state after that. Set this value to false, if you want to handle states yourself.
-		/// </para>
-		/// <para>
-		/// The default value is true.
-		/// </para>
-		/// </remarks>
 		public bool HandleDepthStencilState { get; set; }
 
-		/// <summary>
-		/// Gets or sets, if this SpriteRenderer handles BlendState
-		/// </summary>
-		/// <remarks>
-		/// <para>
-		/// Sprites have to be drawn with simple alpha blending. If HandleBlendState is set to true, the
-		/// SpriteRenderer sets the BlendState to a predefined state before drawing and resets it to
-		/// the previous state after that. Set this value to false, if you want to handle states yourself.
-		/// </para>
-		/// <para>
-		/// The default value is true.
-		/// </para>
-		/// </remarks>
 		public bool HandleBlendState { get; set; }
 
-		/// <summary>
-		/// Set to true, if the order of draw calls can be rearranged for better performance.
-		/// </summary>
-		/// <remarks>
-		/// Sprites are not drawn immediately, but only on a call to <see cref="SpriteRenderer.Flush"/>.
-		/// Rendering performance can be improved, if the order of sprites can be changed, so that sprites
-		/// with the same texture can be drawn with one draw call. However, this will not preserve the z-order.
-		/// Use <see cref="SpriteRenderer.ClearReorderBuffer"/> to force a set of sprites to be drawn before another set.
-		/// </remarks>
-		/// <example>
-		/// Consider the following pseudo code:
-		/// <code>
-		/// Draw left intense red circle
-		/// Draw middle light red circle
-		/// Draw right intense red circle
-		/// </code>
-		/// <para>With AllowReorder set to true, this will result in the following image:<br/>
-		/// <img src="../Reorder1.jpg" alt=""/><br/>
-		/// That is because the last circle is reordered to be drawn together with the first circle.
-		/// </para>
-		/// <para>With AllowReorder set to false, this will result in the following image:<br/>
-		/// <img src="../Reorder2.jpg" alt=""/><br/>
-		/// No optimization is applied. Performance may be slightly worse than with reordering.
-		/// </para>
-		/// </example>
 		public bool AllowReorder { get; set; }
 
-		/// <summary>
-		/// When using relative coordinates, the screen size has to be set. Typically the screen size in pixels is used. However, other values are possible as well.
-		/// </summary>
 		public Vector2 ScreenSize { get; set; }
 
-		/// <summary>
-		/// A list of all sprites to draw. Sprites are drawn in the order in this list.
-		/// </summary>
 		private List<SpriteSegment> sprites = new List<SpriteSegment>();
-		/// <summary>
-		/// Allows direct access to the according SpriteSegments based on the texture
-		/// </summary>
 		private Dictionary<ShaderResourceView, List<SpriteSegment>> textureSprites = new Dictionary<ShaderResourceView, List<SpriteSegment>>();
 
-		/// <summary>
-		/// The number of currently buffered sprites
-		/// </summary>
 		private int spriteCount = 0;
 
 		private Buffer vb;
 
-		/// <summary>
-		/// Create a new SpriteRenderer instance.
-		/// </summary>
-		/// <param name="device">Direct3D device, which will be used for rendering</param>
-		/// <param name="bufferSize">The number of elements that can be stored in the sprite buffer.</param>
-		/// <remarks>
-		/// Sprites are not drawn immediately, but buffered instead. The buffer size defines, how much sprites can be buffered.
-		/// If the buffer is full, according draw calls will be issued on the GPU clearing the buffer. Its size should be as big as
-		/// possible without wasting empty space.
-		/// </remarks>
 		public SpriteRenderer(Device device, int bufferSize = 128)
 		{
 			this.device = device;
@@ -203,17 +87,11 @@ namespace SpriteTextRenderer
 			blendState = BlendState.FromDescription(device, blendDesc);
 		}
 
-		/// <summary>
-		/// Updates the viewport used for absolute positioning. The first current viewport of the device's rasterizer will be used.
-		/// </summary>
 		public void RefreshViewport()
 		{
 			viewport = device.ImmediateContext.Rasterizer.GetViewports()[0];
 		}
 
-		/// <summary>
-		/// Closes a reorder session. Further draw calls will not be drawn together with previous draw calls.
-		/// </summary>
 		public void ClearReorderBuffer()
 		{
 			textureSprites.Clear();
@@ -241,41 +119,16 @@ namespace SpriteTextRenderer
 			return Vector2.Zero;
 		}
 
-		/// <summary>
-		/// Draws a complete texture on the screen.
-		/// </summary>
-		/// <param name="texture">The shader resource view of the texture to draw</param>
-		/// <param name="position">Position of the top left corner of the texture in the chosen coordinate system</param>
-		/// <param name="size">Size of the texture in the chosen coordinate system</param>
-		/// <param name="coordinateType">A custom coordinate system in which to draw the texture</param>
 		public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, CoordinateType coordinateType)
 		{
 			Draw(texture, position, size, new Color4(1, 1, 1, 1), coordinateType);
 		}
 
-		/// <summary>
-		/// Draws a complete texture on the screen.
-		/// </summary>
-		/// <param name="texture">The shader resource view of the texture to draw</param>
-		/// <param name="position">Position of the top left corner of the texture in the chosen coordinate system</param>
-		/// <param name="size">Size of the texture in the chosen coordinate system</param>
-		/// <param name="coordinateType">A custom coordinate system in which to draw the texture</param>
-		/// <param name="color">The color with which to multiply the texture</param>
 		public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, Color4 color, CoordinateType coordinateType)
 		{
 			Draw(texture, position, size, Vector2.Zero, new Vector2(1, 1), color, coordinateType);
 		}
 
-		/// <summary>
-		/// Draws a region of a texture on the screen.
-		/// </summary>
-		/// <param name="texture">The shader resource view of the texture to draw</param>
-		/// <param name="position">Position of the top left corner of the texture in the chosen coordinate system</param>
-		/// <param name="size">Size of the texture in the chosen coordinate system</param>
-		/// <param name="coordinateType">A custom coordinate system in which to draw the texture</param>
-		/// <param name="color">The color with which to multiply the texture</param>
-		/// <param name="texCoords">Texture coordinates for the top left corner</param>
-		/// <param name="texCoordsSize">Size of the region in texture coordinates</param>
 		public void Draw(ShaderResourceView texture, Vector2 position, Vector2 size, Vector2 texCoords, Vector2 texCoordsSize, Color4 color, CoordinateType coordinateType)
 		{
 			if (texture == null)
@@ -323,9 +176,6 @@ namespace SpriteTextRenderer
 			CheckForFullBuffer();
 		}
 
-		/// <summary>
-		/// If the buffer is full, then draw all sprites and clear it.
-		/// </summary>
 		private void CheckForFullBuffer()
 		{
 			spriteCount++;
@@ -339,12 +189,6 @@ namespace SpriteTextRenderer
 			CheckForFullBuffer();
 		}
 
-		/// <summary>
-		/// This method causes the SpriteRenderer to immediately draw all buffered sprites.
-		/// </summary>
-		/// <remarks>
-		/// This method should be called at the end of a frame in order to draw the last sprites that are in the buffer.
-		/// </remarks>
 		public void Flush()
 		{
 			if (spriteCount == 0)
@@ -430,9 +274,6 @@ namespace SpriteTextRenderer
 			this.disposed = true;
 		}
 
-		/// <summary>
-		/// Disposes of the SpriteRenderer.
-		/// </summary>
 		public void Dispose()
 		{
 			Dispose(true);
