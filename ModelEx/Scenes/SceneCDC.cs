@@ -650,16 +650,31 @@ namespace ModelEx
 			{
 				possibleLocations.Add(options.TextureFileLocations[i]);
 			}
-			string[] searchDirectories = new string[]
+
+			List<string> searchDirectories = new List<string>();
+
+			string rootDirectory = Path.GetDirectoryName(modelFileName);
+			while (rootDirectory != null && rootDirectory != "")
 			{
-				System.IO.Path.GetDirectoryName(modelFileName),
-				Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
-			};
-			for (int i = 0; i < searchDirectories.Length; i++)
+				string parentDirectory = Path.GetFileName(rootDirectory);
+				rootDirectory = Path.GetDirectoryName(rootDirectory);
+				if (parentDirectory == "kain2")
+				{
+					string outputDirectory = Path.Combine(rootDirectory, "output");
+					searchDirectories.Add(outputDirectory);
+					searchDirectories.Add(rootDirectory);
+				}
+			}
+
+			searchDirectories.Add(Path.GetDirectoryName(modelFileName));
+			searchDirectories.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+
+			for (int i = 0; i < searchDirectories.Count; i++)
 			{
 				string textureFileName = Path.Combine(searchDirectories[i], defaultTextureFileName);
 				possibleLocations.Add(textureFileName);
 			}
+
 			for (int i = 0; i < possibleLocations.Count; i++)
 			{
 				if (File.Exists(possibleLocations[i]))
