@@ -18,6 +18,10 @@ namespace ModelEx
 
 		public ShaderResourceView Texture;
 
+		protected BlendState blendStateDepth;
+
+		protected DepthStencilState depthStencilStateNoDepth;
+
 		/*InputElement[] elements = new[] {
 			new InputElement("TEXCOORD",     0, Format.R32G32_Float,    0, 0),
 			new InputElement("COLOR",        0, Format.R32G32B32_Float, 8, 0),
@@ -76,6 +80,41 @@ namespace ModelEx
 				}
 
 				layout = new InputLayout(DeviceManager.Instance.device, inputSignature, elements);
+
+				#region Blend States
+
+				RenderTargetBlendDescription rtBlendDefault = new RenderTargetBlendDescription()
+				{
+					BlendEnable = true,
+					BlendOperation = BlendOperation.Add,
+					RenderTargetWriteMask = ColorWriteMaskFlags.All,
+					SourceBlend = BlendOption.SourceAlpha,
+					DestinationBlend = BlendOption.InverseSourceAlpha,
+					BlendOperationAlpha = BlendOperation.Add,
+					SourceBlendAlpha = BlendOption.SourceAlpha,
+					DestinationBlendAlpha = BlendOption.InverseSourceAlpha,
+				};
+
+				BlendStateDescription bBlendStateDefault = new BlendStateDescription();
+				bBlendStateDefault.AlphaToCoverageEnable = false;
+				bBlendStateDefault.IndependentBlendEnable = false;
+				bBlendStateDefault.RenderTargets[0] = rtBlendDefault;
+
+				blendStateDepth = BlendState.FromDescription(DeviceManager.Instance.device, bBlendStateDefault);
+
+				#endregion
+
+				#region Depth Stencils
+
+				DepthStencilStateDescription dsStateNoDepth = new DepthStencilStateDescription()
+				{
+					IsDepthEnabled = false,
+					DepthWriteMask = DepthWriteMask.Zero
+				};
+
+				depthStencilStateNoDepth = DepthStencilState.FromDescription(DeviceManager.Instance.device, dsStateNoDepth);
+
+				#endregion
 			}
 			catch (Exception ex)
 			{
@@ -90,10 +129,17 @@ namespace ModelEx
 			pixelShader?.Dispose();
 			layout?.Dispose();
 			Texture?.Dispose();
+
+			blendStateDepth?.Dispose();
+
+			depthStencilStateNoDepth?.Dispose();
 		}
 
 		public override void Apply(int pass)
 		{
+			DeviceManager.Instance.context.OutputMerger.BlendState = blendStateDepth;
+			DeviceManager.Instance.context.OutputMerger.DepthStencilState = depthStencilStateNoDepth;
+
 			DeviceManager.Instance.context.GeometryShader.Set(geometryShader);
 			DeviceManager.Instance.context.VertexShader.Set(vertexShader);
 			DeviceManager.Instance.context.PixelShader.Set(pixelShader);

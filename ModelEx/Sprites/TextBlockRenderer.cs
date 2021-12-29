@@ -110,7 +110,7 @@ namespace SpriteTextRenderer
 			ReferenceCount++;
 			this.Sprite = sprite;
 			this._FontSize = fontSize;
-			D3DDevice11 = sprite.Device;
+			D3DDevice11 = ModelEx.DeviceManager.Instance.device;
 			System.Threading.Monitor.Enter(D3DDevice11);
 			rtp = new RenderTargetProperties()
 			{

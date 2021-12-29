@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Runtime.InteropServices;
 using SlimDX.Direct3D11;
-using SlimDX.D3DCompiler;
 using SlimDX;
 using Buffer = SlimDX.Direct3D11.Buffer;
+using DeviceManager = ModelEx.DeviceManager;
+using EffectSprite = ModelEx.EffectSprite;
+using SpriteVertex = ModelEx.SpriteVertex;
+using ShaderManager = ModelEx.ShaderManager;
 
 namespace SpriteTextRenderer
 {
@@ -17,23 +20,22 @@ namespace SpriteTextRenderer
 		Absolute
 	}
 
+	public class SpriteSegment
+	{
+		public ShaderResourceView Texture;
+		public List<SpriteVertex> Sprites = new List<SpriteVertex>();
+	}
+
 	public class SpriteRenderer : IDisposable
 	{
-		protected ModelEx.EffectSprite effect = ModelEx.ShaderManager.Instance.effectSprite;
+		protected Buffer vertexBuffer;
 
-		private Device device;
-		public Device Device { get { return device; } }
-		private DeviceContext context;
+		protected int vertexStride = 0;
+		protected int maxVertices;
 
-		private int bufferSize;
+		protected EffectSprite effect = ShaderManager.Instance.effectSprite;
+
 		private Viewport viewport;
-
-		DepthStencilState dSState;
-		BlendState blendState;
-
-		public bool HandleDepthStencilState { get; set; }
-
-		public bool HandleBlendState { get; set; }
 
 		public bool AllowReorder { get; set; }
 
@@ -44,17 +46,11 @@ namespace SpriteTextRenderer
 
 		private int spriteCount = 0;
 
-		private Buffer vb;
-
-		public SpriteRenderer(Device device, int bufferSize = 128)
+		public SpriteRenderer(int maxVertices = 128)
 		{
-			this.device = device;
-			this.context = device.ImmediateContext;
-			this.bufferSize = bufferSize;
+			this.maxVertices = maxVertices;
 
 			AllowReorder = true;
-			HandleDepthStencilState = true;
-			HandleBlendState = true;
 
 			Initialize();
 
@@ -63,33 +59,23 @@ namespace SpriteTextRenderer
 
 		private void Initialize()
 		{
-			vb = new Buffer(device, bufferSize * SpriteVertexLayout.Struct.SizeInBytes, ResourceUsage.Dynamic, BindFlags.VertexBuffer, CpuAccessFlags.Write, ResourceOptionFlags.None, SpriteVertexLayout.Struct.SizeInBytes);
-			vb.DebugName = "Sprites Vertexbuffer";
+			vertexStride = Marshal.SizeOf(typeof(SpriteVertex));
+			int SizeOfVertexBufferInBytes = maxVertices * vertexStride;
 
-			var dssd = new DepthStencilStateDescription()
-			{
-				IsDepthEnabled = false,
-				DepthWriteMask = DepthWriteMask.Zero
-			};
-			dSState = DepthStencilState.FromDescription(Device, dssd);
+			vertexBuffer = new Buffer(
+				DeviceManager.Instance.device,
+				SizeOfVertexBufferInBytes,
+				ResourceUsage.Dynamic,
+				BindFlags.VertexBuffer,
+				CpuAccessFlags.Write, ResourceOptionFlags.None,
+				vertexStride);
 
-			var blendDesc = new BlendStateDescription();
-			blendDesc.AlphaToCoverageEnable = false;
-			blendDesc.IndependentBlendEnable = false;
-			blendDesc.RenderTargets[0].BlendOperation = BlendOperation.Add;
-			blendDesc.RenderTargets[0].DestinationBlend = BlendOption.InverseSourceAlpha;
-			blendDesc.RenderTargets[0].SourceBlend = BlendOption.SourceAlpha;
-			blendDesc.RenderTargets[0].BlendEnable = true;
-			blendDesc.RenderTargets[0].RenderTargetWriteMask = ColorWriteMaskFlags.All;
-			blendDesc.RenderTargets[0].BlendOperationAlpha = BlendOperation.Add;
-			blendDesc.RenderTargets[0].SourceBlendAlpha = BlendOption.SourceAlpha;
-			blendDesc.RenderTargets[0].DestinationBlendAlpha = BlendOption.InverseSourceAlpha;
-			blendState = BlendState.FromDescription(device, blendDesc);
+			vertexBuffer.DebugName = "Sprites Vertexbuffer";
 		}
 
 		public void RefreshViewport()
 		{
-			viewport = device.ImmediateContext.Rasterizer.GetViewports()[0];
+			viewport = DeviceManager.Instance.context.Rasterizer.GetViewports()[0];
 		}
 
 		public void ClearReorderBuffer()
@@ -133,7 +119,7 @@ namespace SpriteTextRenderer
 		{
 			if (texture == null)
 				return;
-			var data = new SpriteVertexLayout.Struct();
+			var data = new SpriteVertex();
 			data.Position = ConvertCoordinate(position, coordinateType);
 			data.Size = ConvertCoordinate(position + size, coordinateType) - data.Position;
 			data.Size.X = Math.Abs(data.Size.X);
@@ -160,7 +146,7 @@ namespace SpriteTextRenderer
 				AddNew(texture, data);
 		}
 
-		private void AddNew(ShaderResourceView texture, SpriteVertexLayout.Struct data)
+		private void AddNew(ShaderResourceView texture, SpriteVertex data)
 		{
 			//Create new segment with initial values
 			var newSegment = new SpriteSegment();
@@ -179,11 +165,11 @@ namespace SpriteTextRenderer
 		private void CheckForFullBuffer()
 		{
 			spriteCount++;
-			if (spriteCount >= bufferSize)
+			if (spriteCount >= maxVertices)
 				Flush();
 		}
 
-		private void AddIn(SpriteSegment segment, SpriteVertexLayout.Struct data)
+		private void AddIn(SpriteSegment segment, SpriteVertex data)
 		{
 			segment.Sprites.Add(data);
 			CheckForFullBuffer();
@@ -194,36 +180,23 @@ namespace SpriteTextRenderer
 			if (spriteCount == 0)
 				return;
 
-			System.Threading.Monitor.Enter(device);
-			//Update DepthStencilState if necessary
-			DepthStencilState oldDSState = null;
-			BlendState oldBlendState = null;
-			if (HandleDepthStencilState)
-			{
-				oldDSState = Device.ImmediateContext.OutputMerger.DepthStencilState;
-				Device.ImmediateContext.OutputMerger.DepthStencilState = dSState;
-			}
-			if (HandleBlendState)
-			{
-				oldBlendState = Device.ImmediateContext.OutputMerger.BlendState;
-				Device.ImmediateContext.OutputMerger.BlendState = blendState;
-			}
+			System.Threading.Monitor.Enter(DeviceManager.Instance.device);
 
 			//Construct vertexbuffer
-			var data = context.MapSubresource(vb, MapMode.WriteDiscard, MapFlags.None);
+			var data = DeviceManager.Instance.context.MapSubresource(vertexBuffer, MapMode.WriteDiscard, MapFlags.None);
 			foreach (var segment in sprites)
 			{
 				var vertices = segment.Sprites.ToArray();
 				data.Data.WriteRange(vertices);
 			}
-			context.UnmapSubresource(vb, 0);
+			DeviceManager.Instance.context.UnmapSubresource(vertexBuffer, 0);
 
 
 			//Initialize render calls
 
-			device.ImmediateContext.InputAssembler.InputLayout = effect.layout;
-			device.ImmediateContext.InputAssembler.PrimitiveTopology = PrimitiveTopology.PointList;
-			device.ImmediateContext.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(vb, SpriteVertexLayout.Struct.SizeInBytes, 0));
+			DeviceManager.Instance.context.InputAssembler.InputLayout = effect.layout;
+			DeviceManager.Instance.context.InputAssembler.PrimitiveTopology = PrimitiveTopology.PointList;
+			DeviceManager.Instance.context.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(vertexBuffer, vertexStride, 0));
 
 			//Draw
 			int offset = 0;
@@ -232,20 +205,11 @@ namespace SpriteTextRenderer
 				int count = segment.Sprites.Count;
 				effect.Texture = segment.Texture;
 				effect.Apply(0);
-				device.ImmediateContext.Draw(count, offset);
+				DeviceManager.Instance.context.Draw(count, offset);
 				offset += count;
 			}
 
-			if (HandleDepthStencilState)
-			{
-				Device.ImmediateContext.OutputMerger.DepthStencilState = oldDSState;
-			}
-			if (HandleBlendState)
-			{
-				Device.ImmediateContext.OutputMerger.BlendState = oldBlendState;
-			}
-
-			System.Threading.Monitor.Exit(device);
+			System.Threading.Monitor.Exit(DeviceManager.Instance.device);
 
 			//System.Diagnostics.Debug.Print(SpriteCount + " Sprites gezeichnet.");
 
@@ -266,10 +230,7 @@ namespace SpriteTextRenderer
 					//There are no managed resources to dispose
 				}
 
-				dSState.Dispose();
-				blendState.Dispose();
-
-				vb.Dispose();
+				vertexBuffer.Dispose();
 			}
 			this.disposed = true;
 		}

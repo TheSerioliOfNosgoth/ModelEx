@@ -12,16 +12,19 @@ namespace ModelEx
 		int VertexCount { get; }
 		void FillVertex(int v, out V vertex);
 	}
+
 	public interface IIndexParser<I>
 	{
 		int IndexCount { get; }
 		void FillIndex(int i, out I index);
 	}
+
 	public interface IMeshParser<V, I> : IVertexParser<V>, IIndexParser<I>
 	{
 		string MeshName { get; }
 		string Technique { get; }
 	}
+
 	public interface IModelParser
 	{
 		string ModelName { get; }
@@ -39,14 +42,14 @@ namespace ModelEx
 
 		public PositionColoredVertex(Vector3 position, int color)
 		{
-			this.Position = position;
-			this.Color = color;
+			Position = position;
+			Color = color;
 		}
 
 		public PositionColoredVertex(float x, float y, float z, int color)
 		{
-			this.Position = new Vector3(x, y, z);
-			this.Color = color;
+			Position = new Vector3(x, y, z);
+			Color = color;
 		}
 	}
 
@@ -59,9 +62,9 @@ namespace ModelEx
 
 		public PositionColoredNormalVertex(Vector3 position, int color, Vector3 normal)
 		{
-			this.Position = position;
-			this.Color = color;
-			this.Normal = normal;
+			Position = position;
+			Color = color;
+			Normal = normal;
 		}
 	}
 
@@ -73,8 +76,8 @@ namespace ModelEx
 
 		public PositionNormalVertex(Vector3 position, Vector3 normal)
 		{
-			this.Position = position;
-			this.Normal = normal;
+			Position = position;
+			Normal = normal;
 		}
 	}
 
@@ -87,9 +90,9 @@ namespace ModelEx
 
 		public PositionNormalTexturedVertex(Vector3 position, Vector3 normal, Vector2 textureCoordinates)
 		{
-			this.Position = position;
-			this.Normal = normal;
-			this.TextureCoordinates = textureCoordinates;
+			Position = position;
+			Normal = normal;
+			TextureCoordinates = textureCoordinates;
 		}
 	}
 
@@ -102,9 +105,9 @@ namespace ModelEx
 
 		public PositionColorTexturedVertex(Vector3 position, Color3 color, Vector2 textureCoordinates)
 		{
-			this.Position = position;
-			this.Color = color;
-			this.TextureCoordinates = textureCoordinates;
+			Position = position;
+			Color = color;
+			TextureCoordinates = textureCoordinates;
 		}
 	}
 
@@ -119,11 +122,11 @@ namespace ModelEx
 
 		public Position2Color2TexturedVertex(Vector3 position0, Vector3 position1, Color3 color0, Color3 color1, Vector2 textureCoordinates)
 		{
-			this.Position0 = position0;
-			this.Position1 = position1;
-			this.Color0 = color0;
-			this.Color1 = color1;
-			this.TextureCoordinates = textureCoordinates;
+			Position0 = position0;
+			Position1 = position1;
+			Color0 = color0;
+			Color1 = color1;
+			TextureCoordinates = textureCoordinates;
 		}
 	}
 
@@ -136,7 +139,7 @@ namespace ModelEx
 
 		public PositionTexturedVertex(Vector3 position, Vector2 textureCoordinates)
 		{
-			this.Position = position;
+			Position = position;
 			TextureCoordinates = textureCoordinates;
 		}
 	}
@@ -150,9 +153,27 @@ namespace ModelEx
 
 		public PositionTextured3DVertex(Vector3 position, Vector3 textureCoordinates)
 		{
-			this.Position = position;
+			Position = position;
 			TextureCoordinates = textureCoordinates;
 		}
 	}
 
+	[StructLayout(LayoutKind.Sequential)]
+	public struct SpriteVertex
+	{
+		public Vector2 TexCoord;
+		public Vector2 TexCoordSize;
+		public Vector2 Position;
+		public Vector2 Size;
+		public int Color;
+
+		public SpriteVertex(Vector2 textureCoordinates, Vector2 textureCoordinatesSize, Vector2 position, Vector2 size, int color)
+		{
+			TexCoord = textureCoordinates;
+			TexCoordSize = textureCoordinatesSize;
+			Position = position;
+			Size = size;
+			Color = color;
+		}
+	}
 }

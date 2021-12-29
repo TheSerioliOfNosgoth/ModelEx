@@ -497,12 +497,14 @@ namespace ModelEx
 			: base()
 		{
 			_game = game;
-			sprite = new SpriteRenderer(DeviceManager.Instance.device);
+			sprite = new SpriteRenderer();
 			textBlock = new TextBlockRenderer(sprite, "Arial", SlimDX.DirectWrite.FontWeight.Bold, SlimDX.DirectWrite.FontStyle.Normal, SlimDX.DirectWrite.FontStretch.Normal, 16);
 		}
 
 		public override void Render()
 		{
+			sprite.RefreshViewport();
+
 			SlimDX.Direct3D11.DepthStencilState oldDSState = DeviceManager.Instance.context.OutputMerger.DepthStencilState;
 			SlimDX.Direct3D11.BlendState oldBlendState = DeviceManager.Instance.context.OutputMerger.BlendState;
 			SlimDX.Direct3D11.RasterizerState oldRasterizerState = DeviceManager.Instance.context.Rasterizer.State;
