@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using SlimDX.DirectWrite;
 using SlimDX.Direct2D;
 using SlimDX.DXGI;
@@ -13,75 +11,29 @@ using System.IO;
 
 namespace SpriteTextRenderer
 {
-	/// <summary>
-	/// Defines how a text is aligned in a rectangle. Use OR-combinations of vertical and horizontal alignment.
-	/// </summary>
-	/// <example>
-	/// This example aligns the textblock on the top edge of the rectangle horizontally centered:
-	/// <code lang="cs">var textAlignment = TextAlignment.Top | TextAlignment.HorizontalCenter</code>
-	/// <code lang="vb">Dim textAlignment = TextAlignment.Top Or TextAlignment.HorizontalCenter</code>
-	/// </example>
 	[Flags]
 	public enum TextAlignment
 	{
-		/// <summary>
-		/// The top edge of the text is aligned at the top edge of the rectangle.
-		/// </summary>
 		Top = 1,
-		/// <summary>
-		/// The vertical center of the text is aligned at the vertical center of the rectangle.
-		/// </summary>
 		VerticalCenter = 2,
-		/// <summary>
-		/// The bottom edge of the text is aligned at the bottom edge of the rectangle.
-		/// </summary>
 		Bottom = 4,
-
-		/// <summary>
-		/// The left edge of the text is aligned at the left edge of the rectangle.
-		/// </summary>
 		Left = 8,
-		/// <summary>
-		/// The horizontal center of the text is aligned at the horizontal center of the rectangle. Each line is aligned independently.
-		/// </summary>
 		HorizontalCenter = 16,
-		/// <summary>
-		/// The right edge of the text is aligned at the right edge of the rectangle. Each line is aligned independently.
-		/// </summary>
 		Right = 32
 	}
 
-	/// <summary>
-	/// This class is responsible for rendering arbitrary text. Every TextRenderer is specialized for a specific font and relies on
-	/// a SpriteRenderer for rendering the text.
-	/// </summary>
-	public class TextBlockRenderer : IDisposable
+	public class TextBlockRenderer
 	{
-		private static int ReferenceCount;
-		private static SlimDX.Direct3D10_1.Device1 D3DDevice10 = null;
 		private SlimDX.Direct3D11.Device D3DDevice11 = null;
 		private SpriteRenderer Sprite;
 
 		private TextFormat Font;
-		private static SlimDX.DirectWrite.Factory WriteFactory;
-		private static SlimDX.Direct2D.Factory D2DFactory;
 		private RenderTargetProperties rtp;
 
 		private float _FontSize;
 
-		/// <summary>
-		/// Returns the font size that this TextRenderer was created for.
-		/// </summary>
 		public float FontSize { get { return _FontSize; } }
 
-		/// <summary>
-		/// Gets or sets whether this TextRenderer should behave PIX compatibly.
-		/// </summary>
-		/// <remarks>
-		/// PIX compatibility means that no shared resource is used.
-		/// However, this will result in no visible text being drawn. 
-		/// The geometry itself will be visible in PIX.
-		/// </remarks>
 		public static bool PixCompatible { get; set; }
 
 		static TextBlockRenderer()
@@ -89,25 +41,10 @@ namespace SpriteTextRenderer
 			PixCompatible = false;
 		}
 
-		/// <summary>
-		/// Contains information about every char table that has been created.
-		/// </summary>
 		private Dictionary<byte, CharTableDescription> CharTables = new Dictionary<byte, CharTableDescription>();
 
-		/// <summary>
-		/// Creates a new text renderer for a specific font.
-		/// </summary>
-		/// <param name="sprite">The sprite renderer that is used for rendering</param>
-		/// <param name="fontName">Name of font. The font has to be installed on the system. 
-		/// If no font can be found, a default one is used.</param>
-		/// <param name="fontSize">Size in which to prerender the text. FontSize should be equal to render size for best results.</param>
-		/// <param name="fontStretch">Font stretch parameter</param>
-		/// <param name="fontStyle">Font style parameter</param>
-		/// <param name="fontWeight">Font weight parameter</param>
 		public TextBlockRenderer(SpriteRenderer sprite, String fontName, SlimDX.DirectWrite.FontWeight fontWeight, SlimDX.DirectWrite.FontStyle fontStyle, FontStretch fontStretch, float fontSize)
 		{
-			AssertDevice();
-			ReferenceCount++;
 			this.Sprite = sprite;
 			this._FontSize = fontSize;
 			D3DDevice11 = ModelEx.DeviceManager.Instance.device;
@@ -121,16 +58,11 @@ namespace SpriteTextRenderer
 				MinimumFeatureLevel = FeatureLevel.Direct3D10
 			};
 
-			Font = WriteFactory.CreateTextFormat(fontName, fontWeight, fontStyle, fontStretch, fontSize, CultureInfo.CurrentCulture.Name);
+			Font = ModelEx.TextManager.Instance.WriteFactory.CreateTextFormat(fontName, fontWeight, fontStyle, fontStretch, fontSize, CultureInfo.CurrentCulture.Name);
 			System.Threading.Monitor.Exit(D3DDevice11);
 			CreateCharTable(0);
 		}
 
-		/// <summary>
-		/// Creates the texture and necessary structures for 256 chars whose unicode number starts with the given byte.
-		/// The table containing ASCII has a prefix of 0 (0x00/00 - 0x00/FF).
-		/// </summary>
-		/// <param name="bytePrefix">The byte prefix of characters.</param>
 		private void CreateCharTable(byte bytePrefix)
 		{
 			var TableDesc = new CharTableDescription();
@@ -143,7 +75,7 @@ namespace SpriteTextRenderer
 			int line = 0, xPos = 0, yPos = 0;
 			for (int i = 0; i < 256; ++i)
 			{
-				tl[i] = new TextLayout(WriteFactory, Convert.ToChar(i + (bytePrefix << 8)).ToString(), Font);
+				tl[i] = new TextLayout(ModelEx.TextManager.Instance.WriteFactory, Convert.ToChar(i + (bytePrefix << 8)).ToString(), Font);
 				int charWidth = 2 + (int)Math.Ceiling(tl[i].Metrics.LayoutWidth + tl[i].OverhangMetrics.Left + tl[i].OverhangMetrics.Right);
 				int charHeight = 2 + (int)Math.Ceiling(tl[i].Metrics.LayoutHeight + tl[i].OverhangMetrics.Top + tl[i].OverhangMetrics.Bottom);
 				line = Math.Max(line, charHeight);
@@ -172,13 +104,13 @@ namespace SpriteTextRenderer
 				SampleDescription = new SampleDescription(1, 0),
 				Usage = ResourceUsage.Default
 			};
-			var texture = new Texture2D(D3DDevice10, TexDesc);
+			var texture = new Texture2D(ModelEx.TextManager.Instance.D3DDevice10, TexDesc);
 
-			var rtv = new RenderTargetView(D3DDevice10, texture);
-			D3DDevice10.ClearRenderTargetView(rtv, new SlimDX.Color4(0, 1, 1, 1));
+			var rtv = new RenderTargetView(ModelEx.TextManager.Instance.D3DDevice10, texture);
+			ModelEx.TextManager.Instance.D3DDevice10.ClearRenderTargetView(rtv, new SlimDX.Color4(0, 1, 1, 1));
 			//D3DDevice10.ClearRenderTargetView(rtv, new SlimDX.Color4(1, 0, 0, 0));
 			Surface surface = texture.AsSurface();
-			var target = RenderTarget.FromDXGI(D2DFactory, surface, rtp);
+			var target = RenderTarget.FromDXGI(ModelEx.TextManager.Instance.D2DFactory, surface, rtp);
 			var color = new SolidColorBrush(target, new SlimDX.Color4(1, 1, 1, 1));
 
 			target.BeginDraw();
@@ -273,15 +205,6 @@ namespace SpriteTextRenderer
 			texture.Dispose();
 		}
 
-		/// <summary>
-		/// Draws the string in the specified coordinate system.
-		/// </summary>
-		/// <param name="text">The text to draw</param>
-		/// <param name="position">A position in the chosen coordinate system where the top left corner of the first character will be</param>
-		/// <param name="realFontSize">The real font size in the chosen coordinate system</param>
-		/// <param name="color">The color in which to draw the text</param>
-		/// <param name="coordinateType">The chosen coordinate system</param>
-		/// <returns>The StringMetrics for the rendered text</returns>
 		public StringMetrics DrawString(string text, Vector2 position, float realFontSize, Color4 color, CoordinateType coordinateType)
 		{
 			StringMetrics sm;
@@ -289,23 +212,11 @@ namespace SpriteTextRenderer
 			return sm;
 		}
 
-		/// <summary>
-		/// Draws the string untransformed in absolute coordinate system.
-		/// </summary>
-		/// <param name="text">The text to draw</param>
-		/// <param name="position">A position in absolute coordinates where the top left corner of the first character will be</param>
-		/// <param name="color">The color in which to draw the text</param>
-		/// <returns>The StringMetrics for the rendered text</returns>
 		public StringMetrics DrawString(string text, Vector2 position, Color4 color)
 		{
 			return DrawString(text, position, FontSize, color, CoordinateType.Absolute);
 		}
 
-		/// <summary>
-		/// Measures the untransformed string in absolute coordinate system.
-		/// </summary>
-		/// <param name="text">The text to measure</param>
-		/// <returns>The StringMetrics for the text</returns>
 		public StringMetrics MeasureString(string text)
 		{
 			StringMetrics sm;
@@ -313,13 +224,6 @@ namespace SpriteTextRenderer
 			return sm;
 		}
 
-		/// <summary>
-		/// Measures the string in the specified coordinate system.
-		/// </summary>
-		/// <param name="text">The text to measure</param>
-		/// <param name="realFontSize">The real font size in the chosen coordinate system</param>
-		/// <param name="coordinateType">The chosen coordinate system</param>
-		/// <returns>The StringMetrics for the text</returns>
 		public StringMetrics MeasureString(string text, float realFontSize, CoordinateType coordinateType)
 		{
 			StringMetrics sm;
@@ -327,16 +231,6 @@ namespace SpriteTextRenderer
 			return sm;
 		}
 
-		/// <summary>
-		/// Draws the string in the specified coordinate system aligned in the given rectangle. The text is not clipped or wrapped.
-		/// </summary>
-		/// <param name="text">The text to draw</param>
-		/// <param name="rect">The rectangle in which to align the text</param>
-		/// <param name="align">Alignment of text in rectangle</param>
-		/// <param name="realFontSize">The real font size in the chosen coordinate system</param>
-		/// <param name="color">The color in which to draw the text</param>
-		/// <param name="coordinateType">The chosen coordinate system</param>
-		/// <returns>The StringMetrics for the rendered text</returns>
 		public StringMetrics DrawString(string text, RectangleF rect, TextAlignment align, float realFontSize, Color4 color, CoordinateType coordinateType)
 		{
 			//If text is aligned top and left, no adjustment has to be made
@@ -388,14 +282,6 @@ namespace SpriteTextRenderer
 			return totalMetrics;
 		}
 
-		/// <summary>
-		/// Draws the string unscaled in absolute coordinate system aligned in the given rectangle. The text is not clipped or wrapped.
-		/// </summary>
-		/// <param name="text">Text to draw</param>
-		/// <param name="rect">A position in absolute coordinates where the top left corner of the first character will be</param>
-		/// <param name="align">Alignment in rectangle</param>
-		/// <param name="color">Color in which to draw the text</param>
-		/// <returns>The StringMetrics for the rendered text</returns>
 		public StringMetrics DrawString(string text, RectangleF rect, TextAlignment align, Color4 color)
 		{
 			return DrawString(text, rect, align, FontSize, color, CoordinateType.Absolute);
@@ -449,52 +335,14 @@ namespace SpriteTextRenderer
 			return CharTables[bytePrefix].Chars[b];
 		}
 
-		static void AssertDevice()
-		{
-			if (D3DDevice10 != null)
-				return;
-			D3DDevice10 = new SlimDX.Direct3D10_1.Device1(DeviceCreationFlags.BgraSupport, SlimDX.Direct3D10_1.FeatureLevel.Level_10_0);
-			WriteFactory = new SlimDX.DirectWrite.Factory(SlimDX.DirectWrite.FactoryType.Shared);
-			D2DFactory = new SlimDX.Direct2D.Factory(SlimDX.Direct2D.FactoryType.SingleThreaded);
-		}
-
-		#region IDisposable Support
-		private bool disposed = false;
-		private void Dispose(bool disposing)
-		{
-			if (!this.disposed)
-			{
-				if (disposing)
-				{
-					//There are no managed resources to dispose
-				}
-
-				Font.Dispose();
-				ReferenceCount--;
-				foreach (var Table in CharTables)
-				{
-					Table.Value.SRV.Dispose();
-					Table.Value.Texture.Dispose();
-				}
-				if (ReferenceCount <= 0)
-				{
-					D3DDevice10.Dispose();
-					WriteFactory.Dispose();
-					D2DFactory.Dispose();
-				}
-			}
-			this.disposed = true;
-		}
-
-		/// <summary>
-		/// Disposes of the SpriteRenderer.
-		/// </summary>
 		public void Dispose()
 		{
-			Dispose(true);
-
-			GC.SuppressFinalize(this);
+			Font.Dispose();
+			foreach (var Table in CharTables)
+			{
+				Table.Value.SRV.Dispose();
+				Table.Value.Texture.Dispose();
+			}
 		}
-		#endregion
 	}
 }

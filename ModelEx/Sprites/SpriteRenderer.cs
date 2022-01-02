@@ -26,7 +26,7 @@ namespace SpriteTextRenderer
 		public List<SpriteVertex> Sprites = new List<SpriteVertex>();
 	}
 
-	public class SpriteRenderer : IDisposable
+	public class SpriteRenderer
 	{
 		protected Buffer vertexBuffer;
 
@@ -219,28 +219,9 @@ namespace SpriteTextRenderer
 			textureSprites.Clear();
 		}
 
-		#region IDisposable Support
-		private bool disposed = false;
-		private void Dispose(bool disposing)
-		{
-			if (!this.disposed)
-			{
-				if (disposing)
-				{
-					//There are no managed resources to dispose
-				}
-
-				vertexBuffer.Dispose();
-			}
-			this.disposed = true;
-		}
-
 		public void Dispose()
 		{
-			Dispose(true);
-
-			GC.SuppressFinalize(this);
+			vertexBuffer.Dispose();
 		}
-		#endregion
 	}
 }

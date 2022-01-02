@@ -490,20 +490,28 @@ namespace ModelEx
 		CDC.Game _game = CDC.Game.SR1;
 		List<SRFile> _objectFiles = new List<SRFile>();
 
-		SpriteRenderer sprite;
-		TextBlockRenderer textBlock;
+		SpriteRenderer _spriteRenderer;
+		TextBlockRenderer _textBlockRenderer;
 
 		public SceneCDC(CDC.Game game)
 			: base()
 		{
 			_game = game;
-			sprite = new SpriteRenderer();
-			textBlock = new TextBlockRenderer(sprite, "Arial", SlimDX.DirectWrite.FontWeight.Bold, SlimDX.DirectWrite.FontStyle.Normal, SlimDX.DirectWrite.FontStretch.Normal, 16);
+			_spriteRenderer = new SpriteRenderer();
+			_textBlockRenderer = new TextBlockRenderer(_spriteRenderer, "Arial", SlimDX.DirectWrite.FontWeight.Bold, SlimDX.DirectWrite.FontStyle.Normal, SlimDX.DirectWrite.FontStretch.Normal, 16);
+		}
+
+		public override void Dispose()
+		{
+			base.Dispose();
+
+			_textBlockRenderer.Dispose();
+			_spriteRenderer.Dispose();
 		}
 
 		public override void Render()
 		{
-			sprite.RefreshViewport();
+			_spriteRenderer.RefreshViewport();
 
 			SlimDX.Direct3D11.DepthStencilState oldDSState = DeviceManager.Instance.context.OutputMerger.DepthStencilState;
 			SlimDX.Direct3D11.BlendState oldBlendState = DeviceManager.Instance.context.OutputMerger.BlendState;
@@ -547,10 +555,16 @@ namespace ModelEx
 
 				if (position3D.Z < vp.MaxZ)
 				{
-					textBlock.DrawString(instance.Name, position2D, new SlimDX.Color4(1.0f, 1.0f, 1.0f));
+					SlimDX.Vector3 objPos = SlimDX.Vector3.Zero;
+					objPos = SlimDX.Vector3.TransformCoordinate(objPos, instance.Transform);
+					SlimDX.Vector3 camPos = CameraManager.Instance.frameCamera.eye;
+					SlimDX.Vector3 objOffset = objPos - camPos;
+					float scale = Math.Min(2.0f, 5.0f / (float)Math.Sqrt(Math.Max(1.0f, objOffset.Length())));
+
+					_textBlockRenderer.DrawString(instance.Name, position2D, 16 * scale, new SlimDX.Color4(1.0f, 1.0f, 1.0f), CoordinateType.Absolute);
 				}
 			}
-			sprite.Flush();
+			_spriteRenderer.Flush();
 			System.Threading.Monitor.Exit(DeviceManager.Instance.device);
 
 			DeviceManager.Instance.context.OutputMerger.DepthStencilState = oldDSState;
