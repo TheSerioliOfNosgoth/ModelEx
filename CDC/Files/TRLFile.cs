@@ -8,7 +8,7 @@ namespace CDC.Objects
 	public class TRLFile : SRFile
 	{
 		public TRLFile(String strFileName, CDC.Objects.ExportOptions options)
-			: base(strFileName, Game.Defiance, options)
+			: base(strFileName, Game.TRL, options)
 		{
 		}
 

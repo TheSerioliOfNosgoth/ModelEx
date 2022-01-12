@@ -11,6 +11,7 @@ using SRFile = CDC.Objects.SRFile;
 using SR1File = CDC.Objects.SR1File;
 using SR2File = CDC.Objects.SR2File;
 using DefianceFile = CDC.Objects.DefianceFile;
+using TRLFile = CDC.Objects.TRLFile;
 using SRModel = CDC.Objects.Models.SRModel;
 using GexModel = CDC.Objects.Models.GexModel;
 using SR1Model = CDC.Objects.Models.SR1Model;
@@ -756,11 +757,22 @@ namespace ModelEx
 					return;
 				}
 			}
-			else
+			else if (_game == CDC.Game.Defiance)
 			{
 				try
 				{
 					srFile = new DefianceFile(fileName, options);
+				}
+				catch
+				{
+					return;
+				}
+			}
+			else
+			{
+				try
+				{
+					srFile = new TRLFile(fileName, options);
 				}
 				catch
 				{
@@ -842,8 +854,11 @@ namespace ModelEx
 				//Thread.Sleep(1000);
 				#region Textures
 				Type currentFileType = srFile.GetType();
-				if (currentFileType == typeof(SR2File) ||
-					currentFileType == typeof(DefianceFile))
+				if (currentFileType == typeof(TRLFile))
+				{
+				}
+				else if (currentFileType == typeof(SR2File) ||
+						 currentFileType == typeof(DefianceFile))
 				{
 					String textureFileName = System.IO.Path.ChangeExtension(fileName, "vrm");
 					try

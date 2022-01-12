@@ -190,14 +190,12 @@ namespace ModelEx
 				CheckFileExists = true,
 				CheckPathExists = true,
 				Filter =
-					"Gex Mesh Files|*.SRObj;*.drm;*.pcm|" +
+					"Gex Mesh Files|*.drm|" +
 					"Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|" +
-					"Soul Reaver 2 Mesh Files|*.SRObj;*.drm;*.pcm|" +
-					"Defiance Mesh Files|*.SRObj;*.drm;*.pcm|" +
+					"Soul Reaver 2 Mesh Files|*.drm|" +
+					"Defiance Mesh Files|*.drm;|" +
+					"Tomb Raider: Legend Mesh Files|*.drm|" +
 					"Collada Mesh Files (*.dae)|*.dae",
-				//"Soul Reaver DRM Files (*.drm)|*.drm|" +
-				//"Soul Reaver PCM Files (*.pcm)|*.pcm|" +
-				//"All Mesh Files|*.SRObj;*.drm;*.pcm|" +
 				//"All Files (*.*)|*.*";
 				DefaultExt = "drm",
 				FilterIndex = filterIndex
@@ -237,7 +235,7 @@ namespace ModelEx
 					return;
 				}
 
-				_CurrentModelType = CDC.Game.Gex;   // "Gex Mesh Files|*.SRObj;*.drm;*.pcm|"
+				_CurrentModelType = CDC.Game.Gex;   // "Gex Mesh Files|*.drm|"
 				_CurrentModelChild = objectSelectDlg.SelectedObject;
 			}
 			else if (OpenDlg.FilterIndex == 2)
@@ -247,12 +245,17 @@ namespace ModelEx
 			}
 			else if (OpenDlg.FilterIndex == 3)
 			{
-				_CurrentModelType = CDC.Game.SR2;   // "Soul Reaver 2 Mesh Files|*.SRObj;*.drm;*.pcm|" +
+				_CurrentModelType = CDC.Game.SR2;   // "Soul Reaver 2 Mesh Files|*.drm|" +
+				_CurrentModelChild = -1;
+			}
+			else if (OpenDlg.FilterIndex == 4)
+			{
+				_CurrentModelType = CDC.Game.Defiance;  // "Defiance Mesh Files|*.drm|" +
 				_CurrentModelChild = -1;
 			}
 			else
 			{
-				_CurrentModelType = CDC.Game.Defiance;  // "Defiance Mesh Files|*.SRObj;*.drm;*.pcm|" +
+				_CurrentModelType = CDC.Game.TRL;  // "TRL Mesh Files|*.drm|" +
 				_CurrentModelChild = -1;
 			}
 
@@ -312,9 +315,6 @@ namespace ModelEx
 				CheckPathExists = true,
 				Filter =
 					"Collada Mesh Files (*.dae)|*.dae",
-				//"Soul Reaver DRM Files (*.drm)|*.drm|" +
-				//"Soul Reaver PCM Files (*.pcm)|*.pcm|" +
-				//"All Mesh Files|*.SRObj;*.drm;*.pcm|" +
 				//"All Files (*.*)|*.*";
 				DefaultExt = "dae",
 				FilterIndex = 1

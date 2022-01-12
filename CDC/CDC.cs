@@ -18,7 +18,8 @@ namespace CDC
 		Gex,
 		SR1,
 		SR2,
-		Defiance
+		Defiance,
+		TRL
 	}
 
 	public enum Asset
