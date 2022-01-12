@@ -31,7 +31,7 @@ namespace ModelEx
 			DeviceManager.Instance.Initialize(this);
 			ShaderManager.Instance.Initialize();
 			RenderManager.Instance.Initialize();
-			TextManager.Instance.Initialize();
+			FontManager.Instance.Initialize();
 
 			Timer.Instance.Reset();
 			Timer.Instance.Start();
@@ -39,7 +39,7 @@ namespace ModelEx
 
 		public void ShutDown()
 		{
-			TextManager.Instance.ShutDown();
+			FontManager.Instance.ShutDown();
 			RenderManager.Instance.ShutDown();
 			ShaderManager.Instance.ShutDown();
 			DeviceManager.Instance.ShutDown();

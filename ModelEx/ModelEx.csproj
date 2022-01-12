@@ -137,7 +137,7 @@
     <Compile Include="Sprites\SpriteRenderer.cs" />
     <Compile Include="Sprites\Structs.cs" />
     <Compile Include="Sprites\TextBlockRenderer.cs" />
-    <Compile Include="Sprites\TextManager.cs" />
+    <Compile Include="Sprites\FontManager.cs" />
     <Compile Include="Timer.cs" />
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>

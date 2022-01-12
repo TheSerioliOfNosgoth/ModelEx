@@ -1375,5 +1375,10 @@ namespace ModelEx
 				RenderManager.Instance.BackgroundColour = colorDialog.Color;
 			}
 		}
+
+		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Close();
+		}
 	}
 }

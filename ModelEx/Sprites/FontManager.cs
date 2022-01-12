@@ -2,22 +2,22 @@
 
 namespace ModelEx
 {
-	public class TextManager
+	public class FontManager
 	{
-		private static TextManager instance = null;
-		public static TextManager Instance
+		private static FontManager instance = null;
+		public static FontManager Instance
 		{
 			get
 			{
 				if (instance == null)
 				{
-					instance = new TextManager();
+					instance = new FontManager();
 				}
 				return instance;
 			}
 		}
 
-		private TextManager()
+		private FontManager()
 		{
 		}
 

@@ -196,10 +196,10 @@
 			// menuBar
 			// 
 			this.menuBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.fileMenu,
-			this.cameraToolStripMenuItem,
-			this.renderModeToolStripMenuItem,
-			this.optionsToolStripMenuItem});
+            this.fileMenu,
+            this.cameraToolStripMenuItem,
+            this.renderModeToolStripMenuItem,
+            this.optionsToolStripMenuItem});
 			this.menuBar.Location = new System.Drawing.Point(0, 0);
 			this.menuBar.Name = "menuBar";
 			this.menuBar.Size = new System.Drawing.Size(943, 24);
@@ -209,10 +209,10 @@
 			// fileMenu
 			// 
 			this.fileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.openToolStripMenuItem,
-			this.reloadCurrentModelToolStripMenuItem,
-			this.exportToolStripMenuItem,
-			this.exitToolStripMenuItem});
+            this.openToolStripMenuItem,
+            this.reloadCurrentModelToolStripMenuItem,
+            this.exportToolStripMenuItem,
+            this.exitToolStripMenuItem});
 			this.fileMenu.Name = "fileMenu";
 			this.fileMenu.Size = new System.Drawing.Size(37, 20);
 			this.fileMenu.Text = "&File";
@@ -244,12 +244,13 @@
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
 			this.exitToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
 			this.exitToolStripMenuItem.Text = "E&xit";
+			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
 			// cameraToolStripMenuItem
 			// 
 			this.cameraToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.modeToolStripMenuItem,
-			this.resetPositionToolStripMenuItem});
+            this.modeToolStripMenuItem,
+            this.resetPositionToolStripMenuItem});
 			this.cameraToolStripMenuItem.Name = "cameraToolStripMenuItem";
 			this.cameraToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
 			this.cameraToolStripMenuItem.Text = "&Camera";
@@ -257,9 +258,9 @@
 			// modeToolStripMenuItem
 			// 
 			this.modeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.egoToolStripMenuItem,
-			this.orbitToolStripMenuItem,
-			this.orbitPanToolStripMenuItem});
+            this.egoToolStripMenuItem,
+            this.orbitToolStripMenuItem,
+            this.orbitPanToolStripMenuItem});
 			this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
 			this.modeToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
 			this.modeToolStripMenuItem.Text = "&Mode";
@@ -297,18 +298,18 @@
 			// renderModeToolStripMenuItem
 			// 
 			this.renderModeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.standardToolStripMenuItem,
-			this.wireframeToolStripMenuItem,
-			this.noTexturemapsToolStripMenuItem,
-			this.polygonFlagsToolStripMenuItem,
-			this.colourLookupTableToolStripMenuItem,
-			this.textureAttributesToolStripMenuItem,
-			this.textureAttributesAToolStripMenuItem,
-			this.texturePageToolStripMenuItem,
-			this.bSPTreeInfoToolStripMenuItem,
-			this.sortPushToolStripMenuItem,
-			this.alphaValuesToolStripMenuItem,
-			this.boneIDHashToolStripMenuItem});
+            this.standardToolStripMenuItem,
+            this.wireframeToolStripMenuItem,
+            this.noTexturemapsToolStripMenuItem,
+            this.polygonFlagsToolStripMenuItem,
+            this.colourLookupTableToolStripMenuItem,
+            this.textureAttributesToolStripMenuItem,
+            this.textureAttributesAToolStripMenuItem,
+            this.texturePageToolStripMenuItem,
+            this.bSPTreeInfoToolStripMenuItem,
+            this.sortPushToolStripMenuItem,
+            this.alphaValuesToolStripMenuItem,
+            this.boneIDHashToolStripMenuItem});
 			this.renderModeToolStripMenuItem.Name = "renderModeToolStripMenuItem";
 			this.renderModeToolStripMenuItem.Size = new System.Drawing.Size(90, 20);
 			this.renderModeToolStripMenuItem.Text = "&Render Mode";
@@ -339,11 +340,11 @@
 			// polygonFlagsToolStripMenuItem
 			// 
 			this.polygonFlagsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.debugPolygonFlagsHashToolStripMenuItem,
-			this.debugPolygonFlags1ToolStripMenuItem,
-			this.debugPolygonFlags2ToolStripMenuItem,
-			this.debugPolygonFlags3ToolStripMenuItem,
-			this.debugPolygonFlagsSoulReaverAToolStripMenuItem});
+            this.debugPolygonFlagsHashToolStripMenuItem,
+            this.debugPolygonFlags1ToolStripMenuItem,
+            this.debugPolygonFlags2ToolStripMenuItem,
+            this.debugPolygonFlags3ToolStripMenuItem,
+            this.debugPolygonFlagsSoulReaverAToolStripMenuItem});
 			this.polygonFlagsToolStripMenuItem.Name = "polygonFlagsToolStripMenuItem";
 			this.polygonFlagsToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
 			this.polygonFlagsToolStripMenuItem.Text = "Polygon Flags";
@@ -386,16 +387,16 @@
 			// colourLookupTableToolStripMenuItem
 			// 
 			this.colourLookupTableToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.cLUTHashToolStripMenuItem,
-			this.cLUTNonRowColBitsHashToolStripMenuItem,
-			this.cLUTNonRowColBits1ToolStripMenuItem,
-			this.cLUTNonRowColBits2ToolStripMenuItem,
-			this.cLUT1ToolStripMenuItem,
-			this.cLUT2ToolStripMenuItem,
-			this.cLUT3ToolStripMenuItem,
-			this.cLUT4ToolStripMenuItem,
-			this.cLUT5ToolStripMenuItem,
-			this.cLUT6ToolStripMenuItem});
+            this.cLUTHashToolStripMenuItem,
+            this.cLUTNonRowColBitsHashToolStripMenuItem,
+            this.cLUTNonRowColBits1ToolStripMenuItem,
+            this.cLUTNonRowColBits2ToolStripMenuItem,
+            this.cLUT1ToolStripMenuItem,
+            this.cLUT2ToolStripMenuItem,
+            this.cLUT3ToolStripMenuItem,
+            this.cLUT4ToolStripMenuItem,
+            this.cLUT5ToolStripMenuItem,
+            this.cLUT6ToolStripMenuItem});
 			this.colourLookupTableToolStripMenuItem.Name = "colourLookupTableToolStripMenuItem";
 			this.colourLookupTableToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
 			this.colourLookupTableToolStripMenuItem.Text = "Colour Lookup Table Value";
@@ -473,13 +474,13 @@
 			// textureAttributesToolStripMenuItem
 			// 
 			this.textureAttributesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.debugTextureAttributesHashToolStripMenuItem,
-			this.debugTextureAttributes1ToolStripMenuItem,
-			this.debugTextureAttributes2ToolStripMenuItem,
-			this.debugTextureAttributes3ToolStripMenuItem,
-			this.debugTextureAttributes4ToolStripMenuItem,
-			this.debugTextureAttributes5ToolStripMenuItem,
-			this.debugTextureAttributes6ToolStripMenuItem});
+            this.debugTextureAttributesHashToolStripMenuItem,
+            this.debugTextureAttributes1ToolStripMenuItem,
+            this.debugTextureAttributes2ToolStripMenuItem,
+            this.debugTextureAttributes3ToolStripMenuItem,
+            this.debugTextureAttributes4ToolStripMenuItem,
+            this.debugTextureAttributes5ToolStripMenuItem,
+            this.debugTextureAttributes6ToolStripMenuItem});
 			this.textureAttributesToolStripMenuItem.Name = "textureAttributesToolStripMenuItem";
 			this.textureAttributesToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
 			this.textureAttributesToolStripMenuItem.Text = "Texture Attributes";
@@ -536,13 +537,13 @@
 			// textureAttributesAToolStripMenuItem
 			// 
 			this.textureAttributesAToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.debugTextureAttributesAHashToolStripMenuItem,
-			this.debugTextureAttributesA1ToolStripMenuItem,
-			this.debugTextureAttributesA2ToolStripMenuItem,
-			this.debugTextureAttributesA3ToolStripMenuItem,
-			this.debugTextureAttributesA4ToolStripMenuItem,
-			this.debugTextureAttributesA5ToolStripMenuItem,
-			this.debugTextureAttributesA6ToolStripMenuItem});
+            this.debugTextureAttributesAHashToolStripMenuItem,
+            this.debugTextureAttributesA1ToolStripMenuItem,
+            this.debugTextureAttributesA2ToolStripMenuItem,
+            this.debugTextureAttributesA3ToolStripMenuItem,
+            this.debugTextureAttributesA4ToolStripMenuItem,
+            this.debugTextureAttributesA5ToolStripMenuItem,
+            this.debugTextureAttributesA6ToolStripMenuItem});
 			this.textureAttributesAToolStripMenuItem.Name = "textureAttributesAToolStripMenuItem";
 			this.textureAttributesAToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
 			this.textureAttributesAToolStripMenuItem.Text = "Texture Attributes A";
@@ -599,15 +600,15 @@
 			// texturePageToolStripMenuItem
 			// 
 			this.texturePageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.debugTexturePageHashToolStripMenuItem,
-			this.debugTexturePageUpper28BitsHashToolStripMenuItem,
-			this.debugTexturePageUpper5BitsHashToolStripMenuItem,
-			this.debugTexturePage1ToolStripMenuItem,
-			this.debugTexturePage2ToolStripMenuItem,
-			this.debugTexturePage3ToolStripMenuItem,
-			this.debugTexturePage4ToolStripMenuItem,
-			this.debugTexturePage5ToolStripMenuItem,
-			this.debugTexturePage6ToolStripMenuItem});
+            this.debugTexturePageHashToolStripMenuItem,
+            this.debugTexturePageUpper28BitsHashToolStripMenuItem,
+            this.debugTexturePageUpper5BitsHashToolStripMenuItem,
+            this.debugTexturePage1ToolStripMenuItem,
+            this.debugTexturePage2ToolStripMenuItem,
+            this.debugTexturePage3ToolStripMenuItem,
+            this.debugTexturePage4ToolStripMenuItem,
+            this.debugTexturePage5ToolStripMenuItem,
+            this.debugTexturePage6ToolStripMenuItem});
 			this.texturePageToolStripMenuItem.Name = "texturePageToolStripMenuItem";
 			this.texturePageToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
 			this.texturePageToolStripMenuItem.Text = "Texture Page";
@@ -678,12 +679,12 @@
 			// bSPTreeInfoToolStripMenuItem
 			// 
 			this.bSPTreeInfoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.rootBSPTreeNumberToolStripMenuItem,
-			this.bSPTreeNodeIDToolStripMenuItem,
-			this.bSPTreeRootFlagsToolStripMenuItem,
-			this.bSPTreeNodeFlagsToolStripMenuItem,
-			this.bSPTreeParentNodeFlagsORdToolStripMenuItem,
-			this.bSPTreeLeafFlagsToolStripMenuItem});
+            this.rootBSPTreeNumberToolStripMenuItem,
+            this.bSPTreeNodeIDToolStripMenuItem,
+            this.bSPTreeRootFlagsToolStripMenuItem,
+            this.bSPTreeNodeFlagsToolStripMenuItem,
+            this.bSPTreeParentNodeFlagsORdToolStripMenuItem,
+            this.bSPTreeLeafFlagsToolStripMenuItem});
 			this.bSPTreeInfoToolStripMenuItem.Name = "bSPTreeInfoToolStripMenuItem";
 			this.bSPTreeInfoToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
 			this.bSPTreeInfoToolStripMenuItem.Text = "BSP Tree Info";
@@ -705,13 +706,13 @@
 			// bSPTreeRootFlagsToolStripMenuItem
 			// 
 			this.bSPTreeRootFlagsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.bSPTreeRootFlagsHashToolStripMenuItem,
-			this.bSPTreeRootFlags1ToolStripMenuItem,
-			this.bSPTreeRootFlags2ToolStripMenuItem,
-			this.bSPTreeRootFlags3ToolStripMenuItem,
-			this.bSPTreeRootFlags4ToolStripMenuItem,
-			this.bSPTreeRootFlags5ToolStripMenuItem,
-			this.bSPTreeRootFlags6ToolStripMenuItem});
+            this.bSPTreeRootFlagsHashToolStripMenuItem,
+            this.bSPTreeRootFlags1ToolStripMenuItem,
+            this.bSPTreeRootFlags2ToolStripMenuItem,
+            this.bSPTreeRootFlags3ToolStripMenuItem,
+            this.bSPTreeRootFlags4ToolStripMenuItem,
+            this.bSPTreeRootFlags5ToolStripMenuItem,
+            this.bSPTreeRootFlags6ToolStripMenuItem});
 			this.bSPTreeRootFlagsToolStripMenuItem.Name = "bSPTreeRootFlagsToolStripMenuItem";
 			this.bSPTreeRootFlagsToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
 			this.bSPTreeRootFlagsToolStripMenuItem.Text = "BSP Tree Root Flags";
@@ -768,13 +769,13 @@
 			// bSPTreeNodeFlagsToolStripMenuItem
 			// 
 			this.bSPTreeNodeFlagsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.bSPTreeNodeFlagsHashToolStripMenuItem,
-			this.bSPTreeNodeFlags1ToolStripMenuItem,
-			this.bSPTreeNodeFlags2ToolStripMenuItem,
-			this.bSPTreeNodeFlags3ToolStripMenuItem,
-			this.bSPTreeNodeFlags4ToolStripMenuItem,
-			this.bSPTreeNodeFlags5ToolStripMenuItem,
-			this.bSPTreeNodeFlags6ToolStripMenuItem});
+            this.bSPTreeNodeFlagsHashToolStripMenuItem,
+            this.bSPTreeNodeFlags1ToolStripMenuItem,
+            this.bSPTreeNodeFlags2ToolStripMenuItem,
+            this.bSPTreeNodeFlags3ToolStripMenuItem,
+            this.bSPTreeNodeFlags4ToolStripMenuItem,
+            this.bSPTreeNodeFlags5ToolStripMenuItem,
+            this.bSPTreeNodeFlags6ToolStripMenuItem});
 			this.bSPTreeNodeFlagsToolStripMenuItem.Name = "bSPTreeNodeFlagsToolStripMenuItem";
 			this.bSPTreeNodeFlagsToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
 			this.bSPTreeNodeFlagsToolStripMenuItem.Text = "BSP Tree Node Flags";
@@ -831,13 +832,13 @@
 			// bSPTreeParentNodeFlagsORdToolStripMenuItem
 			// 
 			this.bSPTreeParentNodeFlagsORdToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.bSPTreeParentNodeFlagsORdHashToolStripMenuItem,
-			this.bSPTreeParentNodeFlagsORd1ToolStripMenuItem,
-			this.bSPTreeParentNodeFlagsORd2ToolStripMenuItem,
-			this.bSPTreeParentNodeFlagsORd3ToolStripMenuItem,
-			this.bSPTreeParentNodeFlagsORd4ToolStripMenuItem,
-			this.bSPTreeParentNodeFlagsORd5ToolStripMenuItem,
-			this.bSPTreeParentNodeFlagsORd6ToolStripMenuItem});
+            this.bSPTreeParentNodeFlagsORdHashToolStripMenuItem,
+            this.bSPTreeParentNodeFlagsORd1ToolStripMenuItem,
+            this.bSPTreeParentNodeFlagsORd2ToolStripMenuItem,
+            this.bSPTreeParentNodeFlagsORd3ToolStripMenuItem,
+            this.bSPTreeParentNodeFlagsORd4ToolStripMenuItem,
+            this.bSPTreeParentNodeFlagsORd5ToolStripMenuItem,
+            this.bSPTreeParentNodeFlagsORd6ToolStripMenuItem});
 			this.bSPTreeParentNodeFlagsORdToolStripMenuItem.Name = "bSPTreeParentNodeFlagsORdToolStripMenuItem";
 			this.bSPTreeParentNodeFlagsORdToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
 			this.bSPTreeParentNodeFlagsORdToolStripMenuItem.Text = "BSP Tree Parent Node Flags OR\'d";
@@ -894,13 +895,13 @@
 			// bSPTreeLeafFlagsToolStripMenuItem
 			// 
 			this.bSPTreeLeafFlagsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.bSPTreeLeafFlagsHashToolStripMenuItem,
-			this.bSPTreeLeafFlags1ToolStripMenuItem,
-			this.bSPTreeLeafFlags2ToolStripMenuItem,
-			this.bSPTreeLeafFlags3ToolStripMenuItem,
-			this.bSPTreeLeafFlags4ToolStripMenuItem,
-			this.bSPTreeLeafFlags5ToolStripMenuItem,
-			this.bSPTreeLeafFlags6ToolStripMenuItem});
+            this.bSPTreeLeafFlagsHashToolStripMenuItem,
+            this.bSPTreeLeafFlags1ToolStripMenuItem,
+            this.bSPTreeLeafFlags2ToolStripMenuItem,
+            this.bSPTreeLeafFlags3ToolStripMenuItem,
+            this.bSPTreeLeafFlags4ToolStripMenuItem,
+            this.bSPTreeLeafFlags5ToolStripMenuItem,
+            this.bSPTreeLeafFlags6ToolStripMenuItem});
 			this.bSPTreeLeafFlagsToolStripMenuItem.Name = "bSPTreeLeafFlagsToolStripMenuItem";
 			this.bSPTreeLeafFlagsToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
 			this.bSPTreeLeafFlagsToolStripMenuItem.Text = "BSP Tree Leaf Flags";
@@ -957,10 +958,10 @@
 			// sortPushToolStripMenuItem
 			// 
 			this.sortPushToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.debugSortPushHashToolStripMenuItem,
-			this.debugSortPushFlags1ToolStripMenuItem,
-			this.debugSortPushFlags2ToolStripMenuItem,
-			this.debugSortPushFlags3ToolStripMenuItem});
+            this.debugSortPushHashToolStripMenuItem,
+            this.debugSortPushFlags1ToolStripMenuItem,
+            this.debugSortPushFlags2ToolStripMenuItem,
+            this.debugSortPushFlags3ToolStripMenuItem});
 			this.sortPushToolStripMenuItem.Name = "sortPushToolStripMenuItem";
 			this.sortPushToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
 			this.sortPushToolStripMenuItem.Text = "Sort Push";
@@ -996,9 +997,9 @@
 			// alphaValuesToolStripMenuItem
 			// 
 			this.alphaValuesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.averageVertexAlphaToolStripMenuItem,
-			this.polygonAlphaToolStripMenuItem,
-			this.polygonOpacityToolStripMenuItem});
+            this.averageVertexAlphaToolStripMenuItem,
+            this.polygonAlphaToolStripMenuItem,
+            this.polygonOpacityToolStripMenuItem});
 			this.alphaValuesToolStripMenuItem.Name = "alphaValuesToolStripMenuItem";
 			this.alphaValuesToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
 			this.alphaValuesToolStripMenuItem.Text = "Alpha/Opacity Values";
@@ -1034,24 +1035,24 @@
 			// optionsToolStripMenuItem
 			// 
 			this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.reloadModelWhenRenderModeIsChangedToolStripMenuItem,
-			this.resetCameraPositionWhenModelIsLoadedToolStripMenuItem,
-			this.exportSpectralVersionOfAreaFilesToolStripMenuItem,
-			this.flagHandlingToolStripMenuItem,
-			this.indexedTexturesToolStripMenuItem,
-			this.soulReaverPlatformDetectionToolStripMenuItem,
-			this.unhide100InvisibleTexturesToolStripMenuItem,
-			this.discardHiddenPolygonsToolStripMenuItem,
-			this.missingPalettesInGreyscaleToolStripMenuItem,
-			this.exportDoubleSidedMaterialsToolStripMenuItem,
-			this.augmentAlphaMaskingFlagsBasedOnImageContentToolStripMenuItem,
-			this.makeAllPolygonsVisibleToolStripMenuItem,
-			this.makeAllPolygonsOpaqueToolStripMenuItem,
-			this.oRAllPolygonColoursWithGreenToolStripMenuItem,
-			this.bSPRenderingToolStripMenuItem,
-			this.debugColouringBasedOnVerticesToolStripMenuItem,
-			this.adjustUVCoordinatesForBilinearFilteringToolStripMenuItem,
-			this.ignoreVertexColoursToolStripMenuItem});
+            this.reloadModelWhenRenderModeIsChangedToolStripMenuItem,
+            this.resetCameraPositionWhenModelIsLoadedToolStripMenuItem,
+            this.exportSpectralVersionOfAreaFilesToolStripMenuItem,
+            this.flagHandlingToolStripMenuItem,
+            this.indexedTexturesToolStripMenuItem,
+            this.soulReaverPlatformDetectionToolStripMenuItem,
+            this.unhide100InvisibleTexturesToolStripMenuItem,
+            this.discardHiddenPolygonsToolStripMenuItem,
+            this.missingPalettesInGreyscaleToolStripMenuItem,
+            this.exportDoubleSidedMaterialsToolStripMenuItem,
+            this.augmentAlphaMaskingFlagsBasedOnImageContentToolStripMenuItem,
+            this.makeAllPolygonsVisibleToolStripMenuItem,
+            this.makeAllPolygonsOpaqueToolStripMenuItem,
+            this.oRAllPolygonColoursWithGreenToolStripMenuItem,
+            this.bSPRenderingToolStripMenuItem,
+            this.debugColouringBasedOnVerticesToolStripMenuItem,
+            this.adjustUVCoordinatesForBilinearFilteringToolStripMenuItem,
+            this.ignoreVertexColoursToolStripMenuItem});
 			this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
 			this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
 			this.optionsToolStripMenuItem.Text = "&Options";
@@ -1080,8 +1081,8 @@
 			// flagHandlingToolStripMenuItem
 			// 
 			this.flagHandlingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.ignorePolygonFlag2ForTerrainToolStripMenuItem,
-			this.createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem});
+            this.ignorePolygonFlag2ForTerrainToolStripMenuItem,
+            this.createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem});
 			this.flagHandlingToolStripMenuItem.Name = "flagHandlingToolStripMenuItem";
 			this.flagHandlingToolStripMenuItem.Size = new System.Drawing.Size(369, 22);
 			this.flagHandlingToolStripMenuItem.Text = "Flag Handling";
@@ -1103,7 +1104,7 @@
 			// indexedTexturesToolStripMenuItem
 			// 
 			this.indexedTexturesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.useEachUniqueTextureCLUTVariationToolStripMenuItem});
+            this.useEachUniqueTextureCLUTVariationToolStripMenuItem});
 			this.indexedTexturesToolStripMenuItem.Name = "indexedTexturesToolStripMenuItem";
 			this.indexedTexturesToolStripMenuItem.Size = new System.Drawing.Size(369, 22);
 			this.indexedTexturesToolStripMenuItem.Text = "Indexed Textures";
@@ -1118,12 +1119,12 @@
 			// soulReaverPlatformDetectionToolStripMenuItem
 			// 
 			this.soulReaverPlatformDetectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.autodetectToolStripMenuItem,
-			this.forceDreamcastToolStripMenuItem,
-			this.forcePlayStationToolStripMenuItem,
-			this.forcePlayStation2ToolStripMenuItem,
-			this.forcePCToolStripMenuItem,
-			this.forceXboxToolStripMenuItem});
+            this.autodetectToolStripMenuItem,
+            this.forceDreamcastToolStripMenuItem,
+            this.forcePlayStationToolStripMenuItem,
+            this.forcePlayStation2ToolStripMenuItem,
+            this.forcePCToolStripMenuItem,
+            this.forceXboxToolStripMenuItem});
 			this.soulReaverPlatformDetectionToolStripMenuItem.Name = "soulReaverPlatformDetectionToolStripMenuItem";
 			this.soulReaverPlatformDetectionToolStripMenuItem.Size = new System.Drawing.Size(369, 22);
 			this.soulReaverPlatformDetectionToolStripMenuItem.Text = "Platform Detection";
@@ -1229,8 +1230,8 @@
 			// bSPRenderingToolStripMenuItem
 			// 
 			this.bSPRenderingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.includeTreeRootFlagsInORdParentFlagsToolStripMenuItem,
-			this.includeLeafFlagsInORdParentFlagsToolStripMenuItem});
+            this.includeTreeRootFlagsInORdParentFlagsToolStripMenuItem,
+            this.includeLeafFlagsInORdParentFlagsToolStripMenuItem});
 			this.bSPRenderingToolStripMenuItem.Name = "bSPRenderingToolStripMenuItem";
 			this.bSPRenderingToolStripMenuItem.Size = new System.Drawing.Size(369, 22);
 			this.bSPRenderingToolStripMenuItem.Text = "BSP Rendering";
@@ -1252,7 +1253,7 @@
 			// debugColouringBasedOnVerticesToolStripMenuItem
 			// 
 			this.debugColouringBasedOnVerticesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.interpolatePolygonColoursToolStripMenuItem});
+            this.interpolatePolygonColoursToolStripMenuItem});
 			this.debugColouringBasedOnVerticesToolStripMenuItem.Name = "debugColouringBasedOnVerticesToolStripMenuItem";
 			this.debugColouringBasedOnVerticesToolStripMenuItem.Size = new System.Drawing.Size(369, 22);
 			this.debugColouringBasedOnVerticesToolStripMenuItem.Text = "Debug Colouring Based on Vertices";

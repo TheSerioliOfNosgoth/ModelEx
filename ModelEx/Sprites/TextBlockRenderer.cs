@@ -30,23 +30,21 @@ namespace SpriteTextRenderer
 		private TextFormat Font;
 		private RenderTargetProperties rtp;
 
-		private float _FontSize;
-
-		public float FontSize { get { return _FontSize; } }
+		public float FontSize { get; private set; }
 
 		public static bool PixCompatible { get; set; }
+
+		private Dictionary<byte, CharTableDescription> CharTables = new Dictionary<byte, CharTableDescription>();
 
 		static TextBlockRenderer()
 		{
 			PixCompatible = false;
 		}
 
-		private Dictionary<byte, CharTableDescription> CharTables = new Dictionary<byte, CharTableDescription>();
-
 		public TextBlockRenderer(SpriteRenderer sprite, String fontName, SlimDX.DirectWrite.FontWeight fontWeight, SlimDX.DirectWrite.FontStyle fontStyle, FontStretch fontStretch, float fontSize)
 		{
-			this.Sprite = sprite;
-			this._FontSize = fontSize;
+			Sprite = sprite;
+			FontSize = fontSize;
 			D3DDevice11 = ModelEx.DeviceManager.Instance.device;
 			System.Threading.Monitor.Enter(D3DDevice11);
 			rtp = new RenderTargetProperties()
@@ -58,7 +56,7 @@ namespace SpriteTextRenderer
 				MinimumFeatureLevel = FeatureLevel.Direct3D10
 			};
 
-			Font = ModelEx.TextManager.Instance.WriteFactory.CreateTextFormat(fontName, fontWeight, fontStyle, fontStretch, fontSize, CultureInfo.CurrentCulture.Name);
+			Font = ModelEx.FontManager.Instance.WriteFactory.CreateTextFormat(fontName, fontWeight, fontStyle, fontStretch, fontSize, CultureInfo.CurrentCulture.Name);
 			System.Threading.Monitor.Exit(D3DDevice11);
 			CreateCharTable(0);
 		}
@@ -75,7 +73,7 @@ namespace SpriteTextRenderer
 			int line = 0, xPos = 0, yPos = 0;
 			for (int i = 0; i < 256; ++i)
 			{
-				tl[i] = new TextLayout(ModelEx.TextManager.Instance.WriteFactory, Convert.ToChar(i + (bytePrefix << 8)).ToString(), Font);
+				tl[i] = new TextLayout(ModelEx.FontManager.Instance.WriteFactory, Convert.ToChar(i + (bytePrefix << 8)).ToString(), Font);
 				int charWidth = 2 + (int)Math.Ceiling(tl[i].Metrics.LayoutWidth + tl[i].OverhangMetrics.Left + tl[i].OverhangMetrics.Right);
 				int charHeight = 2 + (int)Math.Ceiling(tl[i].Metrics.LayoutHeight + tl[i].OverhangMetrics.Top + tl[i].OverhangMetrics.Bottom);
 				line = Math.Max(line, charHeight);
@@ -104,13 +102,13 @@ namespace SpriteTextRenderer
 				SampleDescription = new SampleDescription(1, 0),
 				Usage = ResourceUsage.Default
 			};
-			var texture = new Texture2D(ModelEx.TextManager.Instance.D3DDevice10, TexDesc);
+			var texture = new Texture2D(ModelEx.FontManager.Instance.D3DDevice10, TexDesc);
 
-			var rtv = new RenderTargetView(ModelEx.TextManager.Instance.D3DDevice10, texture);
-			ModelEx.TextManager.Instance.D3DDevice10.ClearRenderTargetView(rtv, new SlimDX.Color4(0, 1, 1, 1));
+			var rtv = new RenderTargetView(ModelEx.FontManager.Instance.D3DDevice10, texture);
+			ModelEx.FontManager.Instance.D3DDevice10.ClearRenderTargetView(rtv, new SlimDX.Color4(0, 1, 1, 1));
 			//D3DDevice10.ClearRenderTargetView(rtv, new SlimDX.Color4(1, 0, 0, 0));
 			Surface surface = texture.AsSurface();
-			var target = RenderTarget.FromDXGI(ModelEx.TextManager.Instance.D2DFactory, surface, rtp);
+			var target = RenderTarget.FromDXGI(ModelEx.FontManager.Instance.D2DFactory, surface, rtp);
 			var color = new SolidColorBrush(target, new SlimDX.Color4(1, 1, 1, 1));
 
 			target.BeginDraw();
@@ -289,7 +287,7 @@ namespace SpriteTextRenderer
 
 		private void IterateStringEm(string text, Vector2 position, bool Draw, float realFontSize, Color4 color, CoordinateType coordinateType, out StringMetrics metrics)
 		{
-			float scale = realFontSize / _FontSize;
+			float scale = realFontSize / FontSize;
 			IterateString(text, position, Draw, scale, color, coordinateType, out metrics);
 		}
 
