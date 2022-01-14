@@ -233,7 +233,7 @@ namespace CDC.Objects
 
 				section.Offset = reader.BaseStream.Position;
 
-				// Store the position the section will be copied to. May need to align size to 16.
+				// copy the section data to the new stream and store the offet it was written to
 				section.NewOffset = writer.BaseStream.Position;
 				Byte[] data = reader.ReadBytes(section.Size);
 				writer.Write(data);
@@ -254,15 +254,10 @@ namespace CDC.Objects
 					UInt32 offset = BitConverter.ToUInt32(pointer, 0);
 
 					// add together section offset and offset
-					//pointer = BitConverter.GetBytes(targetSection.Offset + offset);
-
-					// write back relocated pointer
-					//reader.BaseStream.Position -= 4;
-					//reader.BaseStream.Write(pointer, 0, 4);
-
-					// Same again with the copied section.
 					writer.BaseStream.Position = section.NewOffset + relocation.Offset;
 					pointer = BitConverter.GetBytes(targetSection.NewOffset + offset);
+
+					// write back relocated pointer
 					writer.BaseStream.Write(pointer, 0, 4);
 				}
 			}
