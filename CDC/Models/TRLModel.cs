@@ -330,7 +330,6 @@ namespace CDC.Objects.Models
 			_geometry.PositionsRaw[v].x = (float)reader.ReadInt16();
 			_geometry.PositionsRaw[v].y = (float)reader.ReadInt16();
 			_geometry.PositionsRaw[v].z = (float)reader.ReadInt16();
-			reader.BaseStream.Position += 0x02;
 		}
 
 		protected virtual void ReadTypeAVertices(BinaryReader reader, CDC.Objects.ExportOptions options)
@@ -358,7 +357,6 @@ namespace CDC.Objects.Models
 			_extraGeometry.PositionsRaw[v].x = (float)reader.ReadInt16();
 			_extraGeometry.PositionsRaw[v].y = (float)reader.ReadInt16();
 			_extraGeometry.PositionsRaw[v].z = (float)reader.ReadInt16();
-			reader.BaseStream.Position += 0x02;
 		}
 
 		protected virtual void ReadTypeBVertices(BinaryReader reader, CDC.Objects.ExportOptions options)

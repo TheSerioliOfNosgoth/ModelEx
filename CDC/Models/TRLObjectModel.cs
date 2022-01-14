@@ -27,7 +27,7 @@ namespace CDC.Objects.Models
 			_polygonStart = 0; // _dataStart + reader.ReadUInt32();
 			reader.BaseStream.Position += 0x28;
 			_materialStart = _dataStart + reader.ReadUInt32();
-			reader.BaseStream.Position += 0x04;
+			reader.BaseStream.Position += 0x08;
 			//_materialStart = 0; // ^^Whatever that was, it's a dword and then an array of shorts. 
 			_materialCount = 0;
 			m_uColourStart = _dataStart + reader.ReadUInt32();
@@ -53,16 +53,19 @@ namespace CDC.Objects.Models
 			_geometry.PositionsPhys[v] = _geometry.PositionsRaw[v] * _vertexScale;
 			_geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
 
-			_geometry.Vertices[v].normalID = reader.ReadByte();
-			reader.BaseStream.Position += 0x03;
+			_geometry.Vertices[v].normalID = 0; // = v;
+			reader.BaseStream.Position += 0x04; // Normals
 
 			_geometry.Vertices[v].UVID = v;
+
+			reader.BaseStream.Position += 0x02;
 
 			UInt16 vU = reader.ReadUInt16();
 			UInt16 vV = reader.ReadUInt16();
 
-			_geometry.UVs[v].u = Utility.BizarreFloatToNormalFloat(vU);
-			_geometry.UVs[v].v = Utility.BizarreFloatToNormalFloat(vV);
+			// Different from SR2/Defiance.
+			_geometry.UVs[v].u = vU;
+			_geometry.UVs[v].v = vV;
 		}
 
 		protected override void ReadTypeAVertices(BinaryReader reader, CDC.Objects.ExportOptions options)
@@ -88,12 +91,15 @@ namespace CDC.Objects.Models
 			_bones = new Bone[_boneCount];
 			for (UInt16 b = 0; b < _boneCount; b++)
 			{
+				reader.BaseStream.Position += 0x20;
+
 				// Get the bone data
 				_bones[b].localPos.x = reader.ReadSingle();
 				_bones[b].localPos.y = reader.ReadSingle();
 				_bones[b].localPos.z = reader.ReadSingle();
 
-				float unknown = reader.ReadSingle();
+				reader.BaseStream.Position += 0x04;
+
 				_bones[b].flags = reader.ReadUInt32();
 
 				_bones[b].vFirst = reader.ReadUInt16();
@@ -174,12 +180,14 @@ namespace CDC.Objects.Models
 			List<TRLTriangleList> xTriangleListList = new List<TRLTriangleList>();
 			UInt32 uMaterialPosition = _materialStart;
 			_groupCount = 0;
+
 			while (uMaterialPosition != 0)
 			{
 				reader.BaseStream.Position = uMaterialPosition;
 				TRLTriangleList xTriangleList = new TRLTriangleList();
 
-				if (ReadTriangleList(reader, ref xTriangleList)/* && xTriangleList.m_usGroupID == 0*/)
+				bool isVisible = (ReadTriangleList(reader, ref xTriangleList) /*&& xTriangleList.m_usGroupID == 0*/);
+				if (isVisible)
 				{
 					xTriangleListList.Add(xTriangleList);
 					_polygonCount += xTriangleList.m_uPolygonCount;
@@ -272,8 +280,8 @@ namespace CDC.Objects.Models
 			UInt32 xDWord0 = reader.ReadUInt32();
 			UInt32 xDWord1 = reader.ReadUInt32();
 			xTriangleList.m_xMaterial = new Material();
-			xTriangleList.m_xMaterial.visible = ((xWord1 & 0xFF00) == 0);
-			xTriangleList.m_xMaterial.textureID = (UInt16)(xWord0 & 0x0FFF);
+			xTriangleList.m_xMaterial.visible = true; // ((xWord1 & 0xFF00) == 0);
+			xTriangleList.m_xMaterial.textureID = 0; // (UInt16)(xWord0 & 0x0FFF);
 			xTriangleList.m_xMaterial.colour = 0xFFFFFFFF;
 			if (xTriangleList.m_xMaterial.textureID > 0)
 			{

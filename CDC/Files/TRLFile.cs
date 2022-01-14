@@ -7,6 +7,32 @@ namespace CDC.Objects
 {
 	public class TRLFile : SRFile
 	{
+		enum SectionType
+		{
+			General = 0,
+			Animation = 2,
+			Texture = 5,
+			Wave = 6,
+			Dtp = 7
+		}
+
+		public class Relocation
+		{
+			public int Section;
+			public uint Offset;
+		}
+
+		class Section
+		{
+			public int Size;
+			public long Offset;
+			public long NewOffset;
+			public SectionType Type;
+			public uint Id;
+			public uint NumRelocations;
+			public readonly List<Relocation> Relocations = new List<Relocation>();
+		}
+
 		public TRLFile(String strFileName, CDC.Objects.ExportOptions options)
 			: base(strFileName, Game.TRL, options)
 		{
@@ -16,20 +42,20 @@ namespace CDC.Objects
 		{
 			_dataStart = 0;
 
-			reader.BaseStream.Position = 0x000000AC;
-			if (reader.ReadUInt32() == 0x04C2046E)
-			{
-				_asset = Asset.Unit;
-			}
-			else
-			{
+			//reader.BaseStream.Position = 0x000000AC;
+			//if (reader.ReadUInt32() == 0x04C2046E)
+			//{
+			//	_asset = Asset.Unit;
+			//}
+			//else
+			//{
 				_asset = Asset.Object;
-			}
+			//}
 		}
 
 		protected override void ReadObjectData(BinaryReader reader, CDC.Objects.ExportOptions options)
 		{
-			// Object name. No names in Defiance :(
+			// Object name. No names in TRL :(
 			//reader.BaseStream.Position = _dataStart + 0x00000024;
 			//reader.BaseStream.Position = _dataStart + reader.ReadUInt32();
 			//String strModelName = new String(reader.ReadChars(8));
@@ -54,18 +80,18 @@ namespace CDC.Objects
 			//}
 
 			// Model data
-			reader.BaseStream.Position = _dataStart + 0x00000028;
+			reader.BaseStream.Position = _dataStart + 0x00000018;
 			_modelCount = reader.ReadUInt16();
-			_modelCount = 1; // There are multiple models, but Defiance might have too many. Override for now.
+			_modelCount = 1; // There are multiple models, but TRL might have too many. Override for now.
 			_animCount = 0; //reader.ReadUInt16();
-			reader.BaseStream.Position += 0x02;
+			reader.BaseStream.Position += 0x06;
 			_modelStart = _dataStart + reader.ReadUInt32();
 			_animStart = 0; //_dataStart + reader.ReadUInt32();
 
-			_models = new DefianceModel[_modelCount];
+			_models = new TRLModel[_modelCount];
 			for (UInt16 m = 0; m < _modelCount; m++)
 			{
-				_models[m] = DefianceObjectModel.Load(reader, _dataStart, _modelStart, _name, _platform, m, _version, options);
+				_models[m] = TRLObjectModel.Load(reader, _dataStart, _modelStart, _name, _platform, m, _version, options);
 			}
 		}
 
@@ -141,13 +167,13 @@ namespace CDC.Objects
 			reader.BaseStream.Position = _dataStart + 0x10;
 			_modelCount = 1;
 			_modelStart = _dataStart + 0x10;
-			_models = new DefianceModel[_modelCount];
+			_models = new TRLModel[_modelCount];
 			reader.BaseStream.Position = _modelStart;
 			UInt32 m_uModelData = _dataStart + reader.ReadUInt32();
 
 			// Material data
 			Console.WriteLine("Debug: reading area model 0");
-			_models[0] = DefianceUnitModel.Load(reader, _dataStart, m_uModelData, _name, _platform, _version, options);
+			_models[0] = TRLUnitModel.Load(reader, _dataStart, m_uModelData, _name, _platform, _version, options);
 
 			//if (m_axModels[0].Platform == Platform.Dreamcast ||
 			//    m_axModels[1].Platform == Platform.Dreamcast)
@@ -158,87 +184,87 @@ namespace CDC.Objects
 
 		protected override void ResolvePointers(BinaryReader reader, BinaryWriter writer)
 		{
-			/*
-			 * BlockInfo // AKA SectionInfo
-			 * {
-			 *      uint32 size;
-			 *      uint32 type;
-			 *      uint32 id;
-			 *  }
-			 *  
-			 *  BlockList // AKA SectionList
-			 *  {
-			 *      uint32 versionNumber;
-			 *      uint32 numBlocks;
-			 *      BlockInfo blockList[0];
-			 *  }
-			 */
-
 			reader.BaseStream.Position = 0;
 			writer.BaseStream.Position = 0;
 
-			// This should be 11, otherwise it gives:
-			// "Wrong mkloadob version %s %x\nrebuild needed\n"
-			reader.BaseStream.Position += 0x04;
+			reader.BaseStream.Position += 0x04; // Version number
 
-			UInt32 uRegionCount = reader.ReadUInt32();
+			List<Section> sections = new List<Section>();
 
-			UInt32 uTotal = 0;
-			UInt32[] auRegionSizes = new UInt32[uRegionCount];
-			UInt32[] auRegionPositions = new UInt32[uRegionCount];
-			for (UInt32 r = 0; r < uRegionCount; r++)
+			Int32 numSections = reader.ReadInt32();
+
+			// read all section headers
+			for (int i = 0; i < numSections; i++)
 			{
-				auRegionSizes[r] = reader.ReadUInt32();
-				auRegionPositions[r] = uTotal;
-				uTotal += auRegionSizes[r];
-				uTotal += 0x10; // An extra 16 bytes for metadata.
-				reader.BaseStream.Position += 0x08;
+				Section section = new Section();
+				section.Size = reader.ReadInt32();
+				section.Type = (SectionType)reader.ReadByte();
+
+				reader.BaseStream.Position += 3; // skip past pad and version id
+
+				UInt32 packedData = reader.ReadUInt32();
+
+				section.Id = reader.ReadUInt32();
+				section.NumRelocations = packedData >> 8;
+
+				reader.BaseStream.Position += 4; // skip past specMask
+
+				sections.Add(section);
 			}
 
-			UInt32 uRegionDataSize = uRegionCount * 0x0C;
-			UInt32 uPointerData = (uRegionDataSize + 0x17) & 0xFFFFFFF0;
-			for (UInt32 currentRegion = 0; currentRegion < uRegionCount; currentRegion++)
+			// go trough all sections and relocations
+			foreach (Section section in sections)
 			{
-				reader.BaseStream.Position = uPointerData;
-				UInt32 uPointerCount = reader.ReadUInt32();
-				UInt32 uPointerDataSize = uPointerCount * 0x04;
-				UInt32 uObjectData = uPointerData + ((uPointerDataSize + 0x13) & 0xFFFFFFF0);
-				UInt32 uObjectDataSize = (auRegionSizes[currentRegion] + 0x0F) & 0xFFFFFFF0;
-
-				reader.BaseStream.Position = uObjectData;
-				writer.BaseStream.Position = auRegionPositions[currentRegion];
-
-				writer.Write(0x0001BADE); // Seems like it's always 0x0001BADE
-				writer.Write(0x00000002); // Seems like it's always 0x00000002
-				writer.Write(auRegionSizes[currentRegion]);
-				writer.Write(auRegionPositions[currentRegion] + auRegionSizes[currentRegion]);
-
-				Byte[] auObjectData = reader.ReadBytes((Int32)auRegionSizes[currentRegion]);
-				writer.Write(auObjectData);
-
-				reader.BaseStream.Position = uPointerData + 0x04;
-				UInt32[] auAddresses = new UInt32[uPointerCount];
-				for (UInt32 p = 0; p < uPointerCount; p++)
+				// relocation data is before section
+				for (int i = 0; i < section.NumRelocations; i++)
 				{
-					auAddresses[p] = reader.ReadUInt32();
+					UInt16 typeAndSectionInfo = reader.ReadUInt16();
+					UInt16 type = reader.ReadUInt16();
+					UInt32 offset = reader.ReadUInt32();
+
+					Relocation relocation = new Relocation
+					{
+						Section = typeAndSectionInfo >> 3,
+						Offset = offset
+					};
+
+					section.Relocations.Add(relocation);
 				}
 
-				UInt32[] auValues = new UInt32[uPointerCount];
-				for (UInt32 p = 0; p < uPointerCount; p++)
+				section.Offset = reader.BaseStream.Position;
+
+				// Store the position the section will be copied to. May need to align size to 16.
+				section.NewOffset = writer.BaseStream.Position;
+				Byte[] data = reader.ReadBytes(section.Size);
+				writer.Write(data);
+			}
+
+			// relocate all sections
+			foreach (Section section in sections)
+			{
+				foreach (Relocation relocation in section.Relocations)
 				{
-					reader.BaseStream.Position = uObjectData + auAddresses[p];
-					UInt32 regionIndexAndOffset = reader.ReadUInt32();
-					UInt32 offset = regionIndexAndOffset & 0x003FFFFF;
-					UInt32 regionIndex = regionIndexAndOffset >> 0x16;
+					reader.BaseStream.Position = section.Offset + relocation.Offset;
+					var targetSection = sections[relocation.Section];
 
-					auAddresses[p] += auRegionPositions[currentRegion] + 0x10;
-					auValues[p] = auRegionPositions[regionIndex] + offset + 0x10;
+					// read the offset
+					byte[] pointer = new byte[4];
+					reader.BaseStream.Read(pointer, 0, 4);
 
-					writer.BaseStream.Position = auAddresses[p];
-					writer.Write(auValues[p]);
+					UInt32 offset = BitConverter.ToUInt32(pointer, 0);
+
+					// add together section offset and offset
+					//pointer = BitConverter.GetBytes(targetSection.Offset + offset);
+
+					// write back relocated pointer
+					//reader.BaseStream.Position -= 4;
+					//reader.BaseStream.Write(pointer, 0, 4);
+
+					// Same again with the copied section.
+					writer.BaseStream.Position = section.NewOffset + relocation.Offset;
+					pointer = BitConverter.GetBytes(targetSection.NewOffset + offset);
+					writer.BaseStream.Write(pointer, 0, 4);
 				}
-
-				uPointerData = uObjectData + uObjectDataSize;
 			}
 		}
 	}
