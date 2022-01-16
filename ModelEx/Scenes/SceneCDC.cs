@@ -23,6 +23,7 @@ using SR1PCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPCTexture
 using SR1PSTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPlaystationTextureFile;
 using SR1DCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverDreamcastTextureFile;
 using SR2PCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaver2PCVRMTextureFile;
+using TRLPCTextureFile = BenLincoln.TheLostWorlds.CDTextures.TombRaiderPCDRMTextureFile;
 
 using SpriteTextRenderer;
 
@@ -856,6 +857,35 @@ namespace ModelEx
 				Type currentFileType = srFile.GetType();
 				if (currentFileType == typeof(TRLFile))
 				{
+					String textureFileName = fileName;
+					try
+					{
+						TRLPCTextureFile textureFile = new TRLPCTextureFile(textureFileName);
+						for (int t = 0; t < textureFile.TextureCount; t++)
+						{
+							String textureName = CDC.Objects.Models.SRModel.GetPS2TextureName(srFile.Name, (int)textureFile.TextureDefinitions[t].ID) + TextureExtension;
+
+							System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
+							//textureFile.ExportFile(t, "C:\\Users\\A\\Desktop\\Lara\\" + textureName);
+							if (stream != null)
+							{
+								if (textureFile.TextureDefinitions[t].Format == BenLincoln.TheLostWorlds.CDTextures.DRMFormat.Uncompressed)
+								{
+									MemoryStream stream2 = textureFile.GetUncompressedDataAsStream2(t);
+									TextureManager.Instance.AddTexture(stream2, textureName);
+								}
+								else
+								{
+									TextureManager.Instance.AddTexture(stream, textureName);
+								}
+								_TexturesAsPNGs.Add(textureName, textureFile.GetTextureAsBitmap(t));
+							}
+						}
+					}
+					catch (Exception ex)
+					{
+						Console.Write(ex.ToString());
+					}
 				}
 				else if (currentFileType == typeof(SR2File) ||
 						 currentFileType == typeof(DefianceFile))

@@ -63,9 +63,8 @@ namespace CDC.Objects.Models
 			UInt16 vU = reader.ReadUInt16();
 			UInt16 vV = reader.ReadUInt16();
 
-			// Different from SR2/Defiance.
-			_geometry.UVs[v].u = vU;
-			_geometry.UVs[v].v = vV;
+			_geometry.UVs[v].u = Utility.BizarreFloatToNormalFloat2(vU);
+			_geometry.UVs[v].v = Utility.BizarreFloatToNormalFloat2(vV);
 		}
 
 		protected override void ReadTypeAVertices(BinaryReader reader, CDC.Objects.ExportOptions options)
@@ -281,7 +280,7 @@ namespace CDC.Objects.Models
 			UInt32 xDWord1 = reader.ReadUInt32();
 			xTriangleList.m_xMaterial = new Material();
 			xTriangleList.m_xMaterial.visible = true; // ((xWord1 & 0xFF00) == 0);
-			xTriangleList.m_xMaterial.textureID = 0; // (UInt16)(xWord0 & 0x0FFF);
+			xTriangleList.m_xMaterial.textureID = (UInt16)(xWord0 & 0x1FFF);
 			xTriangleList.m_xMaterial.colour = 0xFFFFFFFF;
 			if (xTriangleList.m_xMaterial.textureID > 0)
 			{

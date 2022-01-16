@@ -95,6 +95,21 @@ namespace CDC
 			return fCalcValue;
 		}
 
+		public static float BizarreFloatToNormalFloat2(UInt16 usBizarreFloat)
+		{
+			UInt32 floatAsInt = ((UInt32)usBizarreFloat) << 16;
+			byte[] bytes = BitConverter.GetBytes(floatAsInt);
+			float result = BitConverter.ToSingle(bytes, 0);
+
+			result %= 1;
+			if (result < 0.0f)
+			{
+				result += 1.0f;
+			}
+
+			return result;
+		}
+
 		public static float ClampToRange(float fValue, float fMin, float fMax)
 		{
 			if (fValue < fMin)

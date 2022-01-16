@@ -90,6 +90,7 @@
     <Compile Include="Models\TRLObjectModel.cs" />
     <Compile Include="Models\TRLUnitModel.cs" />
     <Compile Include="Textures\Gex3PlaystationVRMTextureFile.cs" />
+    <Compile Include="Textures\TombRaiderPCDRMTextureFile.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PS2\PS2ImageData.cs" />

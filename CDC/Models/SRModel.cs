@@ -130,8 +130,7 @@ namespace CDC.Objects.Models
 						textureName = GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID);
 					}
 				}
-				else if (srModel is SR2Model ||
-					srModel is DefianceModel)
+				else if (srModel is SR2Model || srModel is DefianceModel || srModel is TRLModel)
 				{
 					textureName = GetPS2TextureName(srModel.Name, material.textureID);
 				}
