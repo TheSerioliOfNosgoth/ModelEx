@@ -19,7 +19,7 @@ namespace CDC.Objects.Models
 			// _introStart = _dataStart + reader.ReadUInt32();
 			reader.BaseStream.Position = _modelData + 0x0C;
 			_vertexCount = reader.ReadUInt32();
-			_polygonCount = 0; // reader.ReadUInt32(); // Length = 0x14
+			_polygonCount = 0; // reader.ReadUInt32();
 			reader.BaseStream.Position += 0x08;
 			_vertexStart = _dataStart + reader.ReadUInt32();
 			_polygonStart = 0;
@@ -65,8 +65,6 @@ namespace CDC.Objects.Models
 
 			_geometry.Vertices[v].colourID = v;
 
-			//_colours[v] = reader.ReadUInt32();
-			//_coloursAlt[v] = _colours[v];
 			uint vColour = reader.ReadUInt32();
 
 			if (options.IgnoreVertexColours)
@@ -106,20 +104,12 @@ namespace CDC.Objects.Models
 
 			_extraGeometry.Vertices[v].UVID = v;
 
-			// UInt16 vU = reader.ReadUInt16();
-			// UInt16 vV = reader.ReadUInt16();
-
-			//_extraGeometry.UVs[v].u = Utility.BizarreFloatToNormalFloat(vU);
-			//_extraGeometry.UVs[v].v = Utility.BizarreFloatToNormalFloat(vV);
-
 			reader.BaseStream.Position += 0x04;
 
-			_extraGeometry.UVs[v].u = reader.ReadSingle(); // Offset = 0x0C
-			_extraGeometry.UVs[v].v = reader.ReadSingle(); // Offset = 0x10
+			_extraGeometry.UVs[v].u = reader.ReadSingle();
+			_extraGeometry.UVs[v].v = reader.ReadSingle();
 
-			//_colours[v] = reader.ReadUInt32();
-			//_coloursAlt[v] = _colours[v];
-			uint vColour = reader.ReadUInt32(); // Offset = 0x14
+			uint vColour = reader.ReadUInt32();
 
 			if (options.IgnoreVertexColours)
 			{

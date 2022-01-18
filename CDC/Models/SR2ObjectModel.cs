@@ -53,7 +53,8 @@ namespace CDC.Objects.Models
 			_geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
 
 			_geometry.Vertices[v].normalID = reader.ReadUInt16();
-			reader.BaseStream.Position += 0x02;
+
+			reader.BaseStream.Position += 0x02; // boneID
 
 			_geometry.Vertices[v].UVID = v;
 

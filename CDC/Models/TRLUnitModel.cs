@@ -67,8 +67,6 @@ namespace CDC.Objects.Models
 
 			_geometry.Vertices[v].colourID = v;
 
-			//_colours[v] = reader.ReadUInt32();
-			//_coloursAlt[v] = _colours[v];
 			uint vColour = reader.ReadUInt32();
 
 			if (options.IgnoreVertexColours)

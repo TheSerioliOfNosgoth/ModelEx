@@ -20,7 +20,7 @@ namespace CDC.Objects.Models
 			reader.BaseStream.Position = _modelData + 0x0C;
 
 			_vertexCount = reader.ReadUInt32();
-			_polygonCount = 0; // reader.ReadUInt32(); // Length = 0x14
+			_polygonCount = 0; // reader.ReadUInt32();
 			reader.BaseStream.Position += 0x08;
 			_vertexStart = _dataStart + reader.ReadUInt32();
 			_polygonStart = 0; // _dataStart + reader.ReadUInt32();
@@ -53,8 +53,6 @@ namespace CDC.Objects.Models
 
 			_geometry.Vertices[v].colourID = v;
 
-			//_colours[v] = reader.ReadUInt32();
-			//_coloursAlt[v] = _colours[v];
 			uint vColour = reader.ReadUInt32();
 
 			if (options.IgnoreVertexColours)
