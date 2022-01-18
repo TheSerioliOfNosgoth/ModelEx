@@ -283,20 +283,12 @@ namespace CDC.Objects.Models
 
 		protected virtual void ReadData(BinaryReader reader, CDC.Objects.ExportOptions options)
 		{
-			// Get the normals
-			_geometry.Normals = new Vector[s_aiNormals.Length / 3];
-			for (int n = 0; n < _geometry.Normals.Length; n++)
-			{
-				_geometry.Normals[n].x = s_aiNormals[n, 0];
-				_geometry.Normals[n].y = s_aiNormals[n, 1];
-				_geometry.Normals[n].z = s_aiNormals[n, 2];
-			}
-
 			// Get the vertices
 			_geometry.Vertices = new Vertex[_vertexCount];
 			_geometry.PositionsRaw = new Vector[_vertexCount];
 			_geometry.PositionsPhys = new Vector[_vertexCount];
 			_geometry.PositionsAltPhys = new Vector[_vertexCount];
+			_geometry.Normals = new Vector[_vertexCount];
 			_geometry.Colours = new UInt32[_vertexCount];
 			_geometry.ColoursAlt = new UInt32[_vertexCount];
 			_geometry.UVs = new UV[_vertexCount];
@@ -307,6 +299,7 @@ namespace CDC.Objects.Models
 			_extraGeometry.PositionsRaw = new Vector[_extraVertexCount];
 			_extraGeometry.PositionsPhys = new Vector[_extraVertexCount];
 			_extraGeometry.PositionsAltPhys = new Vector[_extraVertexCount];
+			_extraGeometry.Normals = new Vector[_extraVertexCount];
 			_extraGeometry.Colours = new UInt32[_extraVertexCount];
 			_extraGeometry.ColoursAlt = new UInt32[_extraVertexCount];
 			_extraGeometry.UVs = new UV[_extraVertexCount];

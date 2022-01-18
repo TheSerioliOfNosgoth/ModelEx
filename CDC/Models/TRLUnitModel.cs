@@ -19,7 +19,7 @@ namespace CDC.Objects.Models
 			// _introStart = _dataStart + reader.ReadUInt32();
 			reader.BaseStream.Position = _modelData + 0x0C;
 			_vertexCount = reader.ReadUInt32();
-			_polygonCount = 0; // reader.ReadUInt32(); // Length = 0x14
+			_polygonCount = 0; // reader.ReadUInt32();
 			reader.BaseStream.Position += 0x08;
 			_vertexStart = _dataStart + reader.ReadUInt32();
 			_polygonStart = 0;
@@ -60,6 +60,8 @@ namespace CDC.Objects.Models
 		{
 			base.ReadTypeAVertex(reader, v, options);
 
+			reader.BaseStream.Position += 0x02;
+
 			_geometry.PositionsPhys[v] = _geometry.PositionsRaw[v];
 			_geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
 
@@ -98,6 +100,8 @@ namespace CDC.Objects.Models
 		protected override void ReadTypeBVertex(BinaryReader reader, int v, CDC.Objects.ExportOptions options)
 		{
 			base.ReadTypeBVertex(reader, v, options);
+
+			reader.BaseStream.Position += 0x02;
 
 			_extraGeometry.PositionsPhys[v] = _extraGeometry.PositionsRaw[v];
 			_extraGeometry.PositionsAltPhys[v] = _extraGeometry.PositionsPhys[v];
