@@ -14,37 +14,26 @@ namespace CDC.Objects.Models
 		protected TRLUnitModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
 			: base(reader, dataStart, modelData, strModelName, ePlatform, version)
 		{
-			// reader.BaseStream.Position += 0x04;
+			// reader.BaseStream.Position += 0x08;
 			// _introCount = reader.ReadUInt32();
 			// _introStart = _dataStart + reader.ReadUInt32();
-			reader.BaseStream.Position = _modelData + 0x0C;
-			_vertexCount = reader.ReadUInt32();
-			_polygonCount = 0; // reader.ReadUInt32();
-			reader.BaseStream.Position += 0x08;
-			_vertexStart = _dataStart + reader.ReadUInt32();
-			_polygonStart = 0;
-			reader.BaseStream.Position += 0x18;
-			m_uSpectralVertexStart = _dataStart + reader.ReadUInt32();
-			reader.BaseStream.Position += 0x04; // m_uMaterialColourStart
-			m_uSpectralColourStart = _dataStart + reader.ReadUInt32();
-			_materialStart = 0;
-			_materialCount = 0;
+			reader.BaseStream.Position = dataStart + 0x14;
 			m_uOctTreeCount = reader.ReadUInt32();
 			m_uOctTreeStart = _dataStart + reader.ReadUInt32();
+			reader.BaseStream.Position = _modelData + 0x44;
+			_vertexStart = _dataStart + reader.ReadUInt32();
+			reader.BaseStream.Position = _modelData + 0x54;
+			_vertexCount = reader.ReadUInt32();
+			_polygonCount = 0;
+			_polygonStart = 0;
+			m_uSpectralVertexStart = 0;
+			m_uSpectralColourStart = 0;
+			_materialStart = 0;
+			_materialCount = 0;
 			_groupCount = m_uOctTreeCount;
 
-			// The data I'm looking for appears to take up a whole block,
-			// with no indication of length other than the block data itself.
-			// 4 bytes before the start is the position of the next block.
-			// 4 bytes before that is the length of the whole block.
-
-			reader.BaseStream.Position = _modelData + 0x70;
-			_extraVertexStart = reader.ReadUInt32();
-			if (_extraVertexStart != 0)
-			{
-				reader.BaseStream.Position = _extraVertexStart - 0x08;
-				_extraVertexCount = reader.ReadUInt32() / 0x34;
-			}
+			_extraVertexCount = 0;
+			_extraVertexStart = 0;
 
 			_trees = new Tree[_groupCount];
 		}

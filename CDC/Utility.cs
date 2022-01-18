@@ -101,12 +101,6 @@ namespace CDC
 			byte[] bytes = BitConverter.GetBytes(floatAsInt);
 			float result = BitConverter.ToSingle(bytes, 0);
 
-			result %= 1;
-			if (result < 0.0f)
-			{
-				result += 1.0f;
-			}
-
 			return result;
 		}
 

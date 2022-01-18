@@ -42,15 +42,15 @@ namespace CDC.Objects
 		{
 			_dataStart = 0;
 
-			//reader.BaseStream.Position = 0x000000AC;
-			//if (reader.ReadUInt32() == 0x04C2046E)
-			//{
-			//	_asset = Asset.Unit;
-			//}
-			//else
-			//{
+			reader.BaseStream.Position = 0x000000A8;
+			if (reader.ReadUInt32() == 0x04C204BB)
+			{
+				_asset = Asset.Unit;
+			}
+			else
+			{
 				_asset = Asset.Object;
-			//}
+			}
 		}
 
 		protected override void ReadObjectData(BinaryReader reader, CDC.Objects.ExportOptions options)
@@ -100,9 +100,8 @@ namespace CDC.Objects
 			// Adjacent units are seperate from portals.
 			// There can be multiple portals to the same unit.
 			// Portals
-			reader.BaseStream.Position = _dataStart + 0x10;
-			UInt32 m_uConnectionData = _dataStart + reader.ReadUInt32(); // Same as m_uModelData?
-			reader.BaseStream.Position = m_uConnectionData + 0x24;
+			/*UInt32 m_uConnectionData = _dataStart + reader.ReadUInt32(); // Same as m_uModelData?
+			reader.BaseStream.Position = m_uConnectionData + 0x10;
 			portalCount = reader.ReadUInt32();
 			reader.BaseStream.Position = _dataStart + reader.ReadUInt32();
 			_portalNames = new String[portalCount];
@@ -111,10 +110,10 @@ namespace CDC.Objects
 				String strUnitName = new String(reader.ReadChars(16));
 				_portalNames[i] = Utility.CleanName(strUnitName);
 				reader.BaseStream.Position += 0x90;
-			}
+			}*/
 
 			// Intros
-			//reader.BaseStream.Position = _dataStart + 0x44;
+			//reader.BaseStream.Position = _dataStart + 0x74;
 			//_introCount = reader.ReadUInt32();
 			//_introStart = _dataStart + reader.ReadUInt32();
 			//_intros = new Intro[_introCount];
@@ -126,7 +125,7 @@ namespace CDC.Objects
 			//}
 
 			// Object Names
-			//reader.BaseStream.Position = _dataStart + 0x4C;
+			//reader.BaseStream.Position = _dataStart + 0x7C;
 			//_objectNameStart = _dataStart + reader.ReadUInt32();
 			//reader.BaseStream.Position = _objectNameStart;
 			//List<String> introList = new List<String>();
@@ -140,7 +139,7 @@ namespace CDC.Objects
 			//_objectNames = introList.ToArray();
 
 			// Unit name
-			reader.BaseStream.Position = _dataStart + 0x84;
+			reader.BaseStream.Position = _dataStart + 0x80;
 			reader.BaseStream.Position = _dataStart + reader.ReadUInt32();
 			String strModelName = new String(reader.ReadChars(10)); // Need to check
 			_name = Utility.CleanName(strModelName);
@@ -164,9 +163,7 @@ namespace CDC.Objects
 			//}
 
 			// Model data
-			reader.BaseStream.Position = _dataStart + 0x10;
 			_modelCount = 1;
-			_modelStart = _dataStart + 0x10;
 			_models = new TRLModel[_modelCount];
 			reader.BaseStream.Position = _modelStart;
 			UInt32 m_uModelData = _dataStart + reader.ReadUInt32();
