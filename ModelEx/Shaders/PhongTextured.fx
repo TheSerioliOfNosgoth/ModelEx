@@ -15,13 +15,6 @@ struct VertexShaderOutput
 	float2 TexCoord : TEXCOORD2;
 };
 
-SamplerState stateLinear
-{
-	Filter = MIN_MAG_MIP_LINEAR;
-	AddressU = Wrap;
-	AddressV = Wrap;
-};
-
 VertexShaderOutput VShader(VertexShaderInput input)
 {
 	VertexShaderOutput output;
@@ -41,7 +34,7 @@ VertexShaderOutput VShader(VertexShaderInput input)
 float4 PShader(VertexShaderOutput input) : SV_TARGET
 {
 	// Start with diffuse color
-	float4 color = UseTexture == false ? DiffuseColor : Texture.Sample(stateLinear, input.TexCoord);
+	float4 color = UseTexture == false ? DiffuseColor : Texture.Sample(Sampler, input.TexCoord);
 	if (color.a < 0.5)
 	{
 		clip(-1);

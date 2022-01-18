@@ -829,7 +829,7 @@ namespace ModelEx
 			octaParser.BuildModel();
 			renderables.Add(octaParser.Model);
 
-			if (srFile.Asset == CDC.Asset.Unit)
+			if (srFile.Asset == CDC.Asset.Unit && srFile.IntroCount > 0)
 			{
 				foreach (CDC.Intro intro in srFile.Intros)
 				{

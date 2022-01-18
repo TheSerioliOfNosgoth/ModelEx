@@ -17,6 +17,7 @@ namespace ModelEx
 		public EffectConstants Constants;
 		SlimDX.Direct3D11.Buffer ConstantsBuffer;
 		public ShaderResourceView Texture;
+		public SamplerState Sampler;
 
 		InputElement[] elements = new[] {
 				new InputElement("POSITION", 0, Format.R32G32B32_Float, 0,  0),
@@ -68,6 +69,17 @@ namespace ModelEx
 					ResourceOptionFlags.None,
 					0
 				);
+
+				SamplerDescription sDefault = new SamplerDescription();
+				sDefault.AddressU = TextureAddressMode.Wrap;
+				sDefault.AddressV = TextureAddressMode.Wrap;
+				sDefault.AddressW = TextureAddressMode.Wrap;
+				sDefault.Filter = Filter.MinMagMipLinear;
+				sDefault.ComparisonFunction = Comparison.Never;
+				sDefault.MinimumLod = 0;
+				sDefault.MaximumLod = float.MaxValue;
+
+				Sampler = SamplerState.FromDescription(DeviceManager.Instance.device, sDefault);
 			}
 			catch (Exception ex)
 			{
@@ -83,6 +95,7 @@ namespace ModelEx
 			layout?.Dispose();
 			ConstantsBuffer?.Dispose();
 			Texture?.Dispose();
+			Sampler?.Dispose();
 		}
 
 		public override void Apply(int pass)
@@ -108,6 +121,7 @@ namespace ModelEx
 				DeviceManager.Instance.context.PixelShader.Set(pixelShader);
 				DeviceManager.Instance.context.PixelShader.SetConstantBuffer(ConstantsBuffer, 0);
 				DeviceManager.Instance.context.PixelShader.SetShaderResource(Texture, 0);
+				DeviceManager.Instance.context.PixelShader.SetSampler(Sampler, 0);
 			}
 		}
 	}

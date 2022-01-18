@@ -18,3 +18,4 @@ cbuffer Constants : register(b0)
 };
 
 Texture2D Texture : register(t0);
+SamplerState Sampler : register(s0);
