@@ -141,7 +141,7 @@ namespace CDC.Objects
 			// Unit name
 			reader.BaseStream.Position = _dataStart + 0x80;
 			reader.BaseStream.Position = _dataStart + reader.ReadUInt32();
-			String strModelName = new String(reader.ReadChars(10)); // Need to check
+			String strModelName = new String(reader.ReadChars(32)); //  128 for Underworld.
 			_name = Utility.CleanName(strModelName);
 
 			// Texture type
@@ -165,7 +165,7 @@ namespace CDC.Objects
 			// Model data
 			_modelCount = 1;
 			_models = new TRLModel[_modelCount];
-			reader.BaseStream.Position = _modelStart;
+			reader.BaseStream.Position = _dataStart;
 			UInt32 m_uModelData = _dataStart + reader.ReadUInt32();
 
 			// Material data

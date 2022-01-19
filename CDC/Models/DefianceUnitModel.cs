@@ -14,9 +14,6 @@ namespace CDC.Objects.Models
 		protected DefianceUnitModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
 			: base(reader, dataStart, modelData, strModelName, ePlatform, version)
 		{
-			// reader.BaseStream.Position += 0x04;
-			// _introCount = reader.ReadUInt32();
-			// _introStart = _dataStart + reader.ReadUInt32();
 			reader.BaseStream.Position = _modelData + 0x0C;
 			_vertexCount = reader.ReadUInt32();
 			_polygonCount = 0; // reader.ReadUInt32();

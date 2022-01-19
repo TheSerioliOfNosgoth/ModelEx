@@ -15,6 +15,12 @@ namespace CDC.Objects.Models
 			public UInt32 m_uNext;
 		}
 
+		protected class TRLMaterial
+		{
+			public UInt32 textureID;
+			public UInt32 vbBaseOffset;
+		}
+
 		protected TRLModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version) :
 			base(reader, dataStart, modelData, strModelName, ePlatform, version)
 		{

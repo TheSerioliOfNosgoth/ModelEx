@@ -15,7 +15,7 @@ namespace CDC.Objects.Models
 			// reader.BaseStream.Position += 0x08;
 			// _introCount = reader.ReadUInt32();
 			// _introStart = _dataStart + reader.ReadUInt32();
-			reader.BaseStream.Position = dataStart + 0x14;
+			reader.BaseStream.Position = _modelData + 0x14;
 			m_uOctTreeCount = reader.ReadUInt32();
 			m_uOctTreeStart = _dataStart + reader.ReadUInt32();
 			reader.BaseStream.Position = _modelData + 0x44;
@@ -90,20 +90,27 @@ namespace CDC.Objects.Models
 
 			for (UInt32 t = 0; t < m_uOctTreeCount; t++)
 			{
-				reader.BaseStream.Position = m_uOctTreeStart + (t * 0xA0);
+				reader.BaseStream.Position = m_uOctTreeStart + (t * 0xB0);
 
-				reader.BaseStream.Position += 0x2C;
-				bool drawTester = ((reader.ReadUInt32() & 1) != 1);
+				reader.BaseStream.Position += 0x24;
 				UInt32 uOctID = reader.ReadUInt32();
-				reader.BaseStream.Position += 0x10;
+				reader.BaseStream.Position += 0x1C;
 				UInt32 uDataPos = reader.ReadUInt32();
-				reader.BaseStream.Position += 0x08;
-				reader.BaseStream.Position += 0x40; // The 0x40 is a 4x4 matrix
-													 // In each terrain group, vertices start from part way through the array.
-				UInt32 uStartIndex = reader.ReadUInt32();
-				//UInt32 uIndexCount = reader.ReadUInt32();
+				reader.BaseStream.Position += 0x48;
+				UInt32 uMaterialListPos = reader.ReadUInt32();
 
-				_trees[t] = ReadOctTree(reader, treePolygons, uDataPos, _trees[t], xMeshes, xMeshPositions, 0, uStartIndex);
+				reader.BaseStream.Position = uMaterialListPos;
+				UInt32 uNumMaterials = reader.ReadUInt32();
+				List<TRLMaterial> materials = new List<TRLMaterial>();
+
+				for (UInt32 m = 0; m < uNumMaterials; m++)
+				{
+					TRLMaterial material = new TRLMaterial();
+					ReadMaterial(reader, ref material);
+					materials.Add(material);
+				}
+
+				_trees[t] = ReadOctTree(reader, treePolygons, uDataPos, _trees[t], xMeshes, xMeshPositions, 0, materials);
 			}
 
 			_polygonCount = (UInt32)treePolygons.Count;
@@ -121,7 +128,15 @@ namespace CDC.Objects.Models
 			return;
 		}
 
-		protected virtual Tree ReadOctTree(BinaryReader reader, List<TreePolygon> treePolygons, UInt32 uDataPos, Tree xParentTree, List<Mesh> xMeshes, List<int> xMeshPositions, UInt32 uDepth, UInt32 uStartIndex)
+		protected virtual void ReadMaterial(BinaryReader reader, ref TRLMaterial material)
+		{
+			material.textureID = reader.ReadUInt32();
+			reader.BaseStream.Position += 0x04;
+			material.vbBaseOffset = reader.ReadUInt32();
+			reader.BaseStream.Position += 0x08;
+		}
+
+		protected virtual Tree ReadOctTree(BinaryReader reader, List<TreePolygon> treePolygons, UInt32 uDataPos, Tree xParentTree, List<Mesh> xMeshes, List<int> xMeshPositions, UInt32 uDepth, List<TRLMaterial> materials)
 		{
 			if (uDataPos == 0)
 			{
@@ -140,7 +155,7 @@ namespace CDC.Objects.Models
 			{
 				xTree = new Tree();
 				xMesh = new Mesh();
-				xMesh.startIndex = uStartIndex;
+				xMesh.startIndex = 0;
 				xTree.mesh = xMesh;
 
 				if (xParentTree != null)
@@ -159,7 +174,7 @@ namespace CDC.Objects.Models
 				xTree.isLeaf = true;
 
 				reader.BaseStream.Position = uDataPos + 0x30;
-				ReadOctLeaf(reader, treePolygons, xMesh, uStartIndex);
+				ReadOctLeaf(reader, treePolygons, xMesh, materials);
 			}
 			else
 			{
@@ -171,7 +186,7 @@ namespace CDC.Objects.Models
 
 				for (Int32 s = 0; s < iSubTreeCount; s++)
 				{
-					ReadOctTree(reader, treePolygons, auSubTreePositions[s], xTree, xMeshes, xMeshPositions, uDepth + 1, uStartIndex);
+					ReadOctTree(reader, treePolygons, auSubTreePositions[s], xTree, xMeshes, xMeshPositions, uDepth + 1, materials);
 				}
 			}
 
@@ -187,7 +202,7 @@ namespace CDC.Objects.Models
 			return xTree;
 		}
 
-		protected virtual void ReadOctLeaf(BinaryReader reader, List<TreePolygon> treePolygons, Mesh xMesh, UInt32 uStartIndex)
+		protected virtual void ReadOctLeaf(BinaryReader reader, List<TreePolygon> treePolygons, Mesh xMesh, List<TRLMaterial> materials)
 		{
 			UInt32 uNextStrip = _dataStart + reader.ReadUInt32();
 			reader.BaseStream.Position = uNextStrip;
@@ -240,7 +255,7 @@ namespace CDC.Objects.Models
 					}
 
 					reader.BaseStream.Position += 0x04;
-					UInt32 uTextureID = reader.ReadUInt32();
+					UInt32 materialID = reader.ReadUInt32();
 					reader.BaseStream.Position += 0x08;
 
 					UInt32 uTestNextStrip = reader.ReadUInt32();
@@ -257,10 +272,12 @@ namespace CDC.Objects.Models
 						while (i < uIndexCount2)
 						{
 							TreePolygon newPolygon = new TreePolygon();
+							TRLMaterial trlMaterial = materials[(int)materialID];
 							newPolygon.v1 = axStripIndices[axStripIndices2[i++]];
 							newPolygon.v2 = axStripIndices[axStripIndices2[i++]];
 							newPolygon.v3 = axStripIndices[axStripIndices2[i++]];
-							newPolygon.textureID = uTextureID;
+							newPolygon.textureID = trlMaterial.textureID;
+							newPolygon.vbBaseOffset = trlMaterial.vbBaseOffset;
 							newPolygon.useExtraGeometry = true;
 							treePolygons.Add(newPolygon);
 						}
@@ -289,7 +306,7 @@ namespace CDC.Objects.Models
 				}
 
 				reader.BaseStream.Position += 0x04;
-				UInt32 uTextureID = reader.ReadUInt32();
+				UInt32 materialID = reader.ReadUInt32();
 				reader.BaseStream.Position += 0x08;
 
 				uNextStrip = reader.ReadUInt32();
@@ -306,10 +323,12 @@ namespace CDC.Objects.Models
 					while (i < uIndexCount)
 					{
 						TreePolygon newPolygon = new TreePolygon();
+						TRLMaterial trlMaterial = materials[(int)materialID];
 						newPolygon.v1 = axStripIndices[i++];
 						newPolygon.v2 = axStripIndices[i++];
 						newPolygon.v3 = axStripIndices[i++];
-						newPolygon.textureID = uTextureID;
+						newPolygon.textureID = trlMaterial.textureID;
+						newPolygon.vbBaseOffset = trlMaterial.vbBaseOffset;
 						treePolygons.Add(newPolygon);
 					}
 
@@ -333,26 +352,14 @@ namespace CDC.Objects.Models
 				UInt32 uV2 = treePolygons[firstPolygon + p].v2;
 				UInt32 uV3 = treePolygons[firstPolygon + p].v3;
 
-				if (treePolygons[firstPolygon + p].useExtraGeometry == false)
-				{
-					xMesh.polygons[p].v1 = _geometry.Vertices[uV1 + xMesh.startIndex];
-					xMesh.polygons[p].v2 = _geometry.Vertices[uV2 + xMesh.startIndex];
-					xMesh.polygons[p].v3 = _geometry.Vertices[uV3 + xMesh.startIndex];
-				}
-				else
-				{
-					xMesh.polygons[p].v1 = _extraGeometry.Vertices[uV1];
-					xMesh.polygons[p].v2 = _extraGeometry.Vertices[uV2];
-					xMesh.polygons[p].v3 = _extraGeometry.Vertices[uV3];
-					xMesh.polygons[p].v1.isExtraGeometry = true;
-					xMesh.polygons[p].v2.isExtraGeometry = true;
-					xMesh.polygons[p].v3.isExtraGeometry = true;
-				}
+				xMesh.polygons[p].v1 = _geometry.Vertices[uV1 + treePolygons[firstPolygon + p].vbBaseOffset];
+				xMesh.polygons[p].v2 = _geometry.Vertices[uV2 + treePolygons[firstPolygon + p].vbBaseOffset];
+				xMesh.polygons[p].v3 = _geometry.Vertices[uV3 + treePolygons[firstPolygon + p].vbBaseOffset];
 
 				xMaterial = new Material();
 
 				xMaterial.visible = true;
-				xMaterial.textureID = (UInt16)(treePolygons[firstPolygon + p].textureID & 0x0FFF);
+				xMaterial.textureID = (UInt16)(treePolygons[firstPolygon + p].textureID & 0x1FFF);
 				xMaterial.colour = 0xFFFFFFFF;
 				if (xMaterial.textureID > 0 && xMaterial.visible)
 				{

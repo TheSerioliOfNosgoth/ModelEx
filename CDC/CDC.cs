@@ -123,6 +123,8 @@ namespace CDC
 	public struct TreePolygon
 	{
 		public UInt32 textureID;
+		public UInt32 vbBaseOffset;
+
 		public UInt16 v1, v2, v3;
 		public bool useExtraGeometry;
 	}
