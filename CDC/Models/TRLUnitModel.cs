@@ -8,8 +8,6 @@ namespace CDC.Objects.Models
 	{
 		protected UInt32 m_uOctTreeCount;
 		protected UInt32 m_uOctTreeStart;
-		protected UInt32 m_uSpectralVertexStart;
-		protected UInt32 m_uSpectralColourStart;
 
 		protected TRLUnitModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
 			: base(reader, dataStart, modelData, strModelName, ePlatform, version)
@@ -26,14 +24,9 @@ namespace CDC.Objects.Models
 			_vertexCount = reader.ReadUInt32();
 			_polygonCount = 0;
 			_polygonStart = 0;
-			m_uSpectralVertexStart = 0;
-			m_uSpectralColourStart = 0;
 			_materialStart = 0;
 			_materialCount = 0;
 			_groupCount = m_uOctTreeCount;
-
-			_extraVertexCount = 0;
-			_extraVertexStart = 0;
 
 			_trees = new Tree[_groupCount];
 		}
@@ -45,9 +38,9 @@ namespace CDC.Objects.Models
 			return xModel;
 		}
 
-		protected override void ReadTypeAVertex(BinaryReader reader, int v, CDC.Objects.ExportOptions options)
+		protected override void ReadVertex(BinaryReader reader, int v, CDC.Objects.ExportOptions options)
 		{
-			base.ReadTypeAVertex(reader, v, options);
+			base.ReadVertex(reader, v, options);
 
 			reader.BaseStream.Position += 0x02;
 
@@ -73,115 +66,15 @@ namespace CDC.Objects.Models
 			UInt16 vU = reader.ReadUInt16();
 			UInt16 vV = reader.ReadUInt16();
 
-			_geometry.UVs[v].u = Utility.BizarreFloatToNormalFloat(vU);
-			_geometry.UVs[v].v = Utility.BizarreFloatToNormalFloat(vV);
-		}
-
-		protected override void ReadTypeAVertices(BinaryReader reader, CDC.Objects.ExportOptions options)
-		{
-			base.ReadTypeAVertices(reader, options);
-
-			ReadSpectralData(reader, options);
-		}
-
-		protected override void ReadTypeBVertex(BinaryReader reader, int v, CDC.Objects.ExportOptions options)
-		{
-			base.ReadTypeBVertex(reader, v, options);
-
-			reader.BaseStream.Position += 0x02;
-
-			_extraGeometry.PositionsPhys[v] = _extraGeometry.PositionsRaw[v];
-			_extraGeometry.PositionsAltPhys[v] = _extraGeometry.PositionsPhys[v];
-
-			_extraGeometry.Vertices[v].colourID = v;
-
-			_extraGeometry.Vertices[v].UVID = v;
-
-			// UInt16 vU = reader.ReadUInt16();
-			// UInt16 vV = reader.ReadUInt16();
-
-			//_extraGeometry.UVs[v].u = Utility.BizarreFloatToNormalFloat(vU);
-			//_extraGeometry.UVs[v].v = Utility.BizarreFloatToNormalFloat(vV);
+			_geometry.UVs[v].u = vU * 0.00024414062f;
+			_geometry.UVs[v].v = vV * 0.00024414062f;
 
 			reader.BaseStream.Position += 0x04;
-
-			_extraGeometry.UVs[v].u = reader.ReadSingle(); // Offset = 0x0C
-			_extraGeometry.UVs[v].v = reader.ReadSingle(); // Offset = 0x10
-
-			//_colours[v] = reader.ReadUInt32();
-			//_coloursAlt[v] = _colours[v];
-			uint vColour = reader.ReadUInt32(); // Offset = 0x14
-
-			if (options.IgnoreVertexColours)
-			{
-				_extraGeometry.Colours[v] = 0xFFFFFFFF;
-			}
-			else
-			{
-				_extraGeometry.Colours[v] = vColour;
-				_extraGeometry.ColoursAlt[v] = _extraGeometry.Colours[v];
-			}
-
-			// Spectral colours in here for this type of vertex.
-			reader.BaseStream.Position += 0x1C;
 		}
 
-		protected override void ReadTypeBVertices(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected override void ReadVertices(BinaryReader reader, CDC.Objects.ExportOptions options)
 		{
-			base.ReadTypeBVertices(reader, options);
-
-			// ReadSpectralData(reader, options);
-		}
-
-		protected virtual void ReadSpectralData(BinaryReader reader, CDC.Objects.ExportOptions options)
-		{
-			if (m_uSpectralColourStart != 0)
-			{
-				// Spectral Colours
-				reader.BaseStream.Position = m_uSpectralColourStart;
-				for (int v = 0; v < _vertexCount; v++)
-				{
-					UInt32 uShiftColour = reader.ReadUInt32();
-					UInt32 uAlpha = _geometry.ColoursAlt[v] & 0xFF000000;
-					UInt32 uRGB = uShiftColour & 0x00FFFFFF;
-					if (options.IgnoreVertexColours)
-					{
-						_geometry.ColoursAlt[v] = 0xFFFFFFFF;
-					}
-					else
-					{
-						_geometry.ColoursAlt[v] = uAlpha | uRGB;
-					}
-				}
-			}
-
-			if (m_uSpectralVertexStart != 0)
-			{
-				// Spectral vertices
-				reader.BaseStream.Position = _modelData + 0x2C;
-				UInt32 uCurrentIndexPosition = reader.ReadUInt32();
-				UInt32 uCurrentSpectralVertex = m_uSpectralVertexStart;
-				while (true)
-				{
-					reader.BaseStream.Position = uCurrentIndexPosition;
-					Int32 iVertex = reader.ReadInt32();
-					uCurrentIndexPosition = (UInt32)reader.BaseStream.Position;
-
-					if (iVertex == -1)
-					{
-						break;
-					}
-
-					reader.BaseStream.Position = uCurrentSpectralVertex;
-					ShiftVertex xShiftVertex;
-					xShiftVertex.basePos.x = (float)reader.ReadInt16();
-					xShiftVertex.basePos.y = (float)reader.ReadInt16();
-					xShiftVertex.basePos.z = (float)reader.ReadInt16();
-					uCurrentSpectralVertex = (UInt32)reader.BaseStream.Position;
-
-					_geometry.PositionsAltPhys[iVertex] = xShiftVertex.basePos;
-				}
-			}
+			base.ReadVertices(reader, options);
 		}
 
 		protected override void ReadPolygons(BinaryReader reader, CDC.Objects.ExportOptions options)

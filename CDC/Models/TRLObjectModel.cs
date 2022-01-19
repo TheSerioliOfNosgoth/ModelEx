@@ -46,9 +46,9 @@ namespace CDC.Objects.Models
 			return xModel;
 		}
 
-		protected override void ReadTypeAVertex(BinaryReader reader, int v, CDC.Objects.ExportOptions options)
+		protected override void ReadVertex(BinaryReader reader, int v, CDC.Objects.ExportOptions options)
 		{
-			base.ReadTypeAVertex(reader, v, options);
+			base.ReadVertex(reader, v, options);
 
 			_geometry.PositionsPhys[v] = _geometry.PositionsRaw[v] * _vertexScale;
 			_geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
@@ -70,9 +70,9 @@ namespace CDC.Objects.Models
 			_geometry.UVs[v].v = Utility.BizarreFloatToNormalFloat2(vV);
 		}
 
-		protected override void ReadTypeAVertices(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected override void ReadVertices(BinaryReader reader, CDC.Objects.ExportOptions options)
 		{
-			base.ReadTypeAVertices(reader, options);
+			base.ReadVertices(reader, options);
 
 			reader.BaseStream.Position = m_uColourStart;
 			for (UInt16 v = 0; v < _vertexCount; v++)
