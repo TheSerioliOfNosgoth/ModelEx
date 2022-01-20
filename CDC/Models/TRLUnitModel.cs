@@ -63,8 +63,8 @@ namespace CDC.Objects.Models
 
 			_geometry.Vertices[v].UVID = v;
 
-			UInt16 vU = reader.ReadUInt16();
-			UInt16 vV = reader.ReadUInt16();
+			Int16 vU = reader.ReadInt16();
+			Int16 vV = reader.ReadInt16();
 
 			_geometry.UVs[v].u = vU * 0.00024414062f;
 			_geometry.UVs[v].v = vV * 0.00024414062f;
