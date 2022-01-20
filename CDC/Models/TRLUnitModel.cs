@@ -178,7 +178,7 @@ namespace CDC.Objects.Models
 			}
 			else
 			{
-				reader.BaseStream.Position += 0x18;
+				reader.BaseStream.Position = uDataPos + 0x18;
 
 				UInt32[] auSubTreePositions = new UInt32[iSubTreeCount];
 				for (Int32 s = 0; s < iSubTreeCount; s++)
