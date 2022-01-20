@@ -143,7 +143,7 @@ namespace CDC.Objects.Models
 				return null;
 			}
 
-			reader.BaseStream.Position = uDataPos + 0x34;
+			reader.BaseStream.Position = uDataPos + 0x14;
 			Int32 iSubTreeCount = reader.ReadInt32();
 
 			Tree xTree = null;
@@ -173,11 +173,13 @@ namespace CDC.Objects.Models
 			{
 				xTree.isLeaf = true;
 
-				reader.BaseStream.Position = uDataPos + 0x30;
+				reader.BaseStream.Position = uDataPos + 0x10;
 				ReadOctLeaf(reader, treePolygons, xMesh, materials);
 			}
 			else
 			{
+				reader.BaseStream.Position += 0x18;
+
 				UInt32[] auSubTreePositions = new UInt32[iSubTreeCount];
 				for (Int32 s = 0; s < iSubTreeCount; s++)
 				{
@@ -212,22 +214,11 @@ namespace CDC.Objects.Models
 			{
 				bool bShouldWrite = true; // For debug.
 
-				UInt32 uLength = reader.ReadUInt32();
-				if (uLength == 0 || uLength == 0xFFFFFFFF)
-				{
-					break;
-				}
+				UInt32 uIndexCount = reader.ReadUInt32();
 
 				counter++;
 
-				uNextStrip += uLength;
-
-				reader.BaseStream.Position += 0x04;
-				UInt32 uIndexCount = reader.ReadUInt32();
-				if (uIndexCount == 0)
-				{
-					continue;
-				}
+				reader.BaseStream.Position = uNextStrip + 0x2C;
 
 				UInt16[] axStripIndices = new UInt16[uIndexCount];
 				for (UInt32 i = 0; i < uIndexCount; i++)
@@ -235,87 +226,8 @@ namespace CDC.Objects.Models
 					axStripIndices[i] = reader.ReadUInt16();
 				}
 
-				if (reader.BaseStream.Position % 4 != 0)
-				{
-					reader.BaseStream.Position += 0x02;
-				}
-
-				// Did I do this for a reason? Should this be an 'if'?
-				while (counter == 5)
-				{
-					// 0xFFFF wrong?  Try uTestNextStrip
-					UInt32 uIndexCount2 = reader.ReadUInt32();
-					if (/*(uIndexCount2 & 0x0000FFFF) == 0x0000FFFF || (uIndexCount2 & 0xFFFF0000) == 0xFFFF0000 ||*/ uIndexCount2 == 0)
-					{
-						//if (reader.BaseStream.Position % 4 != 0)
-						//{
-						//    reader.BaseStream.Position += 0x02;
-						//}
-						break;
-					}
-
-					reader.BaseStream.Position += 0x04;
-					UInt32 materialID = reader.ReadUInt32();
-					reader.BaseStream.Position += 0x08;
-
-					UInt32 uTestNextStrip = reader.ReadUInt32();
-
-					UInt16[] axStripIndices2 = new UInt16[uIndexCount2];
-					for (UInt32 i = 0; i < uIndexCount2; i++)
-					{
-						axStripIndices2[i] = reader.ReadUInt16();
-					}
-
-					if (bShouldWrite)
-					{
-						UInt16 i = 0;
-						while (i < uIndexCount2)
-						{
-							TreePolygon newPolygon = new TreePolygon();
-							TRLMaterial trlMaterial = materials[(int)materialID];
-							newPolygon.v1 = axStripIndices[axStripIndices2[i++]];
-							newPolygon.v2 = axStripIndices[axStripIndices2[i++]];
-							newPolygon.v3 = axStripIndices[axStripIndices2[i++]];
-							newPolygon.textureID = trlMaterial.textureID;
-							newPolygon.vbBaseOffset = trlMaterial.vbBaseOffset;
-							newPolygon.useExtraGeometry = true;
-							treePolygons.Add(newPolygon);
-						}
-
-						if (xMesh != null)
-						{
-							xMesh.indexCount += uIndexCount2;
-						}
-					}
-
-					reader.BaseStream.Position = uTestNextStrip;
-				}
-
-				reader.BaseStream.Position = uNextStrip;
-			}
-
-			// Was this a special second set of polys?  Animated ones?
-			while (true)
-			{
-				bool bShouldWrite = true; // For debug.
-
-				UInt32 uIndexCount = reader.ReadUInt32();
-				if (uIndexCount == 0)
-				{
-					break;
-				}
-
-				reader.BaseStream.Position += 0x04;
+				reader.BaseStream.Position = uNextStrip + 0x14;
 				UInt32 materialID = reader.ReadUInt32();
-				reader.BaseStream.Position += 0x08;
-
-				uNextStrip = reader.ReadUInt32();
-
-				UInt16[] axStripIndices = new UInt16[uIndexCount];
-				for (UInt32 i = 0; i < uIndexCount; i++)
-				{
-					axStripIndices[i] = reader.ReadUInt16();
-				}
 
 				if (bShouldWrite)
 				{
@@ -336,6 +248,14 @@ namespace CDC.Objects.Models
 					{
 						xMesh.indexCount += uIndexCount;
 					}
+				}
+
+				reader.BaseStream.Position = uNextStrip + 0x28;
+				uNextStrip = reader.ReadUInt32();
+
+				if (uNextStrip == 0 || uIndexCount == 0)
+				{
+					break;
 				}
 
 				reader.BaseStream.Position = uNextStrip;
