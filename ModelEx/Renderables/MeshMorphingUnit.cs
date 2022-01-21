@@ -13,7 +13,8 @@ namespace ModelEx
 
 		public static float RealmBlend = 0.0f;
 
-		public MeshMorphingUnit(IMeshParser<Position2Color2TexturedVertex, short> meshParser)
+		public MeshMorphingUnit(RenderResource resource, IMeshParser<Position2Color2TexturedVertex, short> meshParser)
+			: base(resource)
 		{
 			Name = meshParser.MeshName;
 			technique = meshParser.Technique;
@@ -40,7 +41,7 @@ namespace ModelEx
 			if (material.TextureFileName != null && material.TextureFileName != "")
 			{
 				effect.Constants.UseTexture = true;
-				effect.Texture = TextureManager.Instance.GetShaderResourceView(material.TextureFileName + SceneCDC.TextureExtension);
+				effect.Texture = renderResource.GetShaderResourceView(material.TextureFileName + RenderResourceCDC.TextureExtension);
 			}
 			else
 			{

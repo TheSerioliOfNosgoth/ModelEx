@@ -131,7 +131,7 @@ namespace ModelEx
 			}
 		}
 
-		protected void LoadCurrentModel()
+		protected void LoadCurrentModel(bool isReload)
 		{
 			if ((_CurrentModelPath == "") || (!File.Exists(_CurrentModelPath)))
 			{
@@ -144,7 +144,7 @@ namespace ModelEx
 				SceneManager.Instance.ShutDown();
 				SceneManager.Instance.AddScene(new SceneCDC(_CurrentModelType));
 				SceneCDC sceneCDC = (SceneCDC)SceneManager.Instance.CurrentScene;
-				sceneCDC.ImportFromFile(_CurrentModelPath, ImportExportOptions, _CurrentModelChild);
+				sceneCDC.ImportFromFile(_CurrentModelPath, ImportExportOptions, isReload, _CurrentModelChild);
 
 				if (_ResetCameraOnModelLoad)
 				{
@@ -305,7 +305,7 @@ namespace ModelEx
 			//progressThread.Start();
 			//progressThread.Join();
 
-			LoadCurrentModel();
+			LoadCurrentModel(false);
 		}
 
 		private void ExportToolStripMenuItem_Click(object sender, EventArgs e)
@@ -482,7 +482,7 @@ namespace ModelEx
 
 			if (_ReloadModelOnRenderModeChange)
 			{
-				LoadCurrentModel();
+				LoadCurrentModel(true);
 			}
 		}
 
@@ -1259,7 +1259,7 @@ namespace ModelEx
 
 		private void reloadCurrentModelToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			LoadCurrentModel();
+			LoadCurrentModel(true);
 		}
 
 		private void interpolatePolygonColoursToolStripMenuItem_Click(object sender, EventArgs e)

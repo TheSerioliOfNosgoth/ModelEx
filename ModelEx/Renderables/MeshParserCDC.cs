@@ -26,7 +26,7 @@ namespace ModelEx
 			_srFile = srFile;
 		}
 
-		public void BuildMesh(int modelIndex, int groupIndex, int meshIndex)
+		public void BuildMesh(RenderResource resource, int modelIndex, int groupIndex, int meshIndex)
 		{
 			_srModel = _srFile.Models[modelIndex];
 			_srGroup = _srModel.Groups[groupIndex];
@@ -73,11 +73,11 @@ namespace ModelEx
 				if (_srFile.Asset == CDC.Asset.Unit)
 				{
 					//Mesh = new MeshPCT(this);
-					Mesh = new MeshMorphingUnit(this);
+					Mesh = new MeshMorphingUnit(resource, this);
 				}
 				else
 				{
-					Mesh = new MeshPNT(this);
+					Mesh = new MeshPNT(resource, this);
 				}
 			}
 		}

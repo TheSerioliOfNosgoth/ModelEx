@@ -19,7 +19,7 @@ namespace ModelEx
 			ModelName = modelName;
 		}
 
-		public void BuildModel()
+		public void BuildModel(RenderResource resource)
 		{
 			Material materialA = new Material();
 			materialA.Visible = true;
@@ -38,7 +38,7 @@ namespace ModelEx
 			group.Name = "group";
 
 			MeshParser meshParser = new MeshParser(ModelName);
-			meshParser.BuildMesh();
+			meshParser.BuildMesh(resource);
 			foreach (SubMesh subMesh in meshParser.SubMeshes)
 			{
 				// If the mesh parser knew the total submeshes for the model,

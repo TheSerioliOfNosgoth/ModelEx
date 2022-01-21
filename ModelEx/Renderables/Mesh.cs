@@ -8,6 +8,8 @@ namespace ModelEx
 {
 	public abstract class Mesh
 	{
+		protected RenderResource renderResource;
+
 		protected Buffer vertexBuffer;
 		protected DataStream vertices;
 
@@ -27,6 +29,11 @@ namespace ModelEx
 		public BoundingSphere BoundingSphere { get { return boundingSphere; } }
 
 		public String Name = "";
+
+		protected Mesh(RenderResource resource)
+		{
+			renderResource = resource;
+		}
 
 		protected Vector4 ColorToVector4(System.Drawing.Color color)
 		{

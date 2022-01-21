@@ -13,14 +13,12 @@ namespace ModelEx
 		protected List<RenderInstance> renderInstances;
 		public readonly ReadOnlyCollection<RenderInstance> RenderInstances;
 		public Renderable CurrentObject { get { return renderInstances.Count > 0 ? renderInstances[0] : null; } }
-		protected Dictionary<string, Bitmap> _TexturesAsPNGs;
 
 		protected Scene()
 		{
 			renderables = new List<Renderable>();
 			renderInstances = new List<RenderInstance>();
 			RenderInstances = new ReadOnlyCollection<RenderInstance>(renderInstances);
-			_TexturesAsPNGs = new Dictionary<string, Bitmap>();
 		}
 
 		public virtual void Dispose()
@@ -65,7 +63,7 @@ namespace ModelEx
 			}
 		}
 
-		public abstract void ImportFromFile(string fileName, CDC.Objects.ExportOptions options);
+		public abstract void ImportFromFile(string fileName, CDC.Objects.ExportOptions options, bool isReload = false);
 
 		public abstract void ExportToFile(string fileName, CDC.Objects.ExportOptions options);
 	}

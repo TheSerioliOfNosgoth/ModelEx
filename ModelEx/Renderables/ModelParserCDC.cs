@@ -27,7 +27,7 @@ namespace ModelEx
 			_srFile = srFile;
 		}
 
-		public void BuildModel(int modelIndex, CDC.Objects.ExportOptions options)
+		public void BuildModel(RenderResource resource, int modelIndex, CDC.Objects.ExportOptions options)
 		{
 			_srModel = _srFile.Models[modelIndex];
 			String modelName = _objectName + "-" + modelIndex.ToString();
@@ -70,7 +70,7 @@ namespace ModelEx
 				{
 					Node group = new Node();
 					SRMeshParser meshParser = new SRMeshParser(_objectName, _srFile);
-					meshParser.BuildMesh(modelIndex, groupIndex, 0);
+					meshParser.BuildMesh(resource, modelIndex, groupIndex, 0);
 					foreach (SubMesh subMesh in meshParser.SubMeshes)
 					{
 						// If the mesh parser knew the total submeshes for the model,

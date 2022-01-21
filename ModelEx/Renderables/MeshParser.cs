@@ -27,7 +27,7 @@ namespace ModelEx
 			MeshName = meshName;
 		}
 
-		public void BuildMesh()
+		public void BuildMesh(RenderResource resource)
 		{
 			float v = 1.2f;
 			float h = 1.0f;
@@ -59,7 +59,7 @@ namespace ModelEx
 
 			Technique = "DefaultRender";
 
-			Mesh = new MeshPCT(this);
+			Mesh = new MeshPCT(resource, this);
 
 			SubMesh subMeshA = new SubMesh
 			{

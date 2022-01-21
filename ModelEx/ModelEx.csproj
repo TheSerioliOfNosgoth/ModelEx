@@ -113,12 +113,13 @@
     <Compile Include="Renderables\ModelParserCDC.cs" />
     <Compile Include="Renderables\Physical.cs" />
     <Compile Include="Renderables\RenderInstance.cs" />
+    <Compile Include="Renderables\RenderResource.cs" />
+    <Compile Include="Renderables\RenderResourceCDC.cs" />
     <Compile Include="Renderables\SubMesh.cs" />
     <Compile Include="Renderables\Node.cs" />
     <Compile Include="Renderables\Model.cs" />
     <Compile Include="Renderables\DirectDrawSurface.cs" />
     <Compile Include="Renderables\Renderable.cs" />
-    <Compile Include="Renderables\TextureManager.cs" />
     <Compile Include="RenderControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -11,7 +11,8 @@ namespace ModelEx
 		protected EffectWrapperGouraudTexture effect = ShaderManager.Instance.effectGouraudTexture;
 		protected string technique = "";
 
-		public MeshPCT(IMeshParser<PositionColorTexturedVertex, short> meshParser)
+		public MeshPCT(RenderResource resource, IMeshParser<PositionColorTexturedVertex, short> meshParser)
+			: base(resource)
 		{
 			Name = meshParser.MeshName;
 			technique = meshParser.Technique;
@@ -38,7 +39,7 @@ namespace ModelEx
 			if (material.TextureFileName != null && material.TextureFileName != "")
 			{
 				effect.Constants.UseTexture = true;
-				effect.Texture = TextureManager.Instance.GetShaderResourceView(material.TextureFileName + SceneCDC.TextureExtension);
+				effect.Texture = renderResource.GetShaderResourceView(material.TextureFileName + RenderResourceCDC.TextureExtension);
 			}
 			else
 			{

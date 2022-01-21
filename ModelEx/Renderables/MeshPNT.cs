@@ -11,7 +11,8 @@ namespace ModelEx
 		protected EffectWrapperPhongTexture effect = ShaderManager.Instance.effectPhongTexture;
 		protected string technique = "";
 
-		public MeshPNT(IMeshParser<PositionNormalTexturedVertex, short> meshParser)
+		public MeshPNT(RenderResource resource, IMeshParser<PositionNormalTexturedVertex, short> meshParser)
+			: base(resource)
 		{
 			Name = meshParser.MeshName;
 			technique = meshParser.Technique;
@@ -38,7 +39,7 @@ namespace ModelEx
 			if (material.TextureFileName != null && material.TextureFileName != "")
 			{
 				effect.Constants.UseTexture = true;
-				effect.Texture = TextureManager.Instance.GetShaderResourceView(material.TextureFileName + SceneCDC.TextureExtension);
+				effect.Texture = renderResource.GetShaderResourceView(material.TextureFileName + RenderResourceCDC.TextureExtension);
 			}
 			else
 			{
