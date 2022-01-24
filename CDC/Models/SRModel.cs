@@ -265,7 +265,7 @@ namespace CDC.Objects.Models
 				if (options.SetAllPolygonColoursToValue)
 				{
 					//_polygons[p].material.colour |= 0x0000FF00;
-					_polygons[p].material.colour = SRFile.FloatARGBToUInt32ARGB(new float[] { options.PolygonColourAlpha, options.PolygonColourRed, options.PolygonColourGreen, options.PolygonColourBlue });
+					_polygons[p].material.colour = Utility.FloatARGBToUInt32ARGB(new float[] { options.PolygonColourAlpha, options.PolygonColourRed, options.PolygonColourGreen, options.PolygonColourBlue });
 					_polygons[p].colour = _polygons[p].material.colour;
 					_polygons[p].material.opacity = options.PolygonColourAlpha;
 				}
@@ -505,27 +505,27 @@ namespace CDC.Objects.Models
 				if (options.RenderMode == RenderMode.AverageVertexAlpha)
 				{
 					_polygons[p].material.opacity = 0.75f;
-					float[] fV1 = SRFile.UInt32ARGBToFloatARGB(_geometry.Colours[_polygons[p].v1.colourID]);
-					float[] fV2 = SRFile.UInt32ARGBToFloatARGB(_geometry.Colours[_polygons[p].v2.colourID]);
-					float[] fV3 = SRFile.UInt32ARGBToFloatARGB(_geometry.Colours[_polygons[p].v3.colourID]);
+					float[] fV1 = Utility.UInt32ARGBToFloatARGB(_geometry.Colours[_polygons[p].v1.colourID]);
+					float[] fV2 = Utility.UInt32ARGBToFloatARGB(_geometry.Colours[_polygons[p].v2.colourID]);
+					float[] fV3 = Utility.UInt32ARGBToFloatARGB(_geometry.Colours[_polygons[p].v3.colourID]);
 					float[] fVAverage = new float[4];
 					fVAverage[0] = 1.0f;
 					fVAverage[1] = (fV1[0] + fV2[0] + fV3[0]) / 3.0f;
 					fVAverage[2] = 1.0f;
 					fVAverage[3] = (fV1[0] + fV2[0] + fV3[0]) / 3.0f;
-					_polygons[p].material.colour = SRFile.FloatARGBToUInt32ARGB(fVAverage);
+					_polygons[p].material.colour = Utility.FloatARGBToUInt32ARGB(fVAverage);
 					_polygons[p].colour = _polygons[p].material.colour;
 				}
 
 				if (options.RenderMode == RenderMode.PolygonAlpha)
 				{
-					float[] fPoly = SRFile.UInt32ARGBToFloatARGB(_polygons[p].material.colour);
+					float[] fPoly = Utility.UInt32ARGBToFloatARGB(_polygons[p].material.colour);
 					float[] fVAverage = new float[4];
 					fVAverage[0] = 0.75f;
 					fVAverage[1] = fPoly[0];
 					fVAverage[2] = 1.0f;
 					fVAverage[3] = fPoly[0];
-					_polygons[p].material.colour = SRFile.FloatARGBToUInt32ARGB(fVAverage);
+					_polygons[p].material.colour = Utility.FloatARGBToUInt32ARGB(fVAverage);
 					_polygons[p].colour = _polygons[p].material.colour;
 					_polygons[p].material.opacity = 0.75f;
 				}
@@ -537,7 +537,7 @@ namespace CDC.Objects.Models
 					fVAverage[1] = _polygons[p].material.opacity;
 					fVAverage[2] = 1.0f;
 					fVAverage[3] = _polygons[p].material.opacity;
-					_polygons[p].material.colour = SRFile.FloatARGBToUInt32ARGB(fVAverage);
+					_polygons[p].material.colour = Utility.FloatARGBToUInt32ARGB(fVAverage);
 					_polygons[p].colour = _polygons[p].material.colour;
 					_polygons[p].material.opacity = 0.75f;
 				}
@@ -562,15 +562,15 @@ namespace CDC.Objects.Models
 						{
 							// average the vertex colours and make the polygon translucent to highlight the fact that it's dependent on multiple bones.
 							_polygons[p].material.opacity = 0.25f;
-							float[] fV1 = SRFile.UInt32ARGBToFloatARGB(boneIDColourV1);
-							float[] fV2 = SRFile.UInt32ARGBToFloatARGB(boneIDColourV2);
-							float[] fV3 = SRFile.UInt32ARGBToFloatARGB(boneIDColourV3);
+							float[] fV1 = Utility.UInt32ARGBToFloatARGB(boneIDColourV1);
+							float[] fV2 = Utility.UInt32ARGBToFloatARGB(boneIDColourV2);
+							float[] fV3 = Utility.UInt32ARGBToFloatARGB(boneIDColourV3);
 							float[] fVAverage = new float[4];
 							fVAverage[0] = (fV1[0] + fV2[0] + fV3[0]) / 3.0f;
 							fVAverage[1] = (fV1[1] + fV2[1] + fV3[1]) / 3.0f;
 							fVAverage[2] = (fV1[2] + fV2[2] + fV3[2]) / 3.0f;
 							fVAverage[3] = (fV1[3] + fV2[3] + fV3[3]) / 3.0f;
-							_polygons[p].material.colour = SRFile.FloatARGBToUInt32ARGB(fVAverage);
+							_polygons[p].material.colour = Utility.FloatARGBToUInt32ARGB(fVAverage);
 							_polygons[p].colour = _polygons[p].material.colour;
 						}
 						else

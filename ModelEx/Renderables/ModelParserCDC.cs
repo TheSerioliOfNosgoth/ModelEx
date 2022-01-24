@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Threading;
 using SRFile = CDC.Objects.SRFile;
 using SRModel = CDC.Objects.Models.SRModel;
 using Tree = CDC.Tree;
@@ -33,8 +32,7 @@ namespace ModelEx
 			String modelName = _objectName + "-" + modelIndex.ToString();
 
 			#region Materials
-			SceneCDC.ProgressStage = "Model " + modelIndex.ToString() + " - Creating Materials";
-			Thread.Sleep(500);
+
 			for (int materialIndex = 0; materialIndex < _srModel.MaterialCount; materialIndex++)
 			{
 				Material material = new Material();
@@ -49,20 +47,13 @@ namespace ModelEx
 				material.Diffuse = colorDiffuse;
 				material.TextureFileName = CDC.Objects.Models.SRModel.GetTextureName(_srModel, materialIndex, options);
 				Materials.Add(material);
-
-				if (_srModel.Groups.Length > 0)
-				{
-					SceneCDC.progressLevel += _srModel.IndexCount / _srModel.Groups.Length;
-				}
 			}
+
 			#endregion
 
 			#region Groups
 			for (int groupIndex = 0; groupIndex < _srModel.Groups.Length; groupIndex++)
 			{
-				SceneCDC.ProgressStage = "Model " + modelIndex.ToString() + " - Creating Group " + groupIndex.ToString();
-				Thread.Sleep(100);
-
 				Tree srGroup = _srModel.Groups[groupIndex];
 				String groupName = String.Format("{0}-{1}-group-{2}", _objectName, modelIndex, groupIndex);
 				if (srGroup != null && srGroup.mesh != null &&

@@ -104,6 +104,30 @@ namespace CDC
 			return result;
 		}
 
+		public static float[] UInt32ARGBToFloatARGB(UInt32 argb)
+		{
+			float[] result = new float[4];
+
+			result[0] = (float)((argb & 0xFF000000) >> 24) / 255.0f;
+			result[1] = (float)((argb & 0x00FF0000) >> 16) / 255.0f;
+			result[2] = (float)((argb & 0x0000FF00) >> 8) / 255.0f;
+			result[3] = (float)((argb & 0x000000FF)) / 255.0f;
+
+			return result;
+		}
+
+		public static UInt32 FloatARGBToUInt32ARGB(float[] argb)
+		{
+			UInt32 result;
+
+			result = ((uint)(Math.Round(argb[0] * 255.0f))) << 24;
+			result |= ((uint)(Math.Round(argb[1] * 255.0f))) << 16;
+			result |= ((uint)(Math.Round(argb[2] * 255.0f))) << 8;
+			result |= ((uint)(Math.Round(argb[3] * 255.0f)));
+
+			return result;
+		}
+
 		public static float ClampToRange(float fValue, float fMin, float fMax)
 		{
 			if (fValue < fMin)

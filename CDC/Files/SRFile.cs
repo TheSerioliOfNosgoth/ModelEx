@@ -251,6 +251,53 @@ namespace CDC.Objects
 
 		protected abstract void ResolvePointers(BinaryReader reader, BinaryWriter writer);
 
+		public static SRFile Create(string fileName, Game game, ExportOptions options, int childIndex = -1)
+		{
+			SRFile srFile;
+
+			try
+			{
+				if (game == Game.Gex)
+				{
+					GexFile gexFile = new GexFile(fileName, options);
+					if (gexFile.Asset == Asset.Unit && childIndex >= 0)
+					{
+						srFile = gexFile.Objects[childIndex];
+					}
+					else
+					{
+						srFile = gexFile;
+					}
+				}
+				else if (game == Game.SR1)
+				{
+					srFile = new SR1File(fileName, options);
+				}
+				else if (game == Game.SR2)
+				{
+					srFile = new SR2File(fileName, options);
+				}
+				else if (game == Game.Defiance)
+				{
+					srFile = new DefianceFile(fileName, options);
+				}
+				else if (game == Game.TRL)
+				{
+					srFile = new TRLFile(fileName, options);
+				}
+				else
+				{
+					srFile = null;
+				}
+			}
+			catch (Exception)
+			{
+				srFile = null;
+			}
+
+			return srFile;
+		}
+
 		public bool ExportToFile(String fileName, ExportOptions options)
 		{
 			string name = Utility.CleanName(Name).TrimEnd(new char[] { '_' });
@@ -500,28 +547,16 @@ namespace CDC.Objects
 			return true;
 		}
 
-		public static float[] UInt32ARGBToFloatARGB(UInt32 argb)
+		public UInt32 GetNumMaterials()
 		{
-			float[] result = new float[4];
+			UInt32 numMaterials = 0;
 
-			result[0] = (float)((argb & 0xFF000000) >> 24) / 255.0f;
-			result[1] = (float)((argb & 0x00FF0000) >> 16) / 255.0f;
-			result[2] = (float)((argb & 0x0000FF00) >> 8) / 255.0f;
-			result[3] = (float)((argb & 0x000000FF)) / 255.0f;
+			for (int modelIndex = 0; modelIndex < _models.Length; modelIndex++)
+			{
+				numMaterials += _models[modelIndex].MaterialCount;
+			}
 
-			return result;
-		}
-
-		public static UInt32 FloatARGBToUInt32ARGB(float[] argb)
-		{
-			UInt32 result;
-
-			result = ((uint)(Math.Round(argb[0] * 255.0f))) << 24;
-			result |= ((uint)(Math.Round(argb[1] * 255.0f))) << 16;
-			result |= ((uint)(Math.Round(argb[2] * 255.0f))) << 8;
-			result |= ((uint)(Math.Round(argb[3] * 255.0f)));
-
-			return result;
+			return numMaterials;
 		}
 
 		protected Assimp.Color4D GetAssimpColor(UInt32 color)

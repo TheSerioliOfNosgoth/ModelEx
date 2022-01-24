@@ -65,6 +65,11 @@ namespace ModelEx
 				try
 				{
 					TRLPCTextureFile textureFile = new TRLPCTextureFile(textureFileName);
+
+					SceneCDC.progressLevel = 0;
+					SceneCDC.progressLevels = textureFile.TextureCount;
+					SceneCDC.ProgressStage = "Loading Textures";
+
 					for (int t = 0; t < textureFile.TextureCount; t++)
 					{
 						String textureName = CDC.Objects.Models.SRModel.GetPS2TextureName(_srFile.Name, (int)textureFile.TextureDefinitions[t].ID) + TextureExtension;
@@ -84,6 +89,8 @@ namespace ModelEx
 							}
 							_TexturesAsPNGs.Add(textureName, textureFile.GetTextureAsBitmap(t));
 						}
+
+						SceneCDC.progressLevel++;
 					}
 				}
 				catch (Exception ex)
@@ -98,6 +105,11 @@ namespace ModelEx
 				try
 				{
 					SR2PCTextureFile textureFile = new SR2PCTextureFile(textureFileName);
+
+					SceneCDC.progressLevel = 0;
+					SceneCDC.progressLevels = textureFile.TextureCount;
+					SceneCDC.ProgressStage = "Loading Textures";
+
 					for (int t = 0; t < textureFile.TextureCount; t++)
 					{
 						String textureName = CDC.Objects.Models.SRModel.GetPS2TextureName(_srFile.Name, textureFile.TextureDefinitions[t].Flags1) + TextureExtension;
@@ -109,6 +121,8 @@ namespace ModelEx
 							AddTexture(stream, textureName);
 							_TexturesAsPNGs.Add(textureName, textureFile.GetTextureAsBitmap(t));
 						}
+
+						SceneCDC.progressLevel++;
 					}
 				}
 				catch (Exception ex)
@@ -131,6 +145,11 @@ namespace ModelEx
 						try
 						{
 							SR1PCTextureFile textureFile = new SR1PCTextureFile(textureFileName);
+
+							SceneCDC.progressLevel = 0;
+							SceneCDC.progressLevels = _srFile.GetNumMaterials();
+							SceneCDC.ProgressStage = "Loading Textures";
+
 							foreach (SRModel srModel in _srFile.Models)
 							{
 								foreach (CDC.Material material in srModel.Materials)
@@ -148,6 +167,8 @@ namespace ModelEx
 											}
 										}
 									}
+
+									SceneCDC.progressLevel++;
 								}
 							}
 						}
@@ -174,6 +195,11 @@ namespace ModelEx
 						try
 						{
 							SR1DCTextureFile textureFile = new SR1DCTextureFile(textureFileName);
+
+							SceneCDC.progressLevel = 0;
+							SceneCDC.progressLevels = _srFile.GetNumMaterials();
+							SceneCDC.ProgressStage = "Loading Textures";
+
 							foreach (SRModel srModel in _srFile.Models)
 							{
 								foreach (CDC.Material material in srModel.Materials)
@@ -194,6 +220,8 @@ namespace ModelEx
 											}
 										}
 									}
+
+									SceneCDC.progressLevel++;
 								}
 							}
 						}
@@ -213,6 +241,10 @@ namespace ModelEx
 					try
 					{
 						SR1PSTextureFile textureFile = new SR1PSTextureFile(textureFileName);
+
+						SceneCDC.progressLevel = 0;
+						SceneCDC.progressLevels = 1000; // Arbitrarilly large number.
+						SceneCDC.ProgressStage = "Loading Textures";
 
 						UInt32 polygonCountAllModels = 0;
 						foreach (SRModel srModel in _srFile.Models)
@@ -296,6 +328,8 @@ namespace ModelEx
 							//    tex.Save(@"C:\Debug\Tex-" + texNum + ".png", ImageFormat.Png);
 							//    texNum++;
 							//}
+
+							SceneCDC.progressLevel++;
 						}
 
 						// for models that use index/CLUT textures, if the user has enabled this option
@@ -314,6 +348,8 @@ namespace ModelEx
 									}
 									Bitmap b = textureFile.TexturesByCLUT[textureID][clut];
 									_TexturesAsPNGs.Add(textureName, b);
+
+									SceneCDC.progressLevel++;
 								}
 							}
 						}

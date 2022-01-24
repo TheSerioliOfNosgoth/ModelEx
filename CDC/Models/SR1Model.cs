@@ -369,7 +369,7 @@ namespace CDC.Objects.Models
 			if (options.SetAllPolygonColoursToValue)
 			{
 				//_polygons[p].material.colour |= 0x0000FF00;
-				_polygons[p].material.colour = SRFile.FloatARGBToUInt32ARGB(new float[] { options.PolygonColourAlpha, options.PolygonColourRed, options.PolygonColourGreen, options.PolygonColourBlue });
+				_polygons[p].material.colour = Utility.FloatARGBToUInt32ARGB(new float[] { options.PolygonColourAlpha, options.PolygonColourRed, options.PolygonColourGreen, options.PolygonColourBlue });
 				_polygons[p].colour = _polygons[p].material.colour;
 			}
 
