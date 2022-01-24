@@ -93,6 +93,10 @@ namespace ModelEx
 						SceneCDC.progressLevel++;
 					}
 				}
+				catch (FileNotFoundException)
+				{
+					Console.WriteLine("Error: couldn't find a texture file");
+				}
 				catch (Exception ex)
 				{
 					Console.Write(ex.ToString());
@@ -125,6 +129,10 @@ namespace ModelEx
 						SceneCDC.progressLevel++;
 					}
 				}
+				catch (FileNotFoundException)
+				{
+					Console.WriteLine("Error: couldn't find a texture file");
+				}
 				catch (Exception ex)
 				{
 					Console.Write(ex.ToString());
@@ -134,105 +142,91 @@ namespace ModelEx
 			{
 				if (_srFile.Platform == CDC.Platform.PC)
 				{
-					String textureFileName = GetTextureFileLocation(options, "textures.big", fileName);
-					bool gotTextureFile = false;
-					if (textureFileName != "")
+					try
 					{
-						gotTextureFile = true;
-					}
-					if (gotTextureFile)
-					{
-						try
+						String textureFileName = GetTextureFileLocation(options, "textures.big", fileName);
+
+						SR1PCTextureFile textureFile = new SR1PCTextureFile(textureFileName);
+
+						SceneCDC.progressLevel = 0;
+						SceneCDC.progressLevels = _srFile.GetNumMaterials();
+						SceneCDC.ProgressStage = "Loading Textures";
+
+						foreach (SRModel srModel in _srFile.Models)
 						{
-							SR1PCTextureFile textureFile = new SR1PCTextureFile(textureFileName);
-
-							SceneCDC.progressLevel = 0;
-							SceneCDC.progressLevels = _srFile.GetNumMaterials();
-							SceneCDC.ProgressStage = "Loading Textures";
-
-							foreach (SRModel srModel in _srFile.Models)
+							foreach (CDC.Material material in srModel.Materials)
 							{
-								foreach (CDC.Material material in srModel.Materials)
+								if (material.textureUsed)
 								{
-									if (material.textureUsed)
+									System.IO.MemoryStream stream = textureFile.GetDataAsStream(material.textureID);
+									if (stream != null)
 									{
-										System.IO.MemoryStream stream = textureFile.GetDataAsStream(material.textureID);
-										if (stream != null)
+										String textureName = CDC.Objects.Models.SRModel.GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID) + TextureExtension;
+										AddTexture(stream, textureName);
+										if (!_TexturesAsPNGs.ContainsKey(textureName))
 										{
-											String textureName = CDC.Objects.Models.SRModel.GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID) + TextureExtension;
-											AddTexture(stream, textureName);
-											if (!_TexturesAsPNGs.ContainsKey(textureName))
-											{
-												_TexturesAsPNGs.Add(textureName, textureFile.GetTextureAsBitmap(material.textureID));
-											}
+											_TexturesAsPNGs.Add(textureName, textureFile.GetTextureAsBitmap(material.textureID));
 										}
 									}
-
-									SceneCDC.progressLevel++;
 								}
+
+								SceneCDC.progressLevel++;
 							}
 						}
-						catch (Exception ex)
-						{
-							Console.Write(ex.ToString());
-						}
 					}
-					else
+					catch (FileNotFoundException)
 					{
 						Console.WriteLine("Error: couldn't find a texture file");
+					}
+					catch (Exception ex)
+					{
+						Console.Write(ex.ToString());
 					}
 				}
 				else if (_srFile.Platform == CDC.Platform.Dreamcast)
 				{
-					String textureFileName = GetTextureFileLocation(options, "textures.vq", fileName);
-					bool gotTextureFile = false;
-					if (textureFileName != "")
+					try
 					{
-						gotTextureFile = true;
-					}
-					if (gotTextureFile)
-					{
-						try
+						String textureFileName = GetTextureFileLocation(options, "textures.vq", fileName);		
+
+						SR1DCTextureFile textureFile = new SR1DCTextureFile(textureFileName);
+
+						SceneCDC.progressLevel = 0;
+						SceneCDC.progressLevels = _srFile.GetNumMaterials();
+						SceneCDC.ProgressStage = "Loading Textures";
+
+						foreach (SRModel srModel in _srFile.Models)
 						{
-							SR1DCTextureFile textureFile = new SR1DCTextureFile(textureFileName);
-
-							SceneCDC.progressLevel = 0;
-							SceneCDC.progressLevels = _srFile.GetNumMaterials();
-							SceneCDC.ProgressStage = "Loading Textures";
-
-							foreach (SRModel srModel in _srFile.Models)
+							foreach (CDC.Material material in srModel.Materials)
 							{
-								foreach (CDC.Material material in srModel.Materials)
+								if (material.textureUsed)
 								{
-									if (material.textureUsed)
+									int textureID = material.textureID;
+									System.IO.MemoryStream stream = textureFile.GetDataAsStream(textureID);
+									if (stream != null)
 									{
-										int textureID = material.textureID;
-										System.IO.MemoryStream stream = textureFile.GetDataAsStream(textureID);
-										if (stream != null)
+										String textureName = CDC.Objects.Models.SRModel.GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID) + TextureExtension;
+
+										AddTexture(stream, textureName);
+
+										if (!_TexturesAsPNGs.ContainsKey(textureName))
 										{
-											String textureName = CDC.Objects.Models.SRModel.GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID) + TextureExtension;
-
-											AddTexture(stream, textureName);
-
-											if (!_TexturesAsPNGs.ContainsKey(textureName))
-											{
-												_TexturesAsPNGs.Add(textureName, textureFile.GetTextureAsBitmap(material.textureID));
-											}
+											_TexturesAsPNGs.Add(textureName, textureFile.GetTextureAsBitmap(material.textureID));
 										}
 									}
-
-									SceneCDC.progressLevel++;
 								}
+
+								SceneCDC.progressLevel++;
 							}
 						}
-						catch (Exception ex)
-						{
-							Console.Write(ex.ToString());
-						}
 					}
-					else
+					catch (FileNotFoundException)
 					{
 						Console.WriteLine("Error: couldn't find a texture file");
+					}
+					catch (Exception ex)
+					{
+						Console.Write(ex.ToString());
 					}
 				}
 				else
@@ -243,8 +237,12 @@ namespace ModelEx
 						SR1PSTextureFile textureFile = new SR1PSTextureFile(textureFileName);
 
 						SceneCDC.progressLevel = 0;
-						SceneCDC.progressLevels = 1000; // Arbitrarilly large number.
+						SceneCDC.progressLevels = 100; // Arbitrarily large number.
 						SceneCDC.ProgressStage = "Loading Textures";
+
+						// Trick it into showing a progress bar.
+						System.Threading.Thread.Sleep(100);
+						SceneCDC.progressLevel = 100;
 
 						UInt32 polygonCountAllModels = 0;
 						foreach (SRModel srModel in _srFile.Models)
@@ -354,6 +352,10 @@ namespace ModelEx
 							}
 						}
 					}
+					catch (FileNotFoundException)
+					{
+						Console.WriteLine("Error: couldn't find a texture file");
+					}
 					catch (Exception ex)
 					{
 						Console.Write(ex.ToString());
@@ -362,9 +364,10 @@ namespace ModelEx
 			}
 			else
 			{
-				String textureFileName = System.IO.Path.ChangeExtension(fileName, "vrm");
 				try
 				{
+					String textureFileName = System.IO.Path.ChangeExtension(fileName, "vrm");
+
 					Gex3PSTextureFile textureFile = new Gex3PSTextureFile(textureFileName);
 
 					UInt32 polygonCountAllModels = 0;
@@ -405,6 +408,7 @@ namespace ModelEx
 							polygonNum++;
 						}
 					}
+
 					bool drawGreyscaleFirst = false;
 					bool quantizeBounds = true;
 					textureFile.BuildTexturesFromPolygonData(polygons, ((GexFile)_srFile).TPages, drawGreyscaleFirst, quantizeBounds, options);
@@ -470,6 +474,10 @@ namespace ModelEx
 							}
 						}
 					}
+				}
+				catch (FileNotFoundException)
+				{
+					Console.WriteLine("Error: couldn't find a texture file");
 				}
 				catch (Exception ex)
 				{
