@@ -6,8 +6,8 @@ namespace ModelEx
 {
 	public class Marker : RenderInstance
 	{
-		public Marker(RenderResource renderResource, int modelIndex)
-			: base(renderResource, modelIndex)
+		public Marker(string resourceName, int modelIndex)
+			: base(resourceName, modelIndex)
 		{
 		}
 	}

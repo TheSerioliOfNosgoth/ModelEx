@@ -27,7 +27,7 @@ namespace ModelEx
 		public const string TextureExtension = ".png";
 
 		public RenderResourceCDC(SRFile srFile)
-			: base()
+			: base(srFile.Name)
 		{
 			_srFile = srFile;
 		}

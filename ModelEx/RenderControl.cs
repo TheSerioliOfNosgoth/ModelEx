@@ -88,7 +88,7 @@ namespace ModelEx
 
 		private void RenderControl_Resize(object sender, EventArgs e)
 		{
-			RenderManager.Instance.resize = true;
+			RenderManager.Instance.Resize = true;
 		}
 	}
 }

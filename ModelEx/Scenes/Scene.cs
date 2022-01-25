@@ -55,8 +55,6 @@ namespace ModelEx
 			}
 		}
 
-		public abstract void ImportFromFile(string fileName, CDC.Objects.ExportOptions options, bool isReload = false);
-
 		public abstract void ExportToFile(string fileName, CDC.Objects.ExportOptions options);
 	}
 }

@@ -401,6 +401,11 @@ namespace ModelEx
 							mode = "defiance";
 							handled = true;
 						}
+						if (arg == "--trl")
+						{
+							mode = "trl";
+							handled = true;
+						}
 						if (arg == "--discard-portal-polygons")
 						{
 							options.DiscardPortalPolygons = true;
@@ -507,26 +512,26 @@ namespace ModelEx
 
 					Thread loadingThread = new Thread((() =>
 					{
-						SceneManager.Instance.ShutDown();
+						RenderManager.Instance.UnloadRenderResources();
 						if (mode == "gex")
 						{
-							SceneManager.Instance.AddScene(new SceneCDC(CDC.Game.Gex));
-							SceneManager.Instance.CurrentScene.ImportFromFile(inputFilePath, options);
+							RenderManager.Instance.LoadRenderResourceCDC(inputFilePath, CDC.Game.Gex, options);
 						}
 						else if (mode == "sr1")
 						{
-							SceneManager.Instance.AddScene(new SceneCDC(CDC.Game.SR1));
-							SceneManager.Instance.CurrentScene.ImportFromFile(inputFilePath, options);
+							RenderManager.Instance.LoadRenderResourceCDC(inputFilePath, CDC.Game.SR1, options);
 						}
 						else if (mode == "sr2")
 						{
-							SceneManager.Instance.AddScene(new SceneCDC(CDC.Game.SR2));
-							SceneManager.Instance.CurrentScene.ImportFromFile(inputFilePath, options);
+							RenderManager.Instance.LoadRenderResourceCDC(inputFilePath, CDC.Game.SR2, options);
 						}
-						else
+						else if (mode == "defiance")
 						{
-							SceneManager.Instance.AddScene(new SceneCDC(CDC.Game.Defiance));
-							SceneManager.Instance.CurrentScene.ImportFromFile(inputFilePath, options);
+							RenderManager.Instance.LoadRenderResourceCDC(inputFilePath, CDC.Game.Defiance, options);
+						}
+						else if (mode == "trl")
+						{
+							RenderManager.Instance.LoadRenderResourceCDC(inputFilePath, CDC.Game.TRL, options);
 						}
 
 						CameraManager.Instance.Reset();

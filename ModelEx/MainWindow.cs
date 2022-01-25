@@ -141,10 +141,7 @@ namespace ModelEx
 
 			Thread loadingThread = new Thread((() =>
 			{
-				SceneManager.Instance.ShutDown();
-				SceneManager.Instance.AddScene(new SceneCDC(_CurrentModelType));
-				SceneCDC sceneCDC = (SceneCDC)SceneManager.Instance.CurrentScene;
-				sceneCDC.ImportFromFile(_CurrentModelPath, ImportExportOptions, isReload, _CurrentModelChild);
+				RenderManager.Instance.LoadRenderResourceCDC(_CurrentModelPath, _CurrentModelType, ImportExportOptions, isReload, _CurrentModelChild);
 
 				if (_ResetCameraOnModelLoad)
 				{

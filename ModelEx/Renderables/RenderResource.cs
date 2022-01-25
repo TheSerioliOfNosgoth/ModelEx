@@ -10,13 +10,16 @@ namespace ModelEx
 {
 	public class RenderResource
 	{
+		public string Name { get; private set; } = "";
+
 		public List<Model> Models = new List<Model>();
 		public Dictionary<string, Texture2D> FileTextureDictionary = new Dictionary<string, Texture2D>();
 		public Dictionary<string, ShaderResourceView> FileShaderResourceViewDictionary = new Dictionary<string, ShaderResourceView>();
 		protected Dictionary<string, Bitmap> _TexturesAsPNGs = new Dictionary<string, Bitmap>();
 
-		public RenderResource()
+		public RenderResource(string name)
 		{
+			Name = name;
 		}
 
 		public void Dispose()

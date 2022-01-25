@@ -9,7 +9,7 @@ namespace ModelEx
 	public class RenderResourceShapes : RenderResource
 	{
 		public RenderResourceShapes()
-			: base()
+			: base("")
 		{
 		}
 

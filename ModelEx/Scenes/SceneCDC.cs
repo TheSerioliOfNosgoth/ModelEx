@@ -37,20 +37,37 @@ namespace ModelEx
 			}
 		}
 
-		CDC.Game _game = CDC.Game.SR1;
-
-		RenderResourceShapes _shapesResource = new RenderResourceShapes();
-		List<RenderResource> _renderResources = new List<RenderResource>();
-
 		SpriteRenderer _spriteRenderer;
 		TextBlockRenderer _textBlockRenderer;
 
-		public SceneCDC(CDC.Game game)
+		public SceneCDC(SRFile srFile)
 			: base()
 		{
-			_game = game;
 			_spriteRenderer = new SpriteRenderer();
 			_textBlockRenderer = new TextBlockRenderer(_spriteRenderer, "Arial", SlimDX.DirectWrite.FontWeight.Bold, SlimDX.DirectWrite.FontStyle.Normal, SlimDX.DirectWrite.FontStretch.Normal, 16);
+
+			for (int m = 0; m < srFile.ModelCount; m++)
+			{
+				Physical physical = new Physical(srFile.Name, m);
+				renderInstances.Add(physical);
+			}
+
+			if (srFile.Asset == CDC.Asset.Unit && srFile.IntroCount > 0)
+			{
+				foreach (CDC.Intro intro in srFile.Intros)
+				{
+					Marker marker = new Marker("", 0);
+					float height = marker.GetBoundingSphere().Radius;
+					marker.Name = intro.name;
+					marker.Transform = SlimDX.Matrix.Translation(
+						0.01f * intro.position.x,
+						0.01f * intro.position.z + height,
+						0.01f * intro.position.y
+					);
+
+					renderInstances.Add(marker);
+				}
+			}
 		}
 
 		public override void Dispose()
@@ -128,73 +145,6 @@ namespace ModelEx
 			DeviceManager.Instance.context.PixelShader.SetConstantBuffers(oldPSCBuffers, 0, 10);
 			DeviceManager.Instance.context.PixelShader.SetShaderResources(oldShaderResources, 0, 10);
 			DeviceManager.Instance.context.GeometryShader.Set(oldGeometryShader);
-		}
-
-		public override void ImportFromFile(string fileName, CDC.Objects.ExportOptions options, bool isReload = false)
-		{
-			ImportFromFile(fileName, options, isReload, -1);
-		}
-
-		public void ImportFromFile(string fileName, CDC.Objects.ExportOptions options, bool isReload, int childIndex)
-		{
-			progressLevel = 0;
-			progressLevels = 1;
-			ProgressStage = "Reading Data";
-
-			SRFile srFile = SRFile.Create(fileName, _game, options, childIndex);
-
-			RenderResourceCDC renderResource = null;
-
-			if (_renderResources.Count > 0)
-			{
-				renderResource = (RenderResourceCDC)_renderResources[0];
-
-				if (isReload)
-				{
-					renderResource.Dispose();
-					renderResource = null;
-					_renderResources.Remove(renderResource);
-				}
-			}
-			
-			if (renderResource == null)
-			{
-				renderResource = new RenderResourceCDC(srFile);
-			}
-
-			_shapesResource.LoadModels();
-			renderResource.LoadModels(options);
-
-			progressLevel = 1;
-
-			renderResource.LoadTextures(fileName, options);
-
-			progressLevel = progressLevels;
-			ProgressStage = "Done";
-
-			for (int m = 0; m < renderResource.Models.Count; m++)
-			{
-				Physical physical = new Physical(renderResource, m);
-				renderInstances.Add(physical);
-			}
-
-			if (srFile.Asset == CDC.Asset.Unit && srFile.IntroCount > 0)
-			{
-				foreach (CDC.Intro intro in srFile.Intros)
-				{
-					Marker marker = new Marker(_shapesResource, 0);
-					float height = marker.GetBoundingSphere().Radius;
-					marker.Name = intro.name;
-					marker.Transform = SlimDX.Matrix.Translation(
-						0.01f * intro.position.x,
-						0.01f * intro.position.z + height,
-						0.01f * intro.position.y
-					);
-					renderInstances.Add(marker);
-				}
-			}
-
-			_renderResources.Add(renderResource);
 		}
 
 		public override void ExportToFile(string fileName, CDC.Objects.ExportOptions options)
