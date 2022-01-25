@@ -38,9 +38,8 @@ namespace ModelEx
 		}
 
 		CDC.Game _game = CDC.Game.SR1;
-		List<SRFile> _objectFiles = new List<SRFile>();
 
-		RenderResource _markerResource = new RenderResource();
+		RenderResourceShapes _shapesResource = new RenderResourceShapes();
 		List<RenderResource> _renderResources = new List<RenderResource>();
 
 		SpriteRenderer _spriteRenderer;
@@ -131,67 +130,6 @@ namespace ModelEx
 			DeviceManager.Instance.context.GeometryShader.Set(oldGeometryShader);
 		}
 
-		//public static string GetTextureNameDefault(string objectName, int textureID)
-		//{
-		//    String textureName = string.Format("{0}_{1:X4}", objectName.TrimEnd(new char[] { '_' }).ToLower(), textureID);
-		//    return textureName;
-		//}
-
-		//public static string GetPlayStationTextureNameDefault(string objectName, int textureID)
-		//{
-		//    return GetTextureNameDefault(objectName, textureID);
-		//}
-
-		//public static string GetPlayStationTextureNameWithCLUT(string objectName, int textureID, ushort clut)
-		//{
-		//    String textureName = string.Format("{0}_{1:X4}_{2:X4}", objectName.TrimEnd(new char[] { '_' }).ToLower(), textureID, clut);
-		//    return textureName;
-		//}
-
-		//public static string GetSoulReaverPCOrDreamcastTextureName(string objectName, int textureID)
-		//{
-		//    return GetTextureNameDefault(objectName, textureID);
-		//}
-
-		//public static string GetPS2TextureName(string objectName, int textureID)
-		//{
-		//    return GetTextureNameDefault(objectName, textureID);
-		//}
-
-		//protected static String GetTextureName(SRModel srModel, int materialIndex, CDC.Objects.ExportOptions options)
-		//{
-		//    CDC.Material material = srModel.Materials[materialIndex];
-		//    String textureName = "";
-		//    if (material.textureUsed)
-		//    {
-		//        if (srModel is SR1Model)
-		//        {
-		//            if (srModel.Platform == CDC.Platform.PSX)
-		//            {
-		//                if (options.UseEachUniqueTextureCLUTVariation)
-		//                {
-		//                    textureName = GetPlayStationTextureNameWithCLUT(srModel.Name, material.textureID, material.clutValue);
-		//                }
-		//                else
-		//                {
-		//                    textureName = GetPlayStationTextureNameDefault(srModel.Name, material.textureID);
-		//                }
-		//            }
-		//            else
-		//            {
-		//                textureName = GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID);
-		//            }
-		//        }
-		//        else if (srModel is SR2Model ||
-		//            srModel is DefianceModel)
-		//        {
-		//            textureName = GetPS2TextureName(srModel.Name, material.textureID);
-		//        }
-		//    }
-
-		//    return textureName;
-		//}
-
 		public override void ImportFromFile(string fileName, CDC.Objects.ExportOptions options, bool isReload = false)
 		{
 			ImportFromFile(fileName, options, isReload, -1);
@@ -224,6 +162,7 @@ namespace ModelEx
 				renderResource = new RenderResourceCDC(srFile);
 			}
 
+			_shapesResource.LoadModels();
 			renderResource.LoadModels(options);
 
 			progressLevel = 1;
@@ -233,22 +172,17 @@ namespace ModelEx
 			progressLevel = progressLevels;
 			ProgressStage = "Done";
 
-			foreach (Model model in renderResource.Models)
+			for (int m = 0; m < renderResource.Models.Count; m++)
 			{
-				Physical physical = new Physical(model);
-				renderables.Add(physical.Model);
+				Physical physical = new Physical(renderResource, m);
 				renderInstances.Add(physical);
 			}
-
-			ModelParser octaParser = new ModelParser("octahedron");
-			octaParser.BuildModel(_markerResource);
-			renderables.Add(octaParser.Model);
 
 			if (srFile.Asset == CDC.Asset.Unit && srFile.IntroCount > 0)
 			{
 				foreach (CDC.Intro intro in srFile.Intros)
 				{
-					Marker marker = new Marker(octaParser.Model);
+					Marker marker = new Marker(_shapesResource, 0);
 					float height = marker.GetBoundingSphere().Radius;
 					marker.Name = intro.name;
 					marker.Transform = SlimDX.Matrix.Translation(
@@ -260,7 +194,6 @@ namespace ModelEx
 				}
 			}
 
-			_objectFiles.Add(srFile);
 			_renderResources.Add(renderResource);
 		}
 

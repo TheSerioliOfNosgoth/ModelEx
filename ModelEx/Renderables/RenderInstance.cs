@@ -6,11 +6,17 @@ namespace ModelEx
 {
 	public class RenderInstance : Renderable
 	{
-		public readonly Model Model;
+		protected readonly RenderResource _renderResource;
+		protected int _modelIndex = 0;
 
-		public RenderInstance(Model model)
+		public Model Model { get; protected set; }
+
+		public RenderInstance(RenderResource renderResource, int modelIndex)
 		{
-			Model = model;
+			_renderResource = renderResource;
+			_modelIndex = modelIndex;
+
+			Model = renderResource.Models[modelIndex];
 		}
 
 		public override void Render()
@@ -25,7 +31,6 @@ namespace ModelEx
 
 		public override void Dispose()
 		{
-			//model.Dispose();
 		}
 	}
 }

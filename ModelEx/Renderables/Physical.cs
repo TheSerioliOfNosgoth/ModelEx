@@ -6,8 +6,8 @@ namespace ModelEx
 {
 	public class Physical : RenderInstance
 	{
-		public Physical(Model model)
-			: base(model)
+		public Physical(RenderResource renderResource, int modelIndex)
+			: base(renderResource, modelIndex)
 		{
 		}
 	}

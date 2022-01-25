@@ -9,14 +9,12 @@ namespace ModelEx
 {
 	public abstract class Scene
 	{
-		protected List<Renderable> renderables;
 		protected List<RenderInstance> renderInstances;
 		public readonly ReadOnlyCollection<RenderInstance> RenderInstances;
 		public Renderable CurrentObject { get { return renderInstances.Count > 0 ? renderInstances[0] : null; } }
 
 		protected Scene()
 		{
-			renderables = new List<Renderable>();
 			renderInstances = new List<RenderInstance>();
 			RenderInstances = new ReadOnlyCollection<RenderInstance>(renderInstances);
 		}
@@ -24,12 +22,6 @@ namespace ModelEx
 		public virtual void Dispose()
 		{
 			renderInstances.Clear();
-
-			while (renderables.Count > 0)
-			{
-				renderables[0].Dispose();
-				renderables.Remove(renderables[0]);
-			}
 		}
 
 		public virtual void Render()
