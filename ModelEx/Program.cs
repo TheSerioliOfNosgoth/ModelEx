@@ -552,12 +552,7 @@ namespace ModelEx
 					while (loadingThread.IsAlive);
 					Console.WriteLine("Done loading");
 
-
-					Scene currentScene = SceneManager.Instance.CurrentScene;
-					if (currentScene != null)
-					{
-						currentScene.ExportToFile(outputFilePath, options);
-					}
+					RenderManager.Instance.ExportTextureResource(outputFilePath, options);
 
 					Console.WriteLine("Done exporting");
 

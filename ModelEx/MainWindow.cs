@@ -99,7 +99,7 @@ namespace ModelEx
 
 			TreeNode sceneTreeNode = new TreeNode("Scene");
 			sceneTreeNode.Checked = true;
-			foreach (Renderable renderable in SceneManager.Instance.CurrentScene.RenderInstances)
+			foreach (Renderable renderable in RenderManager.Instance.CurrentScene.RenderInstances)
 			{
 				if (renderable is Physical)
 				{
@@ -327,19 +327,14 @@ namespace ModelEx
 			if (SaveDlg.ShowDialog() == DialogResult.OK)
 			{
 				_LastExportDirectory = Path.GetDirectoryName(SaveDlg.FileName);
-				Scene currentScene = SceneManager.Instance.CurrentScene;
-				if (currentScene != null)
-				{
-					//string saveFileName = "C://Users//Andrew//Desktop//TestModel.dae";
-					currentScene.ExportToFile(SaveDlg.FileName, ImportExportOptions);
-
-				}
+				//string saveFileName = "C://Users//Andrew//Desktop//TestModel.dae";
+				RenderManager.Instance.ExportTextureResource(SaveDlg.FileName, ImportExportOptions);
 			}
 		}
 
 		private void TreeView1_AfterCheck(object sender, TreeViewEventArgs e)
 		{
-			Scene currentScene = SceneManager.Instance.CurrentScene;
+			Scene currentScene = RenderManager.Instance.CurrentScene;
 			if (currentScene != null)
 			{
 				foreach (Renderable renderable in currentScene.RenderInstances)

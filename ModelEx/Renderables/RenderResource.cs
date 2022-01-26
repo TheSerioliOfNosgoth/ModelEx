@@ -13,9 +13,9 @@ namespace ModelEx
 		public string Name { get; private set; } = "";
 
 		public List<Model> Models = new List<Model>();
-		public Dictionary<string, Texture2D> FileTextureDictionary = new Dictionary<string, Texture2D>();
-		public Dictionary<string, ShaderResourceView> FileShaderResourceViewDictionary = new Dictionary<string, ShaderResourceView>();
-		protected Dictionary<string, Bitmap> _TexturesAsPNGs = new Dictionary<string, Bitmap>();
+		public SortedList<string, Texture2D> FileTextureDictionary = new SortedList<string, Texture2D>();
+		public SortedList<string, ShaderResourceView> FileShaderResourceViewDictionary = new SortedList<string, ShaderResourceView>();
+		protected SortedList<string, Bitmap> _TexturesAsPNGs = new SortedList<string, Bitmap>();
 
 		public RenderResource(string name)
 		{
@@ -24,6 +24,36 @@ namespace ModelEx
 
 		public void Dispose()
 		{
+			while (Models.Count > 0)
+			{
+				Model model = Models[0];
+				model.Dispose();
+				Models.RemoveAt(0);
+			}
+
+			while (FileShaderResourceViewDictionary.Count > 0)
+			{
+				string key = FileShaderResourceViewDictionary.Keys[0];
+				ShaderResourceView fsResourceView = FileShaderResourceViewDictionary[key];
+				fsResourceView.Dispose();
+				FileShaderResourceViewDictionary.Remove(key);
+			}
+
+			while (FileTextureDictionary.Count > 0)
+			{
+				string key = FileTextureDictionary.Keys[0];
+				Texture2D texture = FileTextureDictionary[key];
+				texture.Dispose();
+				FileTextureDictionary.Remove(key);
+			}
+
+			while (_TexturesAsPNGs.Count > 0)
+			{
+				string key = _TexturesAsPNGs.Keys[0];
+				Bitmap bitmap = _TexturesAsPNGs[key];
+				bitmap.Dispose();
+				_TexturesAsPNGs.Remove(key);
+			}
 		}
 
 		public void AddTexture(Stream stream, string fileName)

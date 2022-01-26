@@ -4,19 +4,11 @@ using System.Threading;
 using Resource = SlimDX.Direct3D11.Resource;
 using Device = SlimDX.Direct3D11.Device;
 using SlimDX;
-using SlimDX.Windows;
-using SlimDX.D3DCompiler;
 using SlimDX.Direct3D11;
 using SlimDX.DXGI;
 using Game = CDC.Game;
 using ExportOptions = CDC.Objects.ExportOptions;
-using GexFile = CDC.Objects.GexFile;
 using SRFile = CDC.Objects.SRFile;
-using SR1File = CDC.Objects.SR1File;
-using SR2File = CDC.Objects.SR2File;
-using DefianceFile = CDC.Objects.DefianceFile;
-using TRLFile = CDC.Objects.TRLFile;
-using SRModel = CDC.Objects.Models.SRModel;
 
 namespace ModelEx
 {
@@ -33,6 +25,9 @@ namespace ModelEx
 
 		public readonly SortedList<string, RenderResource> Resources = new SortedList<string, RenderResource>();
 
+		public Scene CurrentScene { get; private set; }
+		public Renderable CurrentObject { get { return CurrentScene?.CurrentObject; } }
+
 		private static RenderManager instance = null;
 		public static RenderManager Instance
 		{
@@ -48,7 +43,7 @@ namespace ModelEx
 
 		public void Initialize()
 		{
-			renderThread = new Thread(new ThreadStart(RenderScene));
+			renderThread = new Thread(new ThreadStart(Render));
 			renderThread.Name = "RenderThread";
 			renderThread.Start();
 
@@ -115,14 +110,22 @@ namespace ModelEx
 			SceneCDC.progressLevel = SceneCDC.progressLevels;
 			SceneCDC.ProgressStage = "Done";
 
-			// Temporary
-			SceneManager.Instance.ShutDown();
-			SceneManager.Instance.AddScene(new SceneCDC(srFile));
+			if (CurrentScene != null)
+			{
+				CurrentScene.Dispose();
+				CurrentScene = null;
+			}
+
+			CurrentScene = new SceneCDC(srFile);
 		}
 
 		public void UnloadRenderResources()
 		{
-			SceneManager.Instance.ShutDown();
+			if (CurrentScene != null)
+			{
+				CurrentScene.Dispose();
+				CurrentScene = null;
+			}
 
 			while (Resources.Count > 0)
 			{
@@ -132,7 +135,16 @@ namespace ModelEx
 			}
 		}
 
-		protected void RenderScene()
+		public void ExportTextureResource(string filename, ExportOptions options)
+		{
+			if (Resources.ContainsKey(""))
+			{
+				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[""];
+				renderResource.ExportToFile(filename, options);
+			}
+		}
+
+		protected void Render()
 		{
 			while (true)
 			{
@@ -146,16 +158,19 @@ namespace ModelEx
 
 				fc.Count();
 
-				DeviceManager dm = DeviceManager.Instance;
-				dm.context.ClearDepthStencilView(dm.depthStencil, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
-				dm.context.ClearRenderTargetView(dm.renderTarget, new Color4(BackgroundColour));
+				DeviceManager deviceManager = DeviceManager.Instance;
+				deviceManager.context.ClearDepthStencilView(deviceManager.depthStencil, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
+				deviceManager.context.ClearRenderTargetView(deviceManager.renderTarget, new Color4(BackgroundColour));
 
 				CameraManager.Instance.UpdateFrameCamera();
 
-				SceneManager.Instance.Render();
+				if (CurrentScene != null)
+				{
+					CurrentScene.Render();
+				}
 
 				// syncInterval can be 0
-				dm.swapChain.Present(syncInterval, PresentFlags.None);
+				deviceManager.swapChain.Present(syncInterval, PresentFlags.None);
 			}
 		}
 	}

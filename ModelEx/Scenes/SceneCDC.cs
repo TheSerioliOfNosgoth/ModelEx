@@ -146,9 +146,5 @@ namespace ModelEx
 			DeviceManager.Instance.context.PixelShader.SetShaderResources(oldShaderResources, 0, 10);
 			DeviceManager.Instance.context.GeometryShader.Set(oldGeometryShader);
 		}
-
-		public override void ExportToFile(string fileName, CDC.Objects.ExportOptions options)
-		{
-		}
 	}
 }

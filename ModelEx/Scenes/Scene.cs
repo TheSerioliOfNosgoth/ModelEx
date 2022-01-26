@@ -54,7 +54,5 @@ namespace ModelEx
 				}
 			}
 		}
-
-		public abstract void ExportToFile(string fileName, CDC.Objects.ExportOptions options);
 	}
 }
