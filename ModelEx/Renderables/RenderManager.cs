@@ -57,6 +57,11 @@ namespace ModelEx
 			renderThread.Abort();
 
 			UnloadRenderResources();
+
+			// This should be the unnamed one with the shapes.
+			RenderResource resource = Resources[Resources.Keys[0]];
+			resource.Dispose();
+			Resources.Remove(Resources.Keys[0]);
 		}
 
 		public void SwitchSyncInterval()
@@ -109,14 +114,6 @@ namespace ModelEx
 
 			SceneCDC.progressLevel = SceneCDC.progressLevels;
 			SceneCDC.ProgressStage = "Done";
-
-			if (CurrentScene != null)
-			{
-				CurrentScene.Dispose();
-				CurrentScene = null;
-			}
-
-			CurrentScene = new SceneCDC(srFile);
 		}
 
 		public void UnloadRenderResources()
@@ -127,11 +124,12 @@ namespace ModelEx
 				CurrentScene = null;
 			}
 
-			while (Resources.Count > 0)
+			while (Resources.Count > 1)
 			{
-				RenderResource resource = Resources[Resources.Keys[0]];
+				RenderResource resource = Resources[Resources.Keys[1]];
+
 				resource.Dispose();
-				Resources.Remove(Resources.Keys[0]);
+				Resources.Remove(Resources.Keys[1]);
 			}
 		}
 
@@ -141,6 +139,21 @@ namespace ModelEx
 			{
 				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[""];
 				renderResource.ExportToFile(filename, options);
+			}
+		}
+
+		public void SetCurrentScene(string sceneName)
+		{
+			if (CurrentScene != null)
+			{
+				CurrentScene.Dispose();
+				CurrentScene = null;
+			}
+
+			if (Resources.ContainsKey(sceneName))
+			{
+				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[sceneName];
+				CurrentScene = new SceneCDC(renderResource.File);
 			}
 		}
 

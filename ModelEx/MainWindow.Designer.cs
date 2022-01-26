@@ -166,13 +166,20 @@
 			this.ignoreVertexColoursToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.sceneViewContainer = new System.Windows.Forms.SplitContainer();
 			this.optionTabs = new System.Windows.Forms.TabControl();
-			this.meshGroupsTab = new System.Windows.Forms.TabPage();
-			this.scControls = new System.Windows.Forms.SplitContainer();
+			this.sceneTab = new System.Windows.Forms.TabPage();
+			this.sceneTabControls = new System.Windows.Forms.SplitContainer();
+			this.currentSceneLabel = new System.Windows.Forms.Label();
+			this.currentSceneCombo = new System.Windows.Forms.ComboBox();
 			this.bgColourPanel = new System.Windows.Forms.Panel();
 			this.realmBlendBar = new System.Windows.Forms.TrackBar();
 			this.planeBlendLabel = new System.Windows.Forms.Label();
 			this.bgColourLabel = new System.Windows.Forms.Label();
 			this.sceneTree = new System.Windows.Forms.TreeView();
+			this.resourcesTab = new System.Windows.Forms.TabPage();
+			this.resourcesTabControls = new System.Windows.Forms.SplitContainer();
+			this.unloadResourceButton = new System.Windows.Forms.Button();
+			this.loadResourceButton = new System.Windows.Forms.Button();
+			this.resourceList = new System.Windows.Forms.ListView();
 			this.sceneView = new ModelEx.RenderControl();
 			this.sceneTreeContainer = new System.Windows.Forms.SplitContainer();
 			this.FPSText = new System.Windows.Forms.TextBox();
@@ -182,12 +189,17 @@
 			this.sceneViewContainer.Panel2.SuspendLayout();
 			this.sceneViewContainer.SuspendLayout();
 			this.optionTabs.SuspendLayout();
-			this.meshGroupsTab.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.scControls)).BeginInit();
-			this.scControls.Panel1.SuspendLayout();
-			this.scControls.Panel2.SuspendLayout();
-			this.scControls.SuspendLayout();
+			this.sceneTab.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.sceneTabControls)).BeginInit();
+			this.sceneTabControls.Panel1.SuspendLayout();
+			this.sceneTabControls.Panel2.SuspendLayout();
+			this.sceneTabControls.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.realmBlendBar)).BeginInit();
+			this.resourcesTab.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.resourcesTabControls)).BeginInit();
+			this.resourcesTabControls.Panel1.SuspendLayout();
+			this.resourcesTabControls.Panel2.SuspendLayout();
+			this.resourcesTabControls.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.sceneTreeContainer)).BeginInit();
 			this.sceneTreeContainer.Panel2.SuspendLayout();
 			this.sceneTreeContainer.SuspendLayout();
@@ -1307,7 +1319,8 @@
 			// 
 			// optionTabs
 			// 
-			this.optionTabs.Controls.Add(this.meshGroupsTab);
+			this.optionTabs.Controls.Add(this.sceneTab);
+			this.optionTabs.Controls.Add(this.resourcesTab);
 			this.optionTabs.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.optionTabs.Location = new System.Drawing.Point(0, 0);
 			this.optionTabs.Name = "optionTabs";
@@ -1315,44 +1328,65 @@
 			this.optionTabs.Size = new System.Drawing.Size(267, 611);
 			this.optionTabs.TabIndex = 1;
 			// 
-			// meshGroupsTab
+			// sceneTab
 			// 
-			this.meshGroupsTab.Controls.Add(this.scControls);
-			this.meshGroupsTab.Location = new System.Drawing.Point(4, 22);
-			this.meshGroupsTab.Name = "meshGroupsTab";
-			this.meshGroupsTab.Padding = new System.Windows.Forms.Padding(3);
-			this.meshGroupsTab.Size = new System.Drawing.Size(259, 585);
-			this.meshGroupsTab.TabIndex = 0;
-			this.meshGroupsTab.Text = "Mesh Groups";
-			this.meshGroupsTab.UseVisualStyleBackColor = true;
+			this.sceneTab.Controls.Add(this.sceneTabControls);
+			this.sceneTab.Location = new System.Drawing.Point(4, 22);
+			this.sceneTab.Name = "sceneTab";
+			this.sceneTab.Padding = new System.Windows.Forms.Padding(3);
+			this.sceneTab.Size = new System.Drawing.Size(259, 585);
+			this.sceneTab.TabIndex = 0;
+			this.sceneTab.Text = "Scene";
+			this.sceneTab.UseVisualStyleBackColor = true;
 			// 
-			// scControls
+			// sceneTabControls
 			// 
-			this.scControls.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.scControls.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-			this.scControls.Location = new System.Drawing.Point(3, 3);
-			this.scControls.Name = "scControls";
-			this.scControls.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			this.sceneTabControls.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.sceneTabControls.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+			this.sceneTabControls.Location = new System.Drawing.Point(3, 3);
+			this.sceneTabControls.Name = "sceneTabControls";
+			this.sceneTabControls.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
-			// scControls.Panel1
+			// sceneTabControls.Panel1
 			// 
-			this.scControls.Panel1.Controls.Add(this.bgColourPanel);
-			this.scControls.Panel1.Controls.Add(this.realmBlendBar);
-			this.scControls.Panel1.Controls.Add(this.planeBlendLabel);
-			this.scControls.Panel1.Controls.Add(this.bgColourLabel);
+			this.sceneTabControls.Panel1.Controls.Add(this.currentSceneLabel);
+			this.sceneTabControls.Panel1.Controls.Add(this.currentSceneCombo);
+			this.sceneTabControls.Panel1.Controls.Add(this.bgColourPanel);
+			this.sceneTabControls.Panel1.Controls.Add(this.realmBlendBar);
+			this.sceneTabControls.Panel1.Controls.Add(this.planeBlendLabel);
+			this.sceneTabControls.Panel1.Controls.Add(this.bgColourLabel);
 			// 
-			// scControls.Panel2
+			// sceneTabControls.Panel2
 			// 
-			this.scControls.Panel2.Controls.Add(this.sceneTree);
-			this.scControls.Size = new System.Drawing.Size(253, 579);
-			this.scControls.SplitterDistance = 78;
-			this.scControls.TabIndex = 4;
+			this.sceneTabControls.Panel2.Controls.Add(this.sceneTree);
+			this.sceneTabControls.Size = new System.Drawing.Size(253, 579);
+			this.sceneTabControls.SplitterDistance = 98;
+			this.sceneTabControls.TabIndex = 4;
+			// 
+			// currentSceneLabel
+			// 
+			this.currentSceneLabel.AutoSize = true;
+			this.currentSceneLabel.Location = new System.Drawing.Point(3, 3);
+			this.currentSceneLabel.Name = "currentSceneLabel";
+			this.currentSceneLabel.Size = new System.Drawing.Size(75, 13);
+			this.currentSceneLabel.TabIndex = 8;
+			this.currentSceneLabel.Text = "Current Scene";
+			// 
+			// currentSceneCombo
+			// 
+			this.currentSceneCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.currentSceneCombo.FormattingEnabled = true;
+			this.currentSceneCombo.Location = new System.Drawing.Point(84, 3);
+			this.currentSceneCombo.Name = "currentSceneCombo";
+			this.currentSceneCombo.Size = new System.Drawing.Size(166, 21);
+			this.currentSceneCombo.TabIndex = 7;
+			this.currentSceneCombo.SelectedIndexChanged += new System.EventHandler(this.currentSceneCombo_SelectedIndexChanged);
 			// 
 			// bgColourPanel
 			// 
 			this.bgColourPanel.BackColor = System.Drawing.Color.Gray;
 			this.bgColourPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.bgColourPanel.Location = new System.Drawing.Point(101, 3);
+			this.bgColourPanel.Location = new System.Drawing.Point(101, 28);
 			this.bgColourPanel.Name = "bgColourPanel";
 			this.bgColourPanel.Size = new System.Drawing.Size(24, 21);
 			this.bgColourPanel.TabIndex = 6;
@@ -1361,7 +1395,7 @@
 			// realmBlendBar
 			// 
 			this.realmBlendBar.LargeChange = 1;
-			this.realmBlendBar.Location = new System.Drawing.Point(6, 45);
+			this.realmBlendBar.Location = new System.Drawing.Point(6, 70);
 			this.realmBlendBar.Maximum = 100;
 			this.realmBlendBar.Name = "realmBlendBar";
 			this.realmBlendBar.Size = new System.Drawing.Size(244, 45);
@@ -1372,7 +1406,7 @@
 			// planeBlendLabel
 			// 
 			this.planeBlendLabel.AutoSize = true;
-			this.planeBlendLabel.Location = new System.Drawing.Point(5, 29);
+			this.planeBlendLabel.Location = new System.Drawing.Point(5, 53);
 			this.planeBlendLabel.Name = "planeBlendLabel";
 			this.planeBlendLabel.Size = new System.Drawing.Size(64, 13);
 			this.planeBlendLabel.TabIndex = 3;
@@ -1381,7 +1415,7 @@
 			// bgColourLabel
 			// 
 			this.bgColourLabel.AutoSize = true;
-			this.bgColourLabel.Location = new System.Drawing.Point(3, 3);
+			this.bgColourLabel.Location = new System.Drawing.Point(3, 28);
 			this.bgColourLabel.Name = "bgColourLabel";
 			this.bgColourLabel.Size = new System.Drawing.Size(92, 13);
 			this.bgColourLabel.TabIndex = 5;
@@ -1393,9 +1427,68 @@
 			this.sceneTree.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.sceneTree.Location = new System.Drawing.Point(0, 0);
 			this.sceneTree.Name = "sceneTree";
-			this.sceneTree.Size = new System.Drawing.Size(253, 497);
+			this.sceneTree.Size = new System.Drawing.Size(253, 477);
 			this.sceneTree.TabIndex = 3;
 			this.sceneTree.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.TreeView1_AfterCheck);
+			// 
+			// resourcesTab
+			// 
+			this.resourcesTab.Controls.Add(this.resourcesTabControls);
+			this.resourcesTab.Location = new System.Drawing.Point(4, 22);
+			this.resourcesTab.Name = "resourcesTab";
+			this.resourcesTab.Padding = new System.Windows.Forms.Padding(3);
+			this.resourcesTab.Size = new System.Drawing.Size(259, 585);
+			this.resourcesTab.TabIndex = 1;
+			this.resourcesTab.Text = "Resources";
+			this.resourcesTab.UseVisualStyleBackColor = true;
+			// 
+			// resourcesTabControls
+			// 
+			this.resourcesTabControls.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.resourcesTabControls.Location = new System.Drawing.Point(3, 3);
+			this.resourcesTabControls.Name = "resourcesTabControls";
+			this.resourcesTabControls.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			// 
+			// resourcesTabControls.Panel1
+			// 
+			this.resourcesTabControls.Panel1.Controls.Add(this.unloadResourceButton);
+			this.resourcesTabControls.Panel1.Controls.Add(this.loadResourceButton);
+			// 
+			// resourcesTabControls.Panel2
+			// 
+			this.resourcesTabControls.Panel2.Controls.Add(this.resourceList);
+			this.resourcesTabControls.Size = new System.Drawing.Size(253, 579);
+			this.resourcesTabControls.SplitterDistance = 78;
+			this.resourcesTabControls.TabIndex = 0;
+			// 
+			// unloadResourceButton
+			// 
+			this.unloadResourceButton.Location = new System.Drawing.Point(6, 34);
+			this.unloadResourceButton.Name = "unloadResourceButton";
+			this.unloadResourceButton.Size = new System.Drawing.Size(100, 23);
+			this.unloadResourceButton.TabIndex = 1;
+			this.unloadResourceButton.Text = "Unload Resource";
+			this.unloadResourceButton.UseVisualStyleBackColor = true;
+			// 
+			// loadResourceButton
+			// 
+			this.loadResourceButton.Location = new System.Drawing.Point(6, 4);
+			this.loadResourceButton.Name = "loadResourceButton";
+			this.loadResourceButton.Size = new System.Drawing.Size(100, 23);
+			this.loadResourceButton.TabIndex = 0;
+			this.loadResourceButton.Text = "Load Resource...";
+			this.loadResourceButton.UseVisualStyleBackColor = true;
+			this.loadResourceButton.Click += new System.EventHandler(this.loadResourceButton_Click);
+			// 
+			// resourceList
+			// 
+			this.resourceList.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.resourceList.HideSelection = false;
+			this.resourceList.Location = new System.Drawing.Point(0, 0);
+			this.resourceList.Name = "resourceList";
+			this.resourceList.Size = new System.Drawing.Size(253, 497);
+			this.resourceList.TabIndex = 0;
+			this.resourceList.UseCompatibleStateImageBehavior = false;
 			// 
 			// sceneView
 			// 
@@ -1455,13 +1548,18 @@
 			((System.ComponentModel.ISupportInitialize)(this.sceneViewContainer)).EndInit();
 			this.sceneViewContainer.ResumeLayout(false);
 			this.optionTabs.ResumeLayout(false);
-			this.meshGroupsTab.ResumeLayout(false);
-			this.scControls.Panel1.ResumeLayout(false);
-			this.scControls.Panel1.PerformLayout();
-			this.scControls.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.scControls)).EndInit();
-			this.scControls.ResumeLayout(false);
+			this.sceneTab.ResumeLayout(false);
+			this.sceneTabControls.Panel1.ResumeLayout(false);
+			this.sceneTabControls.Panel1.PerformLayout();
+			this.sceneTabControls.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.sceneTabControls)).EndInit();
+			this.sceneTabControls.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.realmBlendBar)).EndInit();
+			this.resourcesTab.ResumeLayout(false);
+			this.resourcesTabControls.Panel1.ResumeLayout(false);
+			this.resourcesTabControls.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.resourcesTabControls)).EndInit();
+			this.resourcesTabControls.ResumeLayout(false);
 			this.sceneTreeContainer.Panel2.ResumeLayout(false);
 			this.sceneTreeContainer.Panel2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.sceneTreeContainer)).EndInit();
@@ -1489,7 +1587,7 @@
 		private System.Windows.Forms.ToolStripMenuItem orbitToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem orbitPanToolStripMenuItem;
 		private System.Windows.Forms.TabControl optionTabs;
-		private System.Windows.Forms.TabPage meshGroupsTab;
+		private System.Windows.Forms.TabPage sceneTab;
 		private System.Windows.Forms.TreeView sceneTree;
 		private System.Windows.Forms.ToolStripMenuItem renderModeToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem standardToolStripMenuItem;
@@ -1501,7 +1599,7 @@
 		private System.Windows.Forms.ToolStripMenuItem noTexturemapsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem exportDoubleSidedMaterialsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem exportSpectralVersionOfAreaFilesToolStripMenuItem;
-		private System.Windows.Forms.SplitContainer scControls;
+		private System.Windows.Forms.SplitContainer sceneTabControls;
 		private System.Windows.Forms.ToolStripMenuItem makeAllPolygonsVisibleToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem makeAllPolygonsOpaqueToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem oRAllPolygonColoursWithGreenToolStripMenuItem;
@@ -1620,5 +1718,12 @@
 		private System.Windows.Forms.Label planeBlendLabel;
 		private System.Windows.Forms.Label bgColourLabel;
 		private System.Windows.Forms.Panel bgColourPanel;
+		private System.Windows.Forms.TabPage resourcesTab;
+		private System.Windows.Forms.SplitContainer resourcesTabControls;
+		private System.Windows.Forms.ListView resourceList;
+		private System.Windows.Forms.Button loadResourceButton;
+		private System.Windows.Forms.Button unloadResourceButton;
+		private System.Windows.Forms.ComboBox currentSceneCombo;
+		private System.Windows.Forms.Label currentSceneLabel;
 	}
 }

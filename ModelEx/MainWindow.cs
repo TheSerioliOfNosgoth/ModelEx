@@ -97,37 +97,18 @@ namespace ModelEx
 			progressWindow.Hide();
 			progressWindow.Dispose();
 
-			TreeNode sceneTreeNode = new TreeNode("Scene");
-			sceneTreeNode.Checked = true;
-			foreach (Renderable renderable in RenderManager.Instance.CurrentScene.RenderInstances)
+			resourceList.Items.Clear();
+			currentSceneCombo.Items.Clear();
+
+			foreach (string resourceName in RenderManager.Instance.Resources.Keys)
 			{
-				if (renderable is Physical)
+				if (resourceName != "")
 				{
-					Node objectNode = ((Physical)renderable).Model.Root;
+					resourceList.Items.Add(resourceName);
 
-					TreeNode objectTreeNode = new TreeNode(objectNode.Name);
-					objectTreeNode.Checked = true;
-					foreach (Node modelNode in objectNode.Nodes)
-					{
-						TreeNode modelTreeNode = new TreeNode(modelNode.Name);
-						modelTreeNode.Checked = true;
-						foreach (Node groupNode in modelNode.Nodes)
-						{
-							TreeNode groupTreeNode = new TreeNode(groupNode.Name);
-							groupTreeNode.Checked = true;
-							modelTreeNode.Nodes.Add(groupTreeNode);
-						}
-						objectTreeNode.Nodes.Add(modelTreeNode);
-					}
-					sceneTreeNode.Nodes.Add(objectTreeNode);
+					// Maybe filter for only levels here?
+					currentSceneCombo.Items.Add(resourceName);
 				}
-			}
-
-			sceneTree.Nodes.Clear();
-			if (sceneTreeNode.Nodes.Count > 0)
-			{
-				sceneTree.Nodes.Add(sceneTreeNode);
-				sceneTree.ExpandAll();
 			}
 		}
 
@@ -141,6 +122,7 @@ namespace ModelEx
 
 			Thread loadingThread = new Thread((() =>
 			{
+				RenderManager.Instance.UnloadRenderResources();
 				RenderManager.Instance.LoadRenderResourceCDC(_CurrentModelPath, _CurrentModelType, ImportExportOptions, isReload, _CurrentModelChild);
 
 				if (_ResetCameraOnModelLoad)
@@ -1371,6 +1353,57 @@ namespace ModelEx
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			Close();
+		}
+
+		private void currentSceneCombo_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			sceneTree.Nodes.Clear();
+
+			string selectedItem = ((ComboBox)sender).SelectedItem.ToString();
+			RenderManager.Instance.SetCurrentScene(selectedItem);
+
+			if (RenderManager.Instance.CurrentScene == null)
+			{
+				return;
+			}
+
+			TreeNode sceneTreeNode = new TreeNode("Scene");
+			sceneTreeNode.Checked = true;
+			foreach (Renderable renderable in RenderManager.Instance.CurrentScene.RenderInstances)
+			{
+				if (renderable is Physical)
+				{
+					Node objectNode = ((Physical)renderable).Model.Root;
+
+					TreeNode objectTreeNode = new TreeNode(objectNode.Name);
+					objectTreeNode.Checked = true;
+					foreach (Node modelNode in objectNode.Nodes)
+					{
+						TreeNode modelTreeNode = new TreeNode(modelNode.Name);
+						modelTreeNode.Checked = true;
+						foreach (Node groupNode in modelNode.Nodes)
+						{
+							TreeNode groupTreeNode = new TreeNode(groupNode.Name);
+							groupTreeNode.Checked = true;
+							modelTreeNode.Nodes.Add(groupTreeNode);
+						}
+						objectTreeNode.Nodes.Add(modelTreeNode);
+					}
+					sceneTreeNode.Nodes.Add(objectTreeNode);
+				}
+			}
+
+			if (sceneTreeNode.Nodes.Count > 0)
+			{
+				sceneTree.Nodes.Add(sceneTreeNode);
+				sceneTree.ExpandAll();
+			}
+		}
+
+		private void loadResourceButton_Click(object sender, EventArgs e)
+		{
+			// Hack
+			OpenToolStripMenuItem_Click(sender, e);
 		}
 	}
 }
