@@ -20,6 +20,9 @@ namespace ModelEx
 		protected string _CurrentModelPath;
 		protected CDC.Game _CurrentModelType;
 		protected int _CurrentModelChild;
+		protected bool _ClearLoadedResources;
+		protected bool _SelectSceneOnLoaded;
+		protected string _LastLoadedResource;
 		protected string _LastOpenDirectory;
 		protected string _LastExportDirectory;
 
@@ -98,6 +101,7 @@ namespace ModelEx
 			progressWindow.Dispose();
 
 			resourceList.Items.Clear();
+			currentObjectCombo.Items.Clear();
 			currentSceneCombo.Items.Clear();
 
 			foreach (string resourceName in RenderManager.Instance.Resources.Keys)
@@ -106,13 +110,112 @@ namespace ModelEx
 				{
 					resourceList.Items.Add(resourceName);
 
+					currentObjectCombo.Items.Add(resourceName);
+
 					// Maybe filter for only levels here?
 					currentSceneCombo.Items.Add(resourceName);
 				}
 			}
+
+			if (_SelectSceneOnLoaded && currentSceneCombo.Items.Contains(_LastLoadedResource))
+			{
+				currentSceneCombo.SelectedIndex = currentSceneCombo.Items.IndexOf(_LastLoadedResource);
+				optionTabs.SelectedIndex = 0;
+				CameraManager.Instance.Reset();
+			}
+
+			_SelectSceneOnLoaded = false;
+			_LastLoadedResource = "";
 		}
 
-		protected void LoadCurrentModel(bool isReload)
+		protected bool SelectResourceToLoad(bool clearLoadedResources, bool selectSceneOnLoaded)
+		{
+			OpenFileDialog OpenDlg = new OpenFileDialog
+			{
+				CheckFileExists = true,
+				CheckPathExists = true,
+				Filter =
+					"Gex Mesh Files|*.drm|" +
+					"Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|" +
+					"Soul Reaver 2 Mesh Files|*.drm|" +
+					"Defiance Mesh Files|*.drm;|" +
+					"Tomb Raider: Legend Mesh Files|*.drm|" +
+					"Collada Mesh Files (*.dae)|*.dae",
+				//"All Files (*.*)|*.*";
+				DefaultExt = "drm",
+				FilterIndex = filterIndex
+			};
+
+			if (_LastOpenDirectory != "")
+			{
+				if (Directory.Exists(_LastOpenDirectory))
+				{
+					OpenDlg.InitialDirectory = _LastOpenDirectory;
+				}
+			}
+
+			if (OpenDlg.ShowDialog() != DialogResult.OK)
+			{
+				return false;
+			}
+
+			if (OpenDlg.FilterIndex == 1)
+			{
+				CDC.Objects.GexFile gexFile;
+				ObjectSelectWindow objectSelectDlg = new ObjectSelectWindow();
+
+				try
+				{
+					gexFile = new CDC.Objects.GexFile(OpenDlg.FileName, ImportExportOptions);
+					if (gexFile.Asset == CDC.Asset.Unit)
+					{
+						objectSelectDlg.SetObjectNames(gexFile.ObjectNames);
+						if (objectSelectDlg.ShowDialog() != DialogResult.OK)
+						{
+							return false;
+						}
+					}
+				}
+				catch
+				{
+					return false;
+				}
+
+				_CurrentModelType = CDC.Game.Gex;   // "Gex Mesh Files|*.drm|"
+				_CurrentModelChild = objectSelectDlg.SelectedObject;
+			}
+			else if (OpenDlg.FilterIndex == 2)
+			{
+				_CurrentModelType = CDC.Game.SR1;   // "Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|"
+				_CurrentModelChild = -1;
+			}
+			else if (OpenDlg.FilterIndex == 3)
+			{
+				_CurrentModelType = CDC.Game.SR2;   // "Soul Reaver 2 Mesh Files|*.drm|" +
+				_CurrentModelChild = -1;
+			}
+			else if (OpenDlg.FilterIndex == 4)
+			{
+				_CurrentModelType = CDC.Game.Defiance;  // "Defiance Mesh Files|*.drm|" +
+				_CurrentModelChild = -1;
+			}
+			else
+			{
+				_CurrentModelType = CDC.Game.TRL;  // "TRL Mesh Files|*.drm|" +
+				_CurrentModelChild = -1;
+			}
+
+			_ClearLoadedResources = clearLoadedResources;
+			_SelectSceneOnLoaded = selectSceneOnLoaded;
+			_LastOpenDirectory = Path.GetDirectoryName(OpenDlg.FileName);
+			_CurrentModelPath = OpenDlg.FileName;
+			reloadCurrentModelToolStripMenuItem.Enabled = true;
+			filterIndex = OpenDlg.FilterIndex;
+
+			return true;
+		}
+
+		protected void LoadCurrentModel()
 		{
 			if ((_CurrentModelPath == "") || (!File.Exists(_CurrentModelPath)))
 			{
@@ -122,8 +225,13 @@ namespace ModelEx
 
 			Thread loadingThread = new Thread((() =>
 			{
-				RenderManager.Instance.UnloadRenderResources();
-				RenderManager.Instance.LoadRenderResourceCDC(_CurrentModelPath, _CurrentModelType, ImportExportOptions, isReload, _CurrentModelChild);
+				if (_ClearLoadedResources)
+				{
+					RenderManager.Instance.UnloadRenderResources();
+					_ClearLoadedResources = false;
+				}
+
+				_LastLoadedResource = RenderManager.Instance.LoadRenderResourceCDC(_CurrentModelPath, _CurrentModelType, ImportExportOptions, _CurrentModelChild);
 
 				if (_ResetCameraOnModelLoad)
 				{
@@ -160,131 +268,6 @@ namespace ModelEx
 			progressThread.Name = "ProgressThread";
 			progressThread.SetApartmentState(ApartmentState.STA);
 			progressThread.Start();
-		}
-
-		private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			OpenFileDialog OpenDlg = new OpenFileDialog
-			{
-				CheckFileExists = true,
-				CheckPathExists = true,
-				Filter =
-					"Gex Mesh Files|*.drm|" +
-					"Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|" +
-					"Soul Reaver 2 Mesh Files|*.drm|" +
-					"Defiance Mesh Files|*.drm;|" +
-					"Tomb Raider: Legend Mesh Files|*.drm|" +
-					"Collada Mesh Files (*.dae)|*.dae",
-				//"All Files (*.*)|*.*";
-				DefaultExt = "drm",
-				FilterIndex = filterIndex
-			};
-			if (_LastOpenDirectory != "")
-			{
-				if (Directory.Exists(_LastOpenDirectory))
-				{
-					OpenDlg.InitialDirectory = _LastOpenDirectory;
-				}
-			}
-
-			if (OpenDlg.ShowDialog() != DialogResult.OK)
-			{
-				return;
-			}
-
-			if (OpenDlg.FilterIndex == 1)
-			{
-				CDC.Objects.GexFile gexFile;
-				ObjectSelectWindow objectSelectDlg = new ObjectSelectWindow();
-
-				try
-				{
-					gexFile = new CDC.Objects.GexFile(OpenDlg.FileName, ImportExportOptions);
-					if (gexFile.Asset == CDC.Asset.Unit)
-					{
-						objectSelectDlg.SetObjectNames(gexFile.ObjectNames);
-						if (objectSelectDlg.ShowDialog() != DialogResult.OK)
-						{
-							return;
-						}
-					}
-				}
-				catch
-				{
-					return;
-				}
-
-				_CurrentModelType = CDC.Game.Gex;   // "Gex Mesh Files|*.drm|"
-				_CurrentModelChild = objectSelectDlg.SelectedObject;
-			}
-			else if (OpenDlg.FilterIndex == 2)
-			{
-				_CurrentModelType = CDC.Game.SR1;   // "Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|"
-				_CurrentModelChild = -1;
-			}
-			else if (OpenDlg.FilterIndex == 3)
-			{
-				_CurrentModelType = CDC.Game.SR2;   // "Soul Reaver 2 Mesh Files|*.drm|" +
-				_CurrentModelChild = -1;
-			}
-			else if (OpenDlg.FilterIndex == 4)
-			{
-				_CurrentModelType = CDC.Game.Defiance;  // "Defiance Mesh Files|*.drm|" +
-				_CurrentModelChild = -1;
-			}
-			else
-			{
-				_CurrentModelType = CDC.Game.TRL;  // "TRL Mesh Files|*.drm|" +
-				_CurrentModelChild = -1;
-			}
-
-			_LastOpenDirectory = Path.GetDirectoryName(OpenDlg.FileName);
-			_CurrentModelPath = OpenDlg.FileName;
-			reloadCurrentModelToolStripMenuItem.Enabled = true;
-			filterIndex = OpenDlg.FilterIndex;
-
-			//Invoke(new MethodInvoker(BeginLoading));
-
-			//Thread loadingThread = new Thread((() =>
-			//{
-			//    SceneManager.Instance.ShutDown();
-			//    SceneManager.Instance.AddScene(new SceneCDC(_CurrentModelType));
-			//    SceneManager.Instance.CurrentScene.ImportFromFile(_CurrentModelPath, ImportExportOptions);
-
-			//    //CameraManager.Instance.Reset();
-
-			//    Invoke(new MethodInvoker(EndLoading));
-			//}));
-
-			//loadingThread.Name = "LoadingThread";
-			//loadingThread.SetApartmentState(ApartmentState.STA);
-			//loadingThread.Start();
-			////loadingThread.Join();
-
-			//Thread progressThread = new Thread((() =>
-			//{
-			//    do
-			//    {
-			//        lock (SceneCDC.ProgressStage)
-			//        {
-			//            progressWindow.SetMessage(SceneCDC.ProgressStage);
-			//            int oldProgress = progressWindow.GetProgress();
-			//            if (oldProgress < SceneCDC.ProgressPercent)
-			//            {
-			//                progressWindow.SetProgress(oldProgress + 1);
-			//            }
-			//        }
-			//        Thread.Sleep(20);
-			//    }
-			//    while (loadingThread.IsAlive);
-			//}));
-
-			//progressThread.Name = "ProgressThread";
-			//progressThread.SetApartmentState(ApartmentState.STA);
-			//progressThread.Start();
-			//progressThread.Join();
-
-			LoadCurrentModel(false);
 		}
 
 		private void ExportToolStripMenuItem_Click(object sender, EventArgs e)
@@ -456,7 +439,7 @@ namespace ModelEx
 
 			if (_ReloadModelOnRenderModeChange)
 			{
-				LoadCurrentModel(true);
+				LoadCurrentModel();
 			}
 		}
 
@@ -1233,7 +1216,7 @@ namespace ModelEx
 
 		private void reloadCurrentModelToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			LoadCurrentModel(true);
+			LoadCurrentModel();
 		}
 
 		private void interpolatePolygonColoursToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1402,8 +1385,26 @@ namespace ModelEx
 
 		private void loadResourceButton_Click(object sender, EventArgs e)
 		{
-			// Hack
-			OpenToolStripMenuItem_Click(sender, e);
+			if (SelectResourceToLoad(false, false))
+			{
+				LoadCurrentModel();
+			}
+		}
+
+		private void loadResourceToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (SelectResourceToLoad(false, false))
+			{
+				LoadCurrentModel();
+			}
+		}
+
+		private void loadSceneToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (SelectResourceToLoad(false, true))
+			{
+				LoadCurrentModel();
+			}
 		}
 	}
 }

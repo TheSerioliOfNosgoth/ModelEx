@@ -31,7 +31,8 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
 			this.menuBar = new System.Windows.Forms.MenuStrip();
 			this.fileMenu = new System.Windows.Forms.ToolStripMenuItem();
-			this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadResourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.reloadCurrentModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -180,6 +181,15 @@
 			this.unloadResourceButton = new System.Windows.Forms.Button();
 			this.loadResourceButton = new System.Windows.Forms.Button();
 			this.resourceList = new System.Windows.Forms.ListView();
+			this.objectTab = new System.Windows.Forms.TabPage();
+			this.objectTabControls = new System.Windows.Forms.SplitContainer();
+			this.currentObjectLabel = new System.Windows.Forms.Label();
+			this.currentObjectCombo = new System.Windows.Forms.ComboBox();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.trackBar1 = new System.Windows.Forms.TrackBar();
+			this.label2 = new System.Windows.Forms.Label();
+			this.label3 = new System.Windows.Forms.Label();
+			this.objectTree = new System.Windows.Forms.TreeView();
 			this.sceneView = new ModelEx.RenderControl();
 			this.sceneTreeContainer = new System.Windows.Forms.SplitContainer();
 			this.FPSText = new System.Windows.Forms.TextBox();
@@ -200,6 +210,12 @@
 			this.resourcesTabControls.Panel1.SuspendLayout();
 			this.resourcesTabControls.Panel2.SuspendLayout();
 			this.resourcesTabControls.SuspendLayout();
+			this.objectTab.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.objectTabControls)).BeginInit();
+			this.objectTabControls.Panel1.SuspendLayout();
+			this.objectTabControls.Panel2.SuspendLayout();
+			this.objectTabControls.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.sceneTreeContainer)).BeginInit();
 			this.sceneTreeContainer.Panel2.SuspendLayout();
 			this.sceneTreeContainer.SuspendLayout();
@@ -221,7 +237,8 @@
 			// fileMenu
 			// 
 			this.fileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openToolStripMenuItem,
+            this.loadResourceToolStripMenuItem,
+            this.loadSceneToolStripMenuItem,
             this.reloadCurrentModelToolStripMenuItem,
             this.exportToolStripMenuItem,
             this.exitToolStripMenuItem});
@@ -229,12 +246,19 @@
 			this.fileMenu.Size = new System.Drawing.Size(37, 20);
 			this.fileMenu.Text = "&File";
 			// 
-			// openToolStripMenuItem
+			// loadResourceToolStripMenuItem
 			// 
-			this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-			this.openToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-			this.openToolStripMenuItem.Text = "&Open";
-			this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItem_Click);
+			this.loadResourceToolStripMenuItem.Name = "loadResourceToolStripMenuItem";
+			this.loadResourceToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+			this.loadResourceToolStripMenuItem.Text = "Load Resource...";
+			this.loadResourceToolStripMenuItem.Click += new System.EventHandler(this.loadResourceToolStripMenuItem_Click);
+			// 
+			// loadSceneToolStripMenuItem
+			// 
+			this.loadSceneToolStripMenuItem.Name = "loadSceneToolStripMenuItem";
+			this.loadSceneToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+			this.loadSceneToolStripMenuItem.Text = "Load Scene...";
+			this.loadSceneToolStripMenuItem.Click += new System.EventHandler(this.loadSceneToolStripMenuItem_Click);
 			// 
 			// reloadCurrentModelToolStripMenuItem
 			// 
@@ -1321,6 +1345,7 @@
 			// 
 			this.optionTabs.Controls.Add(this.sceneTab);
 			this.optionTabs.Controls.Add(this.resourcesTab);
+			this.optionTabs.Controls.Add(this.objectTab);
 			this.optionTabs.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.optionTabs.Location = new System.Drawing.Point(0, 0);
 			this.optionTabs.Name = "optionTabs";
@@ -1395,7 +1420,7 @@
 			// realmBlendBar
 			// 
 			this.realmBlendBar.LargeChange = 1;
-			this.realmBlendBar.Location = new System.Drawing.Point(6, 70);
+			this.realmBlendBar.Location = new System.Drawing.Point(3, 70);
 			this.realmBlendBar.Maximum = 100;
 			this.realmBlendBar.Name = "realmBlendBar";
 			this.realmBlendBar.Size = new System.Drawing.Size(244, 45);
@@ -1406,7 +1431,7 @@
 			// planeBlendLabel
 			// 
 			this.planeBlendLabel.AutoSize = true;
-			this.planeBlendLabel.Location = new System.Drawing.Point(5, 53);
+			this.planeBlendLabel.Location = new System.Drawing.Point(3, 53);
 			this.planeBlendLabel.Name = "planeBlendLabel";
 			this.planeBlendLabel.Size = new System.Drawing.Size(64, 13);
 			this.planeBlendLabel.TabIndex = 3;
@@ -1445,6 +1470,7 @@
 			// resourcesTabControls
 			// 
 			this.resourcesTabControls.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.resourcesTabControls.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
 			this.resourcesTabControls.Location = new System.Drawing.Point(3, 3);
 			this.resourcesTabControls.Name = "resourcesTabControls";
 			this.resourcesTabControls.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -1489,6 +1515,104 @@
 			this.resourceList.Size = new System.Drawing.Size(253, 497);
 			this.resourceList.TabIndex = 0;
 			this.resourceList.UseCompatibleStateImageBehavior = false;
+			// 
+			// objectTab
+			// 
+			this.objectTab.Controls.Add(this.objectTabControls);
+			this.objectTab.Location = new System.Drawing.Point(4, 22);
+			this.objectTab.Name = "objectTab";
+			this.objectTab.Padding = new System.Windows.Forms.Padding(3);
+			this.objectTab.Size = new System.Drawing.Size(259, 585);
+			this.objectTab.TabIndex = 2;
+			this.objectTab.Text = "Object";
+			this.objectTab.UseVisualStyleBackColor = true;
+			// 
+			// objectTabControls
+			// 
+			this.objectTabControls.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.objectTabControls.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+			this.objectTabControls.Location = new System.Drawing.Point(3, 3);
+			this.objectTabControls.Name = "objectTabControls";
+			this.objectTabControls.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			// 
+			// objectTabControls.Panel1
+			// 
+			this.objectTabControls.Panel1.Controls.Add(this.currentObjectLabel);
+			this.objectTabControls.Panel1.Controls.Add(this.currentObjectCombo);
+			this.objectTabControls.Panel1.Controls.Add(this.panel1);
+			this.objectTabControls.Panel1.Controls.Add(this.trackBar1);
+			this.objectTabControls.Panel1.Controls.Add(this.label2);
+			this.objectTabControls.Panel1.Controls.Add(this.label3);
+			// 
+			// objectTabControls.Panel2
+			// 
+			this.objectTabControls.Panel2.Controls.Add(this.objectTree);
+			this.objectTabControls.Size = new System.Drawing.Size(253, 579);
+			this.objectTabControls.SplitterDistance = 98;
+			this.objectTabControls.TabIndex = 0;
+			// 
+			// currentObjectLabel
+			// 
+			this.currentObjectLabel.AutoSize = true;
+			this.currentObjectLabel.Location = new System.Drawing.Point(3, 3);
+			this.currentObjectLabel.Name = "currentObjectLabel";
+			this.currentObjectLabel.Size = new System.Drawing.Size(75, 13);
+			this.currentObjectLabel.TabIndex = 14;
+			this.currentObjectLabel.Text = "Current Object";
+			// 
+			// currentObjectCombo
+			// 
+			this.currentObjectCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.currentObjectCombo.FormattingEnabled = true;
+			this.currentObjectCombo.Location = new System.Drawing.Point(84, 3);
+			this.currentObjectCombo.Name = "currentObjectCombo";
+			this.currentObjectCombo.Size = new System.Drawing.Size(166, 21);
+			this.currentObjectCombo.TabIndex = 13;
+			// 
+			// panel1
+			// 
+			this.panel1.BackColor = System.Drawing.Color.Gray;
+			this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.panel1.Location = new System.Drawing.Point(101, 28);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(24, 21);
+			this.panel1.TabIndex = 12;
+			// 
+			// trackBar1
+			// 
+			this.trackBar1.LargeChange = 1;
+			this.trackBar1.Location = new System.Drawing.Point(3, 70);
+			this.trackBar1.Maximum = 100;
+			this.trackBar1.Name = "trackBar1";
+			this.trackBar1.Size = new System.Drawing.Size(244, 45);
+			this.trackBar1.TabIndex = 10;
+			this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.None;
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(3, 53);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(64, 13);
+			this.label2.TabIndex = 9;
+			this.label2.Text = "Plane Blend";
+			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(3, 28);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(92, 13);
+			this.label3.TabIndex = 11;
+			this.label3.Text = "Background Color";
+			// 
+			// objectTree
+			// 
+			this.objectTree.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.objectTree.Location = new System.Drawing.Point(0, 0);
+			this.objectTree.Name = "objectTree";
+			this.objectTree.Size = new System.Drawing.Size(253, 477);
+			this.objectTree.TabIndex = 0;
 			// 
 			// sceneView
 			// 
@@ -1560,6 +1684,13 @@
 			this.resourcesTabControls.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.resourcesTabControls)).EndInit();
 			this.resourcesTabControls.ResumeLayout(false);
+			this.objectTab.ResumeLayout(false);
+			this.objectTabControls.Panel1.ResumeLayout(false);
+			this.objectTabControls.Panel1.PerformLayout();
+			this.objectTabControls.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.objectTabControls)).EndInit();
+			this.objectTabControls.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
 			this.sceneTreeContainer.Panel2.ResumeLayout(false);
 			this.sceneTreeContainer.Panel2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.sceneTreeContainer)).EndInit();
@@ -1573,7 +1704,6 @@
 
 		private System.Windows.Forms.MenuStrip menuBar;
 		private System.Windows.Forms.ToolStripMenuItem fileMenu;
-		private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
 		private System.Windows.Forms.SplitContainer sceneViewContainer;
@@ -1725,5 +1855,16 @@
 		private System.Windows.Forms.Button unloadResourceButton;
 		private System.Windows.Forms.ComboBox currentSceneCombo;
 		private System.Windows.Forms.Label currentSceneLabel;
+		private System.Windows.Forms.ToolStripMenuItem loadResourceToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem loadSceneToolStripMenuItem;
+		private System.Windows.Forms.TabPage objectTab;
+		private System.Windows.Forms.SplitContainer objectTabControls;
+		private System.Windows.Forms.TreeView objectTree;
+		private System.Windows.Forms.Label currentObjectLabel;
+		private System.Windows.Forms.ComboBox currentObjectCombo;
+		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.TrackBar trackBar1;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Label label3;
 	}
 }

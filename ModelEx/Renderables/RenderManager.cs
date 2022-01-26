@@ -76,12 +76,12 @@ namespace ModelEx
 			}
 		}
 
-		public void LoadRenderResourceCDC(string fileName, Game game, ExportOptions options, bool isReload = false)
+		public string LoadRenderResourceCDC(string fileName, Game game, ExportOptions options)
 		{
-			LoadRenderResourceCDC(fileName, game, options, isReload, -1);
+			return LoadRenderResourceCDC(fileName, game, options, -1);
 		}
 
-		public void LoadRenderResourceCDC(string fileName, Game game, ExportOptions options, bool isReload, int childIndex)
+		public string LoadRenderResourceCDC(string fileName, Game game, ExportOptions options, int childIndex)
 		{
 			SceneCDC.progressLevel = 0;
 			SceneCDC.progressLevels = 1;
@@ -89,21 +89,16 @@ namespace ModelEx
 
 			SRFile srFile = SRFile.Create(fileName, game, options, childIndex);
 
-			RenderResourceCDC renderResource = null;
+			RenderResourceCDC renderResource;
 
-			if (!isReload && Resources.ContainsKey(srFile.Name))
+			if (Resources.ContainsKey(srFile.Name))
 			{
 				renderResource = (RenderResourceCDC)Resources[srFile.Name];
 				renderResource.Dispose();
-				renderResource = null;
 				Resources.Remove(srFile.Name);
 			}
 
-			if (renderResource == null)
-			{
-				renderResource = new RenderResourceCDC(srFile);
-			}
-
+			renderResource = new RenderResourceCDC(srFile);
 			renderResource.LoadModels(options);
 
 			SceneCDC.progressLevel = 1;
@@ -114,6 +109,8 @@ namespace ModelEx
 
 			SceneCDC.progressLevel = SceneCDC.progressLevels;
 			SceneCDC.ProgressStage = "Done";
+
+			return srFile.Name;
 		}
 
 		public void UnloadRenderResources()
