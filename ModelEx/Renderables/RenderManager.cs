@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
-using Resource = SlimDX.Direct3D11.Resource;
-using Device = SlimDX.Direct3D11.Device;
+using SpriteTextRenderer;
 using SlimDX;
 using SlimDX.Direct3D11;
 using SlimDX.DXGI;
@@ -12,21 +11,32 @@ using SRFile = CDC.Objects.SRFile;
 
 namespace ModelEx
 {
+	public enum ViewMode : int
+	{
+		Resources = 0,
+		Object = 1,
+		Scene = 2
+	}
+
 	public class RenderManager
 	{
 		private Thread renderThread;
 		private int syncInterval = 1;
-		private FrameCounter fc = FrameCounter.Instance;
+		private FrameCounter frameCounter = FrameCounter.Instance;
 
 		public bool Resize = false;
 
+		public ViewMode ViewMode = ViewMode.Scene;
 		public Color BackgroundColour = Color.Gray;
 		public bool Wireframe = false;
 
 		public readonly SortedList<string, RenderResource> Resources = new SortedList<string, RenderResource>();
 
 		public Scene CurrentScene { get; private set; }
-		public Renderable CurrentObject { get { return CurrentScene?.CurrentObject; } }
+		public Renderable CurrentObject { get; private set; }
+
+		SpriteRenderer _spriteRenderer;
+		public TextBlockRenderer _textBlockRenderer;
 
 		private static RenderManager instance = null;
 		public static RenderManager Instance
@@ -43,13 +53,16 @@ namespace ModelEx
 
 		public void Initialize()
 		{
-			renderThread = new Thread(new ThreadStart(Render));
-			renderThread.Name = "RenderThread";
-			renderThread.Start();
+			_spriteRenderer = new SpriteRenderer();
+			_textBlockRenderer = new TextBlockRenderer(_spriteRenderer, "Arial", SlimDX.DirectWrite.FontWeight.Bold, SlimDX.DirectWrite.FontStyle.Normal, SlimDX.DirectWrite.FontStretch.Normal, 16);
 
 			RenderResourceShapes shapesResource = new RenderResourceShapes();
 			shapesResource.LoadModels();
 			Resources.Add(shapesResource.Name, shapesResource);
+
+			renderThread = new Thread(new ThreadStart(Render));
+			renderThread.Name = "RenderThread";
+			renderThread.Start();
 		}
 
 		public void ShutDown()
@@ -62,6 +75,9 @@ namespace ModelEx
 			RenderResource resource = Resources[Resources.Keys[0]];
 			resource.Dispose();
 			Resources.Remove(Resources.Keys[0]);
+
+			_textBlockRenderer.Dispose();
+			_spriteRenderer.Dispose();
 		}
 
 		public void SwitchSyncInterval()
@@ -139,6 +155,19 @@ namespace ModelEx
 			}
 		}
 
+		public void SetCurrentObject(string objectName)
+		{
+			if (CurrentObject != null)
+			{
+				CurrentScene = null;
+			}
+
+			if (Resources.ContainsKey(objectName))
+			{
+				CurrentObject = new Physical(objectName, 0);
+			}
+		}
+
 		public void SetCurrentScene(string sceneName)
 		{
 			if (CurrentScene != null)
@@ -154,6 +183,28 @@ namespace ModelEx
 			}
 		}
 
+		public Renderable GetCameraTarget()
+		{
+			if (ViewMode == ViewMode.Object)
+			{
+				return CurrentObject;
+			}
+
+			if (ViewMode == ViewMode.Scene && CurrentScene != null)
+			{
+				return CurrentScene.CurrentObject;
+			}
+
+			return null;
+		}
+
+		public void DrawString(string text, Vector2 position, float realFontSize, Color4 color)
+		{
+			Monitor.Enter(DeviceManager.Instance.device);
+			_textBlockRenderer.DrawString(text, position, realFontSize, color, CoordinateType.Absolute);
+			Monitor.Exit(DeviceManager.Instance.device);
+		}
+
 		protected void Render()
 		{
 			while (true)
@@ -166,7 +217,7 @@ namespace ModelEx
 					Resize = false;
 				}
 
-				fc.Count();
+				frameCounter.Count();
 
 				DeviceManager deviceManager = DeviceManager.Instance;
 				deviceManager.context.ClearDepthStencilView(deviceManager.depthStencil, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
@@ -174,10 +225,55 @@ namespace ModelEx
 
 				CameraManager.Instance.UpdateFrameCamera();
 
-				if (CurrentScene != null)
+				SlimDX.Direct3D11.DepthStencilState oldDSState = DeviceManager.Instance.context.OutputMerger.DepthStencilState;
+				SlimDX.Direct3D11.BlendState oldBlendState = DeviceManager.Instance.context.OutputMerger.BlendState;
+				SlimDX.Direct3D11.RasterizerState oldRasterizerState = DeviceManager.Instance.context.Rasterizer.State;
+				SlimDX.Direct3D11.VertexShader oldVertexShader = DeviceManager.Instance.context.VertexShader.Get();
+				SlimDX.Direct3D11.Buffer[] oldVSCBuffers = DeviceManager.Instance.context.VertexShader.GetConstantBuffers(0, 10);
+				SlimDX.Direct3D11.PixelShader oldPixelShader = DeviceManager.Instance.context.PixelShader.Get();
+				SlimDX.Direct3D11.Buffer[] oldPSCBuffers = DeviceManager.Instance.context.PixelShader.GetConstantBuffers(0, 10);
+				SlimDX.Direct3D11.ShaderResourceView[] oldShaderResources = DeviceManager.Instance.context.PixelShader.GetShaderResources(0, 10);
+				SlimDX.Direct3D11.GeometryShader oldGeometryShader = DeviceManager.Instance.context.GeometryShader.Get();
+
+				if (ViewMode == ViewMode.Scene)
 				{
-					CurrentScene.Render();
+					if (CurrentScene != null)
+					{
+						CurrentScene.Render();
+					}
 				}
+				else if (ViewMode == ViewMode.Object)
+				{
+					if (CurrentObject != null)
+					{
+						CurrentObject.Render();
+					}
+				}
+
+				DeviceManager.Instance.context.OutputMerger.DepthStencilState = oldDSState;
+				DeviceManager.Instance.context.OutputMerger.BlendState = oldBlendState;
+				DeviceManager.Instance.context.Rasterizer.State = oldRasterizerState;
+				DeviceManager.Instance.context.VertexShader.Set(oldVertexShader);
+				DeviceManager.Instance.context.VertexShader.SetConstantBuffers(oldVSCBuffers, 0, 10);
+				DeviceManager.Instance.context.PixelShader.Set(oldPixelShader);
+				DeviceManager.Instance.context.PixelShader.SetConstantBuffers(oldPSCBuffers, 0, 10);
+				DeviceManager.Instance.context.PixelShader.SetShaderResources(oldShaderResources, 0, 10);
+				DeviceManager.Instance.context.GeometryShader.Set(oldGeometryShader);
+
+				Monitor.Enter(DeviceManager.Instance.device);
+				_spriteRenderer.RefreshViewport();
+				_spriteRenderer.Flush();
+				Monitor.Exit(DeviceManager.Instance.device);
+
+				DeviceManager.Instance.context.OutputMerger.DepthStencilState = oldDSState;
+				DeviceManager.Instance.context.OutputMerger.BlendState = oldBlendState;
+				DeviceManager.Instance.context.Rasterizer.State = oldRasterizerState;
+				DeviceManager.Instance.context.VertexShader.Set(oldVertexShader);
+				DeviceManager.Instance.context.VertexShader.SetConstantBuffers(oldVSCBuffers, 0, 10);
+				DeviceManager.Instance.context.PixelShader.Set(oldPixelShader);
+				DeviceManager.Instance.context.PixelShader.SetConstantBuffers(oldPSCBuffers, 0, 10);
+				DeviceManager.Instance.context.PixelShader.SetShaderResources(oldShaderResources, 0, 10);
+				DeviceManager.Instance.context.GeometryShader.Set(oldGeometryShader);
 
 				// syncInterval can be 0
 				deviceManager.swapChain.Present(syncInterval, PresentFlags.None);

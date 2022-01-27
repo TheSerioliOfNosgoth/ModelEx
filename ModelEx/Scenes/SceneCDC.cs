@@ -12,8 +12,6 @@ using DefianceFile = CDC.Objects.DefianceFile;
 using TRLFile = CDC.Objects.TRLFile;
 using SRModel = CDC.Objects.Models.SRModel;
 
-using SpriteTextRenderer;
-
 namespace ModelEx
 {
 	public class SceneCDC : Scene
@@ -37,15 +35,9 @@ namespace ModelEx
 			}
 		}
 
-		SpriteRenderer _spriteRenderer;
-		TextBlockRenderer _textBlockRenderer;
-
 		public SceneCDC(SRFile srFile)
 			: base()
 		{
-			_spriteRenderer = new SpriteRenderer();
-			_textBlockRenderer = new TextBlockRenderer(_spriteRenderer, "Arial", SlimDX.DirectWrite.FontWeight.Bold, SlimDX.DirectWrite.FontStyle.Normal, SlimDX.DirectWrite.FontStretch.Normal, 16);
-
 			for (int m = 0; m < srFile.ModelCount; m++)
 			{
 				Physical physical = new Physical(srFile.Name, m);
@@ -73,15 +65,10 @@ namespace ModelEx
 		public override void Dispose()
 		{
 			base.Dispose();
-
-			_textBlockRenderer.Dispose();
-			_spriteRenderer.Dispose();
 		}
 
 		public override void Render()
 		{
-			_spriteRenderer.RefreshViewport();
-
 			SlimDX.Direct3D11.DepthStencilState oldDSState = DeviceManager.Instance.context.OutputMerger.DepthStencilState;
 			SlimDX.Direct3D11.BlendState oldBlendState = DeviceManager.Instance.context.OutputMerger.BlendState;
 			SlimDX.Direct3D11.RasterizerState oldRasterizerState = DeviceManager.Instance.context.Rasterizer.State;
@@ -104,7 +91,6 @@ namespace ModelEx
 			DeviceManager.Instance.context.PixelShader.SetShaderResources(oldShaderResources, 0, 10);
 			DeviceManager.Instance.context.GeometryShader.Set(oldGeometryShader);
 
-			System.Threading.Monitor.Enter(DeviceManager.Instance.device);
 			foreach (RenderInstance instance in renderInstances)
 			{
 				if (instance.Name == null)
@@ -130,11 +116,9 @@ namespace ModelEx
 					SlimDX.Vector3 objOffset = objPos - camPos;
 					float scale = Math.Min(2.0f, 5.0f / (float)Math.Sqrt(Math.Max(1.0f, objOffset.Length())));
 
-					_textBlockRenderer.DrawString(instance.Name, position2D, 16 * scale, new SlimDX.Color4(1.0f, 1.0f, 1.0f), CoordinateType.Absolute);
+					RenderManager.Instance.DrawString(instance.Name, position2D, 16 * scale, new SlimDX.Color4(1.0f, 1.0f, 1.0f));
 				}
 			}
-			_spriteRenderer.Flush();
-			System.Threading.Monitor.Exit(DeviceManager.Instance.device);
 
 			DeviceManager.Instance.context.OutputMerger.DepthStencilState = oldDSState;
 			DeviceManager.Instance.context.OutputMerger.BlendState = oldBlendState;

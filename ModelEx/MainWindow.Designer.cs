@@ -1352,6 +1352,7 @@
 			this.optionTabs.SelectedIndex = 0;
 			this.optionTabs.Size = new System.Drawing.Size(267, 611);
 			this.optionTabs.TabIndex = 1;
+			this.optionTabs.SelectedIndexChanged += new System.EventHandler(this.optionTabs_SelectedIndexChanged);
 			// 
 			// sceneTab
 			// 
@@ -1454,7 +1455,7 @@
 			this.sceneTree.Name = "sceneTree";
 			this.sceneTree.Size = new System.Drawing.Size(253, 477);
 			this.sceneTree.TabIndex = 3;
-			this.sceneTree.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.TreeView1_AfterCheck);
+			this.sceneTree.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.sceneTree_AfterCheck);
 			// 
 			// resourcesTab
 			// 
@@ -1568,6 +1569,7 @@
 			this.currentObjectCombo.Name = "currentObjectCombo";
 			this.currentObjectCombo.Size = new System.Drawing.Size(166, 21);
 			this.currentObjectCombo.TabIndex = 13;
+			this.currentObjectCombo.SelectedIndexChanged += new System.EventHandler(this.currentObjectCombo_SelectedIndexChanged);
 			// 
 			// panel1
 			// 
@@ -1661,7 +1663,7 @@
 			this.Name = "MainWindow";
 			this.Text = "ModelEx v5.2";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
-			this.Load += new System.EventHandler(this.Form1_Load);
+			this.Load += new System.EventHandler(this.MainWindow_Load);
 			this.Enter += new System.EventHandler(this.MainWindow_Enter);
 			this.Leave += new System.EventHandler(this.MainWindow_Leave);
 			this.Resize += new System.EventHandler(this.MainWindow_Resize);

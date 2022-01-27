@@ -67,7 +67,7 @@ namespace ModelEx
 			sceneView.ShutDown();
 		}
 
-		private void Form1_Load(object sender, EventArgs e)
+		private void MainWindow_Load(object sender, EventArgs e)
 		{
 			sceneView.Initialize();
 			_ReloadModelOnRenderModeChange = reloadModelWhenRenderModeIsChangedToolStripMenuItem.Checked;
@@ -297,7 +297,7 @@ namespace ModelEx
 			}
 		}
 
-		private void TreeView1_AfterCheck(object sender, TreeViewEventArgs e)
+		private void sceneTree_AfterCheck(object sender, TreeViewEventArgs e)
 		{
 			Scene currentScene = RenderManager.Instance.CurrentScene;
 			if (currentScene != null)
@@ -1383,6 +1383,47 @@ namespace ModelEx
 			}
 		}
 
+		private void currentObjectCombo_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			objectTree.Nodes.Clear();
+
+			string selectedItem = ((ComboBox)sender).SelectedItem.ToString();
+			RenderManager.Instance.SetCurrentObject(selectedItem);
+
+			if (RenderManager.Instance.CurrentObject == null)
+			{
+				return;
+			}
+
+			TreeNode sceneTreeNode = new TreeNode("Scene");
+			sceneTreeNode.Checked = true;
+			Renderable renderable = RenderManager.Instance.CurrentObject;
+
+			Node objectNode = ((Physical)renderable).Model.Root;
+
+			TreeNode objectTreeNode = new TreeNode(objectNode.Name);
+			objectTreeNode.Checked = true;
+			foreach (Node modelNode in objectNode.Nodes)
+			{
+				TreeNode modelTreeNode = new TreeNode(modelNode.Name);
+				modelTreeNode.Checked = true;
+				foreach (Node groupNode in modelNode.Nodes)
+				{
+					TreeNode groupTreeNode = new TreeNode(groupNode.Name);
+					groupTreeNode.Checked = true;
+					modelTreeNode.Nodes.Add(groupTreeNode);
+				}
+				objectTreeNode.Nodes.Add(modelTreeNode);
+			}
+			sceneTreeNode.Nodes.Add(objectTreeNode);
+
+			if (sceneTreeNode.Nodes.Count > 0)
+			{
+				objectTree.Nodes.Add(sceneTreeNode);
+				objectTree.ExpandAll();
+			}
+		}
+
 		private void loadResourceButton_Click(object sender, EventArgs e)
 		{
 			if (SelectResourceToLoad(false, false))
@@ -1404,6 +1445,24 @@ namespace ModelEx
 			if (SelectResourceToLoad(false, true))
 			{
 				LoadCurrentModel();
+			}
+		}
+
+		private void optionTabs_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			int selectedIndex = ((TabControl)sender).SelectedIndex;
+
+			if (selectedIndex == 0)
+			{
+				RenderManager.Instance.ViewMode = ViewMode.Scene;
+			}
+			else if (selectedIndex == 2)
+			{
+				RenderManager.Instance.ViewMode = ViewMode.Object;
+			}
+			else
+			{
+				RenderManager.Instance.ViewMode = ViewMode.Resources;
 			}
 		}
 	}

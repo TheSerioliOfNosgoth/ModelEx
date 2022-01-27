@@ -51,10 +51,10 @@ namespace ModelEx
 			Vector3 eye = new Vector3(0.0f, 0.0f, 0.0f);
 			Vector3 target = new Vector3(0.0f, 0.0f, 1.0f);
 
-			Renderable currentObject = RenderManager.Instance.CurrentObject;
-			if (currentObject != null && currentObject.GetType() == typeof(Physical))
+			Renderable cameraTarget = RenderManager.Instance.GetCameraTarget();
+			if (cameraTarget != null && cameraTarget.GetType() == typeof(Physical))
 			{
-				BoundingSphere boundingSphere = currentObject.GetBoundingSphere();
+				BoundingSphere boundingSphere = cameraTarget.GetBoundingSphere();
 				if (boundingSphere != null)
 				{
 					target = boundingSphere.Center;
