@@ -304,9 +304,9 @@ namespace ModelEx
 			{
 				foreach (Renderable renderable in currentScene.RenderInstances)
 				{
-					if (renderable is Physical)
+					if (renderable is RenderInstance)
 					{
-						Node node = ((Physical)renderable).Model.FindNode(e.Node.Text);
+						Node node = ((RenderInstance)renderable).Model.FindNode(e.Node.Text);
 						if (node != null)
 						{
 							node.Visible = e.Node.Checked;
@@ -1354,11 +1354,11 @@ namespace ModelEx
 			sceneTreeNode.Checked = true;
 			foreach (Renderable renderable in RenderManager.Instance.CurrentScene.RenderInstances)
 			{
-				if (renderable is Physical)
+				if (renderable is RenderInstance)
 				{
-					Node objectNode = ((Physical)renderable).Model.Root;
+					Node objectNode = ((RenderInstance)renderable).Model.Root;
 
-					TreeNode objectTreeNode = new TreeNode(objectNode.Name);
+					TreeNode objectTreeNode = new TreeNode(renderable.Name);
 					objectTreeNode.Checked = true;
 					foreach (Node modelNode in objectNode.Nodes)
 					{
@@ -1379,7 +1379,8 @@ namespace ModelEx
 			if (sceneTreeNode.Nodes.Count > 0)
 			{
 				sceneTree.Nodes.Add(sceneTreeNode);
-				sceneTree.ExpandAll();
+				sceneTree.Nodes[0].Expand();
+				sceneTree.Nodes[0].Nodes[0].Expand();
 			}
 		}
 
@@ -1399,7 +1400,7 @@ namespace ModelEx
 			sceneTreeNode.Checked = true;
 			Renderable renderable = RenderManager.Instance.CurrentObject;
 
-			Node objectNode = ((Physical)renderable).Model.Root;
+			Node objectNode = ((RenderInstance)renderable).Model.Root;
 
 			TreeNode objectTreeNode = new TreeNode(objectNode.Name);
 			objectTreeNode.Checked = true;

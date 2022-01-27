@@ -40,24 +40,25 @@ namespace ModelEx
 		{
 			for (int m = 0; m < srFile.ModelCount; m++)
 			{
-				Physical physical = new Physical(srFile.Name, m);
-				renderInstances.Add(physical);
+				RenderInstance instance = new RenderInstance(srFile.Name, m);
+				instance.Name = srFile.Models[m].Name + "-" + m.ToString();
+				renderInstances.Add(instance);
 			}
 
 			if (srFile.Asset == CDC.Asset.Unit && srFile.IntroCount > 0)
 			{
 				foreach (CDC.Intro intro in srFile.Intros)
 				{
-					Marker marker = new Marker("", 0);
-					float height = marker.GetBoundingSphere().Radius;
-					marker.Name = intro.name;
-					marker.Transform = SlimDX.Matrix.Translation(
+					RenderInstance instance = new RenderInstance("", 0);
+					float height = instance.GetBoundingSphere().Radius;
+					instance.Name = intro.name;
+					instance.Transform = SlimDX.Matrix.Translation(
 						0.01f * intro.position.x,
 						0.01f * intro.position.z + height,
 						0.01f * intro.position.y
 					);
 
-					renderInstances.Add(marker);
+					renderInstances.Add(instance);
 				}
 			}
 		}

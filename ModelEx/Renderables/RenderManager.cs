@@ -164,7 +164,7 @@ namespace ModelEx
 
 			if (Resources.ContainsKey(objectName))
 			{
-				CurrentObject = new Physical(objectName, 0);
+				CurrentObject = new RenderInstance(objectName, 0);
 			}
 		}
 

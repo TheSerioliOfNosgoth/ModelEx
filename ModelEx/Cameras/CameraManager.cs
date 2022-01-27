@@ -52,7 +52,7 @@ namespace ModelEx
 			Vector3 target = new Vector3(0.0f, 0.0f, 1.0f);
 
 			Renderable cameraTarget = RenderManager.Instance.GetCameraTarget();
-			if (cameraTarget != null && cameraTarget.GetType() == typeof(Physical))
+			if (cameraTarget != null)
 			{
 				BoundingSphere boundingSphere = cameraTarget.GetBoundingSphere();
 				if (boundingSphere != null)
