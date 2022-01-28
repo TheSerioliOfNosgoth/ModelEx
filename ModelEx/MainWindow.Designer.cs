@@ -171,10 +171,6 @@
 			this.sceneTabControls = new System.Windows.Forms.SplitContainer();
 			this.currentSceneLabel = new System.Windows.Forms.Label();
 			this.currentSceneCombo = new System.Windows.Forms.ComboBox();
-			this.bgColourPanel = new System.Windows.Forms.Panel();
-			this.realmBlendBar = new System.Windows.Forms.TrackBar();
-			this.planeBlendLabel = new System.Windows.Forms.Label();
-			this.bgColourLabel = new System.Windows.Forms.Label();
 			this.sceneTree = new System.Windows.Forms.TreeView();
 			this.resourcesTab = new System.Windows.Forms.TabPage();
 			this.resourcesTabControls = new System.Windows.Forms.SplitContainer();
@@ -185,14 +181,12 @@
 			this.objectTabControls = new System.Windows.Forms.SplitContainer();
 			this.currentObjectLabel = new System.Windows.Forms.Label();
 			this.currentObjectCombo = new System.Windows.Forms.ComboBox();
-			this.panel1 = new System.Windows.Forms.Panel();
-			this.trackBar1 = new System.Windows.Forms.TrackBar();
-			this.label2 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
 			this.objectTree = new System.Windows.Forms.TreeView();
 			this.sceneView = new ModelEx.RenderControl();
 			this.sceneTreeContainer = new System.Windows.Forms.SplitContainer();
 			this.FPSText = new System.Windows.Forms.TextBox();
+			this.comonControls1 = new ModelEx.CommonControls();
+			this.comonControls2 = new ModelEx.CommonControls();
 			this.menuBar.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.sceneViewContainer)).BeginInit();
 			this.sceneViewContainer.Panel1.SuspendLayout();
@@ -204,7 +198,6 @@
 			this.sceneTabControls.Panel1.SuspendLayout();
 			this.sceneTabControls.Panel2.SuspendLayout();
 			this.sceneTabControls.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.realmBlendBar)).BeginInit();
 			this.resourcesTab.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.resourcesTabControls)).BeginInit();
 			this.resourcesTabControls.Panel1.SuspendLayout();
@@ -215,7 +208,6 @@
 			this.objectTabControls.Panel1.SuspendLayout();
 			this.objectTabControls.Panel2.SuspendLayout();
 			this.objectTabControls.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.sceneTreeContainer)).BeginInit();
 			this.sceneTreeContainer.Panel2.SuspendLayout();
 			this.sceneTreeContainer.SuspendLayout();
@@ -1375,12 +1367,9 @@
 			// 
 			// sceneTabControls.Panel1
 			// 
+			this.sceneTabControls.Panel1.Controls.Add(this.comonControls2);
 			this.sceneTabControls.Panel1.Controls.Add(this.currentSceneLabel);
 			this.sceneTabControls.Panel1.Controls.Add(this.currentSceneCombo);
-			this.sceneTabControls.Panel1.Controls.Add(this.bgColourPanel);
-			this.sceneTabControls.Panel1.Controls.Add(this.realmBlendBar);
-			this.sceneTabControls.Panel1.Controls.Add(this.planeBlendLabel);
-			this.sceneTabControls.Panel1.Controls.Add(this.bgColourLabel);
 			// 
 			// sceneTabControls.Panel2
 			// 
@@ -1407,45 +1396,6 @@
 			this.currentSceneCombo.Size = new System.Drawing.Size(166, 21);
 			this.currentSceneCombo.TabIndex = 7;
 			this.currentSceneCombo.SelectedIndexChanged += new System.EventHandler(this.currentSceneCombo_SelectedIndexChanged);
-			// 
-			// bgColourPanel
-			// 
-			this.bgColourPanel.BackColor = System.Drawing.Color.Gray;
-			this.bgColourPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.bgColourPanel.Location = new System.Drawing.Point(101, 28);
-			this.bgColourPanel.Name = "bgColourPanel";
-			this.bgColourPanel.Size = new System.Drawing.Size(24, 21);
-			this.bgColourPanel.TabIndex = 6;
-			this.bgColourPanel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.bgColorPanel_MouseClick);
-			// 
-			// realmBlendBar
-			// 
-			this.realmBlendBar.LargeChange = 1;
-			this.realmBlendBar.Location = new System.Drawing.Point(3, 70);
-			this.realmBlendBar.Maximum = 100;
-			this.realmBlendBar.Name = "realmBlendBar";
-			this.realmBlendBar.Size = new System.Drawing.Size(244, 45);
-			this.realmBlendBar.TabIndex = 4;
-			this.realmBlendBar.TickStyle = System.Windows.Forms.TickStyle.None;
-			this.realmBlendBar.Scroll += new System.EventHandler(this.RealmBlendBar_Scroll);
-			// 
-			// planeBlendLabel
-			// 
-			this.planeBlendLabel.AutoSize = true;
-			this.planeBlendLabel.Location = new System.Drawing.Point(3, 53);
-			this.planeBlendLabel.Name = "planeBlendLabel";
-			this.planeBlendLabel.Size = new System.Drawing.Size(64, 13);
-			this.planeBlendLabel.TabIndex = 3;
-			this.planeBlendLabel.Text = "Plane Blend";
-			// 
-			// bgColourLabel
-			// 
-			this.bgColourLabel.AutoSize = true;
-			this.bgColourLabel.Location = new System.Drawing.Point(3, 28);
-			this.bgColourLabel.Name = "bgColourLabel";
-			this.bgColourLabel.Size = new System.Drawing.Size(92, 13);
-			this.bgColourLabel.TabIndex = 5;
-			this.bgColourLabel.Text = "Background Color";
 			// 
 			// sceneTree
 			// 
@@ -1539,12 +1489,9 @@
 			// 
 			// objectTabControls.Panel1
 			// 
+			this.objectTabControls.Panel1.Controls.Add(this.comonControls1);
 			this.objectTabControls.Panel1.Controls.Add(this.currentObjectLabel);
 			this.objectTabControls.Panel1.Controls.Add(this.currentObjectCombo);
-			this.objectTabControls.Panel1.Controls.Add(this.panel1);
-			this.objectTabControls.Panel1.Controls.Add(this.trackBar1);
-			this.objectTabControls.Panel1.Controls.Add(this.label2);
-			this.objectTabControls.Panel1.Controls.Add(this.label3);
 			// 
 			// objectTabControls.Panel2
 			// 
@@ -1571,43 +1518,6 @@
 			this.currentObjectCombo.Size = new System.Drawing.Size(166, 21);
 			this.currentObjectCombo.TabIndex = 13;
 			this.currentObjectCombo.SelectedIndexChanged += new System.EventHandler(this.currentObjectCombo_SelectedIndexChanged);
-			// 
-			// panel1
-			// 
-			this.panel1.BackColor = System.Drawing.Color.Gray;
-			this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.panel1.Location = new System.Drawing.Point(101, 28);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(24, 21);
-			this.panel1.TabIndex = 12;
-			// 
-			// trackBar1
-			// 
-			this.trackBar1.LargeChange = 1;
-			this.trackBar1.Location = new System.Drawing.Point(3, 70);
-			this.trackBar1.Maximum = 100;
-			this.trackBar1.Name = "trackBar1";
-			this.trackBar1.Size = new System.Drawing.Size(244, 45);
-			this.trackBar1.TabIndex = 10;
-			this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.None;
-			// 
-			// label2
-			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(3, 53);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(64, 13);
-			this.label2.TabIndex = 9;
-			this.label2.Text = "Plane Blend";
-			// 
-			// label3
-			// 
-			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(3, 28);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(92, 13);
-			this.label3.TabIndex = 11;
-			this.label3.Text = "Background Color";
 			// 
 			// objectTree
 			// 
@@ -1655,6 +1565,22 @@
 			this.FPSText.TabIndex = 0;
 			this.FPSText.Text = "Testing...\r\nTesting...\r\nTesting...";
 			// 
+			// comonControls1
+			// 
+			this.comonControls1.BackColor = System.Drawing.Color.Transparent;
+			this.comonControls1.Location = new System.Drawing.Point(0, 30);
+			this.comonControls1.Name = "comonControls1";
+			this.comonControls1.Size = new System.Drawing.Size(253, 75);
+			this.comonControls1.TabIndex = 15;
+			// 
+			// comonControls2
+			// 
+			this.comonControls2.BackColor = System.Drawing.Color.Transparent;
+			this.comonControls2.Location = new System.Drawing.Point(0, 30);
+			this.comonControls2.Name = "comonControls2";
+			this.comonControls2.Size = new System.Drawing.Size(253, 75);
+			this.comonControls2.TabIndex = 16;
+			// 
 			// MainWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1665,7 +1591,7 @@
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "MainWindow";
 			this.Text = "ModelEx v6.0";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWindow_FormClosing);
 			this.Load += new System.EventHandler(this.MainWindow_Load);
 			this.Enter += new System.EventHandler(this.MainWindow_Enter);
 			this.Leave += new System.EventHandler(this.MainWindow_Leave);
@@ -1683,7 +1609,6 @@
 			this.sceneTabControls.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.sceneTabControls)).EndInit();
 			this.sceneTabControls.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.realmBlendBar)).EndInit();
 			this.resourcesTab.ResumeLayout(false);
 			this.resourcesTabControls.Panel1.ResumeLayout(false);
 			this.resourcesTabControls.Panel2.ResumeLayout(false);
@@ -1695,7 +1620,6 @@
 			this.objectTabControls.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.objectTabControls)).EndInit();
 			this.objectTabControls.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
 			this.sceneTreeContainer.Panel2.ResumeLayout(false);
 			this.sceneTreeContainer.Panel2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.sceneTreeContainer)).EndInit();
@@ -1849,10 +1773,6 @@
 		private System.Windows.Forms.ToolStripMenuItem createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem adjustUVCoordinatesForBilinearFilteringToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem ignoreVertexColoursToolStripMenuItem;
-		private System.Windows.Forms.TrackBar realmBlendBar;
-		private System.Windows.Forms.Label planeBlendLabel;
-		private System.Windows.Forms.Label bgColourLabel;
-		private System.Windows.Forms.Panel bgColourPanel;
 		private System.Windows.Forms.TabPage resourcesTab;
 		private System.Windows.Forms.SplitContainer resourcesTabControls;
 		private System.Windows.Forms.ListView resourceList;
@@ -1867,9 +1787,7 @@
 		private System.Windows.Forms.TreeView objectTree;
 		private System.Windows.Forms.Label currentObjectLabel;
 		private System.Windows.Forms.ComboBox currentObjectCombo;
-		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.TrackBar trackBar1;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label3;
+		private CommonControls comonControls1;
+		private CommonControls comonControls2;
 	}
 }

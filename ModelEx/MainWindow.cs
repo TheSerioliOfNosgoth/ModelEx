@@ -62,7 +62,7 @@ namespace ModelEx
 			uiMonitor.Start();
 		}
 
-		private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+		private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			_RunUIMonitoringThread = false;
 			sceneView.ShutDown();
@@ -384,11 +384,6 @@ namespace ModelEx
 			egoToolStripMenuItem.Checked = false;
 			orbitToolStripMenuItem.Checked = false;
 			orbitPanToolStripMenuItem.Checked = true;
-		}
-
-		private void RealmBlendBar_Scroll(object sender, EventArgs e)
-		{
-			MeshMorphingUnit.RealmBlend = ((float)realmBlendBar.Value / realmBlendBar.Maximum);
 		}
 
 		protected void resetRenderModeMenu()
@@ -1356,22 +1351,6 @@ namespace ModelEx
 			ResetPlatformDetection();
 			forceXboxToolStripMenuItem.Checked = true;
 			ImportExportOptions.ForcedPlatform = CDC.Platform.Xbox;
-		}
-
-		private void bgColorPanel_MouseClick(object sender, MouseEventArgs e)
-		{
-			ColorDialog colorDialog = new ColorDialog();
-			colorDialog.AllowFullOpen = true;
-			colorDialog.AnyColor = true;
-			colorDialog.SolidColorOnly = true;
-			colorDialog.FullOpen = true;
-
-			colorDialog.Color = RenderManager.Instance.BackgroundColour;
-			if (colorDialog.ShowDialog() == DialogResult.OK)
-			{
-				((Control)sender).BackColor = colorDialog.Color;
-				RenderManager.Instance.BackgroundColour = colorDialog.Color;
-			}
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)

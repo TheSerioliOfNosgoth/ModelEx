@@ -79,6 +79,12 @@
     <Compile Include="Cameras\EgoCamera.cs" />
     <Compile Include="Cameras\OrbitCamera.cs" />
     <Compile Include="Cameras\OrbitPanCamera.cs" />
+    <Compile Include="CommonControls.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CommonControls.Designer.cs">
+      <DependentUpon>CommonControls.cs</DependentUpon>
+    </Compile>
     <Compile Include="DeviceManager.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
@@ -142,6 +148,9 @@
     <Compile Include="Sprites\TextBlockRenderer.cs" />
     <Compile Include="Sprites\FontManager.cs" />
     <Compile Include="Timer.cs" />
+    <EmbeddedResource Include="CommonControls.resx">
+      <DependentUpon>CommonControls.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
