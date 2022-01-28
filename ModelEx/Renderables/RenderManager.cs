@@ -32,7 +32,7 @@ namespace ModelEx
 
 		public readonly SortedList<string, RenderResource> Resources = new SortedList<string, RenderResource>();
 
-		public Scene CurrentScene { get; private set; }
+		public Renderable CurrentScene { get; private set; }
 		public Renderable CurrentObject { get; private set; }
 
 		SpriteRenderer _spriteRenderer;
@@ -159,12 +159,13 @@ namespace ModelEx
 		{
 			if (CurrentObject != null)
 			{
-				CurrentScene = null;
+				CurrentObject = null;
 			}
 
 			if (Resources.ContainsKey(objectName))
 			{
-				CurrentObject = new RenderInstance(objectName, 0);
+				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[objectName];
+				CurrentObject = new SceneCDC(renderResource.File, false);
 			}
 		}
 
@@ -179,7 +180,7 @@ namespace ModelEx
 			if (Resources.ContainsKey(sceneName))
 			{
 				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[sceneName];
-				CurrentScene = new SceneCDC(renderResource.File);
+				CurrentScene = new SceneCDC(renderResource.File, true);
 			}
 		}
 
@@ -190,9 +191,9 @@ namespace ModelEx
 				return CurrentObject;
 			}
 
-			if (ViewMode == ViewMode.Scene && CurrentScene != null)
+			if (ViewMode == ViewMode.Scene)
 			{
-				return CurrentScene.CurrentObject;
+				return CurrentScene;
 			}
 
 			return null;

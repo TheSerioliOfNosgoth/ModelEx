@@ -31,7 +31,7 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
 			this.menuBar = new System.Windows.Forms.MenuStrip();
 			this.fileMenu = new System.Windows.Forms.ToolStripMenuItem();
-			this.loadResourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.loadSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.reloadCurrentModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -237,7 +237,7 @@
 			// fileMenu
 			// 
 			this.fileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadResourceToolStripMenuItem,
+            this.loadObjectToolStripMenuItem,
             this.loadSceneToolStripMenuItem,
             this.reloadCurrentModelToolStripMenuItem,
             this.exportToolStripMenuItem,
@@ -246,12 +246,12 @@
 			this.fileMenu.Size = new System.Drawing.Size(37, 20);
 			this.fileMenu.Text = "&File";
 			// 
-			// loadResourceToolStripMenuItem
+			// loadObjectToolStripMenuItem
 			// 
-			this.loadResourceToolStripMenuItem.Name = "loadResourceToolStripMenuItem";
-			this.loadResourceToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-			this.loadResourceToolStripMenuItem.Text = "Load Resource...";
-			this.loadResourceToolStripMenuItem.Click += new System.EventHandler(this.loadResourceToolStripMenuItem_Click);
+			this.loadObjectToolStripMenuItem.Name = "loadObjectToolStripMenuItem";
+			this.loadObjectToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+			this.loadObjectToolStripMenuItem.Text = "Load Object...";
+			this.loadObjectToolStripMenuItem.Click += new System.EventHandler(this.loadObjectToolStripMenuItem_Click);
 			// 
 			// loadSceneToolStripMenuItem
 			// 
@@ -1516,6 +1516,7 @@
 			this.resourceList.Size = new System.Drawing.Size(253, 497);
 			this.resourceList.TabIndex = 0;
 			this.resourceList.UseCompatibleStateImageBehavior = false;
+			this.resourceList.View = System.Windows.Forms.View.List;
 			// 
 			// objectTab
 			// 
@@ -1610,11 +1611,13 @@
 			// 
 			// objectTree
 			// 
+			this.objectTree.CheckBoxes = true;
 			this.objectTree.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.objectTree.Location = new System.Drawing.Point(0, 0);
 			this.objectTree.Name = "objectTree";
 			this.objectTree.Size = new System.Drawing.Size(253, 477);
 			this.objectTree.TabIndex = 0;
+			this.objectTree.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.objectTree_AfterCheck);
 			// 
 			// sceneView
 			// 
@@ -1661,7 +1664,7 @@
 			this.Controls.Add(this.menuBar);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "MainWindow";
-			this.Text = "ModelEx v5.2";
+			this.Text = "ModelEx v6.0";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
 			this.Load += new System.EventHandler(this.MainWindow_Load);
 			this.Enter += new System.EventHandler(this.MainWindow_Enter);
@@ -1857,7 +1860,7 @@
 		private System.Windows.Forms.Button unloadResourceButton;
 		private System.Windows.Forms.ComboBox currentSceneCombo;
 		private System.Windows.Forms.Label currentSceneLabel;
-		private System.Windows.Forms.ToolStripMenuItem loadResourceToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem loadObjectToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem loadSceneToolStripMenuItem;
 		private System.Windows.Forms.TabPage objectTab;
 		private System.Windows.Forms.SplitContainer objectTabControls;

@@ -1,30 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Threading;
+using SlimDX;
 
 namespace ModelEx
 {
-	public abstract class Scene
+	public abstract class Scene : Renderable
 	{
-		protected List<RenderInstance> renderInstances;
+		protected bool _includeObjects;
+		protected List<RenderInstance> _renderInstances;
+
 		public readonly ReadOnlyCollection<RenderInstance> RenderInstances;
-		public Renderable CurrentObject { get { return renderInstances.Count > 0 ? renderInstances[0] : null; } }
+		public Renderable CurrentObject { get { return _renderInstances.Count > 0 ? _renderInstances[0] : null; } }
 
-		protected Scene()
+		protected Scene(bool includeObjects)
 		{
-			renderInstances = new List<RenderInstance>();
-			RenderInstances = new ReadOnlyCollection<RenderInstance>(renderInstances);
+			_includeObjects = includeObjects;
+			_renderInstances = new List<RenderInstance>();
+			RenderInstances = new ReadOnlyCollection<RenderInstance>(_renderInstances);
 		}
 
-		public virtual void Dispose()
+		public override void Dispose()
 		{
-			renderInstances.Clear();
+			_renderInstances.Clear();
 		}
 
-		public virtual void Render()
+		public override void Render()
 		{
 			// handle attempts to render where the renderInstances collection is modified by another threads
 			int retryCount = 0;
@@ -35,7 +37,7 @@ namespace ModelEx
 			{
 				try
 				{
-					foreach (Renderable renderable in renderInstances)
+					foreach (Renderable renderable in _renderInstances)
 					{
 						renderable.Render();
 					}
@@ -53,6 +55,17 @@ namespace ModelEx
 					Thread.Sleep(retryDelay);
 				}
 			}
+		}
+
+		public override BoundingSphere GetBoundingSphere()
+		{
+			BoundingSphere boundingSphere = new BoundingSphere();
+			if (CurrentObject != null)
+			{
+				boundingSphere = CurrentObject.GetBoundingSphere();
+			}
+
+			return boundingSphere;
 		}
 	}
 }

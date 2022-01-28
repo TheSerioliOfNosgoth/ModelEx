@@ -21,6 +21,7 @@ namespace ModelEx
 		protected CDC.Game _CurrentModelType;
 		protected int _CurrentModelChild;
 		protected bool _ClearLoadedResources;
+		protected bool _SelectObjectOnLoaded;
 		protected bool _SelectSceneOnLoaded;
 		protected string _LastLoadedResource;
 		protected string _LastOpenDirectory;
@@ -117,6 +118,13 @@ namespace ModelEx
 				}
 			}
 
+			if (_SelectObjectOnLoaded && currentObjectCombo.Items.Contains(_LastLoadedResource))
+			{
+				currentObjectCombo.SelectedIndex = currentObjectCombo.Items.IndexOf(_LastLoadedResource);
+				optionTabs.SelectedIndex = 2;
+				CameraManager.Instance.Reset();
+			}
+
 			if (_SelectSceneOnLoaded && currentSceneCombo.Items.Contains(_LastLoadedResource))
 			{
 				currentSceneCombo.SelectedIndex = currentSceneCombo.Items.IndexOf(_LastLoadedResource);
@@ -124,11 +132,12 @@ namespace ModelEx
 				CameraManager.Instance.Reset();
 			}
 
+			_SelectObjectOnLoaded = false;
 			_SelectSceneOnLoaded = false;
 			_LastLoadedResource = "";
 		}
 
-		protected bool SelectResourceToLoad(bool clearLoadedResources, bool selectSceneOnLoaded)
+		protected bool SelectResourceToLoad(bool clearLoadedResources, bool selectObjectOnLoaded, bool selectSceneOnLoaded)
 		{
 			OpenFileDialog OpenDlg = new OpenFileDialog
 			{
@@ -206,6 +215,7 @@ namespace ModelEx
 			}
 
 			_ClearLoadedResources = clearLoadedResources;
+			_SelectObjectOnLoaded = selectObjectOnLoaded;
 			_SelectSceneOnLoaded = selectSceneOnLoaded;
 			_LastOpenDirectory = Path.GetDirectoryName(OpenDlg.FileName);
 			_CurrentModelPath = OpenDlg.FileName;
@@ -299,13 +309,44 @@ namespace ModelEx
 
 		private void sceneTree_AfterCheck(object sender, TreeViewEventArgs e)
 		{
-			Scene currentScene = RenderManager.Instance.CurrentScene;
+			Scene currentScene = (Scene)RenderManager.Instance.CurrentScene;
 			if (currentScene != null)
 			{
 				foreach (Renderable renderable in currentScene.RenderInstances)
 				{
 					if (renderable is RenderInstance)
 					{
+						if (renderable.Name == e.Node.Text)
+						{
+							((RenderInstance)renderable).Model.Root.Visible = e.Node.Checked;
+							continue;
+						}
+
+						Node node = ((RenderInstance)renderable).Model.FindNode(e.Node.Text);
+						if (node != null)
+						{
+							node.Visible = e.Node.Checked;
+						}
+					}
+				}
+			}
+		}
+
+		private void objectTree_AfterCheck(object sender, TreeViewEventArgs e)
+		{
+			Scene currentObject = (Scene)RenderManager.Instance.CurrentObject;
+			if (currentObject != null)
+			{
+				foreach (Renderable renderable in currentObject.RenderInstances)
+				{
+					if (renderable is RenderInstance)
+					{
+						if (renderable.Name == e.Node.Text)
+						{
+							((RenderInstance)renderable).Model.Root.Visible = e.Node.Checked;
+							continue;
+						}
+
 						Node node = ((RenderInstance)renderable).Model.FindNode(e.Node.Text);
 						if (node != null)
 						{
@@ -1350,9 +1391,12 @@ namespace ModelEx
 				return;
 			}
 
+			Scene currentScene = (Scene)RenderManager.Instance.CurrentScene;
+
 			TreeNode sceneTreeNode = new TreeNode("Scene");
 			sceneTreeNode.Checked = true;
-			foreach (Renderable renderable in RenderManager.Instance.CurrentScene.RenderInstances)
+
+			foreach (Renderable renderable in currentScene.RenderInstances)
 			{
 				if (renderable is RenderInstance)
 				{
@@ -1360,10 +1404,17 @@ namespace ModelEx
 
 					TreeNode objectTreeNode = new TreeNode(renderable.Name);
 					objectTreeNode.Checked = true;
+
 					foreach (Node modelNode in objectNode.Nodes)
 					{
 						TreeNode modelTreeNode = new TreeNode(modelNode.Name);
 						modelTreeNode.Checked = true;
+
+						if (sceneTreeNode.Nodes.Count > 0)
+						{
+							continue;
+						}
+
 						foreach (Node groupNode in modelNode.Nodes)
 						{
 							TreeNode groupTreeNode = new TreeNode(groupNode.Name);
@@ -1396,46 +1447,53 @@ namespace ModelEx
 				return;
 			}
 
-			TreeNode sceneTreeNode = new TreeNode("Scene");
-			sceneTreeNode.Checked = true;
-			Renderable renderable = RenderManager.Instance.CurrentObject;
+			Scene currentObject = (Scene)RenderManager.Instance.CurrentObject;
 
-			Node objectNode = ((RenderInstance)renderable).Model.Root;
+			TreeNode objectSceneTreeNode = new TreeNode("Object");
+			objectSceneTreeNode.Checked = true;
 
-			TreeNode objectTreeNode = new TreeNode(objectNode.Name);
-			objectTreeNode.Checked = true;
-			foreach (Node modelNode in objectNode.Nodes)
+			foreach (Renderable renderable in currentObject.RenderInstances)
 			{
-				TreeNode modelTreeNode = new TreeNode(modelNode.Name);
-				modelTreeNode.Checked = true;
-				foreach (Node groupNode in modelNode.Nodes)
+				if (renderable is RenderInstance)
 				{
-					TreeNode groupTreeNode = new TreeNode(groupNode.Name);
-					groupTreeNode.Checked = true;
-					modelTreeNode.Nodes.Add(groupTreeNode);
-				}
-				objectTreeNode.Nodes.Add(modelTreeNode);
-			}
-			sceneTreeNode.Nodes.Add(objectTreeNode);
+					Node objectNode = ((RenderInstance)renderable).Model.Root;
 
-			if (sceneTreeNode.Nodes.Count > 0)
+					TreeNode objectTreeNode = new TreeNode(renderable.Name);
+					objectTreeNode.Checked = true;
+					foreach (Node modelNode in objectNode.Nodes)
+					{
+						TreeNode modelTreeNode = new TreeNode(modelNode.Name);
+						modelTreeNode.Checked = true;
+						foreach (Node groupNode in modelNode.Nodes)
+						{
+							TreeNode groupTreeNode = new TreeNode(groupNode.Name);
+							groupTreeNode.Checked = true;
+							modelTreeNode.Nodes.Add(groupTreeNode);
+						}
+						objectTreeNode.Nodes.Add(modelTreeNode);
+					}
+					objectSceneTreeNode.Nodes.Add(objectTreeNode);
+				}
+			}
+
+			if (objectSceneTreeNode.Nodes.Count > 0)
 			{
-				objectTree.Nodes.Add(sceneTreeNode);
-				objectTree.ExpandAll();
+				objectTree.Nodes.Add(objectSceneTreeNode);
+				objectTree.Nodes[0].Expand();
 			}
 		}
 
 		private void loadResourceButton_Click(object sender, EventArgs e)
 		{
-			if (SelectResourceToLoad(false, false))
+			if (SelectResourceToLoad(false, false, false))
 			{
 				LoadCurrentModel();
 			}
 		}
 
-		private void loadResourceToolStripMenuItem_Click(object sender, EventArgs e)
+		private void loadObjectToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (SelectResourceToLoad(false, false))
+			if (SelectResourceToLoad(false, true, false))
 			{
 				LoadCurrentModel();
 			}
@@ -1443,7 +1501,7 @@ namespace ModelEx
 
 		private void loadSceneToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (SelectResourceToLoad(false, true))
+			if (SelectResourceToLoad(false, false, true))
 			{
 				LoadCurrentModel();
 			}

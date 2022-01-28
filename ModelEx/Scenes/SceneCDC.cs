@@ -35,17 +35,17 @@ namespace ModelEx
 			}
 		}
 
-		public SceneCDC(SRFile srFile)
-			: base()
+		public SceneCDC(SRFile srFile, bool includeObjects)
+			: base(includeObjects)
 		{
 			for (int m = 0; m < srFile.ModelCount; m++)
 			{
 				RenderInstance instance = new RenderInstance(srFile.Name, m);
 				instance.Name = srFile.Models[m].Name + "-" + m.ToString();
-				renderInstances.Add(instance);
+				_renderInstances.Add(instance);
 			}
 
-			if (srFile.Asset == CDC.Asset.Unit && srFile.IntroCount > 0)
+			if (includeObjects && srFile.Asset == CDC.Asset.Unit && srFile.IntroCount > 0)
 			{
 				foreach (CDC.Intro intro in srFile.Intros)
 				{
@@ -58,14 +58,9 @@ namespace ModelEx
 						0.01f * intro.position.y
 					);
 
-					renderInstances.Add(instance);
+					_renderInstances.Add(instance);
 				}
 			}
-		}
-
-		public override void Dispose()
-		{
-			base.Dispose();
 		}
 
 		public override void Render()
@@ -92,7 +87,7 @@ namespace ModelEx
 			DeviceManager.Instance.context.PixelShader.SetShaderResources(oldShaderResources, 0, 10);
 			DeviceManager.Instance.context.GeometryShader.Set(oldGeometryShader);
 
-			foreach (RenderInstance instance in renderInstances)
+			foreach (RenderInstance instance in _renderInstances)
 			{
 				if (instance.Name == null)
 				{
