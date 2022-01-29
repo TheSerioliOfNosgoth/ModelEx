@@ -318,11 +318,11 @@ namespace ModelEx
 					{
 						if (renderable.Name == e.Node.Text)
 						{
-							((RenderInstance)renderable).Model.Root.Visible = e.Node.Checked;
+							((RenderInstance)renderable).Root.Visible = e.Node.Checked;
 							continue;
 						}
 
-						Node node = ((RenderInstance)renderable).Model.FindNode(e.Node.Text);
+						VisibilityNode node = ((RenderInstance)renderable).FindNode(e.Node.Text);
 						if (node != null)
 						{
 							node.Visible = e.Node.Checked;
@@ -343,11 +343,11 @@ namespace ModelEx
 					{
 						if (renderable.Name == e.Node.Text)
 						{
-							((RenderInstance)renderable).Model.Root.Visible = e.Node.Checked;
+							((RenderInstance)renderable).Root.Visible = e.Node.Checked;
 							continue;
 						}
 
-						Node node = ((RenderInstance)renderable).Model.FindNode(e.Node.Text);
+						VisibilityNode node = ((RenderInstance)renderable).FindNode(e.Node.Text);
 						if (node != null)
 						{
 							node.Visible = e.Node.Checked;
@@ -1379,12 +1379,12 @@ namespace ModelEx
 			{
 				if (renderable is RenderInstance)
 				{
-					Node objectNode = ((RenderInstance)renderable).Model.Root;
+					VisibilityNode objectNode = ((RenderInstance)renderable).Root;
 
 					TreeNode objectTreeNode = new TreeNode(renderable.Name);
 					objectTreeNode.Checked = true;
 
-					foreach (Node modelNode in objectNode.Nodes)
+					foreach (VisibilityNode modelNode in objectNode.Nodes)
 					{
 						TreeNode modelTreeNode = new TreeNode(modelNode.Name);
 						modelTreeNode.Checked = true;
@@ -1394,7 +1394,7 @@ namespace ModelEx
 							continue;
 						}
 
-						foreach (Node groupNode in modelNode.Nodes)
+						foreach (VisibilityNode groupNode in modelNode.Nodes)
 						{
 							TreeNode groupTreeNode = new TreeNode(groupNode.Name);
 							groupTreeNode.Checked = true;
@@ -1435,15 +1435,15 @@ namespace ModelEx
 			{
 				if (renderable is RenderInstance)
 				{
-					Node objectNode = ((RenderInstance)renderable).Model.Root;
+					VisibilityNode objectNode = ((RenderInstance)renderable).Root;
 
 					TreeNode objectTreeNode = new TreeNode(renderable.Name);
 					objectTreeNode.Checked = true;
-					foreach (Node modelNode in objectNode.Nodes)
+					foreach (VisibilityNode modelNode in objectNode.Nodes)
 					{
 						TreeNode modelTreeNode = new TreeNode(modelNode.Name);
 						modelTreeNode.Checked = true;
-						foreach (Node groupNode in modelNode.Nodes)
+						foreach (VisibilityNode groupNode in modelNode.Nodes)
 						{
 							TreeNode groupTreeNode = new TreeNode(groupNode.Name);
 							groupTreeNode.Checked = true;

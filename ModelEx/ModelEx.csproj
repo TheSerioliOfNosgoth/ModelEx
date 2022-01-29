@@ -114,6 +114,7 @@
     <Compile Include="Renderables\MeshPCT.cs" />
     <Compile Include="Renderables\MeshPNT.cs" />
     <Compile Include="Renderables\Mesh.cs" />
+    <Compile Include="Renderables\VisibilityNode.cs" />
     <Compile Include="Renderables\ModelParser.cs" />
     <Compile Include="Renderables\ModelParserCDC.cs" />
     <Compile Include="Renderables\RenderInstance.cs" />
@@ -121,7 +122,7 @@
     <Compile Include="Renderables\RenderResourceCDC.cs" />
     <Compile Include="Renderables\RenderResourceShapes.cs" />
     <Compile Include="Renderables\SubMesh.cs" />
-    <Compile Include="Renderables\Node.cs" />
+    <Compile Include="Renderables\ModelNode.cs" />
     <Compile Include="Renderables\Model.cs" />
     <Compile Include="Renderables\DirectDrawSurface.cs" />
     <Compile Include="Renderables\Renderable.cs" />

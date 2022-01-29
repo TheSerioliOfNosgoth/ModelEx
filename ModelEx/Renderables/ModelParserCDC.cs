@@ -18,7 +18,7 @@ namespace ModelEx
 		public List<Material> Materials { get; } = new List<Material>();
 		public List<Mesh> Meshes { get; } = new List<Mesh>();
 		public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
-		public List<Node> Groups { get; } = new List<Node>();
+		public List<ModelNode> Groups { get; } = new List<ModelNode>();
 
 		public SRModelParser(string objectName, SRFile srFile)
 		{
@@ -59,7 +59,7 @@ namespace ModelEx
 				if (srGroup != null && srGroup.mesh != null &&
 					srGroup.mesh.indexCount > 0 && srGroup.mesh.polygonCount > 0)
 				{
-					Node group = new Node();
+					ModelNode group = new ModelNode();
 					SRMeshParser meshParser = new SRMeshParser(_objectName, _srFile);
 					meshParser.BuildMesh(resource, modelIndex, groupIndex, 0);
 					foreach (SubMesh subMesh in meshParser.SubMeshes)

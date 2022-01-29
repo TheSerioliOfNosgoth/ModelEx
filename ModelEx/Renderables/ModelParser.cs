@@ -12,7 +12,7 @@ namespace ModelEx
 		public List<Material> Materials { get; } = new List<Material>();
 		public List<Mesh> Meshes { get; } = new List<Mesh>();
 		public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
-		public List<Node> Groups { get; } = new List<Node>();
+		public List<ModelNode> Groups { get; } = new List<ModelNode>();
 
 		public ModelParser(string modelName)
 		{
@@ -34,7 +34,7 @@ namespace ModelEx
 			materialB.TextureFileName = "";
 			Materials.Add(materialB);
 
-			Node group = new Node();
+			ModelNode group = new ModelNode();
 			group.Name = "group";
 
 			MeshParser meshParser = new MeshParser(ModelName);

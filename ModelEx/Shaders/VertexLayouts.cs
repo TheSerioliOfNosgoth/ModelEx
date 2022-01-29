@@ -31,7 +31,7 @@ namespace ModelEx
 		List<Material> Materials { get; }
 		List<Mesh> Meshes { get; }
 		List<SubMesh> SubMeshes { get; }
-		List<Node> Groups { get; }
+		List<ModelNode> Groups { get; }
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

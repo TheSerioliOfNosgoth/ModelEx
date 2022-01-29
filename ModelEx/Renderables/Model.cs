@@ -9,7 +9,7 @@ namespace ModelEx
 		public List<Material> Materials { get; } = new List<Material>();
 		public List<Mesh> Meshes { get; } = new List<Mesh>();
 		public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
-		public Node Root { get; } = new Node();
+		public ModelNode Root { get; } = new ModelNode();
 
 		public Model(IModelParser modelParser)
 		{
@@ -25,24 +25,23 @@ namespace ModelEx
 		{
 			if (SubMeshes.Count > 0)
 			{
-				RenderNode(Root, Transform, false);
-				RenderNode(Root, Transform, true);
+				RenderNode(Root, Transform, null, false);
+				RenderNode(Root, Transform, null, true);
 			}
 		}
 
-		public void Render(Matrix transform)
+		public void Render(Matrix transform, VisibilityNode visibilityNode)
 		{
 			if (SubMeshes.Count > 0)
 			{
-				RenderNode(Root, transform, false);
-				RenderNode(Root, transform, true);
+				RenderNode(Root, transform, visibilityNode, false);
+				RenderNode(Root, transform, visibilityNode, true);
 			}
 		}
 
-		public void RenderNode(Node node, SlimDX.Matrix transform, bool isTransparent)
+		public void RenderNode(ModelNode node, SlimDX.Matrix transform, VisibilityNode visibilityNode, bool isTransparent)
 		{
-			//node.Visible = false;
-			if (node.Visible == false)
+			if (visibilityNode != null && !visibilityNode.Visible)
 			{
 				return;
 			}
@@ -66,25 +65,27 @@ namespace ModelEx
 				//}
 			}
 
-			foreach (Node child in node.Nodes)
+			int n = 0;
+			foreach (ModelNode child in node.Nodes)
 			{
-				RenderNode(child, localTransform, isTransparent);
+				RenderNode(child, localTransform, visibilityNode?.Nodes[n], isTransparent);
+				n++;
 			}
 		}
 
-		public Node FindNode(string name)
+		public ModelNode FindNode(string name)
 		{
 			return FindNode(name, Root);
 		}
 
-		public Node FindNode(string name, Node node)
+		public ModelNode FindNode(string name, ModelNode node)
 		{
 			if (node.Name == name)
 			{
 				return node;
 			}
 
-			foreach (Node child in node.Nodes)
+			foreach (ModelNode child in node.Nodes)
 			{
 				node = FindNode(name, child);
 				if (node != null)

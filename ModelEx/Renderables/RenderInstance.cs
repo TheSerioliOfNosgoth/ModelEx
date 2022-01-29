@@ -9,7 +9,9 @@ namespace ModelEx
 		protected string _resourceName = "";
 		protected int _modelIndex = 0;
 
-		public Model Model { get; protected set; }
+		public readonly VisibilityNode Root = new VisibilityNode();
+
+		protected Model Model { get; set; }
 
 		public RenderInstance(string resourceName, int modelIndex)
 		{
@@ -27,11 +29,43 @@ namespace ModelEx
 			}
 
 			Model = resource.Models[modelIndex];
+
+			Root.Name = Model.Root.Name;
+			foreach (ModelNode modelNode in Model.Root.Nodes)
+			{
+				VisibilityNode visibilityNode = new VisibilityNode();
+				visibilityNode.Name = modelNode.Name;
+				Root.Nodes.Add(visibilityNode);
+			}
+		}
+
+		public VisibilityNode FindNode(string name)
+		{
+			return FindNode(name, Root);
+		}
+
+		public VisibilityNode FindNode(string name, VisibilityNode visibilityNode)
+		{
+			if (visibilityNode.Name == name)
+			{
+				return visibilityNode;
+			}
+
+			foreach (VisibilityNode child in visibilityNode.Nodes)
+			{
+				visibilityNode = FindNode(name, child);
+				if (visibilityNode != null)
+				{
+					return visibilityNode;
+				}
+			}
+
+			return null;
 		}
 
 		public override void Render()
 		{
-			Model.Render(Transform);
+			Model.Render(Transform, Root);
 		}
 
 		public override BoundingSphere GetBoundingSphere()
