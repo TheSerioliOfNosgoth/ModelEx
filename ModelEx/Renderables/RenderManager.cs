@@ -105,6 +105,12 @@ namespace ModelEx
 
 			SRFile srFile = SRFile.Create(fileName, game, options, childIndex);
 
+			if (srFile == null)
+			{
+				SceneCDC.progressLevel = 1;
+				SceneCDC.ProgressStage = "Done";
+			}
+
 			RenderResourceCDC renderResource;
 
 			if (Resources.ContainsKey(srFile.Name))

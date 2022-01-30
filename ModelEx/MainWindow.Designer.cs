@@ -169,9 +169,10 @@
 			this.optionTabs = new System.Windows.Forms.TabControl();
 			this.sceneTab = new System.Windows.Forms.TabPage();
 			this.sceneTabControls = new System.Windows.Forms.SplitContainer();
+			this.comonControls2 = new ModelEx.CommonControls();
 			this.currentSceneLabel = new System.Windows.Forms.Label();
 			this.currentSceneCombo = new System.Windows.Forms.ComboBox();
-			this.sceneTree = new System.Windows.Forms.TreeView();
+			this.sceneTree = new ModelEx.SceneTreeView();
 			this.resourcesTab = new System.Windows.Forms.TabPage();
 			this.resourcesTabControls = new System.Windows.Forms.SplitContainer();
 			this.unloadResourceButton = new System.Windows.Forms.Button();
@@ -179,14 +180,13 @@
 			this.resourceList = new System.Windows.Forms.ListView();
 			this.objectTab = new System.Windows.Forms.TabPage();
 			this.objectTabControls = new System.Windows.Forms.SplitContainer();
+			this.comonControls1 = new ModelEx.CommonControls();
 			this.currentObjectLabel = new System.Windows.Forms.Label();
 			this.currentObjectCombo = new System.Windows.Forms.ComboBox();
-			this.objectTree = new System.Windows.Forms.TreeView();
+			this.objectTree = new ModelEx.SceneTreeView();
 			this.sceneView = new ModelEx.RenderControl();
 			this.sceneTreeContainer = new System.Windows.Forms.SplitContainer();
 			this.FPSText = new System.Windows.Forms.TextBox();
-			this.comonControls1 = new ModelEx.CommonControls();
-			this.comonControls2 = new ModelEx.CommonControls();
 			this.menuBar.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.sceneViewContainer)).BeginInit();
 			this.sceneViewContainer.Panel1.SuspendLayout();
@@ -1378,6 +1378,14 @@
 			this.sceneTabControls.SplitterDistance = 98;
 			this.sceneTabControls.TabIndex = 4;
 			// 
+			// comonControls2
+			// 
+			this.comonControls2.BackColor = System.Drawing.Color.Transparent;
+			this.comonControls2.Location = new System.Drawing.Point(0, 30);
+			this.comonControls2.Name = "comonControls2";
+			this.comonControls2.Size = new System.Drawing.Size(253, 75);
+			this.comonControls2.TabIndex = 16;
+			// 
 			// currentSceneLabel
 			// 
 			this.currentSceneLabel.AutoSize = true;
@@ -1500,6 +1508,14 @@
 			this.objectTabControls.SplitterDistance = 98;
 			this.objectTabControls.TabIndex = 0;
 			// 
+			// comonControls1
+			// 
+			this.comonControls1.BackColor = System.Drawing.Color.Transparent;
+			this.comonControls1.Location = new System.Drawing.Point(0, 30);
+			this.comonControls1.Name = "comonControls1";
+			this.comonControls1.Size = new System.Drawing.Size(253, 75);
+			this.comonControls1.TabIndex = 15;
+			// 
 			// currentObjectLabel
 			// 
 			this.currentObjectLabel.AutoSize = true;
@@ -1564,22 +1580,6 @@
 			this.FPSText.Size = new System.Drawing.Size(672, 166);
 			this.FPSText.TabIndex = 0;
 			this.FPSText.Text = "Testing...\r\nTesting...\r\nTesting...";
-			// 
-			// comonControls1
-			// 
-			this.comonControls1.BackColor = System.Drawing.Color.Transparent;
-			this.comonControls1.Location = new System.Drawing.Point(0, 30);
-			this.comonControls1.Name = "comonControls1";
-			this.comonControls1.Size = new System.Drawing.Size(253, 75);
-			this.comonControls1.TabIndex = 15;
-			// 
-			// comonControls2
-			// 
-			this.comonControls2.BackColor = System.Drawing.Color.Transparent;
-			this.comonControls2.Location = new System.Drawing.Point(0, 30);
-			this.comonControls2.Name = "comonControls2";
-			this.comonControls2.Size = new System.Drawing.Size(253, 75);
-			this.comonControls2.TabIndex = 16;
 			// 
 			// MainWindow
 			// 
@@ -1647,7 +1647,6 @@
 		private System.Windows.Forms.ToolStripMenuItem orbitPanToolStripMenuItem;
 		private System.Windows.Forms.TabControl optionTabs;
 		private System.Windows.Forms.TabPage sceneTab;
-		private System.Windows.Forms.TreeView sceneTree;
 		private System.Windows.Forms.ToolStripMenuItem renderModeToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem standardToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem wireframeToolStripMenuItem;
@@ -1784,10 +1783,11 @@
 		private System.Windows.Forms.ToolStripMenuItem loadSceneToolStripMenuItem;
 		private System.Windows.Forms.TabPage objectTab;
 		private System.Windows.Forms.SplitContainer objectTabControls;
-		private System.Windows.Forms.TreeView objectTree;
+		private SceneTreeView objectTree;
 		private System.Windows.Forms.Label currentObjectLabel;
 		private System.Windows.Forms.ComboBox currentObjectCombo;
 		private CommonControls comonControls1;
 		private CommonControls comonControls2;
+		private SceneTreeView sceneTree;
 	}
 }

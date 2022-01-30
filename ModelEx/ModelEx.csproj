@@ -86,6 +86,12 @@
       <DependentUpon>CommonControls.cs</DependentUpon>
     </Compile>
     <Compile Include="DeviceManager.cs" />
+    <Compile Include="LoadResourceDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LoadResourceDialog.Designer.cs">
+      <DependentUpon>LoadResourceDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -135,6 +141,12 @@
     <Compile Include="Renderables\RenderManager.cs" />
     <Compile Include="Scenes\Scene.cs" />
     <Compile Include="Scenes\SceneCDC.cs" />
+    <Compile Include="SceneTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SceneTreeView.Designer.cs">
+      <DependentUpon>SceneTreeView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Shaders\EffectSprite.cs" />
     <Compile Include="Shaders\Effect.cs" />
     <Compile Include="Shaders\Effect3D.cs" />
@@ -151,6 +163,9 @@
     <Compile Include="Timer.cs" />
     <EmbeddedResource Include="CommonControls.resx">
       <DependentUpon>CommonControls.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LoadResourceDialog.resx">
+      <DependentUpon>LoadResourceDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
