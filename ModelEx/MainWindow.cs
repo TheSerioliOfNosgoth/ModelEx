@@ -1480,6 +1480,18 @@ namespace ModelEx
 
 		private void loadSceneToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			/*LoadResourceDialog loadResourceDialog = new LoadResourceDialog();
+
+			if (_LastOpenDirectory != "")
+			{
+				if (Directory.Exists(_LastOpenDirectory))
+				{
+					loadResourceDialog.InitialDirectory = _LastOpenDirectory;
+				}
+			}
+
+			loadResourceDialog.ShowDialog();*/
+
 			if (SelectResourceToLoad(false, false, true))
 			{
 				LoadCurrentModel();
