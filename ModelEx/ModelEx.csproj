@@ -161,6 +161,7 @@
     <Compile Include="Sprites\TextBlockRenderer.cs" />
     <Compile Include="Sprites\FontManager.cs" />
     <Compile Include="Timer.cs" />
+    <Compile Include="Win32\Win32Icons.cs" />
     <EmbeddedResource Include="CommonControls.resx">
       <DependentUpon>CommonControls.cs</DependentUpon>
     </EmbeddedResource>

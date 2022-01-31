@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Security.AccessControl;
@@ -10,6 +11,8 @@ namespace ModelEx
     {
         public string InitialDirectory { get; set; }
         public string FileName { get; private set; } = "";
+
+        private static readonly string _folderImageKey = "WINDOWS";
 
         public LoadResourceDialog()
         {
@@ -27,22 +30,24 @@ namespace ModelEx
         {
             treeView1.BeginUpdate();
 
-            imageList1.Images.Add("folder", SystemIcons.Application);
-            imageList1.Images.Add("file", this.Icon);
+            imageList1.Images.Add("", this.Icon);
+            
+            string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+            imageList1.Images.Add(_folderImageKey, Win32Icons.GetDirectoryIcon(folderPath, false));
 
             TreeNode rootNode;
 
-            string currentDirectory = InitialDirectory;
+            /*string currentDirectory = InitialDirectory;
             if (!Directory.Exists(currentDirectory))
             {
                 currentDirectory = @"../..";
-            }
-            currentDirectory = @"C:\";
+            }*/
 
-            DirectoryInfo info = new DirectoryInfo(currentDirectory);
-            if (info.Exists)
+            DriveInfo[] driveInfos = DriveInfo.GetDrives();
+            foreach (DriveInfo driveInfo in driveInfos)
             {
-                rootNode = CreateTreeNode(info); // GetDirectories(info);
+                DirectoryInfo subDirectoryInfo = new DirectoryInfo(driveInfo.Name);
+                rootNode = CreateTreeNode(subDirectoryInfo); // GetDirectories(info);
                 treeView1.Nodes.Add(rootNode);
             }
 
@@ -65,12 +70,28 @@ namespace ModelEx
             return subDirectoryInfo;
         }
 
+        private FileInfo[] GetFiles(DirectoryInfo directoryInfo)
+        {
+            FileInfo[] fileInfo;
+
+            try
+            {
+                fileInfo = directoryInfo.GetFiles();
+            }
+            catch (System.Exception/*System.UnauthorizedAccessException*/)
+            {
+                fileInfo = new FileInfo[0];
+            }
+
+            return fileInfo;
+        }
+
         private TreeNode GetDirectories(DirectoryInfo directoryInfo)
         {
             TreeNode nodeToAddTo = new TreeNode(directoryInfo.Name, 0, 0);
             nodeToAddTo.Tag = directoryInfo;
-            nodeToAddTo.ImageKey = "folder";
-            nodeToAddTo.SelectedImageKey = "folder";
+            nodeToAddTo.ImageKey = _folderImageKey;
+            nodeToAddTo.SelectedImageKey = _folderImageKey;
 
             DirectoryInfo[] subDirectoryInfos = GetSubDirectories(directoryInfo);
             foreach (DirectoryInfo subDirectoryInfo in subDirectoryInfos)
@@ -123,8 +144,22 @@ namespace ModelEx
         {
             TreeNode treeNode = new TreeNode(directoryInfo.Name, 0, 0);
             treeNode.Tag = directoryInfo;
-            treeNode.ImageKey = "folder";
-            treeNode.SelectedImageKey = "folder";
+
+            if (directoryInfo.Parent?.Parent == null)
+            {
+                if (!imageList1.Images.ContainsKey(directoryInfo.Name))
+                {
+                    imageList1.Images.Add(directoryInfo.Name, Win32Icons.GetDirectoryIcon(directoryInfo.FullName, false));
+                }
+
+                treeNode.ImageKey = directoryInfo.Name;
+                treeNode.SelectedImageKey = directoryInfo.Name;
+            }
+            else
+            {
+                treeNode.ImageKey = _folderImageKey;
+                treeNode.SelectedImageKey = _folderImageKey;
+            }
 
             DirectoryInfo[] subDirectoryInfos = GetSubDirectories(directoryInfo);
 
@@ -141,43 +176,51 @@ namespace ModelEx
             return treeNode;
         }
 
-        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            TreeNode newSelected = e.Node;
             listView1.Items.Clear();
+            TreeNode newSelected = e.Node;
             DirectoryInfo nodeDirInfo = (DirectoryInfo)newSelected.Tag;
             ListViewItem.ListViewSubItem[] subItems;
             ListViewItem item;
 
-            foreach (DirectoryInfo dir in nodeDirInfo.GetDirectories())
+            DirectoryInfo[] subDirectoryInfos = GetSubDirectories(nodeDirInfo);
+            if (subDirectoryInfos.Length > 0)
             {
-                item = new ListViewItem(dir.Name, 0);
-                item.Tag = dir;
-                subItems = new ListViewItem.ListViewSubItem[]
+                foreach (DirectoryInfo dir in nodeDirInfo.GetDirectories())
                 {
+                    item = new ListViewItem(dir.Name, _folderImageKey);
+                    item.Tag = dir;
+                    subItems = new ListViewItem.ListViewSubItem[]
+                    {
                     new ListViewItem.ListViewSubItem(item, "Directory"),
                     new ListViewItem.ListViewSubItem(item, dir.LastAccessTime.ToShortDateString())
-                };
-                item.SubItems.AddRange(subItems);
-                listView1.Items.Add(item);
+                    };
+                    item.SubItems.AddRange(subItems);
+                    listView1.Items.Add(item);
+                }
             }
 
-            foreach (FileInfo file in nodeDirInfo.GetFiles())
+            FileInfo[] fileInfos = GetFiles(nodeDirInfo);
+            if (fileInfos.Length > 0)
             {
-                if (file.Extension != ".pcm" && file.Extension != ".drm")
+                foreach (FileInfo file in nodeDirInfo.GetFiles())
                 {
-                    continue;
-                }
+                    if (file.Extension != ".pcm" && file.Extension != ".drm")
+                    {
+                        continue;
+                    }
 
-                item = new ListViewItem(file.Name, 1);
-                item.Tag = file;
-                subItems = new ListViewItem.ListViewSubItem[]
-                {
+                    item = new ListViewItem(file.Name, 0);
+                    item.Tag = file;
+                    subItems = new ListViewItem.ListViewSubItem[]
+                    {
                     new ListViewItem.ListViewSubItem(item, "File"),
                     new ListViewItem.ListViewSubItem(item, file.LastAccessTime.ToShortDateString())
-                };
-                item.SubItems.AddRange(subItems);
-                listView1.Items.Add(item);
+                    };
+                    item.SubItems.AddRange(subItems);
+                    listView1.Items.Add(item);
+                }
             }
 
             listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
