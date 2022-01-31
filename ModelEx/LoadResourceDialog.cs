@@ -14,6 +14,8 @@ namespace ModelEx
 
         private static readonly string _folderImageKey = "WINDOWS";
 
+        private readonly List<string> _specialFolders = new List<string>();
+
         public LoadResourceDialog()
         {
             InitializeComponent();
@@ -31,9 +33,22 @@ namespace ModelEx
             treeView1.BeginUpdate();
 
             imageList1.Images.Add("", this.Icon);
-            
-            string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-            imageList1.Images.Add(_folderImageKey, Win32Icons.GetDirectoryIcon(folderPath, false));
+
+            for (int i = 0; i < 60; i++)
+            {
+                try
+                {
+                    string specialFolderName = Environment.GetFolderPath((Environment.SpecialFolder)i);
+
+                    DirectoryInfo directoryInfo = new DirectoryInfo(specialFolderName);
+
+                    _specialFolders.Add(specialFolderName);
+                    imageList1.Images.Add(directoryInfo.Name, Win32Icons.GetDirectoryIcon(specialFolderName, false).ToBitmap());
+                }
+                catch (Exception)
+                {
+                }
+            }
 
             TreeNode rootNode;
 
@@ -46,6 +61,12 @@ namespace ModelEx
             DriveInfo[] driveInfos = DriveInfo.GetDrives();
             foreach (DriveInfo driveInfo in driveInfos)
             {
+                if (!imageList1.Images.ContainsKey(driveInfo.Name))
+                {
+                    _specialFolders.Add(driveInfo.Name);
+                    imageList1.Images.Add(driveInfo.Name, Win32Icons.GetDirectoryIcon(driveInfo.Name, false).ToBitmap());
+                }
+
                 DirectoryInfo subDirectoryInfo = new DirectoryInfo(driveInfo.Name);
                 rootNode = CreateTreeNode(subDirectoryInfo); // GetDirectories(info);
                 treeView1.Nodes.Add(rootNode);
@@ -145,13 +166,8 @@ namespace ModelEx
             TreeNode treeNode = new TreeNode(directoryInfo.Name, 0, 0);
             treeNode.Tag = directoryInfo;
 
-            if (directoryInfo.Parent?.Parent == null)
+            if (_specialFolders.Contains(directoryInfo.FullName))
             {
-                if (!imageList1.Images.ContainsKey(directoryInfo.Name))
-                {
-                    imageList1.Images.Add(directoryInfo.Name, Win32Icons.GetDirectoryIcon(directoryInfo.FullName, false));
-                }
-
                 treeNode.ImageKey = directoryInfo.Name;
                 treeNode.SelectedImageKey = directoryInfo.Name;
             }
@@ -189,7 +205,13 @@ namespace ModelEx
             {
                 foreach (DirectoryInfo dir in nodeDirInfo.GetDirectories())
                 {
-                    item = new ListViewItem(dir.Name, _folderImageKey);
+                    string folderImageKey = _folderImageKey;
+                    if (_specialFolders.Contains(dir.FullName))
+                    {
+                        folderImageKey = dir.Name;
+                    }
+
+                    item = new ListViewItem(dir.Name, folderImageKey);
                     item.Tag = dir;
                     subItems = new ListViewItem.ListViewSubItem[]
                     {
@@ -228,19 +250,23 @@ namespace ModelEx
 
 		private void LoadResourceDialog_Load(object sender, System.EventArgs e)
         {
-            //this.BackColor = Color.Black;
+            /*this.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
 
-            //treeView1.BackColor = Color.DarkGray;
-            //treeView1.ForeColor = Color.White;
-            //treeView1.LineColor = Color.White;
+            treeView1.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
+            treeView1.ForeColor = Color.White;
+            treeView1.LineColor = Color.White;
 
-            //listView1.BackColor = Color.DarkGray;
-            //listView1.ForeColor = Color.White;
+            listView1.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
+            listView1.ForeColor = Color.White;
 
-            //panel1.BackColor = Color.Transparent;
+            panel1.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
 
-            //button1.BackColor = SystemColors.ButtonFace;
-            //button2.BackColor = SystemColors.ButtonFace;
+            button1.BackColor = SystemColors.ButtonFace;
+            button2.BackColor = SystemColors.ButtonFace;
+
+            label1.ForeColor = Color.White;
+            label2.ForeColor = Color.White;
+            checkBox1.ForeColor = Color.White;*/
 
             PopulateTreeView();
         }
