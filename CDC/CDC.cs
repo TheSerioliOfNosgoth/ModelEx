@@ -13,7 +13,7 @@ namespace CDC
 		Xbox
 	}
 
-	public enum Game
+	public enum Game : int
 	{
 		Gex,
 		SR1,

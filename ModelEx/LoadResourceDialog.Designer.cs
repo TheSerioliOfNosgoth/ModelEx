@@ -32,6 +32,7 @@ namespace ModelEx
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoadResourceDialog));
 			this.panel1 = new System.Windows.Forms.Panel();
+			this.comboBox1 = new System.Windows.Forms.ComboBox();
 			this.checkBox1 = new System.Windows.Forms.CheckBox();
 			this.textBox2 = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
@@ -47,6 +48,9 @@ namespace ModelEx
 			this.nameHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.typeHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.lastModifiedHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.label3 = new System.Windows.Forms.Label();
+			this.comboBox3 = new System.Windows.Forms.ComboBox();
+			this.label4 = new System.Windows.Forms.Label();
 			this.panel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -56,6 +60,10 @@ namespace ModelEx
 			// 
 			// panel1
 			// 
+			this.panel1.Controls.Add(this.label4);
+			this.panel1.Controls.Add(this.comboBox3);
+			this.panel1.Controls.Add(this.label3);
+			this.panel1.Controls.Add(this.comboBox1);
 			this.panel1.Controls.Add(this.checkBox1);
 			this.panel1.Controls.Add(this.textBox2);
 			this.panel1.Controls.Add(this.label2);
@@ -65,10 +73,19 @@ namespace ModelEx
 			this.panel1.Controls.Add(this.button1);
 			this.panel1.Controls.Add(this.comboBox2);
 			this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.panel1.Location = new System.Drawing.Point(0, 350);
+			this.panel1.Location = new System.Drawing.Point(0, 362);
 			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(800, 100);
+			this.panel1.Size = new System.Drawing.Size(800, 110);
 			this.panel1.TabIndex = 0;
+			// 
+			// comboBox1
+			// 
+			this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.comboBox1.FormattingEnabled = true;
+			this.comboBox1.Location = new System.Drawing.Point(94, 58);
+			this.comboBox1.Name = "comboBox1";
+			this.comboBox1.Size = new System.Drawing.Size(514, 21);
+			this.comboBox1.TabIndex = 10;
 			// 
 			// checkBox1
 			// 
@@ -83,15 +100,16 @@ namespace ModelEx
 			// 
 			// textBox2
 			// 
-			this.textBox2.Location = new System.Drawing.Point(94, 56);
+			this.textBox2.Location = new System.Drawing.Point(94, 6);
 			this.textBox2.Name = "textBox2";
-			this.textBox2.Size = new System.Drawing.Size(532, 20);
+			this.textBox2.ReadOnly = true;
+			this.textBox2.Size = new System.Drawing.Size(514, 20);
 			this.textBox2.TabIndex = 7;
 			// 
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(14, 58);
+			this.label2.Location = new System.Drawing.Point(14, 61);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(65, 13);
 			this.label2.TabIndex = 6;
@@ -101,13 +119,14 @@ namespace ModelEx
 			// 
 			this.textBox1.Location = new System.Drawing.Point(94, 32);
 			this.textBox1.Name = "textBox1";
-			this.textBox1.Size = new System.Drawing.Size(532, 20);
+			this.textBox1.ReadOnly = true;
+			this.textBox1.Size = new System.Drawing.Size(514, 20);
 			this.textBox1.TabIndex = 5;
 			// 
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(14, 32);
+			this.label1.Location = new System.Drawing.Point(14, 35);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(74, 13);
 			this.label1.TabIndex = 4;
@@ -115,29 +134,31 @@ namespace ModelEx
 			// 
 			// button2
 			// 
-			this.button2.Location = new System.Drawing.Point(713, 56);
+			this.button2.Location = new System.Drawing.Point(704, 57);
 			this.button2.Name = "button2";
-			this.button2.Size = new System.Drawing.Size(75, 23);
+			this.button2.Size = new System.Drawing.Size(84, 23);
 			this.button2.TabIndex = 3;
 			this.button2.Text = "Cancel";
 			this.button2.UseVisualStyleBackColor = true;
 			// 
 			// button1
 			// 
-			this.button1.Location = new System.Drawing.Point(632, 56);
+			this.button1.Location = new System.Drawing.Point(614, 57);
 			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(75, 23);
+			this.button1.Size = new System.Drawing.Size(84, 23);
 			this.button1.TabIndex = 2;
 			this.button1.Text = "OK";
 			this.button1.UseVisualStyleBackColor = true;
 			// 
 			// comboBox2
 			// 
+			this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.comboBox2.FormattingEnabled = true;
-			this.comboBox2.Location = new System.Drawing.Point(632, 31);
+			this.comboBox2.Location = new System.Drawing.Point(614, 32);
 			this.comboBox2.Name = "comboBox2";
-			this.comboBox2.Size = new System.Drawing.Size(156, 21);
+			this.comboBox2.Size = new System.Drawing.Size(174, 21);
 			this.comboBox2.TabIndex = 1;
+			this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
 			// 
 			// splitContainer1
 			// 
@@ -152,7 +173,7 @@ namespace ModelEx
 			// splitContainer1.Panel2
 			// 
 			this.splitContainer1.Panel2.Controls.Add(this.listView1);
-			this.splitContainer1.Size = new System.Drawing.Size(800, 350);
+			this.splitContainer1.Size = new System.Drawing.Size(800, 362);
 			this.splitContainer1.SplitterDistance = 266;
 			this.splitContainer1.TabIndex = 1;
 			// 
@@ -164,7 +185,7 @@ namespace ModelEx
 			this.treeView1.Location = new System.Drawing.Point(0, 0);
 			this.treeView1.Name = "treeView1";
 			this.treeView1.SelectedImageIndex = 0;
-			this.treeView1.Size = new System.Drawing.Size(266, 350);
+			this.treeView1.Size = new System.Drawing.Size(266, 362);
 			this.treeView1.TabIndex = 0;
 			this.treeView1.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterCollapse);
 			this.treeView1.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeView1_BeforeExpand);
@@ -186,7 +207,7 @@ namespace ModelEx
 			this.listView1.HideSelection = false;
 			this.listView1.Location = new System.Drawing.Point(0, 0);
 			this.listView1.Name = "listView1";
-			this.listView1.Size = new System.Drawing.Size(530, 350);
+			this.listView1.Size = new System.Drawing.Size(530, 362);
 			this.listView1.SmallImageList = this.imageList1;
 			this.listView1.TabIndex = 0;
 			this.listView1.UseCompatibleStateImageBehavior = false;
@@ -207,14 +228,42 @@ namespace ModelEx
 			this.lastModifiedHeader.Text = "Last Modified";
 			this.lastModifiedHeader.Width = 100;
 			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(14, 9);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(75, 13);
+			this.label3.TabIndex = 11;
+			this.label3.Text = "Project Folder:";
+			// 
+			// comboBox3
+			// 
+			this.comboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.comboBox3.FormattingEnabled = true;
+			this.comboBox3.Location = new System.Drawing.Point(94, 84);
+			this.comboBox3.Name = "comboBox3";
+			this.comboBox3.Size = new System.Drawing.Size(514, 21);
+			this.comboBox3.TabIndex = 12;
+			// 
+			// label4
+			// 
+			this.label4.AutoSize = true;
+			this.label4.Location = new System.Drawing.Point(14, 87);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(74, 13);
+			this.label4.TabIndex = 13;
+			this.label4.Text = "Object ID File:";
+			// 
 			// LoadResourceDialog
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(800, 450);
+			this.ClientSize = new System.Drawing.Size(800, 472);
 			this.Controls.Add(this.splitContainer1);
 			this.Controls.Add(this.panel1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.MinimumSize = new System.Drawing.Size(300, 200);
 			this.Name = "LoadResourceDialog";
 			this.Text = "LoadResourceDialog";
 			this.Load += new System.EventHandler(this.LoadResourceDialog_Load);
@@ -246,5 +295,9 @@ namespace ModelEx
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox textBox1;
 		private System.Windows.Forms.CheckBox checkBox1;
+		private System.Windows.Forms.ComboBox comboBox1;
+		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.ComboBox comboBox3;
+		private System.Windows.Forms.Label label4;
 	}
 }

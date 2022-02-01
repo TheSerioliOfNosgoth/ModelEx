@@ -20,19 +20,37 @@ namespace ModelEx
         {
             InitializeComponent();
 
-            comboBox2.Items.Add("Gex 3 (*.drm)");
-            comboBox2.Items.Add("Soul Reaver 1 (*.drm)");
-            comboBox2.Items.Add("Soul Reaver 2 (*.drm)");
-            comboBox2.Items.Add("Defiance (*.drm)");
-            comboBox2.Items.Add("Tomb Raider (*.drm)");
+            comboBox2.Items.Add("Gex 3 Files(*.drm)");
+            comboBox2.Items.Add("Soul Reaver 1 Files (*.drm)");
+            comboBox2.Items.Add("Soul Reaver 2 Files (*.drm)");
+            comboBox2.Items.Add("Defiance Files (*.drm)");
+            comboBox2.Items.Add("Tomb Raider Files(*.drm)");
             comboBox2.SelectedIndex = 1;
         }
 
-        private void PopulateTreeView()
+		private void LoadResourceDialog_Load(object sender, System.EventArgs e)
         {
             treeView1.BeginUpdate();
 
-            imageList1.Images.Add("", this.Icon);
+            /*this.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
+
+            treeView1.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
+            treeView1.ForeColor = Color.White;
+            treeView1.LineColor = Color.White;
+
+            listView1.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
+            listView1.ForeColor = Color.White;
+
+            panel1.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
+
+            button1.BackColor = SystemColors.ButtonFace;
+            button2.BackColor = SystemColors.ButtonFace;
+
+            label1.ForeColor = Color.White;
+            label2.ForeColor = Color.White;
+            checkBox1.ForeColor = Color.White;*/
+
+            imageList1.Images.Add("", Icon);
 
             for (int i = 0; i < 60; i++)
             {
@@ -61,18 +79,58 @@ namespace ModelEx
             DriveInfo[] driveInfos = DriveInfo.GetDrives();
             foreach (DriveInfo driveInfo in driveInfos)
             {
-                if (!imageList1.Images.ContainsKey(driveInfo.Name))
+                DirectoryInfo directoryInfo = new DirectoryInfo(driveInfo.Name);
+                if (!imageList1.Images.ContainsKey(directoryInfo.Name))
                 {
-                    _specialFolders.Add(driveInfo.Name);
-                    imageList1.Images.Add(driveInfo.Name, Win32Icons.GetDirectoryIcon(driveInfo.Name, false).ToBitmap());
+                    _specialFolders.Add(directoryInfo.Name);
+                    imageList1.Images.Add(directoryInfo.Name, Win32Icons.GetDirectoryIcon(directoryInfo.Name, false).ToBitmap());
                 }
-
-                DirectoryInfo subDirectoryInfo = new DirectoryInfo(driveInfo.Name);
-                rootNode = CreateTreeNode(subDirectoryInfo); // GetDirectories(info);
+                rootNode = CreateTreeNode(directoryInfo); // GetDirectories(info);
                 treeView1.Nodes.Add(rootNode);
             }
 
             treeView1.EndUpdate();
+
+            List<DirectoryInfo> breadCrumbs = new List<DirectoryInfo>();
+            try
+            {
+                DirectoryInfo initialDirectoryInfo = new DirectoryInfo(InitialDirectory);
+                DirectoryInfo expandDirectory = initialDirectoryInfo;
+                while (expandDirectory != null)
+                {
+                    breadCrumbs.Insert(0, expandDirectory);
+                    expandDirectory = expandDirectory.Parent;
+                }
+            }
+            catch (Exception)
+            {
+                breadCrumbs.Clear();
+            }
+
+            TreeNode expandNode = null;
+
+            try
+            {
+                TreeNodeCollection expandNodeCollection = treeView1.Nodes;
+                while (breadCrumbs.Count > 0)
+                {
+                    expandNode = expandNodeCollection.Find(breadCrumbs[0].Name, false)[0];
+                    expandNodeCollection = expandNode.Nodes;
+
+                    if (expandNodeCollection.Count > 0)
+                    {
+                        expandNode.Expand();
+                    }
+
+                    breadCrumbs.RemoveAt(0);
+                }
+            }
+            catch (Exception)
+            {
+                treeView1.CollapseAll();
+            }
+
+            treeView1.SelectedNode = expandNode;
         }
 
         private DirectoryInfo[] GetSubDirectories(DirectoryInfo directoryInfo)
@@ -110,6 +168,7 @@ namespace ModelEx
         private TreeNode GetDirectories(DirectoryInfo directoryInfo)
         {
             TreeNode nodeToAddTo = new TreeNode(directoryInfo.Name, 0, 0);
+            nodeToAddTo.Name = directoryInfo.Name;
             nodeToAddTo.Tag = directoryInfo;
             nodeToAddTo.ImageKey = _folderImageKey;
             nodeToAddTo.SelectedImageKey = _folderImageKey;
@@ -164,6 +223,7 @@ namespace ModelEx
         private TreeNode CreateTreeNode(DirectoryInfo directoryInfo)
         {
             TreeNode treeNode = new TreeNode(directoryInfo.Name, 0, 0);
+            treeNode.Name = directoryInfo.Name;
             treeNode.Tag = directoryInfo;
 
             if (_specialFolders.Contains(directoryInfo.FullName))
@@ -248,29 +308,6 @@ namespace ModelEx
             listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
         }
 
-		private void LoadResourceDialog_Load(object sender, System.EventArgs e)
-        {
-            /*this.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
-
-            treeView1.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
-            treeView1.ForeColor = Color.White;
-            treeView1.LineColor = Color.White;
-
-            listView1.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
-            listView1.ForeColor = Color.White;
-
-            panel1.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
-
-            button1.BackColor = SystemColors.ButtonFace;
-            button2.BackColor = SystemColors.ButtonFace;
-
-            label1.ForeColor = Color.White;
-            label2.ForeColor = Color.White;
-            checkBox1.ForeColor = Color.White;*/
-
-            PopulateTreeView();
-        }
-
 		private void treeView1_AfterCollapse(object sender, TreeViewEventArgs e)
         {
             TreeNode treeNode = e.Node;
@@ -318,20 +355,65 @@ namespace ModelEx
                     FileInfo fileInfo = (FileInfo)listView.SelectedItems[0].Tag;
                     textBox1.Text = fileInfo.FullName;
 
-                    string textureFileName = Path.ChangeExtension(fileInfo.FullName, "crm");
-                    textBox2.Text = textureFileName;
+                    comboBox1.Items.Clear();
+                    comboBox1.Enabled = false;
+                    comboBox3.Items.Clear();
+                    comboBox3.Enabled = false;
+
+                    string textureFileName = fileInfo.FullName;
+                    string objectIDFileName = fileInfo.FullName;
+                    switch ((CDC.Game)comboBox2.SelectedIndex)
+                    {
+                        case CDC.Game.SR1:
+                        {
+                            textureFileName = Path.ChangeExtension(fileInfo.FullName, "crm");
+                            comboBox1.Enabled = true;
+                            break;
+                        }
+                        case CDC.Game.Gex:
+                        case CDC.Game.SR2:
+                        case CDC.Game.Defiance:
+                        {
+                            textureFileName = Path.ChangeExtension(fileInfo.FullName, "vrm");
+                            comboBox1.Enabled = true;
+                            comboBox3.Enabled = true;
+                            break;
+                        }
+                        case CDC.Game.TRL:
+                        {
+                            comboBox3.Enabled = true;
+                            break;
+                        }
+                        default:
+                            break;
+                    }
+
+                    comboBox1.Items.Add(textureFileName);
+                    comboBox1.SelectedIndex = 0;
+
+                    comboBox3.Items.Add(objectIDFileName);
+                    comboBox3.SelectedIndex = 0;
                 }
                 else
                 {
                     textBox1.Text = "";
                     textBox2.Text = "";
+                    comboBox1.Items.Clear();
+                    comboBox3.Items.Clear();
                 }
             }
             else
             {
                 textBox1.Text = "";
                 textBox2.Text = "";
+                comboBox1.Items.Clear();
+                comboBox3.Items.Clear();
             }
+		}
+
+		private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+		{
+
 		}
 	}
 }
