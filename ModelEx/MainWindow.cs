@@ -1490,7 +1490,10 @@ namespace ModelEx
 				}
 			}
 
-			loadResourceDialog.ShowDialog();*/
+			if (loadResourceDialog.ShowDialog() == DialogResult.OK)
+			{
+				Console.WriteLine("OK!");
+			}*/
 
 			if (SelectResourceToLoad(false, false, true))
 			{
