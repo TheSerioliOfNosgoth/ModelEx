@@ -13,11 +13,37 @@ namespace ModelEx
 		public string DataFile { get; private set; } = "";
 		public string TextureFile { get; private set; } = "";
 		public string ObjectIDFile { get; private set; } = "";
+		public CDC.Game GameType { get; private set; } = CDC.Game.Gex;
+		public CDC.Platform Platform { get; private set; } = CDC.Platform.PC;
 		public bool ClearLoadedFiles { get; private set; } = false;
 
 		private static readonly string _folderImageKey = "WINDOWS";
 
 		private readonly List<string> _specialFolders = new List<string>();
+
+		class PlatformNode
+		{
+			public readonly CDC.Platform Platform = CDC.Platform.None;
+
+			public PlatformNode(CDC.Platform platform)
+			{
+				Platform = platform;
+			}
+
+			public override string ToString()
+			{
+				switch (Platform)
+				{
+					default:
+					case CDC.Platform.None: return "None";
+					case CDC.Platform.PC: return "PC";
+					case CDC.Platform.PSX: return "PlayStation";
+					case CDC.Platform.PlayStation2: return "PlayStation 2";
+					case CDC.Platform.Dreamcast: return "Dreamcast";
+					case CDC.Platform.Xbox: return "XBox";
+				}
+			}
+		}
 
 		public LoadResourceDialog()
 		{
@@ -29,20 +55,22 @@ namespace ModelEx
 			gameTypeComboBox.Items.Add("Defiance Files (*.drm)");
 			gameTypeComboBox.Items.Add("Tomb Raider Files(*.drm)");
 			gameTypeComboBox.SelectedIndex = 1;
+
+			// UpdateGameType will be called automatically by setting the selected index.
 		}
 
 		private void LoadResourceDialog_Load(object sender, System.EventArgs e)
 		{
-			treeView1.BeginUpdate();
+			hrowserTreeView.BeginUpdate();
 
 			/*this.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
 
-            treeView1.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
-            treeView1.ForeColor = Color.White;
-            treeView1.LineColor = Color.White;
+            browserTreeView.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
+            browserTreeView.ForeColor = Color.White;
+            browserTreeView.LineColor = Color.White;
 
-            listView1.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
-            listView1.ForeColor = Color.White;
+            browserListView.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
+            browserListView.ForeColor = Color.White;
 
             panel1.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
 
@@ -88,11 +116,11 @@ namespace ModelEx
 					_specialFolders.Add(directoryInfo.Name);
 					imageList1.Images.Add(directoryInfo.Name, Win32Icons.GetDirectoryIcon(directoryInfo.Name, false).ToBitmap());
 				}
-				rootNode = CreateTreeNode(directoryInfo); // GetDirectories(info);
-				treeView1.Nodes.Add(rootNode);
+				rootNode = CreateTreeNode(directoryInfo);
+				hrowserTreeView.Nodes.Add(rootNode);
 			}
 
-			treeView1.EndUpdate();
+			hrowserTreeView.EndUpdate();
 
 			List<DirectoryInfo> breadCrumbs = new List<DirectoryInfo>();
 			try
@@ -114,7 +142,7 @@ namespace ModelEx
 
 			try
 			{
-				TreeNodeCollection expandNodeCollection = treeView1.Nodes;
+				TreeNodeCollection expandNodeCollection = hrowserTreeView.Nodes;
 				while (breadCrumbs.Count > 0)
 				{
 					expandNode = expandNodeCollection.Find(breadCrumbs[0].Name, false)[0];
@@ -130,10 +158,10 @@ namespace ModelEx
 			}
 			catch (Exception)
 			{
-				treeView1.CollapseAll();
+				hrowserTreeView.CollapseAll();
 			}
 
-			treeView1.SelectedNode = expandNode;
+			hrowserTreeView.SelectedNode = expandNode;
 		}
 
 		private DirectoryInfo[] GetSubDirectories(DirectoryInfo directoryInfo)
@@ -168,61 +196,6 @@ namespace ModelEx
 			return fileInfo;
 		}
 
-		private TreeNode GetDirectories(DirectoryInfo directoryInfo)
-		{
-			TreeNode nodeToAddTo = new TreeNode(directoryInfo.Name, 0, 0);
-			nodeToAddTo.Name = directoryInfo.Name;
-			nodeToAddTo.Tag = directoryInfo;
-			nodeToAddTo.ImageKey = _folderImageKey;
-			nodeToAddTo.SelectedImageKey = _folderImageKey;
-
-			DirectoryInfo[] subDirectoryInfos = GetSubDirectories(directoryInfo);
-			foreach (DirectoryInfo subDirectoryInfo in subDirectoryInfos)
-			{
-				#region Validation
-				/*bool writeAllow = false;
-                bool writeDeny = false;
-                var accessControlList = Directory.GetAccessControl(subDirectoryInfo.FullName);
-                if (accessControlList == null)
-                {
-                    continue;
-                }
-                var accessRules = accessControlList.GetAccessRules(true, true, typeof(System.Security.Principal.SecurityIdentifier));
-                if (accessRules == null)
-                {
-                    continue;
-                }
-
-                foreach (FileSystemAccessRule rule in accessRules)
-                {
-                    if ((FileSystemRights.ListDirectory & rule.FileSystemRights) == 0)
-                    {
-                        continue;
-                    }
-
-                    if (rule.AccessControlType == AccessControlType.Allow)
-                    {
-                        writeAllow = true;
-                    }
-                    else if (rule.AccessControlType == AccessControlType.Deny)
-                    {
-                        writeDeny = true;
-                    }
-                }
-
-                if (writeDeny)
-                {
-                    continue;
-                }*/
-				#endregion
-
-				TreeNode subDirNode = GetDirectories(subDirectoryInfo);
-				nodeToAddTo.Nodes.Add(subDirNode);
-			}
-
-			return nodeToAddTo;
-		}
-
 		private TreeNode CreateTreeNode(DirectoryInfo directoryInfo)
 		{
 			TreeNode treeNode = new TreeNode(directoryInfo.Name, 0, 0);
@@ -255,66 +228,51 @@ namespace ModelEx
 			return treeNode;
 		}
 
-		private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+		private void UpdateGameType()
 		{
-			UpdateListView((DirectoryInfo)e?.Node?.Tag);
-		}
+			GameType = (CDC.Game)gameTypeComboBox.SelectedIndex;
 
-		private void treeView1_AfterCollapse(object sender, TreeViewEventArgs e)
-		{
-			TreeNode treeNode = e.Node;
-			if (treeNode.Tag is DirectoryInfo)
+			platformComboBox.Items.Clear();
+
+			if (GameType == CDC.Game.Gex)
 			{
-				DirectoryInfo directoryInfo = (DirectoryInfo)treeNode.Tag;
-				treeNode.Nodes.Clear();
-
-				DirectoryInfo[] subDirectoryInfos = GetSubDirectories(directoryInfo);
-				if (subDirectoryInfos.Length > 0)
-				{
-					TreeNode dummyChildNode = new TreeNode();
-					treeNode.Nodes.Add(dummyChildNode);
-				}
+				platformComboBox.Items.Add(new PlatformNode(CDC.Platform.PSX));
 			}
-		}
-
-		private void treeView1_BeforeExpand(object sender, TreeViewCancelEventArgs e)
-		{
-			TreeNode treeNode = e.Node;
-			if (treeNode.Tag is DirectoryInfo)
+			else if (GameType == CDC.Game.SR1)
 			{
-				DirectoryInfo directoryInfo = (DirectoryInfo)treeNode.Tag;
-				treeNode.Nodes.Clear();
-
-				DirectoryInfo[] subDirectoryInfos = GetSubDirectories(directoryInfo);
-				if (subDirectoryInfos.Length > 0)
-				{
-					foreach (DirectoryInfo subDirectoryInfo in subDirectoryInfos)
-					{
-						TreeNode subDirNode = CreateTreeNode(subDirectoryInfo);
-						treeNode.Nodes.Add(subDirNode);
-					}
-				}
+				platformComboBox.Items.Add(new PlatformNode(CDC.Platform.PC));
+				platformComboBox.Items.Add(new PlatformNode(CDC.Platform.PSX));
+				platformComboBox.Items.Add(new PlatformNode(CDC.Platform.Dreamcast));
 			}
+			else if (GameType == CDC.Game.SR2 || GameType == CDC.Game.Defiance)
+			{
+				platformComboBox.Items.Add(new PlatformNode(CDC.Platform.PC));
+				platformComboBox.Items.Add(new PlatformNode(CDC.Platform.PlayStation2));
+			}
+			else
+			{
+				platformComboBox.Items.Add(new PlatformNode(CDC.Platform.PC));
+			}
+
+			platformComboBox.SelectedIndex = 0;
+
+			// UpdateSelections will be called automatically by setting the selected index.
 		}
 
-		private void listView1_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void UpdatePlatform()
 		{
-			UpdateSelections();
-		}
+			Platform = ((PlatformNode)platformComboBox.SelectedItem).Platform;
 
-		private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
-		{
 			UpdateSelections();
 		}
 
 		private void UpdateSelections()
 		{
-			if (listView1.SelectedItems.Count > 0)
+			if (browserListView.SelectedItems.Count > 0)
 			{
-				if (listView1.SelectedItems[0].Tag is FileInfo)
+				if (browserListView.SelectedItems[0].Tag is FileInfo)
 				{
-					FileInfo fileInfo = (FileInfo)listView1.SelectedItems[0].Tag;
-					CDC.Game game = (CDC.Game)gameTypeComboBox.SelectedIndex;
+					FileInfo fileInfo = (FileInfo)browserListView.SelectedItems[0].Tag;
 
 					dataFileTextBox.Text = fileInfo.FullName;
 
@@ -322,39 +280,13 @@ namespace ModelEx
 					textureFileComboBox.Enabled = false;
 					textureFileComboBox.SelectedIndex = -1;
 
-					objectIDComboBox.Items.Clear();
-					objectIDComboBox.Enabled = false;
-					objectIDComboBox.SelectedIndex = -1;
-
-					string textureFileName = fileInfo.FullName;
-					string objectIDFileName = fileInfo.FullName;
-					switch (game)
-					{
-						case CDC.Game.SR1:
-						{
-							textureFileName = Path.ChangeExtension(fileInfo.FullName, "crm");
-							textureFileComboBox.Enabled = true;
-							break;
-						}
-						case CDC.Game.Gex:
-						case CDC.Game.SR2:
-						case CDC.Game.Defiance:
-						{
-							textureFileName = Path.ChangeExtension(fileInfo.FullName, "vrm");
-							textureFileComboBox.Enabled = true;
-							break;
-						}
-						case CDC.Game.TRL:
-						{
-							break;
-						}
-						default:
-							break;
-					}
+					objectListFileComboBox.Items.Clear();
+					objectListFileComboBox.Enabled = false;
+					objectListFileComboBox.SelectedIndex = -1;
 
 					string rootDirectory = Path.GetDirectoryName(fileInfo.FullName);
 					string rootFolderName = "";
-					switch (game)
+					switch (GameType)
 					{
 						case CDC.Game.Gex: rootFolderName = "g3"; break;
 						case CDC.Game.SR1: rootFolderName = "kain2"; break;
@@ -376,53 +308,137 @@ namespace ModelEx
 						}
 					}
 
-					textureFileComboBox.Items.Add(textureFileName);
-					textureFileComboBox.SelectedIndex = 0;
-
 					if (foundRoot)
 					{
-						rootFolderTextBox.Text = rootDirectory;
+						projectFolderTextBox.Text = rootDirectory;
+					}
+					else
+					{
+						rootDirectory = "";
+						projectFolderTextBox.Text = "(NOT FOUND)";
 					}
 
-					if (game == CDC.Game.Defiance)
+					#region Textures
+					string textureFileName = fileInfo.FullName;
+					switch (GameType)
 					{
-						objectIDFileName = Path.Combine(rootDirectory, "sr3", rootFolderName, "objectlist.txt");
-						objectIDComboBox.Enabled = true;
-					}
-					else if (game == CDC.Game.TRL)
-					{
-						objectIDFileName = Path.Combine(rootDirectory, "tr7", rootFolderName, "objectlist.txt");
-						objectIDComboBox.Enabled = true;
+						case CDC.Game.SR1:
+						{
+							if (Platform == CDC.Platform.PSX)
+							{
+								textureFileName = Path.ChangeExtension(fileInfo.FullName, "crm");
+								if (!File.Exists(textureFileName))
+								{
+									textureFileName += " (NOT FOUND)";
+								}
+								textureFileComboBox.Items.Add(textureFileName);
+							}
+							else if (Platform == CDC.Platform.PC)
+							{
+								textureFileName = Path.Combine(rootDirectory, "textures.big");
+								if (!foundRoot || !File.Exists(textureFileName))
+								{
+									textureFileName += " (NOT FOUND)";
+								}
+								textureFileComboBox.Items.Add(textureFileName);
+								textureFileName = Path.Combine(fileInfo.DirectoryName, "textures.big");
+								if (!File.Exists(textureFileName))
+								{
+									textureFileName += " (NOT FOUND)";
+								}
+								textureFileComboBox.Items.Add(textureFileName);
+								textureFileComboBox.Enabled = true;
+							}
+							else if (Platform == CDC.Platform.Dreamcast)
+							{
+								textureFileName = Path.Combine(rootDirectory, "textures.vq");
+								if (!foundRoot || !File.Exists(textureFileName))
+								{
+									textureFileName += " (NOT FOUND)";
+								}
+								textureFileComboBox.Items.Add(textureFileName);
+								textureFileName = Path.Combine(fileInfo.DirectoryName, "textures.vq");
+								if (!File.Exists(textureFileName))
+								{
+									textureFileName += " (NOT FOUND)";
+								}
+								textureFileComboBox.Items.Add(textureFileName);
+								textureFileComboBox.Enabled = true;
+							}
+							break;
+						}
+						case CDC.Game.Gex:
+						case CDC.Game.SR2:
+						case CDC.Game.Defiance:
+						{
+							textureFileName = Path.ChangeExtension(fileInfo.FullName, "vrm");
+							textureFileComboBox.Items.Add(textureFileName);
+							break;
+						}
+						case CDC.Game.TRL:
+						{
+							textureFileComboBox.Items.Add(textureFileName);
+							break;
+						}
+						default:
+							break;
 					}
 
-					objectIDComboBox.Items.Add(objectIDFileName);
-					objectIDComboBox.SelectedIndex = 0;
+					textureFileComboBox.SelectedIndex = 0;
+					#endregion
+
+					#region Object List
+					string objectListFileName = fileInfo.FullName;
+					if (GameType == CDC.Game.Defiance || GameType == CDC.Game.TRL)
+					{
+						string gameFolderName = (GameType == CDC.Game.Defiance) ? "sr3" : "tr7";
+						objectListFileName = Path.Combine(rootDirectory, gameFolderName, rootFolderName, "objectlist.txt");
+						if (!File.Exists(objectListFileName))
+						{
+							objectListFileName += " (NOT FOUND)";
+						}
+						objectListFileComboBox.Items.Add(objectListFileName);
+						objectListFileName = Path.Combine(fileInfo.DirectoryName, "objectlist.txt");
+						if (!File.Exists(objectListFileName))
+						{
+							objectListFileName += " (NOT FOUND)";
+						}
+						objectListFileComboBox.Items.Add(objectListFileName);
+						objectListFileComboBox.Enabled = true;
+					}
+					else
+					{
+						objectListFileComboBox.Items.Add(objectListFileName);
+					}
+
+					objectListFileComboBox.SelectedIndex = 0;
+					#endregion
 				}
 				else
 				{
 					dataFileTextBox.Text = "";
-					rootFolderTextBox.Text = "";
+					projectFolderTextBox.Text = "";
 					textureFileComboBox.Items.Clear();
-					objectIDComboBox.Items.Clear();
+					objectListFileComboBox.Items.Clear();
 				}
 			}
 			else
 			{
 				dataFileTextBox.Text = "";
-				rootFolderTextBox.Text = "";
+				projectFolderTextBox.Text = "";
 				textureFileComboBox.Items.Clear();
-				objectIDComboBox.Items.Clear();
+				objectListFileComboBox.Items.Clear();
 			}
 		}
 
-		private void UpdateListView(DirectoryInfo nodeDirInfo)
+		private void UpdateBrowserListView(DirectoryInfo nodeDirInfo)
 		{
 			if (nodeDirInfo == null)
 			{
 				return;
 			}
 
-			listView1.Items.Clear();
+			browserListView.Items.Clear();
 
 			ListViewItem.ListViewSubItem[] subItems;
 			ListViewItem item;
@@ -442,11 +458,11 @@ namespace ModelEx
 					item.Tag = dir;
 					subItems = new ListViewItem.ListViewSubItem[]
 					{
-					new ListViewItem.ListViewSubItem(item, "Directory"),
-					new ListViewItem.ListViewSubItem(item, dir.LastAccessTime.ToShortDateString())
+						new ListViewItem.ListViewSubItem(item, "Directory"),
+						new ListViewItem.ListViewSubItem(item, dir.LastAccessTime.ToShortDateString())
 					};
 					item.SubItems.AddRange(subItems);
-					listView1.Items.Add(item);
+					browserListView.Items.Add(item);
 				}
 			}
 
@@ -464,18 +480,65 @@ namespace ModelEx
 					item.Tag = file;
 					subItems = new ListViewItem.ListViewSubItem[]
 					{
-					new ListViewItem.ListViewSubItem(item, "File"),
-					new ListViewItem.ListViewSubItem(item, file.LastAccessTime.ToShortDateString())
+						new ListViewItem.ListViewSubItem(item, "File"),
+						new ListViewItem.ListViewSubItem(item, file.LastAccessTime.ToShortDateString())
 					};
 					item.SubItems.AddRange(subItems);
-					listView1.Items.Add(item);
+					browserListView.Items.Add(item);
 				}
 			}
 
-			listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+			browserListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 		}
 
-		private void listView1_ItemActivate(object sender, EventArgs e)
+		private void browserTreeView_AfterSelect(object sender, TreeViewEventArgs e)
+		{
+			UpdateBrowserListView((DirectoryInfo)e?.Node?.Tag);
+		}
+
+		private void browserTreeView_AfterCollapse(object sender, TreeViewEventArgs e)
+		{
+			TreeNode treeNode = e.Node;
+			if (treeNode.Tag is DirectoryInfo)
+			{
+				DirectoryInfo directoryInfo = (DirectoryInfo)treeNode.Tag;
+				treeNode.Nodes.Clear();
+
+				DirectoryInfo[] subDirectoryInfos = GetSubDirectories(directoryInfo);
+				if (subDirectoryInfos.Length > 0)
+				{
+					TreeNode dummyChildNode = new TreeNode();
+					treeNode.Nodes.Add(dummyChildNode);
+				}
+			}
+		}
+
+		private void browserTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
+		{
+			TreeNode treeNode = e.Node;
+			if (treeNode.Tag is DirectoryInfo)
+			{
+				DirectoryInfo directoryInfo = (DirectoryInfo)treeNode.Tag;
+				treeNode.Nodes.Clear();
+
+				DirectoryInfo[] subDirectoryInfos = GetSubDirectories(directoryInfo);
+				if (subDirectoryInfos.Length > 0)
+				{
+					foreach (DirectoryInfo subDirectoryInfo in subDirectoryInfos)
+					{
+						TreeNode subDirNode = CreateTreeNode(subDirectoryInfo);
+						treeNode.Nodes.Add(subDirNode);
+					}
+				}
+			}
+		}
+
+		private void browserListView_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			UpdateSelections();
+		}
+
+		private void browserListView_ItemActivate(object sender, EventArgs e)
 		{
 			ListView listView = (ListView)sender;
 			if (listView.SelectedItems.Count > 0)
@@ -483,9 +546,19 @@ namespace ModelEx
 				ListViewItem listViewItem = listView.SelectedItems[0];
 				if (listViewItem.Tag != null && listViewItem.Tag is DirectoryInfo)
 				{
-					UpdateListView((DirectoryInfo)listViewItem.Tag);
+					UpdateBrowserListView((DirectoryInfo)listViewItem.Tag);
 				}
 			}
+		}
+
+		private void platformComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			UpdatePlatform();
+		}
+
+		private void gameTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			UpdateGameType();
 		}
 	}
 }
