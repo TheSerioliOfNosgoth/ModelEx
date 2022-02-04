@@ -17,8 +17,6 @@ namespace ModelEx
 		public CDC.Platform Platform { get; private set; } = CDC.Platform.PC;
 		public bool ClearLoadedFiles { get; private set; } = false;
 
-		private static readonly string _folderImageKey = "WINDOWS";
-
 		private readonly List<string> _specialFolders = new List<string>();
 
 		class PlatformNode
@@ -82,7 +80,7 @@ namespace ModelEx
 
 		private void LoadResourceDialog_Load(object sender, System.EventArgs e)
 		{
-			hrowserTreeView.BeginUpdate();
+			browserTreeView.BeginUpdate();
 
 			/*this.BackColor = Color.FromArgb(0x40, 0x40, 0x40);
 
@@ -103,6 +101,8 @@ namespace ModelEx
             checkBox1.ForeColor = Color.White;*/
 
 			imageList1.Images.Add("", Icon);
+			Bitmap folderIcon = Win32Icons.GetStockIcon(Win32Icons.SHSTOCKICONID.Folder, false);
+			imageList1.Images.Add("", folderIcon);
 
 			for (int i = 0; i < 60; i++)
 			{
@@ -113,7 +113,7 @@ namespace ModelEx
 					DirectoryInfo directoryInfo = new DirectoryInfo(specialFolderName);
 
 					_specialFolders.Add(specialFolderName);
-					imageList1.Images.Add(directoryInfo.Name, Win32Icons.GetDirectoryIcon(specialFolderName, false).ToBitmap());
+					imageList1.Images.Add(directoryInfo.Name, Win32Icons.GetDirectoryIcon(specialFolderName, false));
 				}
 				catch (Exception)
 				{
@@ -122,12 +122,6 @@ namespace ModelEx
 
 			TreeNode rootNode;
 
-			/*string currentDirectory = InitialDirectory;
-            if (!Directory.Exists(currentDirectory))
-            {
-                currentDirectory = @"../..";
-            }*/
-
 			DriveInfo[] driveInfos = DriveInfo.GetDrives();
 			foreach (DriveInfo driveInfo in driveInfos)
 			{
@@ -135,13 +129,13 @@ namespace ModelEx
 				if (!imageList1.Images.ContainsKey(directoryInfo.Name))
 				{
 					_specialFolders.Add(directoryInfo.Name);
-					imageList1.Images.Add(directoryInfo.Name, Win32Icons.GetDirectoryIcon(directoryInfo.Name, false).ToBitmap());
+					imageList1.Images.Add(directoryInfo.Name, Win32Icons.GetDirectoryIcon(directoryInfo.Name, false));
 				}
 				rootNode = CreateTreeNode(directoryInfo);
-				hrowserTreeView.Nodes.Add(rootNode);
+				browserTreeView.Nodes.Add(rootNode);
 			}
 
-			hrowserTreeView.EndUpdate();
+			browserTreeView.EndUpdate();
 
 			List<DirectoryInfo> breadCrumbs = new List<DirectoryInfo>();
 			try
@@ -163,7 +157,7 @@ namespace ModelEx
 
 			try
 			{
-				TreeNodeCollection expandNodeCollection = hrowserTreeView.Nodes;
+				TreeNodeCollection expandNodeCollection = browserTreeView.Nodes;
 				while (breadCrumbs.Count > 0)
 				{
 					expandNode = expandNodeCollection.Find(breadCrumbs[0].Name, false)[0];
@@ -179,10 +173,10 @@ namespace ModelEx
 			}
 			catch (Exception)
 			{
-				hrowserTreeView.CollapseAll();
+				browserTreeView.CollapseAll();
 			}
 
-			hrowserTreeView.SelectedNode = expandNode;
+			browserTreeView.SelectedNode = expandNode;
 		}
 
 		private void LoadResourceDialog_FormClosing(object sender, FormClosingEventArgs e)
@@ -308,7 +302,7 @@ namespace ModelEx
 
 		private TreeNode CreateTreeNode(DirectoryInfo directoryInfo)
 		{
-			TreeNode treeNode = new TreeNode(directoryInfo.Name, 0, 0);
+			TreeNode treeNode = new TreeNode(directoryInfo.Name, 1, 1);
 			treeNode.Name = directoryInfo.Name;
 			treeNode.Tag = directoryInfo;
 
@@ -316,11 +310,6 @@ namespace ModelEx
 			{
 				treeNode.ImageKey = directoryInfo.Name;
 				treeNode.SelectedImageKey = directoryInfo.Name;
-			}
-			else
-			{
-				treeNode.ImageKey = _folderImageKey;
-				treeNode.SelectedImageKey = _folderImageKey;
 			}
 
 			DirectoryInfo[] subDirectoryInfos = GetSubDirectories(directoryInfo);
@@ -538,13 +527,16 @@ namespace ModelEx
 			{
 				foreach (DirectoryInfo dir in nodeDirInfo.GetDirectories())
 				{
-					string folderImageKey = _folderImageKey;
+					string folderImageKey = "";
 					if (_specialFolders.Contains(dir.FullName))
 					{
-						folderImageKey = dir.Name;
+						item = new ListViewItem(dir.Name, dir.Name);
+					}
+					else
+					{
+						item = new ListViewItem(dir.Name, 1);
 					}
 
-					item = new ListViewItem(dir.Name, folderImageKey);
 					item.Tag = dir;
 					subItems = new ListViewItem.ListViewSubItem[]
 					{

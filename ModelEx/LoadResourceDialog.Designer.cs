@@ -46,7 +46,7 @@ namespace ModelEx
 			this.okButton = new System.Windows.Forms.Button();
 			this.gameTypeComboBox = new System.Windows.Forms.ComboBox();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-			this.hrowserTreeView = new SceneTreeView();
+			this.browserTreeView = new SceneTreeView();
 			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
 			this.browserListView = new System.Windows.Forms.ListView();
 			this.nameHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -209,7 +209,7 @@ namespace ModelEx
 			// 
 			// splitContainer1.Panel1
 			// 
-			this.splitContainer1.Panel1.Controls.Add(this.hrowserTreeView);
+			this.splitContainer1.Panel1.Controls.Add(this.browserTreeView);
 			// 
 			// splitContainer1.Panel2
 			// 
@@ -220,18 +220,18 @@ namespace ModelEx
 			// 
 			// hrowserTreeView
 			// 
-			this.hrowserTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.hrowserTreeView.ImageIndex = 0;
-			this.hrowserTreeView.ImageList = this.imageList1;
-			this.hrowserTreeView.Location = new System.Drawing.Point(0, 0);
-			this.hrowserTreeView.Name = "hrowserTreeView";
-			this.hrowserTreeView.SelectedImageIndex = 0;
-			this.hrowserTreeView.Size = new System.Drawing.Size(266, 362);
-			this.hrowserTreeView.TabIndex = 0;
-			this.hrowserTreeView.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.browserTreeView_AfterCollapse);
-			this.hrowserTreeView.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.browserTreeView_BeforeExpand);
-			this.hrowserTreeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.hrowserTreeView_NodeMouseDoubleClick);
-			this.hrowserTreeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.hrowserTreeView_KeyDown);
+			this.browserTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.browserTreeView.ImageIndex = 0;
+			this.browserTreeView.ImageList = this.imageList1;
+			this.browserTreeView.Location = new System.Drawing.Point(0, 0);
+			this.browserTreeView.Name = "hrowserTreeView";
+			this.browserTreeView.SelectedImageIndex = 0;
+			this.browserTreeView.Size = new System.Drawing.Size(266, 362);
+			this.browserTreeView.TabIndex = 0;
+			this.browserTreeView.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.browserTreeView_AfterCollapse);
+			this.browserTreeView.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.browserTreeView_BeforeExpand);
+			this.browserTreeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.hrowserTreeView_NodeMouseDoubleClick);
+			this.browserTreeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.hrowserTreeView_KeyDown);
 			// 
 			// imageList1
 			// 
@@ -303,7 +303,7 @@ namespace ModelEx
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.SplitContainer splitContainer1;
 		private System.Windows.Forms.ImageList imageList1;
-		private SceneTreeView hrowserTreeView;
+		private SceneTreeView browserTreeView;
 		private System.Windows.Forms.ListView browserListView;
 		private System.Windows.Forms.ColumnHeader nameHeader;
 		private System.Windows.Forms.ColumnHeader typeHeader;
