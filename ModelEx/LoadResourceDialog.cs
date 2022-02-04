@@ -12,7 +12,7 @@ namespace ModelEx
 		public string InitialDirectory { get; set; }
 		public string DataFile { get; private set; } = "";
 		public string TextureFile { get; private set; } = "";
-		public string ObjectIDFile { get; private set; } = "";
+		public string ObjectListFile { get; private set; } = "";
 		public CDC.Game GameType { get; private set; } = CDC.Game.Gex;
 		public CDC.Platform Platform { get; private set; } = CDC.Platform.PC;
 		public bool ClearLoadedFiles { get; private set; } = false;
@@ -23,25 +23,46 @@ namespace ModelEx
 
 		class PlatformNode
 		{
-			public readonly CDC.Platform Platform = CDC.Platform.None;
+			public readonly CDC.Platform Platform;
+			public readonly string PlatformName;
 
 			public PlatformNode(CDC.Platform platform)
 			{
 				Platform = platform;
+				switch (Platform)
+				{
+					default:
+					case CDC.Platform.None: PlatformName = "None"; break;
+					case CDC.Platform.PC: PlatformName = "PC"; break;
+					case CDC.Platform.PSX: PlatformName = "PlayStation"; break;
+					case CDC.Platform.PlayStation2: PlatformName = "PlayStation 2"; break;
+					case CDC.Platform.Dreamcast: PlatformName = "Dreamcast"; break;
+					case CDC.Platform.Xbox: PlatformName = "XBox"; break;
+				}
 			}
 
 			public override string ToString()
 			{
-				switch (Platform)
-				{
-					default:
-					case CDC.Platform.None: return "None";
-					case CDC.Platform.PC: return "PC";
-					case CDC.Platform.PSX: return "PlayStation";
-					case CDC.Platform.PlayStation2: return "PlayStation 2";
-					case CDC.Platform.Dreamcast: return "Dreamcast";
-					case CDC.Platform.Xbox: return "XBox";
-				}
+				return PlatformName;
+			}
+		}
+
+		class FileNode
+		{
+			public readonly bool FileExists;
+			public readonly string FileName;
+			public readonly string FileDescription;
+
+			public FileNode(string fileName, bool fileExists)
+			{
+				FileName = fileName;
+				FileExists = fileExists && File.Exists(fileName);
+				FileDescription = FileExists ? FileName : (FileName + " (NOT FOUND)");
+			}
+
+			public override string ToString()
+			{
+				return FileDescription;
 			}
 		}
 
@@ -162,6 +183,95 @@ namespace ModelEx
 			}
 
 			hrowserTreeView.SelectedNode = expandNode;
+		}
+
+		private void LoadResourceDialog_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			if (DialogResult != DialogResult.OK)
+			{
+				return;
+			}
+
+			if (ActiveControl != okButton)
+			{
+				e.Cancel = true;
+				DialogResult = DialogResult.None;
+
+				return;
+			}
+
+			try
+			{
+				if (dataFileTextBox.Text == "")
+				{
+					MessageBox.Show(
+						"Data file not selected.",
+						"File not selected",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Exclamation
+					);
+
+					e.Cancel = true;
+					return;
+				}
+
+				if (!File.Exists(dataFileTextBox.Text))
+				{
+					MessageBox.Show(
+						"Data file \"" + dataFileTextBox.Text + "\" not found.\r\nPlease select another option.",
+						"File not found",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Exclamation
+					);
+
+					e.Cancel = true;
+					return;
+				}
+
+				FileNode textureFileNode = (FileNode)textureFileComboBox.SelectedItem;
+				if (textureFileComboBox.Enabled && !textureFileNode.FileExists)
+				{
+					MessageBox.Show(
+						"Texture file \"" + dataFileTextBox.Text + "\" not found.\r\nPlease select another option.",
+						"File not found",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Exclamation
+					);
+
+					e.Cancel = true;
+					return;
+				}
+
+				FileNode objectListFileNode = (FileNode)objectListFileComboBox.SelectedItem;
+				if (objectListFileComboBox.Enabled && !objectListFileNode.FileExists)
+				{
+					MessageBox.Show(
+						"Object list file \"" + objectListFileNode.FileName + "\" not found.\r\nPlease select another option.",
+						"File not found",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Exclamation
+					);
+
+					e.Cancel = true;
+					return;
+				}
+
+				DataFile = dataFileTextBox.Text;
+				TextureFile = textureFileNode.FileName;
+				ObjectListFile = objectListFileNode.FileName;
+				ClearLoadedFiles = clearLoadedFilesCheckBox.Checked;
+			}
+			catch (Exception)
+			{
+				MessageBox.Show(
+					"Unknown error",
+					"Error",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Error
+				);
+
+				DialogResult = DialogResult.Cancel;
+			}
 		}
 
 		private DirectoryInfo[] GetSubDirectories(DirectoryInfo directoryInfo)
@@ -327,42 +437,22 @@ namespace ModelEx
 							if (Platform == CDC.Platform.PSX)
 							{
 								textureFileName = Path.ChangeExtension(fileInfo.FullName, "crm");
-								if (!File.Exists(textureFileName))
-								{
-									textureFileName += " (NOT FOUND)";
-								}
-								textureFileComboBox.Items.Add(textureFileName);
+								textureFileComboBox.Items.Add(new FileNode(textureFileName, true));
 							}
 							else if (Platform == CDC.Platform.PC)
 							{
 								textureFileName = Path.Combine(rootDirectory, "textures.big");
-								if (!foundRoot || !File.Exists(textureFileName))
-								{
-									textureFileName += " (NOT FOUND)";
-								}
-								textureFileComboBox.Items.Add(textureFileName);
+								textureFileComboBox.Items.Add(new FileNode(textureFileName, foundRoot));
 								textureFileName = Path.Combine(fileInfo.DirectoryName, "textures.big");
-								if (!File.Exists(textureFileName))
-								{
-									textureFileName += " (NOT FOUND)";
-								}
-								textureFileComboBox.Items.Add(textureFileName);
+								textureFileComboBox.Items.Add(new FileNode(textureFileName, true));
 								textureFileComboBox.Enabled = true;
 							}
 							else if (Platform == CDC.Platform.Dreamcast)
 							{
 								textureFileName = Path.Combine(rootDirectory, "textures.vq");
-								if (!foundRoot || !File.Exists(textureFileName))
-								{
-									textureFileName += " (NOT FOUND)";
-								}
-								textureFileComboBox.Items.Add(textureFileName);
+								textureFileComboBox.Items.Add(new FileNode(textureFileName, foundRoot));
 								textureFileName = Path.Combine(fileInfo.DirectoryName, "textures.vq");
-								if (!File.Exists(textureFileName))
-								{
-									textureFileName += " (NOT FOUND)";
-								}
-								textureFileComboBox.Items.Add(textureFileName);
+								textureFileComboBox.Items.Add(new FileNode(textureFileName, true));
 								textureFileComboBox.Enabled = true;
 							}
 							break;
@@ -372,12 +462,13 @@ namespace ModelEx
 						case CDC.Game.Defiance:
 						{
 							textureFileName = Path.ChangeExtension(fileInfo.FullName, "vrm");
-							textureFileComboBox.Items.Add(textureFileName);
+							textureFileComboBox.Items.Add(new FileNode(textureFileName, true));
+							textureFileComboBox.Enabled = true;
 							break;
 						}
 						case CDC.Game.TRL:
 						{
-							textureFileComboBox.Items.Add(textureFileName);
+							textureFileComboBox.Items.Add(new FileNode(textureFileName, true));
 							break;
 						}
 						default:
@@ -391,24 +482,23 @@ namespace ModelEx
 					string objectListFileName = fileInfo.FullName;
 					if (GameType == CDC.Game.Defiance || GameType == CDC.Game.TRL)
 					{
-						string gameFolderName = (GameType == CDC.Game.Defiance) ? "sr3" : "tr7";
-						objectListFileName = Path.Combine(rootDirectory, gameFolderName, rootFolderName, "objectlist.txt");
-						if (!File.Exists(objectListFileName))
+						if (foundRoot)
 						{
-							objectListFileName += " (NOT FOUND)";
+							string gameFolderName = (GameType == CDC.Game.Defiance) ? "sr3" : "tr7";
+							objectListFileName = Path.Combine(rootDirectory, gameFolderName, rootFolderName, "objectlist.txt");
 						}
-						objectListFileComboBox.Items.Add(objectListFileName);
+						else
+						{
+							objectListFileName = "objectlist.txt";
+						}
+						objectListFileComboBox.Items.Add(new FileNode(objectListFileName, foundRoot));
 						objectListFileName = Path.Combine(fileInfo.DirectoryName, "objectlist.txt");
-						if (!File.Exists(objectListFileName))
-						{
-							objectListFileName += " (NOT FOUND)";
-						}
-						objectListFileComboBox.Items.Add(objectListFileName);
+						objectListFileComboBox.Items.Add(new FileNode(objectListFileName, true));
 						objectListFileComboBox.Enabled = true;
 					}
 					else
 					{
-						objectListFileComboBox.Items.Add(objectListFileName);
+						objectListFileComboBox.Items.Add(new FileNode(objectListFileName, true));
 					}
 
 					objectListFileComboBox.SelectedIndex = 0;
@@ -491,9 +581,12 @@ namespace ModelEx
 			browserListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 		}
 
-		private void browserTreeView_AfterSelect(object sender, TreeViewEventArgs e)
+		private void hrowserTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
 		{
-			UpdateBrowserListView((DirectoryInfo)e?.Node?.Tag);
+			if (e.Node.Tag != null)
+			{
+				UpdateBrowserListView((DirectoryInfo)e.Node.Tag);
+			}
 		}
 
 		private void browserTreeView_AfterCollapse(object sender, TreeViewEventArgs e)
@@ -515,6 +608,7 @@ namespace ModelEx
 
 		private void browserTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
 		{
+			System.Diagnostics.Debug.WriteLine("BeforeExpand");
 			TreeNode treeNode = e.Node;
 			if (treeNode.Tag is DirectoryInfo)
 			{
@@ -533,6 +627,21 @@ namespace ModelEx
 			}
 		}
 
+		private void hrowserTreeView_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Enter)
+			{
+				e.Handled = true;
+				e.SuppressKeyPress = true;
+
+				TreeView treeView = (TreeView)sender;
+				if (treeView.SelectedNode != null)
+				{
+					UpdateBrowserListView((DirectoryInfo)treeView.SelectedNode.Tag);
+				}
+			}
+		}
+
 		private void browserListView_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			UpdateSelections();
@@ -547,6 +656,25 @@ namespace ModelEx
 				if (listViewItem.Tag != null && listViewItem.Tag is DirectoryInfo)
 				{
 					UpdateBrowserListView((DirectoryInfo)listViewItem.Tag);
+				}
+			}
+		}
+
+		private void browserListView_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Enter)
+			{
+				e.Handled = true;
+				e.SuppressKeyPress = true;
+
+				ListView listView = (ListView)sender;
+				if (listView.SelectedItems.Count > 0)
+				{
+					ListViewItem listViewItem = listView.SelectedItems[0];
+					if (listViewItem.Tag != null && listViewItem.Tag is DirectoryInfo)
+					{
+						UpdateBrowserListView((DirectoryInfo)listViewItem.Tag);
+					}
 				}
 			}
 		}

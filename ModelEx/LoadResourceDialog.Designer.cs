@@ -46,7 +46,7 @@ namespace ModelEx
 			this.okButton = new System.Windows.Forms.Button();
 			this.gameTypeComboBox = new System.Windows.Forms.ComboBox();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-			this.hrowserTreeView = new System.Windows.Forms.TreeView();
+			this.hrowserTreeView = new SceneTreeView();
 			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
 			this.browserListView = new System.Windows.Forms.ListView();
 			this.nameHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -230,7 +230,8 @@ namespace ModelEx
 			this.hrowserTreeView.TabIndex = 0;
 			this.hrowserTreeView.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.browserTreeView_AfterCollapse);
 			this.hrowserTreeView.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.browserTreeView_BeforeExpand);
-			this.hrowserTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.browserTreeView_AfterSelect);
+			this.hrowserTreeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.hrowserTreeView_NodeMouseDoubleClick);
+			this.hrowserTreeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.hrowserTreeView_KeyDown);
 			// 
 			// imageList1
 			// 
@@ -254,7 +255,7 @@ namespace ModelEx
 			this.browserListView.UseCompatibleStateImageBehavior = false;
 			this.browserListView.View = System.Windows.Forms.View.Details;
 			this.browserListView.ItemActivate += new System.EventHandler(this.browserListView_ItemActivate);
-			this.browserListView.SelectedIndexChanged += new System.EventHandler(this.browserListView_SelectedIndexChanged);
+			this.browserListView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.browserListView_KeyDown);
 			// 
 			// nameHeader
 			// 
@@ -272,7 +273,6 @@ namespace ModelEx
 			// 
 			// LoadResourceDialog
 			// 
-			this.AcceptButton = this.okButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.cancelButton;
@@ -286,6 +286,7 @@ namespace ModelEx
 			this.Name = "LoadResourceDialog";
 			this.ShowInTaskbar = false;
 			this.Text = "LoadResourceDialog";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LoadResourceDialog_FormClosing);
 			this.Load += new System.EventHandler(this.LoadResourceDialog_Load);
 			this.panel1.ResumeLayout(false);
 			this.panel1.PerformLayout();
@@ -302,7 +303,7 @@ namespace ModelEx
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.SplitContainer splitContainer1;
 		private System.Windows.Forms.ImageList imageList1;
-		private System.Windows.Forms.TreeView hrowserTreeView;
+		private SceneTreeView hrowserTreeView;
 		private System.Windows.Forms.ListView browserListView;
 		private System.Windows.Forms.ColumnHeader nameHeader;
 		private System.Windows.Forms.ColumnHeader typeHeader;
