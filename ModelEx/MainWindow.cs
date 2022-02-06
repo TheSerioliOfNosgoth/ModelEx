@@ -11,14 +11,13 @@ namespace ModelEx
 	public partial class MainWindow : Form
 	{
 		ProgressWindow progressWindow;
-		int filterIndex = 2;
 		CDC.Objects.ExportOptions ImportExportOptions;
 		int _MainSplitPanelPosition;
 		protected bool _RunUIMonitoringThread;
 		protected bool _ReloadModelOnRenderModeChange;
 		protected bool _ResetCameraOnModelLoad;
 		protected string _CurrentModelPath;
-		protected CDC.Game _CurrentModelType;
+		protected CDC.Game _GameType;
 		protected int _CurrentModelChild;
 		protected bool _ClearLoadedResources;
 		protected bool _SelectObjectOnLoaded;
@@ -139,50 +138,45 @@ namespace ModelEx
 
 		protected bool SelectResourceToLoad(bool clearLoadedResources, bool selectObjectOnLoaded, bool selectSceneOnLoaded)
 		{
-			OpenFileDialog OpenDlg = new OpenFileDialog
-			{
-				CheckFileExists = true,
-				CheckPathExists = true,
-				Filter =
-					"Gex Mesh Files|*.drm|" +
-					"Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|" +
-					"Soul Reaver 2 Mesh Files|*.drm|" +
-					"Defiance Mesh Files|*.drm;|" +
-					"Tomb Raider: Legend Mesh Files|*.drm|" +
-					"Collada Mesh Files (*.dae)|*.dae",
-				//"All Files (*.*)|*.*";
-				DefaultExt = "drm",
-				FilterIndex = filterIndex
-			};
+			LoadResourceDialog loadResourceDialog = new LoadResourceDialog();
 
 			if (_LastOpenDirectory != "")
 			{
 				if (Directory.Exists(_LastOpenDirectory))
 				{
-					OpenDlg.InitialDirectory = _LastOpenDirectory;
+					loadResourceDialog.InitialDirectory = _LastOpenDirectory;
 				}
 			}
 
-			if (OpenDlg.ShowDialog() != DialogResult.OK)
+			if (loadResourceDialog.ShowDialog() != DialogResult.OK)
 			{
+				loadResourceDialog.Dispose();
 				return false;
 			}
 
-			if (OpenDlg.FilterIndex == 1)
+			loadResourceDialog.Dispose();
+
+			_GameType = loadResourceDialog.GameType;
+			_CurrentModelChild = -1;
+
+			if (loadResourceDialog.GameType == CDC.Game.Gex)
 			{
 				CDC.Objects.GexFile gexFile;
 				ObjectSelectWindow objectSelectDlg = new ObjectSelectWindow();
 
 				try
 				{
-					gexFile = new CDC.Objects.GexFile(OpenDlg.FileName, ImportExportOptions);
+					gexFile = new CDC.Objects.GexFile(loadResourceDialog.DataFile, ImportExportOptions);
 					if (gexFile.Asset == CDC.Asset.Unit)
 					{
 						objectSelectDlg.SetObjectNames(gexFile.ObjectNames);
 						if (objectSelectDlg.ShowDialog() != DialogResult.OK)
 						{
+							objectSelectDlg.Dispose();
 							return false;
 						}
+
+						objectSelectDlg.Dispose();
 					}
 				}
 				catch
@@ -190,37 +184,15 @@ namespace ModelEx
 					return false;
 				}
 
-				_CurrentModelType = CDC.Game.Gex;   // "Gex Mesh Files|*.drm|"
 				_CurrentModelChild = objectSelectDlg.SelectedObject;
-			}
-			else if (OpenDlg.FilterIndex == 2)
-			{
-				_CurrentModelType = CDC.Game.SR1;   // "Soul Reaver 1 Mesh Files|*.SRObj;*.drm;*.pcm|"
-				_CurrentModelChild = -1;
-			}
-			else if (OpenDlg.FilterIndex == 3)
-			{
-				_CurrentModelType = CDC.Game.SR2;   // "Soul Reaver 2 Mesh Files|*.drm|" +
-				_CurrentModelChild = -1;
-			}
-			else if (OpenDlg.FilterIndex == 4)
-			{
-				_CurrentModelType = CDC.Game.Defiance;  // "Defiance Mesh Files|*.drm|" +
-				_CurrentModelChild = -1;
-			}
-			else
-			{
-				_CurrentModelType = CDC.Game.TRL;  // "TRL Mesh Files|*.drm|" +
-				_CurrentModelChild = -1;
 			}
 
 			_ClearLoadedResources = clearLoadedResources;
 			_SelectObjectOnLoaded = selectObjectOnLoaded;
 			_SelectSceneOnLoaded = selectSceneOnLoaded;
-			_LastOpenDirectory = Path.GetDirectoryName(OpenDlg.FileName);
-			_CurrentModelPath = OpenDlg.FileName;
+			_LastOpenDirectory = Path.GetDirectoryName(loadResourceDialog.DataFile);
+			_CurrentModelPath = loadResourceDialog.DataFile;
 			reloadCurrentModelToolStripMenuItem.Enabled = true;
-			filterIndex = OpenDlg.FilterIndex;
 
 			return true;
 		}
@@ -241,7 +213,7 @@ namespace ModelEx
 					_ClearLoadedResources = false;
 				}
 
-				_LastLoadedResource = RenderManager.Instance.LoadRenderResourceCDC(_CurrentModelPath, _CurrentModelType, ImportExportOptions, _CurrentModelChild);
+				_LastLoadedResource = RenderManager.Instance.LoadRenderResourceCDC(_CurrentModelPath, _GameType, ImportExportOptions, _CurrentModelChild);
 
 				if (_ResetCameraOnModelLoad)
 				{
@@ -1480,20 +1452,6 @@ namespace ModelEx
 
 		private void loadSceneToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			LoadResourceDialog loadResourceDialog = new LoadResourceDialog();
-
-			if (_LastOpenDirectory != "")
-			{
-				if (Directory.Exists(_LastOpenDirectory))
-				{
-					loadResourceDialog.InitialDirectory = _LastOpenDirectory;
-				}
-			}
-
-			if (loadResourceDialog.ShowDialog() == DialogResult.OK)
-			{
-				Console.WriteLine("OK!");
-			}
 
 			if (SelectResourceToLoad(false, false, true))
 			{
