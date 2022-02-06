@@ -16,6 +16,7 @@ namespace ModelEx
 		public CDC.Game GameType { get; private set; } = CDC.Game.Gex;
 		public CDC.Platform Platform { get; private set; } = CDC.Platform.PC;
 		public bool ClearLoadedFiles { get; private set; } = false;
+		private DirectoryInfo _currentDirectory;
 
 		private readonly List<string> _specialFolders = new List<string>();
 
@@ -100,9 +101,9 @@ namespace ModelEx
             label2.ForeColor = Color.White;
             checkBox1.ForeColor = Color.White;*/
 
-			imageList1.Images.Add("", Icon);
+			fileFolderImageList.Images.Add("", Icon);
 			Bitmap folderIcon = Win32Icons.GetStockIcon(Win32Icons.SHSTOCKICONID.Folder, false);
-			imageList1.Images.Add("", folderIcon);
+			fileFolderImageList.Images.Add("", folderIcon);
 
 			for (int i = 0; i < 60; i++)
 			{
@@ -113,7 +114,7 @@ namespace ModelEx
 					DirectoryInfo directoryInfo = new DirectoryInfo(specialFolderName);
 
 					_specialFolders.Add(specialFolderName);
-					imageList1.Images.Add(directoryInfo.Name, Win32Icons.GetDirectoryIcon(specialFolderName, false));
+					fileFolderImageList.Images.Add(directoryInfo.Name, Win32Icons.GetDirectoryIcon(specialFolderName, false));
 				}
 				catch (Exception)
 				{
@@ -126,10 +127,10 @@ namespace ModelEx
 			foreach (DriveInfo driveInfo in driveInfos)
 			{
 				DirectoryInfo directoryInfo = new DirectoryInfo(driveInfo.Name);
-				if (!imageList1.Images.ContainsKey(directoryInfo.Name))
+				if (!fileFolderImageList.Images.ContainsKey(directoryInfo.Name))
 				{
 					_specialFolders.Add(directoryInfo.Name);
-					imageList1.Images.Add(directoryInfo.Name, Win32Icons.GetDirectoryIcon(directoryInfo.Name, false));
+					fileFolderImageList.Images.Add(directoryInfo.Name, Win32Icons.GetDirectoryIcon(directoryInfo.Name, false));
 				}
 				rootNode = CreateTreeNode(directoryInfo);
 				browserTreeView.Nodes.Add(rootNode);
@@ -141,42 +142,20 @@ namespace ModelEx
 			try
 			{
 				DirectoryInfo initialDirectoryInfo = new DirectoryInfo(InitialDirectory);
-				DirectoryInfo expandDirectory = initialDirectoryInfo;
+				/*DirectoryInfo expandDirectory = initialDirectoryInfo;
 				while (expandDirectory != null)
 				{
 					breadCrumbs.Insert(0, expandDirectory);
 					expandDirectory = expandDirectory.Parent;
-				}
+				}*/
+
+				UpdateBrowserListView(initialDirectoryInfo);
+				recentLocationsComboBox.Items.Add(_currentDirectory.FullName);
 			}
 			catch (Exception)
 			{
 				breadCrumbs.Clear();
 			}
-
-			TreeNode expandNode = null;
-
-			try
-			{
-				TreeNodeCollection expandNodeCollection = browserTreeView.Nodes;
-				while (breadCrumbs.Count > 0)
-				{
-					expandNode = expandNodeCollection.Find(breadCrumbs[0].Name, false)[0];
-					expandNodeCollection = expandNode.Nodes;
-
-					if (expandNodeCollection.Count > 0)
-					{
-						expandNode.Expand();
-					}
-
-					breadCrumbs.RemoveAt(0);
-				}
-			}
-			catch (Exception)
-			{
-				browserTreeView.CollapseAll();
-			}
-
-			browserTreeView.SelectedNode = expandNode;
 		}
 
 		private void LoadResourceDialog_FormClosing(object sender, FormClosingEventArgs e)
@@ -510,24 +489,27 @@ namespace ModelEx
 			}
 		}
 
-		private void UpdateBrowserListView(DirectoryInfo nodeDirInfo)
+		private void UpdateBrowserListView(DirectoryInfo directoryInfo)
 		{
-			if (nodeDirInfo == null)
+			_currentDirectory = directoryInfo;
+			browserListView.Items.Clear();
+
+			if (directoryInfo == null)
 			{
+				recentLocationsComboBox.Text = "";
 				return;
 			}
 
-			browserListView.Items.Clear();
+			recentLocationsComboBox.Text = directoryInfo.FullName;
 
 			ListViewItem.ListViewSubItem[] subItems;
 			ListViewItem item;
 
-			DirectoryInfo[] subDirectoryInfos = GetSubDirectories(nodeDirInfo);
+			DirectoryInfo[] subDirectoryInfos = GetSubDirectories(directoryInfo);
 			if (subDirectoryInfos.Length > 0)
 			{
-				foreach (DirectoryInfo dir in nodeDirInfo.GetDirectories())
+				foreach (DirectoryInfo dir in directoryInfo.GetDirectories())
 				{
-					string folderImageKey = "";
 					if (_specialFolders.Contains(dir.FullName))
 					{
 						item = new ListViewItem(dir.Name, dir.Name);
@@ -548,10 +530,10 @@ namespace ModelEx
 				}
 			}
 
-			FileInfo[] fileInfos = GetFiles(nodeDirInfo);
+			FileInfo[] fileInfos = GetFiles(directoryInfo);
 			if (fileInfos.Length > 0)
 			{
-				foreach (FileInfo file in nodeDirInfo.GetFiles())
+				foreach (FileInfo file in directoryInfo.GetFiles())
 				{
 					if (file.Extension != ".pcm" && file.Extension != ".drm")
 					{
@@ -573,7 +555,7 @@ namespace ModelEx
 			browserListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 		}
 
-		private void hrowserTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+		private void browserTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
 		{
 			if (e.Node.Tag != null)
 			{
@@ -619,7 +601,7 @@ namespace ModelEx
 			}
 		}
 
-		private void hrowserTreeView_KeyDown(object sender, KeyEventArgs e)
+		private void browserTreeView_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.Enter)
 			{
@@ -679,6 +661,16 @@ namespace ModelEx
 		private void gameTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			UpdateGameType();
+		}
+
+		private void navigateUpButton_Click(object sender, EventArgs e)
+		{
+			UpdateBrowserListView(_currentDirectory?.Parent);
+		}
+
+		private void navigateRefreshButton_Click(object sender, EventArgs e)
+		{
+			UpdateBrowserListView(_currentDirectory);
 		}
 	}
 }

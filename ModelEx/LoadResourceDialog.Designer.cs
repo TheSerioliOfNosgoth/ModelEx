@@ -31,7 +31,7 @@ namespace ModelEx
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoadResourceDialog));
-			this.panel1 = new System.Windows.Forms.Panel();
+			this.selectionsPanel = new System.Windows.Forms.Panel();
 			this.platformComboBox = new System.Windows.Forms.ComboBox();
 			this.objectListFileLabel = new System.Windows.Forms.Label();
 			this.objectListFileComboBox = new System.Windows.Forms.ComboBox();
@@ -45,43 +45,51 @@ namespace ModelEx
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.okButton = new System.Windows.Forms.Button();
 			this.gameTypeComboBox = new System.Windows.Forms.ComboBox();
-			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-			this.browserTreeView = new SceneTreeView();
-			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+			this.browserSplitContainer = new System.Windows.Forms.SplitContainer();
+			this.fileFolderImageList = new System.Windows.Forms.ImageList(this.components);
 			this.browserListView = new System.Windows.Forms.ListView();
 			this.nameHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.typeHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.lastModifiedHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.panel1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-			this.splitContainer1.Panel1.SuspendLayout();
-			this.splitContainer1.Panel2.SuspendLayout();
-			this.splitContainer1.SuspendLayout();
+			this.navigationBarPanel = new System.Windows.Forms.Panel();
+			this.navigateRefreshButton = new System.Windows.Forms.Button();
+			this.recentLocationsComboBox = new System.Windows.Forms.ComboBox();
+			this.navigateUpButton = new System.Windows.Forms.Button();
+			this.buttonImageList = new System.Windows.Forms.ImageList(this.components);
+			this.browserTreeView = new ModelEx.SceneTreeView();
+			this.selectionsPanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.browserSplitContainer)).BeginInit();
+			this.browserSplitContainer.Panel1.SuspendLayout();
+			this.browserSplitContainer.Panel2.SuspendLayout();
+			this.browserSplitContainer.SuspendLayout();
+			this.navigationBarPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// panel1
+			// selectionsPanel
 			// 
-			this.panel1.Controls.Add(this.platformComboBox);
-			this.panel1.Controls.Add(this.objectListFileLabel);
-			this.panel1.Controls.Add(this.objectListFileComboBox);
-			this.panel1.Controls.Add(this.projectFolderLabel);
-			this.panel1.Controls.Add(this.textureFileComboBox);
-			this.panel1.Controls.Add(this.clearLoadedFilesCheckBox);
-			this.panel1.Controls.Add(this.projectFolderTextBox);
-			this.panel1.Controls.Add(this.textureFileLabel);
-			this.panel1.Controls.Add(this.dataFileTextBox);
-			this.panel1.Controls.Add(this.dataFileLabel);
-			this.panel1.Controls.Add(this.cancelButton);
-			this.panel1.Controls.Add(this.okButton);
-			this.panel1.Controls.Add(this.gameTypeComboBox);
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.panel1.Location = new System.Drawing.Point(0, 362);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(800, 110);
-			this.panel1.TabIndex = 0;
+			this.selectionsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.selectionsPanel.Controls.Add(this.platformComboBox);
+			this.selectionsPanel.Controls.Add(this.objectListFileLabel);
+			this.selectionsPanel.Controls.Add(this.objectListFileComboBox);
+			this.selectionsPanel.Controls.Add(this.projectFolderLabel);
+			this.selectionsPanel.Controls.Add(this.textureFileComboBox);
+			this.selectionsPanel.Controls.Add(this.clearLoadedFilesCheckBox);
+			this.selectionsPanel.Controls.Add(this.projectFolderTextBox);
+			this.selectionsPanel.Controls.Add(this.textureFileLabel);
+			this.selectionsPanel.Controls.Add(this.dataFileTextBox);
+			this.selectionsPanel.Controls.Add(this.dataFileLabel);
+			this.selectionsPanel.Controls.Add(this.cancelButton);
+			this.selectionsPanel.Controls.Add(this.okButton);
+			this.selectionsPanel.Controls.Add(this.gameTypeComboBox);
+			this.selectionsPanel.Location = new System.Drawing.Point(0, 360);
+			this.selectionsPanel.Name = "selectionsPanel";
+			this.selectionsPanel.Size = new System.Drawing.Size(800, 110);
+			this.selectionsPanel.TabIndex = 0;
 			// 
 			// platformComboBox
 			// 
+			this.platformComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.platformComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.platformComboBox.FormattingEnabled = true;
 			this.platformComboBox.Location = new System.Drawing.Point(614, 58);
@@ -92,6 +100,7 @@ namespace ModelEx
 			// 
 			// objectListFileLabel
 			// 
+			this.objectListFileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.objectListFileLabel.AutoSize = true;
 			this.objectListFileLabel.Location = new System.Drawing.Point(14, 87);
 			this.objectListFileLabel.Name = "objectListFileLabel";
@@ -101,6 +110,8 @@ namespace ModelEx
 			// 
 			// objectListFileComboBox
 			// 
+			this.objectListFileComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.objectListFileComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.objectListFileComboBox.FormattingEnabled = true;
 			this.objectListFileComboBox.Location = new System.Drawing.Point(94, 84);
@@ -110,6 +121,7 @@ namespace ModelEx
 			// 
 			// projectFolderLabel
 			// 
+			this.projectFolderLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.projectFolderLabel.AutoSize = true;
 			this.projectFolderLabel.Location = new System.Drawing.Point(14, 9);
 			this.projectFolderLabel.Name = "projectFolderLabel";
@@ -119,6 +131,8 @@ namespace ModelEx
 			// 
 			// textureFileComboBox
 			// 
+			this.textureFileComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.textureFileComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.textureFileComboBox.FormattingEnabled = true;
 			this.textureFileComboBox.Location = new System.Drawing.Point(94, 58);
@@ -128,6 +142,7 @@ namespace ModelEx
 			// 
 			// clearLoadedFilesCheckBox
 			// 
+			this.clearLoadedFilesCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.clearLoadedFilesCheckBox.AutoSize = true;
 			this.clearLoadedFilesCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.clearLoadedFilesCheckBox.Location = new System.Drawing.Point(614, 6);
@@ -139,6 +154,8 @@ namespace ModelEx
 			// 
 			// projectFolderTextBox
 			// 
+			this.projectFolderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.projectFolderTextBox.Location = new System.Drawing.Point(94, 6);
 			this.projectFolderTextBox.Name = "projectFolderTextBox";
 			this.projectFolderTextBox.ReadOnly = true;
@@ -147,6 +164,7 @@ namespace ModelEx
 			// 
 			// textureFileLabel
 			// 
+			this.textureFileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.textureFileLabel.AutoSize = true;
 			this.textureFileLabel.Location = new System.Drawing.Point(14, 61);
 			this.textureFileLabel.Name = "textureFileLabel";
@@ -156,6 +174,8 @@ namespace ModelEx
 			// 
 			// dataFileTextBox
 			// 
+			this.dataFileTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.dataFileTextBox.Location = new System.Drawing.Point(94, 32);
 			this.dataFileTextBox.Name = "dataFileTextBox";
 			this.dataFileTextBox.ReadOnly = true;
@@ -164,6 +184,7 @@ namespace ModelEx
 			// 
 			// dataFileLabel
 			// 
+			this.dataFileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.dataFileLabel.AutoSize = true;
 			this.dataFileLabel.Location = new System.Drawing.Point(14, 35);
 			this.dataFileLabel.Name = "dataFileLabel";
@@ -173,6 +194,7 @@ namespace ModelEx
 			// 
 			// cancelButton
 			// 
+			this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.cancelButton.Location = new System.Drawing.Point(704, 82);
 			this.cancelButton.Name = "cancelButton";
@@ -183,6 +205,7 @@ namespace ModelEx
 			// 
 			// okButton
 			// 
+			this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.okButton.Location = new System.Drawing.Point(614, 82);
 			this.okButton.Name = "okButton";
@@ -193,6 +216,7 @@ namespace ModelEx
 			// 
 			// gameTypeComboBox
 			// 
+			this.gameTypeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.gameTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.gameTypeComboBox.FormattingEnabled = true;
 			this.gameTypeComboBox.Location = new System.Drawing.Point(614, 32);
@@ -201,43 +225,30 @@ namespace ModelEx
 			this.gameTypeComboBox.TabIndex = 1;
 			this.gameTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.gameTypeComboBox_SelectedIndexChanged);
 			// 
-			// splitContainer1
+			// browserSplitContainer
 			// 
-			this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-			this.splitContainer1.Name = "splitContainer1";
+			this.browserSplitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.browserSplitContainer.Location = new System.Drawing.Point(0, 25);
+			this.browserSplitContainer.Name = "browserSplitContainer";
 			// 
-			// splitContainer1.Panel1
+			// browserSplitContainer.Panel1
 			// 
-			this.splitContainer1.Panel1.Controls.Add(this.browserTreeView);
+			this.browserSplitContainer.Panel1.Controls.Add(this.browserTreeView);
 			// 
-			// splitContainer1.Panel2
+			// browserSplitContainer.Panel2
 			// 
-			this.splitContainer1.Panel2.Controls.Add(this.browserListView);
-			this.splitContainer1.Size = new System.Drawing.Size(800, 362);
-			this.splitContainer1.SplitterDistance = 266;
-			this.splitContainer1.TabIndex = 1;
+			this.browserSplitContainer.Panel2.Controls.Add(this.browserListView);
+			this.browserSplitContainer.Size = new System.Drawing.Size(800, 339);
+			this.browserSplitContainer.SplitterDistance = 266;
+			this.browserSplitContainer.TabIndex = 1;
 			// 
-			// hrowserTreeView
+			// fileFolderImageList
 			// 
-			this.browserTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.browserTreeView.ImageIndex = 0;
-			this.browserTreeView.ImageList = this.imageList1;
-			this.browserTreeView.Location = new System.Drawing.Point(0, 0);
-			this.browserTreeView.Name = "hrowserTreeView";
-			this.browserTreeView.SelectedImageIndex = 0;
-			this.browserTreeView.Size = new System.Drawing.Size(266, 362);
-			this.browserTreeView.TabIndex = 0;
-			this.browserTreeView.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.browserTreeView_AfterCollapse);
-			this.browserTreeView.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.browserTreeView_BeforeExpand);
-			this.browserTreeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.hrowserTreeView_NodeMouseDoubleClick);
-			this.browserTreeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.hrowserTreeView_KeyDown);
-			// 
-			// imageList1
-			// 
-			this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
-			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+			this.fileFolderImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+			this.fileFolderImageList.ImageSize = new System.Drawing.Size(16, 16);
+			this.fileFolderImageList.TransparentColor = System.Drawing.Color.Transparent;
 			// 
 			// browserListView
 			// 
@@ -249,12 +260,13 @@ namespace ModelEx
 			this.browserListView.HideSelection = false;
 			this.browserListView.Location = new System.Drawing.Point(0, 0);
 			this.browserListView.Name = "browserListView";
-			this.browserListView.Size = new System.Drawing.Size(530, 362);
-			this.browserListView.SmallImageList = this.imageList1;
+			this.browserListView.Size = new System.Drawing.Size(530, 339);
+			this.browserListView.SmallImageList = this.fileFolderImageList;
 			this.browserListView.TabIndex = 0;
 			this.browserListView.UseCompatibleStateImageBehavior = false;
 			this.browserListView.View = System.Windows.Forms.View.Details;
 			this.browserListView.ItemActivate += new System.EventHandler(this.browserListView_ItemActivate);
+			this.browserListView.SelectedIndexChanged += new System.EventHandler(this.browserListView_SelectedIndexChanged);
 			this.browserListView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.browserListView_KeyDown);
 			// 
 			// nameHeader
@@ -271,14 +283,83 @@ namespace ModelEx
 			this.lastModifiedHeader.Text = "Last Modified";
 			this.lastModifiedHeader.Width = 100;
 			// 
+			// navigationBarPanel
+			// 
+			this.navigationBarPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.navigationBarPanel.Controls.Add(this.navigateRefreshButton);
+			this.navigationBarPanel.Controls.Add(this.recentLocationsComboBox);
+			this.navigationBarPanel.Controls.Add(this.navigateUpButton);
+			this.navigationBarPanel.Location = new System.Drawing.Point(0, 0);
+			this.navigationBarPanel.Name = "navigationBarPanel";
+			this.navigationBarPanel.Size = new System.Drawing.Size(800, 25);
+			this.navigationBarPanel.TabIndex = 2;
+			// 
+			// navigateRefreshButton
+			// 
+			this.navigateRefreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.navigateRefreshButton.ImageIndex = 1;
+			this.navigateRefreshButton.ImageList = this.buttonImageList;
+			this.navigateRefreshButton.Location = new System.Drawing.Point(775, 0);
+			this.navigateRefreshButton.Name = "navigateRefreshButton";
+			this.navigateRefreshButton.Size = new System.Drawing.Size(25, 25);
+			this.navigateRefreshButton.TabIndex = 2;
+			this.navigateRefreshButton.UseVisualStyleBackColor = true;
+			this.navigateRefreshButton.Click += new System.EventHandler(this.navigateRefreshButton_Click);
+			// 
+			// recentLocationsComboBox
+			// 
+			this.recentLocationsComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.recentLocationsComboBox.FormattingEnabled = true;
+			this.recentLocationsComboBox.Location = new System.Drawing.Point(27, 2);
+			this.recentLocationsComboBox.Name = "recentLocationsComboBox";
+			this.recentLocationsComboBox.Size = new System.Drawing.Size(745, 21);
+			this.recentLocationsComboBox.TabIndex = 1;
+			// 
+			// navigateUpButton
+			// 
+			this.navigateUpButton.ImageIndex = 0;
+			this.navigateUpButton.ImageList = this.buttonImageList;
+			this.navigateUpButton.Location = new System.Drawing.Point(0, 0);
+			this.navigateUpButton.Name = "navigateUpButton";
+			this.navigateUpButton.Size = new System.Drawing.Size(25, 25);
+			this.navigateUpButton.TabIndex = 0;
+			this.navigateUpButton.UseVisualStyleBackColor = true;
+			this.navigateUpButton.Click += new System.EventHandler(this.navigateUpButton_Click);
+			// 
+			// buttonImageList
+			// 
+			this.buttonImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("buttonImageList.ImageStream")));
+			this.buttonImageList.TransparentColor = System.Drawing.Color.Transparent;
+			this.buttonImageList.Images.SetKeyName(0, "NavigateUpIcon.ico");
+			this.buttonImageList.Images.SetKeyName(1, "RefreshIcon.ico");
+			// 
+			// browserTreeView
+			// 
+			this.browserTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.browserTreeView.ImageIndex = 0;
+			this.browserTreeView.ImageList = this.fileFolderImageList;
+			this.browserTreeView.Location = new System.Drawing.Point(0, 0);
+			this.browserTreeView.Name = "browserTreeView";
+			this.browserTreeView.SelectedImageIndex = 0;
+			this.browserTreeView.Size = new System.Drawing.Size(266, 339);
+			this.browserTreeView.TabIndex = 0;
+			this.browserTreeView.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.browserTreeView_AfterCollapse);
+			this.browserTreeView.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.browserTreeView_BeforeExpand);
+			this.browserTreeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.browserTreeView_NodeMouseDoubleClick);
+			this.browserTreeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.browserTreeView_KeyDown);
+			// 
 			// LoadResourceDialog
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.cancelButton;
-			this.ClientSize = new System.Drawing.Size(800, 472);
-			this.Controls.Add(this.splitContainer1);
-			this.Controls.Add(this.panel1);
+			this.ClientSize = new System.Drawing.Size(800, 471);
+			this.Controls.Add(this.navigationBarPanel);
+			this.Controls.Add(this.browserSplitContainer);
+			this.Controls.Add(this.selectionsPanel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -288,21 +369,22 @@ namespace ModelEx
 			this.Text = "LoadResourceDialog";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LoadResourceDialog_FormClosing);
 			this.Load += new System.EventHandler(this.LoadResourceDialog_Load);
-			this.panel1.ResumeLayout(false);
-			this.panel1.PerformLayout();
-			this.splitContainer1.Panel1.ResumeLayout(false);
-			this.splitContainer1.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-			this.splitContainer1.ResumeLayout(false);
+			this.selectionsPanel.ResumeLayout(false);
+			this.selectionsPanel.PerformLayout();
+			this.browserSplitContainer.Panel1.ResumeLayout(false);
+			this.browserSplitContainer.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.browserSplitContainer)).EndInit();
+			this.browserSplitContainer.ResumeLayout(false);
+			this.navigationBarPanel.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
 
-		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.SplitContainer splitContainer1;
-		private System.Windows.Forms.ImageList imageList1;
+		private System.Windows.Forms.Panel selectionsPanel;
+		private System.Windows.Forms.SplitContainer browserSplitContainer;
+		private System.Windows.Forms.ImageList fileFolderImageList;
 		private SceneTreeView browserTreeView;
 		private System.Windows.Forms.ListView browserListView;
 		private System.Windows.Forms.ColumnHeader nameHeader;
@@ -321,5 +403,10 @@ namespace ModelEx
 		private System.Windows.Forms.ComboBox objectListFileComboBox;
 		private System.Windows.Forms.Label objectListFileLabel;
 		private System.Windows.Forms.ComboBox platformComboBox;
+		private System.Windows.Forms.Panel navigationBarPanel;
+		private System.Windows.Forms.Button navigateUpButton;
+		private System.Windows.Forms.ComboBox recentLocationsComboBox;
+		private System.Windows.Forms.Button navigateRefreshButton;
+		private System.Windows.Forms.ImageList buttonImageList;
 	}
 }

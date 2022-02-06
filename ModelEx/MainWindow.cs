@@ -1480,7 +1480,7 @@ namespace ModelEx
 
 		private void loadSceneToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			/*LoadResourceDialog loadResourceDialog = new LoadResourceDialog();
+			LoadResourceDialog loadResourceDialog = new LoadResourceDialog();
 
 			if (_LastOpenDirectory != "")
 			{
@@ -1493,7 +1493,7 @@ namespace ModelEx
 			if (loadResourceDialog.ShowDialog() == DialogResult.OK)
 			{
 				Console.WriteLine("OK!");
-			}*/
+			}
 
 			if (SelectResourceToLoad(false, false, true))
 			{

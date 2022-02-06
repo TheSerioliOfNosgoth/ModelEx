@@ -206,6 +206,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DimensionSymbol.ico" />
+    <Content Include="NavigateUpIcon.ico" />
+    <Content Include="RefreshIcon.ico" />
     <Content Include="Shaders\Constants.fx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
