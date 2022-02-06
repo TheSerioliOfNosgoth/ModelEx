@@ -53,9 +53,9 @@ namespace ModelEx
 			this.lastModifiedHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.navigationBarPanel = new System.Windows.Forms.Panel();
 			this.navigateRefreshButton = new System.Windows.Forms.Button();
+			this.buttonImageList = new System.Windows.Forms.ImageList(this.components);
 			this.recentLocationsComboBox = new System.Windows.Forms.ComboBox();
 			this.navigateUpButton = new System.Windows.Forms.Button();
-			this.buttonImageList = new System.Windows.Forms.ImageList(this.components);
 			this.browserTreeView = new ModelEx.SceneTreeView();
 			this.selectionsPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.browserSplitContainer)).BeginInit();
@@ -307,6 +307,13 @@ namespace ModelEx
 			this.navigateRefreshButton.UseVisualStyleBackColor = true;
 			this.navigateRefreshButton.Click += new System.EventHandler(this.navigateRefreshButton_Click);
 			// 
+			// buttonImageList
+			// 
+			this.buttonImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("buttonImageList.ImageStream")));
+			this.buttonImageList.TransparentColor = System.Drawing.Color.Transparent;
+			this.buttonImageList.Images.SetKeyName(0, "NavigateUpIcon.ico");
+			this.buttonImageList.Images.SetKeyName(1, "RefreshIcon.ico");
+			// 
 			// recentLocationsComboBox
 			// 
 			this.recentLocationsComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -317,6 +324,10 @@ namespace ModelEx
 			this.recentLocationsComboBox.Name = "recentLocationsComboBox";
 			this.recentLocationsComboBox.Size = new System.Drawing.Size(745, 21);
 			this.recentLocationsComboBox.TabIndex = 1;
+			this.recentLocationsComboBox.SelectedIndexChanged += new System.EventHandler(this.recentLocationsComboBox_SelectedIndexChanged);
+			this.recentLocationsComboBox.TextChanged += new System.EventHandler(this.recentLocationsComboBox_TextChanged);
+			this.recentLocationsComboBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.recentLocationsComboBox_KeyDown);
+			this.recentLocationsComboBox.Validating += new System.ComponentModel.CancelEventHandler(this.recentLocationsComboBox_Validating);
 			// 
 			// navigateUpButton
 			// 
@@ -328,13 +339,6 @@ namespace ModelEx
 			this.navigateUpButton.TabIndex = 0;
 			this.navigateUpButton.UseVisualStyleBackColor = true;
 			this.navigateUpButton.Click += new System.EventHandler(this.navigateUpButton_Click);
-			// 
-			// buttonImageList
-			// 
-			this.buttonImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("buttonImageList.ImageStream")));
-			this.buttonImageList.TransparentColor = System.Drawing.Color.Transparent;
-			this.buttonImageList.Images.SetKeyName(0, "NavigateUpIcon.ico");
-			this.buttonImageList.Images.SetKeyName(1, "RefreshIcon.ico");
 			// 
 			// browserTreeView
 			// 
@@ -366,7 +370,7 @@ namespace ModelEx
 			this.MinimumSize = new System.Drawing.Size(300, 200);
 			this.Name = "LoadResourceDialog";
 			this.ShowInTaskbar = false;
-			this.Text = "LoadResourceDialog";
+			this.Text = "Load Resource...";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LoadResourceDialog_FormClosing);
 			this.Load += new System.EventHandler(this.LoadResourceDialog_Load);
 			this.selectionsPanel.ResumeLayout(false);

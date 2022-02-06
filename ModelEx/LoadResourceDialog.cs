@@ -141,16 +141,16 @@ namespace ModelEx
 			List<DirectoryInfo> breadCrumbs = new List<DirectoryInfo>();
 			try
 			{
-				DirectoryInfo initialDirectoryInfo = new DirectoryInfo(InitialDirectory);
-				/*DirectoryInfo expandDirectory = initialDirectoryInfo;
+				/*DirectoryInfo initialDirectoryInfo = new DirectoryInfo(InitialDirectory);
+				DirectoryInfo expandDirectory = initialDirectoryInfo;
 				while (expandDirectory != null)
 				{
 					breadCrumbs.Insert(0, expandDirectory);
 					expandDirectory = expandDirectory.Parent;
 				}*/
 
-				UpdateBrowserListView(initialDirectoryInfo);
-				recentLocationsComboBox.Items.Add(_currentDirectory.FullName);
+				recentLocationsComboBox.Items.Add(InitialDirectory);
+				recentLocationsComboBox.SelectedIndex = 0;
 			}
 			catch (Exception)
 			{
@@ -671,6 +671,51 @@ namespace ModelEx
 		private void navigateRefreshButton_Click(object sender, EventArgs e)
 		{
 			UpdateBrowserListView(_currentDirectory);
+		}
+
+		private void recentLocationsComboBox_TextChanged(object sender, EventArgs e)
+		{
+		}
+
+		private void recentLocationsComboBox_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+		}
+
+		private void recentLocationsComboBox_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Enter)
+			{
+				ComboBox comboBox = (ComboBox)sender;
+				string folderName = comboBox.Text;
+				try
+				{
+					if (!Directory.Exists(folderName))
+					{
+						throw new DirectoryNotFoundException();
+					}
+
+					int currentIndex = comboBox.Items.IndexOf(folderName);
+					if (currentIndex >= 0)
+					{
+						comboBox.Items.RemoveAt(currentIndex);
+					}
+
+					comboBox.Items.Insert(0, folderName);
+					comboBox.SelectedIndex = 0;
+				}
+				catch (Exception)
+				{
+				}
+
+				e.SuppressKeyPress = true;
+			}
+		}
+
+		private void recentLocationsComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			ComboBox comboBox = (ComboBox)sender;
+			DirectoryInfo directoryInfo = new DirectoryInfo(comboBox.Text);
+			UpdateBrowserListView(directoryInfo);
 		}
 	}
 }
