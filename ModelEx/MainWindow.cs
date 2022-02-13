@@ -16,15 +16,14 @@ namespace ModelEx
 		protected bool _RunUIMonitoringThread;
 		protected bool _ReloadModelOnRenderModeChange;
 		protected bool _ResetCameraOnModelLoad;
-		protected string _CurrentModelPath;
-		protected CDC.Game _GameType;
-		protected int _CurrentModelChild;
 		protected bool _ClearLoadedResources;
 		protected bool _SelectObjectOnLoaded;
 		protected bool _SelectSceneOnLoaded;
-		protected string _LastLoadedResource;
-		protected string _LastOpenDirectory;
-		protected string _LastExportDirectory;
+		protected string _LastLoadedResource = "";
+		protected string _LastOpenDirectory = "";
+		protected string _LastExportDirectory = "";
+		protected CDC.Game _LastSelectedGameType = CDC.Game.Gex;
+		protected RenderManager.LoadRequestCDC _LoadRequest;
 
 		protected void UIMonitor()
 		{
@@ -50,9 +49,6 @@ namespace ModelEx
 		public MainWindow()
 		{
 			_RunUIMonitoringThread = true;
-			_CurrentModelPath = "";
-			_LastOpenDirectory = "";
-			_LastExportDirectory = "";
 			InitializeComponent();
 			ImportExportOptions = new CDC.Objects.ExportOptions();
 			UpdateSplitPanelPosition();
@@ -136,16 +132,14 @@ namespace ModelEx
 			_LastLoadedResource = "";
 		}
 
-		protected bool SelectResourceToLoad(bool clearLoadedResources, bool selectObjectOnLoaded, bool selectSceneOnLoaded)
+		protected bool SelectResourceToLoad(bool selectObjectOnLoaded, bool selectSceneOnLoaded)
 		{
+			_LoadRequest = new RenderManager.LoadRequestCDC();
 			LoadResourceDialog loadResourceDialog = new LoadResourceDialog();
 
-			if (_LastOpenDirectory != "")
+			if (Directory.Exists(_LastOpenDirectory))
 			{
-				if (Directory.Exists(_LastOpenDirectory))
-				{
-					loadResourceDialog.InitialDirectory = _LastOpenDirectory;
-				}
+				loadResourceDialog.InitialDirectory = _LastOpenDirectory;
 			}
 
 			if (loadResourceDialog.ShowDialog() != DialogResult.OK)
@@ -155,9 +149,6 @@ namespace ModelEx
 			}
 
 			loadResourceDialog.Dispose();
-
-			_GameType = loadResourceDialog.GameType;
-			_CurrentModelChild = -1;
 
 			if (loadResourceDialog.GameType == CDC.Game.Gex)
 			{
@@ -184,14 +175,21 @@ namespace ModelEx
 					return false;
 				}
 
-				_CurrentModelChild = objectSelectDlg.SelectedObject;
+				_LoadRequest.ChildIndex = objectSelectDlg.SelectedObject;
 			}
 
-			_ClearLoadedResources = clearLoadedResources;
+			_LoadRequest.DataFile = loadResourceDialog.DataFile;
+			_LoadRequest.TextureFile = loadResourceDialog.TextureFile;
+			_LoadRequest.ObjectListFile = loadResourceDialog.ObjectListFile;
+			_LoadRequest.GameType = loadResourceDialog.GameType;
+			_LoadRequest.ExportOptions = ImportExportOptions;
+
+			_ClearLoadedResources = loadResourceDialog.ClearLoadedFiles;
 			_SelectObjectOnLoaded = selectObjectOnLoaded;
 			_SelectSceneOnLoaded = selectSceneOnLoaded;
 			_LastOpenDirectory = Path.GetDirectoryName(loadResourceDialog.DataFile);
-			_CurrentModelPath = loadResourceDialog.DataFile;
+			_LastSelectedGameType = loadResourceDialog.GameType;
+
 			reloadCurrentModelToolStripMenuItem.Enabled = true;
 
 			return true;
@@ -199,21 +197,22 @@ namespace ModelEx
 
 		protected void LoadCurrentModel()
 		{
-			if ((_CurrentModelPath == "") || (!File.Exists(_CurrentModelPath)))
+			if (!File.Exists(_LoadRequest.DataFile))
 			{
 				return;
 			}
+
 			Invoke(new MethodInvoker(BeginLoading));
 
 			Thread loadingThread = new Thread((() =>
 			{
 				if (_ClearLoadedResources)
 				{
-					RenderManager.Instance.UnloadRenderResources();
+					RenderManager.Instance.UnloadResources();
 					_ClearLoadedResources = false;
 				}
 
-				_LastLoadedResource = RenderManager.Instance.LoadRenderResourceCDC(_CurrentModelPath, _GameType, ImportExportOptions, _CurrentModelChild);
+				_LastLoadedResource = RenderManager.Instance.LoadResourceCDC(_LoadRequest);
 
 				if (_ResetCameraOnModelLoad)
 				{
@@ -252,7 +251,7 @@ namespace ModelEx
 			progressThread.Start();
 		}
 
-		private void ExportToolStripMenuItem_Click(object sender, EventArgs e)
+		private void exportObjectToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			SaveFileDialog SaveDlg = new SaveFileDialog
 			{
@@ -263,19 +262,40 @@ namespace ModelEx
 				DefaultExt = "dae",
 				FilterIndex = 1
 			};
-			if (_LastExportDirectory != "")
+
+			if (Directory.Exists(_LastExportDirectory))
 			{
-				if (Directory.Exists(_LastExportDirectory))
-				{
-					SaveDlg.InitialDirectory = _LastExportDirectory;
-				}
+				SaveDlg.InitialDirectory = _LastExportDirectory;
 			}
 
 			if (SaveDlg.ShowDialog() == DialogResult.OK)
 			{
 				_LastExportDirectory = Path.GetDirectoryName(SaveDlg.FileName);
-				//string saveFileName = "C://Users//Andrew//Desktop//TestModel.dae";
-				RenderManager.Instance.ExportTextureResource(SaveDlg.FileName, ImportExportOptions);
+				RenderManager.Instance.ExportCurrentObject(SaveDlg.FileName, ImportExportOptions);
+			}
+		}
+
+		private void exportSceneToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			SaveFileDialog SaveDlg = new SaveFileDialog
+			{
+				CheckPathExists = true,
+				Filter =
+					"Collada Mesh Files (*.dae)|*.dae",
+				//"All Files (*.*)|*.*";
+				DefaultExt = "dae",
+				FilterIndex = 1
+			};
+
+			if (Directory.Exists(_LastExportDirectory))
+			{
+				SaveDlg.InitialDirectory = _LastExportDirectory;
+			}
+
+			if (SaveDlg.ShowDialog() == DialogResult.OK)
+			{
+				_LastExportDirectory = Path.GetDirectoryName(SaveDlg.FileName);
+				RenderManager.Instance.ExportCurrentScene(SaveDlg.FileName, ImportExportOptions);
 			}
 		}
 
@@ -1436,7 +1456,7 @@ namespace ModelEx
 
 		private void loadResourceButton_Click(object sender, EventArgs e)
 		{
-			if (SelectResourceToLoad(false, false, false))
+			if (SelectResourceToLoad(false, false))
 			{
 				LoadCurrentModel();
 			}
@@ -1444,7 +1464,7 @@ namespace ModelEx
 
 		private void loadObjectToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (SelectResourceToLoad(false, true, false))
+			if (SelectResourceToLoad(true, false))
 			{
 				LoadCurrentModel();
 			}
@@ -1452,8 +1472,7 @@ namespace ModelEx
 
 		private void loadSceneToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
-			if (SelectResourceToLoad(false, false, true))
+			if (SelectResourceToLoad(false, true))
 			{
 				LoadCurrentModel();
 			}

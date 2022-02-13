@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Reflection;
 
 namespace CDC
 {
@@ -181,6 +180,51 @@ namespace CDC
 			}
 			xUV.v = ClampToRange(xUV.v + fOffsetAdjust, 0.0f, 255.0f);
 			//xUV.v = WraparoundUVValues(xUV.v + fOffsetAdjust, 0.0f, 255.0f);
+		}
+
+		public static string GetTextureFileLocation(CDC.Objects.ExportOptions options, string defaultTextureFileName, string modelFileName)
+		{
+			string result = "";
+			List<string> possibleLocations = new List<string>();
+			for (int i = 0; i < options.TextureFileLocations.Count; i++)
+			{
+				possibleLocations.Add(options.TextureFileLocations[i]);
+			}
+
+			List<string> searchDirectories = new List<string>();
+
+			string rootDirectory = Path.GetDirectoryName(modelFileName);
+			while (rootDirectory != null && rootDirectory != "")
+			{
+				string parentDirectory = Path.GetFileName(rootDirectory);
+				rootDirectory = Path.GetDirectoryName(rootDirectory);
+				if (parentDirectory == "kain2")
+				{
+					string outputDirectory = Path.Combine(rootDirectory, "output");
+					searchDirectories.Add(outputDirectory);
+					searchDirectories.Add(rootDirectory);
+				}
+			}
+
+			searchDirectories.Add(Path.GetDirectoryName(modelFileName));
+			searchDirectories.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+
+			for (int i = 0; i < searchDirectories.Count; i++)
+			{
+				string textureFileName = Path.Combine(searchDirectories[i], defaultTextureFileName);
+				possibleLocations.Add(textureFileName);
+			}
+
+			for (int i = 0; i < possibleLocations.Count; i++)
+			{
+				if (System.IO.File.Exists(possibleLocations[i]))
+				{
+					result = possibleLocations[i];
+					Console.WriteLine(string.Format("Debug: using texture file '{0}'", result));
+					break;
+				}
+			}
+			return result;
 		}
 	}
 }

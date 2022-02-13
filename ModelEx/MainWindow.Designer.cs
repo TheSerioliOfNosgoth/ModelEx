@@ -31,8 +31,6 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
 			this.menuBar = new System.Windows.Forms.MenuStrip();
 			this.fileMenu = new System.Windows.Forms.ToolStripMenuItem();
-			this.loadObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.loadSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.reloadCurrentModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -187,6 +185,11 @@
 			this.sceneView = new ModelEx.RenderControl();
 			this.sceneTreeContainer = new System.Windows.Forms.SplitContainer();
 			this.FPSText = new System.Windows.Forms.TextBox();
+			this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.exportObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.exportSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuBar.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.sceneViewContainer)).BeginInit();
 			this.sceneViewContainer.Panel1.SuspendLayout();
@@ -229,28 +232,13 @@
 			// fileMenu
 			// 
 			this.fileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadObjectToolStripMenuItem,
-            this.loadSceneToolStripMenuItem,
-            this.reloadCurrentModelToolStripMenuItem,
+            this.loadToolStripMenuItem,
             this.exportToolStripMenuItem,
+            this.reloadCurrentModelToolStripMenuItem,
             this.exitToolStripMenuItem});
 			this.fileMenu.Name = "fileMenu";
 			this.fileMenu.Size = new System.Drawing.Size(37, 20);
 			this.fileMenu.Text = "&File";
-			// 
-			// loadObjectToolStripMenuItem
-			// 
-			this.loadObjectToolStripMenuItem.Name = "loadObjectToolStripMenuItem";
-			this.loadObjectToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-			this.loadObjectToolStripMenuItem.Text = "Load Object...";
-			this.loadObjectToolStripMenuItem.Click += new System.EventHandler(this.loadObjectToolStripMenuItem_Click);
-			// 
-			// loadSceneToolStripMenuItem
-			// 
-			this.loadSceneToolStripMenuItem.Name = "loadSceneToolStripMenuItem";
-			this.loadSceneToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-			this.loadSceneToolStripMenuItem.Text = "Load Scene...";
-			this.loadSceneToolStripMenuItem.Click += new System.EventHandler(this.loadSceneToolStripMenuItem_Click);
 			// 
 			// reloadCurrentModelToolStripMenuItem
 			// 
@@ -262,10 +250,12 @@
 			// 
 			// exportToolStripMenuItem
 			// 
+			this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exportObjectToolStripMenuItem,
+            this.exportSceneToolStripMenuItem});
 			this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
 			this.exportToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
 			this.exportToolStripMenuItem.Text = "&Export";
-			this.exportToolStripMenuItem.Click += new System.EventHandler(this.ExportToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
@@ -1581,6 +1571,43 @@
 			this.FPSText.TabIndex = 0;
 			this.FPSText.Text = "Testing...\r\nTesting...\r\nTesting...";
 			// 
+			// loadToolStripMenuItem
+			// 
+			this.loadToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadObjectToolStripMenuItem,
+            this.loadSceneToolStripMenuItem});
+			this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
+			this.loadToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+			this.loadToolStripMenuItem.Text = "&Load";
+			// 
+			// loadObjectToolStripMenuItem
+			// 
+			this.loadObjectToolStripMenuItem.Name = "loadObjectToolStripMenuItem";
+			this.loadObjectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.loadObjectToolStripMenuItem.Text = "Load &Object...";
+			this.loadObjectToolStripMenuItem.Click += new System.EventHandler(this.loadObjectToolStripMenuItem_Click);
+			// 
+			// loadSceneToolStripMenuItem
+			// 
+			this.loadSceneToolStripMenuItem.Name = "loadSceneToolStripMenuItem";
+			this.loadSceneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.loadSceneToolStripMenuItem.Text = "Load &Scene...";
+			this.loadSceneToolStripMenuItem.Click += new System.EventHandler(this.loadSceneToolStripMenuItem_Click);
+			// 
+			// exportObjectToolStripMenuItem
+			// 
+			this.exportObjectToolStripMenuItem.Name = "exportObjectToolStripMenuItem";
+			this.exportObjectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.exportObjectToolStripMenuItem.Text = "Export &Object...";
+			this.exportObjectToolStripMenuItem.Click += new System.EventHandler(this.exportObjectToolStripMenuItem_Click);
+			// 
+			// exportSceneToolStripMenuItem
+			// 
+			this.exportSceneToolStripMenuItem.Name = "exportSceneToolStripMenuItem";
+			this.exportSceneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.exportSceneToolStripMenuItem.Text = "Export &Scene...";
+			this.exportSceneToolStripMenuItem.Click += new System.EventHandler(this.exportSceneToolStripMenuItem_Click);
+			// 
 			// MainWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1779,8 +1806,6 @@
 		private System.Windows.Forms.Button unloadResourceButton;
 		private System.Windows.Forms.ComboBox currentSceneCombo;
 		private System.Windows.Forms.Label currentSceneLabel;
-		private System.Windows.Forms.ToolStripMenuItem loadObjectToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem loadSceneToolStripMenuItem;
 		private System.Windows.Forms.TabPage objectTab;
 		private System.Windows.Forms.SplitContainer objectTabControls;
 		private SceneTreeView objectTree;
@@ -1789,5 +1814,10 @@
 		private CommonControls comonControls1;
 		private CommonControls comonControls2;
 		private SceneTreeView sceneTree;
+		private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem loadObjectToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem loadSceneToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem exportObjectToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem exportSceneToolStripMenuItem;
 	}
 }

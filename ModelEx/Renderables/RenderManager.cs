@@ -20,6 +20,16 @@ namespace ModelEx
 
 	public class RenderManager
 	{
+		public class LoadRequestCDC
+		{
+			public string DataFile = "";
+			public string TextureFile = "";
+			public string ObjectListFile = "";
+			public Game GameType = Game.Gex;
+			public int ChildIndex = -1;
+			public ExportOptions ExportOptions;
+		};
+
 		private Thread renderThread;
 		private int syncInterval = 1;
 		private FrameCounter frameCounter = FrameCounter.Instance;
@@ -30,13 +40,15 @@ namespace ModelEx
 		public Color BackgroundColour = Color.Gray;
 		public bool Wireframe = false;
 
-		public readonly SortedList<string, RenderResource> Resources = new SortedList<string, RenderResource>();
-
 		public Renderable CurrentScene { get; private set; }
 		public Renderable CurrentObject { get; private set; }
 
 		SpriteRenderer _spriteRenderer;
 		public TextBlockRenderer _textBlockRenderer;
+
+		public readonly SortedList<string, RenderResource> Resources = new SortedList<string, RenderResource>();
+
+		private List<LoadRequestCDC> _loadRequestsCDC = new List<LoadRequestCDC>();
 
 		private static RenderManager instance = null;
 		public static RenderManager Instance
@@ -69,7 +81,7 @@ namespace ModelEx
 		{
 			renderThread.Abort();
 
-			UnloadRenderResources();
+			UnloadResources();
 
 			// This should be the unnamed one with the shapes.
 			RenderResource resource = Resources[Resources.Keys[0]];
@@ -92,18 +104,30 @@ namespace ModelEx
 			}
 		}
 
-		public string LoadRenderResourceCDC(string fileName, Game game, ExportOptions options)
+		public void RequestResourceCDC(LoadRequestCDC loadRequest)
 		{
-			return LoadRenderResourceCDC(fileName, game, options, -1);
+			if (_loadRequestsCDC.Find(x => x.DataFile == loadRequest.DataFile) == null)
+			{
+				_loadRequestsCDC.Add(loadRequest);
+			}
 		}
 
-		public string LoadRenderResourceCDC(string fileName, Game game, ExportOptions options, int childIndex)
+		public void LoadRequestedResourcesCDC()
+		{
+			while (_loadRequestsCDC.Count > 0)
+			{
+				LoadResourceCDC(_loadRequestsCDC[0]);
+				_loadRequestsCDC.RemoveAt(0);
+			}
+		}
+
+		public string LoadResourceCDC(LoadRequestCDC loadRequest)
 		{
 			SceneCDC.progressLevel = 0;
 			SceneCDC.progressLevels = 1;
 			SceneCDC.ProgressStage = "Reading Data";
 
-			SRFile srFile = SRFile.Create(fileName, game, options, childIndex);
+			SRFile srFile = SRFile.Create(loadRequest.DataFile, loadRequest.GameType, loadRequest.ExportOptions, loadRequest.ChildIndex);
 
 			if (srFile == null)
 			{
@@ -121,11 +145,11 @@ namespace ModelEx
 			}
 
 			renderResource = new RenderResourceCDC(srFile);
-			renderResource.LoadModels(options);
+			renderResource.LoadModels(loadRequest.ExportOptions);
 
 			SceneCDC.progressLevel = 1;
 
-			renderResource.LoadTextures(fileName, options);
+			renderResource.LoadTextures(loadRequest.TextureFile, loadRequest.ExportOptions);
 
 			Resources.Add(renderResource.Name, renderResource);
 
@@ -135,12 +159,20 @@ namespace ModelEx
 			return srFile.Name;
 		}
 
-		public void UnloadRenderResources()
+		public void UnloadResources()
 		{
+			_loadRequestsCDC.Clear();
+
 			if (CurrentScene != null)
 			{
 				CurrentScene.Dispose();
 				CurrentScene = null;
+			}
+
+			if (CurrentObject != null)
+			{
+				CurrentObject.Dispose();
+				CurrentObject = null;
 			}
 
 			while (Resources.Count > 1)
@@ -152,11 +184,11 @@ namespace ModelEx
 			}
 		}
 
-		public void ExportTextureResource(string filename, ExportOptions options)
+		public void ExportResourceCDC(string resourceName, string filename, ExportOptions options)
 		{
-			if (Resources.ContainsKey(""))
+			if (resourceName != "" && Resources.ContainsKey(resourceName))
 			{
-				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[""];
+				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[resourceName];
 				renderResource.ExportToFile(filename, options);
 			}
 		}
@@ -168,10 +200,18 @@ namespace ModelEx
 				CurrentObject = null;
 			}
 
-			if (Resources.ContainsKey(objectName))
+			if (objectName != "" && Resources.ContainsKey(objectName))
 			{
 				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[objectName];
 				CurrentObject = new SceneCDC(renderResource.File, false);
+			}
+		}
+
+		public void ExportCurrentObject(string fileName, ExportOptions options)
+		{
+			if (CurrentObject != null)
+			{
+				ExportResourceCDC(CurrentObject.Name, fileName, options);
 			}
 		}
 
@@ -183,10 +223,18 @@ namespace ModelEx
 				CurrentScene = null;
 			}
 
-			if (Resources.ContainsKey(sceneName))
+			if (sceneName != "" && Resources.ContainsKey(sceneName))
 			{
 				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[sceneName];
 				CurrentScene = new SceneCDC(renderResource.File, true);
+			}
+		}
+
+		public void ExportCurrentScene(string fileName, ExportOptions options)
+		{
+			if (CurrentScene != null)
+			{
+				ExportResourceCDC(CurrentScene.Name, fileName, options);
 			}
 		}
 

@@ -496,11 +496,13 @@ namespace ModelEx
 							positionalArgs.Add(arg);
 						}
 					}
+
 					if (inputFilePath == "")
 					{
 						Console.WriteLine("--input path is required");
 						Environment.Exit(1);
 					}
+
 					if (outputFilePath == "")
 					{
 						Console.WriteLine("--output path is required");
@@ -510,30 +512,58 @@ namespace ModelEx
 					RenderControl sceneView = new RenderControl();
 					sceneView.Initialize();
 
+					string loadedResource = "";
+
 					Thread loadingThread = new Thread((() =>
 					{
-						RenderManager.Instance.UnloadRenderResources();
-						if (mode == "gex")
+						RenderManager.Instance.UnloadResources();
+
+						RenderManager.LoadRequestCDC loadRequest = new RenderManager.LoadRequestCDC();
+						loadRequest.DataFile = inputFilePath;
+						loadRequest.ExportOptions = options;
+						if (mode == "gex") loadRequest.GameType = CDC.Game.Gex;
+						else if (mode == "sr1") loadRequest.GameType = CDC.Game.SR1;
+						else if (mode == "sr2") loadRequest.GameType = CDC.Game.SR2;
+						else if (mode == "defiance") loadRequest.GameType = CDC.Game.Defiance;
+						else if (mode == "trl") loadRequest.GameType = CDC.Game.TRL;
+
+						if (loadRequest.GameType == CDC.Game.SR1)
 						{
-							RenderManager.Instance.LoadRenderResourceCDC(inputFilePath, CDC.Game.Gex, options);
+							CDC.Objects.SR1File srFile = new CDC.Objects.SR1File(inputFilePath, options);
+
+							if (srFile.Platform == CDC.Platform.PC)
+							{
+								loadRequest.TextureFile = CDC.Utility.GetTextureFileLocation(options, "textures.big", inputFilePath);
+							}
+							else if (srFile.Platform == CDC.Platform.Dreamcast)
+							{
+								loadRequest.TextureFile = CDC.Utility.GetTextureFileLocation(options, "textures.vq", inputFilePath);
+							}
+							else
+							{
+								loadRequest.TextureFile = Path.ChangeExtension(inputFilePath, "crm");
+							}
 						}
-						else if (mode == "sr1")
+						else if (loadRequest.GameType == CDC.Game.Gex ||
+							loadRequest.GameType == CDC.Game.SR2 || loadRequest.GameType == CDC.Game.Defiance)
 						{
-							RenderManager.Instance.LoadRenderResourceCDC(inputFilePath, CDC.Game.SR1, options);
+							loadRequest.TextureFile = Path.ChangeExtension(inputFilePath, "vrm");
 						}
-						else if (mode == "sr2")
+						else
 						{
-							RenderManager.Instance.LoadRenderResourceCDC(inputFilePath, CDC.Game.SR2, options);
-						}
-						else if (mode == "defiance")
-						{
-							RenderManager.Instance.LoadRenderResourceCDC(inputFilePath, CDC.Game.Defiance, options);
-						}
-						else if (mode == "trl")
-						{
-							RenderManager.Instance.LoadRenderResourceCDC(inputFilePath, CDC.Game.TRL, options);
+							loadRequest.TextureFile = inputFilePath;
 						}
 
+						if (loadRequest.GameType == CDC.Game.TRL)
+						{
+							//
+						}
+						else
+						{
+							loadRequest.ObjectListFile = inputFilePath;
+						}
+
+						loadedResource = RenderManager.Instance.LoadResourceCDC(loadRequest);
 						CameraManager.Instance.Reset();
 					}));
 
@@ -552,7 +582,7 @@ namespace ModelEx
 					while (loadingThread.IsAlive);
 					Console.WriteLine("Done loading");
 
-					RenderManager.Instance.ExportTextureResource(outputFilePath, options);
+					RenderManager.Instance.ExportResourceCDC(loadedResource, outputFilePath, options);
 
 					Console.WriteLine("Done exporting");
 

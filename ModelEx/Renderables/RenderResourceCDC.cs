@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Reflection;
 using SRFile = CDC.Objects.SRFile;
 using GexFile = CDC.Objects.GexFile;
 using SR1File = CDC.Objects.SR1File;
@@ -61,10 +60,9 @@ namespace ModelEx
 			Type currentFileType = File.GetType();
 			if (currentFileType == typeof(TRLFile))
 			{
-				String textureFileName = fileName;
 				try
 				{
-					TRLPCTextureFile textureFile = new TRLPCTextureFile(textureFileName);
+					TRLPCTextureFile textureFile = new TRLPCTextureFile(fileName);
 
 					SceneCDC.progressLevel = 0;
 					SceneCDC.progressLevels = textureFile.TextureCount;
@@ -72,7 +70,7 @@ namespace ModelEx
 
 					for (int t = 0; t < textureFile.TextureCount; t++)
 					{
-						String textureName = CDC.Objects.Models.SRModel.GetPS2TextureName(File.Name, (int)textureFile.TextureDefinitions[t].ID) + TextureExtension;
+						String textureName = SRModel.GetPS2TextureName(File.Name, (int)textureFile.TextureDefinitions[t].ID) + TextureExtension;
 
 						System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
 						//textureFile.ExportFile(t, "C:\\Users\\A\\Desktop\\Lara\\" + textureName);
@@ -105,10 +103,9 @@ namespace ModelEx
 			else if (currentFileType == typeof(SR2File) ||
 					 currentFileType == typeof(DefianceFile))
 			{
-				String textureFileName = System.IO.Path.ChangeExtension(fileName, "vrm");
 				try
 				{
-					SR2PCTextureFile textureFile = new SR2PCTextureFile(textureFileName);
+					SR2PCTextureFile textureFile = new SR2PCTextureFile(fileName);
 
 					SceneCDC.progressLevel = 0;
 					SceneCDC.progressLevels = textureFile.TextureCount;
@@ -116,7 +113,7 @@ namespace ModelEx
 
 					for (int t = 0; t < textureFile.TextureCount; t++)
 					{
-						String textureName = CDC.Objects.Models.SRModel.GetPS2TextureName(File.Name, textureFile.TextureDefinitions[t].Flags1) + TextureExtension;
+						String textureName = SRModel.GetPS2TextureName(File.Name, textureFile.TextureDefinitions[t].Flags1) + TextureExtension;
 
 						System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
 						//textureFile.ExportFile(t, "C:\\Users\\A\\Desktop\\" + textureName);
@@ -144,9 +141,7 @@ namespace ModelEx
 				{
 					try
 					{
-						String textureFileName = GetTextureFileLocation(options, "textures.big", fileName);
-
-						SR1PCTextureFile textureFile = new SR1PCTextureFile(textureFileName);
+						SR1PCTextureFile textureFile = new SR1PCTextureFile(fileName);
 
 						SceneCDC.progressLevel = 0;
 						SceneCDC.progressLevels = File.GetNumMaterials();
@@ -161,7 +156,7 @@ namespace ModelEx
 									System.IO.MemoryStream stream = textureFile.GetDataAsStream(material.textureID);
 									if (stream != null)
 									{
-										String textureName = CDC.Objects.Models.SRModel.GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID) + TextureExtension;
+										String textureName = SRModel.GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID) + TextureExtension;
 										AddTexture(stream, textureName);
 										if (!_TexturesAsPNGs.ContainsKey(textureName))
 										{
@@ -187,9 +182,7 @@ namespace ModelEx
 				{
 					try
 					{
-						String textureFileName = GetTextureFileLocation(options, "textures.vq", fileName);		
-
-						SR1DCTextureFile textureFile = new SR1DCTextureFile(textureFileName);
+						SR1DCTextureFile textureFile = new SR1DCTextureFile(fileName);
 
 						SceneCDC.progressLevel = 0;
 						SceneCDC.progressLevels = File.GetNumMaterials();
@@ -205,7 +198,7 @@ namespace ModelEx
 									System.IO.MemoryStream stream = textureFile.GetDataAsStream(textureID);
 									if (stream != null)
 									{
-										String textureName = CDC.Objects.Models.SRModel.GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID) + TextureExtension;
+										String textureName = SRModel.GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID) + TextureExtension;
 
 										AddTexture(stream, textureName);
 
@@ -231,10 +224,9 @@ namespace ModelEx
 				}
 				else
 				{
-					String textureFileName = System.IO.Path.ChangeExtension(fileName, "crm");
 					try
 					{
-						SR1PSTextureFile textureFile = new SR1PSTextureFile(textureFileName);
+						SR1PSTextureFile textureFile = new SR1PSTextureFile(fileName);
 
 						SceneCDC.progressLevel = 0;
 						SceneCDC.progressLevels = 100; // Arbitrarily large number.
@@ -289,7 +281,7 @@ namespace ModelEx
 						// For all models
 						for (int t = 0; t < textureFile.TextureCount; t++)
 						{
-							String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameDefault(File.Name, t) + TextureExtension;
+							String textureName = SRModel.GetPlayStationTextureNameDefault(File.Name, t) + TextureExtension;
 
 							System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
 							if (stream != null)
@@ -338,7 +330,7 @@ namespace ModelEx
 								Dictionary<ushort, Bitmap> textureCLUTCollection = textureFile.TexturesByCLUT[textureID];
 								foreach (ushort clut in textureCLUTCollection.Keys)
 								{
-									String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameWithCLUT(File.Name, textureID, clut) + TextureExtension;
+									String textureName = SRModel.GetPlayStationTextureNameWithCLUT(File.Name, textureID, clut) + TextureExtension;
 									System.IO.MemoryStream stream = textureFile.GetTextureWithCLUTAsStream(textureID, clut);
 									if (stream != null)
 									{
@@ -366,9 +358,7 @@ namespace ModelEx
 			{
 				try
 				{
-					String textureFileName = System.IO.Path.ChangeExtension(fileName, "vrm");
-
-					Gex3PSTextureFile textureFile = new Gex3PSTextureFile(textureFileName);
+					Gex3PSTextureFile textureFile = new Gex3PSTextureFile(fileName);
 
 					UInt32 polygonCountAllModels = 0;
 					foreach (SRModel srModel in File.Models)
@@ -416,7 +406,7 @@ namespace ModelEx
 					// For all models
 					for (int t = 0; t < textureFile.TextureCount; t++)
 					{
-						String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameDefault(File.Name, t) + TextureExtension;
+						String textureName = SRModel.GetPlayStationTextureNameDefault(File.Name, t) + TextureExtension;
 
 						System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
 						if (stream != null)
@@ -463,7 +453,7 @@ namespace ModelEx
 							Dictionary<ushort, Bitmap> textureCLUTCollection = textureFile.TexturesByCLUT[textureID];
 							foreach (ushort clut in textureCLUTCollection.Keys)
 							{
-								String textureName = CDC.Objects.Models.SRModel.GetPlayStationTextureNameWithCLUT(File.Name, textureID, clut) + TextureExtension;
+								String textureName = SRModel.GetPlayStationTextureNameWithCLUT(File.Name, textureID, clut) + TextureExtension;
 								System.IO.MemoryStream stream = textureFile.GetTextureWithCLUTAsStream(textureID, clut);
 								if (stream != null)
 								{
@@ -514,51 +504,6 @@ namespace ModelEx
 				DeleteExistingFile(texturePath);
 				_TexturesAsPNGs[textureFileName].Save(texturePath, ImageFormat.Png);
 			}
-		}
-
-		protected string GetTextureFileLocation(CDC.Objects.ExportOptions options, string defaultTextureFileName, string modelFileName)
-		{
-			string result = "";
-			List<string> possibleLocations = new List<string>();
-			for (int i = 0; i < options.TextureFileLocations.Count; i++)
-			{
-				possibleLocations.Add(options.TextureFileLocations[i]);
-			}
-
-			List<string> searchDirectories = new List<string>();
-
-			string rootDirectory = Path.GetDirectoryName(modelFileName);
-			while (rootDirectory != null && rootDirectory != "")
-			{
-				string parentDirectory = Path.GetFileName(rootDirectory);
-				rootDirectory = Path.GetDirectoryName(rootDirectory);
-				if (parentDirectory == "kain2")
-				{
-					string outputDirectory = Path.Combine(rootDirectory, "output");
-					searchDirectories.Add(outputDirectory);
-					searchDirectories.Add(rootDirectory);
-				}
-			}
-
-			searchDirectories.Add(Path.GetDirectoryName(modelFileName));
-			searchDirectories.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-
-			for (int i = 0; i < searchDirectories.Count; i++)
-			{
-				string textureFileName = Path.Combine(searchDirectories[i], defaultTextureFileName);
-				possibleLocations.Add(textureFileName);
-			}
-
-			for (int i = 0; i < possibleLocations.Count; i++)
-			{
-				if (System.IO.File.Exists(possibleLocations[i]))
-				{
-					result = possibleLocations[i];
-					Console.WriteLine(string.Format("Debug: using texture file '{0}'", result));
-					break;
-				}
-			}
-			return result;
 		}
 
 		protected static bool BitmapHasTransparentPixels(Bitmap b)
