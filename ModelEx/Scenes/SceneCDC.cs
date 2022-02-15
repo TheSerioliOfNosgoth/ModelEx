@@ -38,6 +38,8 @@ namespace ModelEx
 		public SceneCDC(SRFile srFile, bool includeObjects)
 			: base(includeObjects)
 		{
+			Name = srFile.Name;
+
 			for (int m = 0; m < srFile.ModelCount; m++)
 			{
 				RenderInstance instance = new RenderInstance(srFile.Name, m);

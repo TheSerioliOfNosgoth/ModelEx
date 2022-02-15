@@ -46,6 +46,7 @@ namespace ModelEx
 			this.okButton = new System.Windows.Forms.Button();
 			this.gameTypeComboBox = new System.Windows.Forms.ComboBox();
 			this.browserSplitContainer = new System.Windows.Forms.SplitContainer();
+			this.browserTreeView = new ModelEx.SceneTreeView();
 			this.fileFolderImageList = new System.Windows.Forms.ImageList(this.components);
 			this.browserListView = new System.Windows.Forms.ListView();
 			this.nameHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -56,7 +57,6 @@ namespace ModelEx
 			this.buttonImageList = new System.Windows.Forms.ImageList(this.components);
 			this.recentLocationsComboBox = new System.Windows.Forms.ComboBox();
 			this.navigateUpButton = new System.Windows.Forms.Button();
-			this.browserTreeView = new ModelEx.SceneTreeView();
 			this.selectionsPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.browserSplitContainer)).BeginInit();
 			this.browserSplitContainer.Panel1.SuspendLayout();
@@ -145,7 +145,7 @@ namespace ModelEx
 			this.clearLoadedFilesCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.clearLoadedFilesCheckBox.AutoSize = true;
 			this.clearLoadedFilesCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.clearLoadedFilesCheckBox.Location = new System.Drawing.Point(614, 6);
+			this.clearLoadedFilesCheckBox.Location = new System.Drawing.Point(622, 8);
 			this.clearLoadedFilesCheckBox.Name = "clearLoadedFilesCheckBox";
 			this.clearLoadedFilesCheckBox.Size = new System.Drawing.Size(164, 17);
 			this.clearLoadedFilesCheckBox.TabIndex = 9;
@@ -244,6 +244,21 @@ namespace ModelEx
 			this.browserSplitContainer.SplitterDistance = 266;
 			this.browserSplitContainer.TabIndex = 1;
 			// 
+			// browserTreeView
+			// 
+			this.browserTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.browserTreeView.ImageIndex = 0;
+			this.browserTreeView.ImageList = this.fileFolderImageList;
+			this.browserTreeView.Location = new System.Drawing.Point(0, 0);
+			this.browserTreeView.Name = "browserTreeView";
+			this.browserTreeView.SelectedImageIndex = 0;
+			this.browserTreeView.Size = new System.Drawing.Size(266, 339);
+			this.browserTreeView.TabIndex = 0;
+			this.browserTreeView.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.browserTreeView_AfterCollapse);
+			this.browserTreeView.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.browserTreeView_BeforeExpand);
+			this.browserTreeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.browserTreeView_NodeMouseClick);
+			this.browserTreeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.browserTreeView_KeyDown);
+			// 
 			// fileFolderImageList
 			// 
 			this.fileFolderImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
@@ -339,21 +354,6 @@ namespace ModelEx
 			this.navigateUpButton.TabIndex = 0;
 			this.navigateUpButton.UseVisualStyleBackColor = true;
 			this.navigateUpButton.Click += new System.EventHandler(this.navigateUpButton_Click);
-			// 
-			// browserTreeView
-			// 
-			this.browserTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.browserTreeView.ImageIndex = 0;
-			this.browserTreeView.ImageList = this.fileFolderImageList;
-			this.browserTreeView.Location = new System.Drawing.Point(0, 0);
-			this.browserTreeView.Name = "browserTreeView";
-			this.browserTreeView.SelectedImageIndex = 0;
-			this.browserTreeView.Size = new System.Drawing.Size(266, 339);
-			this.browserTreeView.TabIndex = 0;
-			this.browserTreeView.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.browserTreeView_AfterCollapse);
-			this.browserTreeView.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.browserTreeView_BeforeExpand);
-			this.browserTreeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.browserTreeView_NodeMouseDoubleClick);
-			this.browserTreeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.browserTreeView_KeyDown);
 			// 
 			// LoadResourceDialog
 			// 

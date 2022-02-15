@@ -19,7 +19,6 @@ namespace ModelEx
 		protected bool _ClearLoadedResources;
 		protected bool _SelectObjectOnLoaded;
 		protected bool _SelectSceneOnLoaded;
-		protected string _LastLoadedResource = "";
 		protected string _LastOpenDirectory = "";
 		protected string _LastExportDirectory = "";
 		protected CDC.Game _LastSelectedGameType = CDC.Game.Gex;
@@ -75,10 +74,8 @@ namespace ModelEx
 
 		protected void BeginLoading()
 		{
-			if (progressWindow != null)
-			{
-				progressWindow.Dispose();
-			}
+			Enabled = false;
+			progressWindow?.Dispose();
 			progressWindow = new ProgressWindow();
 			progressWindow.Title = "Loading";
 			progressWindow.SetMessage("");
@@ -86,50 +83,69 @@ namespace ModelEx
 			progressWindow.Owner = this;
 			progressWindow.TopLevel = true;
 			progressWindow.ShowInTaskbar = false;
-			this.Enabled = false;
 			progressWindow.Show();
+
+			if (_ClearLoadedResources)
+			{
+				currentObjectCombo.SelectedIndex = -1;
+				currentSceneCombo.SelectedIndex = -1;
+
+				resourceList.Items.Clear();
+				currentObjectCombo.Items.Clear();
+				currentSceneCombo.Items.Clear();
+			}
 		}
 
 		protected void EndLoading()
 		{
-			Enabled = true;
-			progressWindow.Hide();
-			progressWindow.Dispose();
-
-			resourceList.Items.Clear();
-			currentObjectCombo.Items.Clear();
-			currentSceneCombo.Items.Clear();
-
 			foreach (string resourceName in RenderManager.Instance.Resources.Keys)
 			{
 				if (resourceName != "")
 				{
-					resourceList.Items.Add(resourceName);
+					if (!resourceList.Items.ContainsKey(resourceName))
+					{
+						resourceList.Items.Add(resourceName, resourceName, -1);
+					}
 
-					currentObjectCombo.Items.Add(resourceName);
+					if (!currentObjectCombo.Items.Contains(resourceName))
+					{
+						currentObjectCombo.Items.Add(resourceName);
+					}
 
-					// Maybe filter for only levels here?
-					currentSceneCombo.Items.Add(resourceName);
+					if (!currentSceneCombo.Items.Contains(resourceName))
+					{
+						// Maybe filter for only levels here?
+						currentSceneCombo.Items.Add(resourceName);
+					}
 				}
 			}
 
-			if (_SelectObjectOnLoaded && currentObjectCombo.Items.Contains(_LastLoadedResource))
+			if (_SelectObjectOnLoaded && currentObjectCombo.Items.Contains(_LoadRequest.ResourceName))
 			{
-				currentObjectCombo.SelectedIndex = currentObjectCombo.Items.IndexOf(_LastLoadedResource);
+				currentObjectCombo.SelectedIndex = currentObjectCombo.Items.IndexOf(_LoadRequest.ResourceName);
 				optionTabs.SelectedIndex = 2;
 				CameraManager.Instance.Reset();
 			}
 
-			if (_SelectSceneOnLoaded && currentSceneCombo.Items.Contains(_LastLoadedResource))
+			if (_SelectSceneOnLoaded && currentSceneCombo.Items.Contains(_LoadRequest.ResourceName))
 			{
-				currentSceneCombo.SelectedIndex = currentSceneCombo.Items.IndexOf(_LastLoadedResource);
-				optionTabs.SelectedIndex = 0;
+				currentSceneCombo.SelectedIndex = currentSceneCombo.Items.IndexOf(_LoadRequest.ResourceName);
+				optionTabs.SelectedIndex = 1;
 				CameraManager.Instance.Reset();
 			}
 
 			_SelectObjectOnLoaded = false;
 			_SelectSceneOnLoaded = false;
-			_LastLoadedResource = "";
+			_ClearLoadedResources = false;
+
+			if (_ResetCameraOnModelLoad)
+			{
+				CameraManager.Instance.Reset();
+			}
+
+			Enabled = true;
+			progressWindow.Hide();
+			progressWindow.Dispose();
 		}
 
 		protected bool SelectResourceToLoad(bool selectObjectOnLoaded, bool selectSceneOnLoaded)
@@ -140,6 +156,19 @@ namespace ModelEx
 			if (Directory.Exists(_LastOpenDirectory))
 			{
 				loadResourceDialog.InitialDirectory = _LastOpenDirectory;
+			}
+
+			if (selectObjectOnLoaded)
+			{
+				loadResourceDialog.Text = "Load Object...";
+			}
+			else if (selectSceneOnLoaded)
+			{
+				loadResourceDialog.Text = "Load Scene...";
+			}
+			else
+			{
+				loadResourceDialog.Text = "Load Resource...";
 			}
 
 			if (loadResourceDialog.ShowDialog() != DialogResult.OK)
@@ -195,29 +224,23 @@ namespace ModelEx
 			return true;
 		}
 
-		protected void LoadCurrentModel()
+		protected void LoadResource()
 		{
 			if (!File.Exists(_LoadRequest.DataFile))
 			{
 				return;
 			}
 
-			Invoke(new MethodInvoker(BeginLoading));
-
 			Thread loadingThread = new Thread((() =>
 			{
+				Invoke(new MethodInvoker(BeginLoading));
+
 				if (_ClearLoadedResources)
 				{
 					RenderManager.Instance.UnloadResources();
-					_ClearLoadedResources = false;
 				}
 
-				_LastLoadedResource = RenderManager.Instance.LoadResourceCDC(_LoadRequest);
-
-				if (_ResetCameraOnModelLoad)
-				{
-					CameraManager.Instance.Reset();
-				}
+				RenderManager.Instance.LoadResourceCDC(_LoadRequest);
 
 				Invoke(new MethodInvoker(EndLoading));
 			}));
@@ -227,13 +250,16 @@ namespace ModelEx
 			loadingThread.Start();
 			//loadingThread.Join();
 
-			Thread progressThread = new Thread((() =>
+			Thread progressThread = new Thread(() =>
 			{
 				do
 				{
-					lock (SceneCDC.ProgressStage)
+					if (progressWindow != null)
 					{
-						progressWindow.SetMessage(SceneCDC.ProgressStage);
+						lock (SceneCDC.ProgressStage)
+						{
+							progressWindow.SetMessage(SceneCDC.ProgressStage);
+						}
 
 						int oldProgress = progressWindow.GetProgress();
 						if (oldProgress < SceneCDC.ProgressPercent)
@@ -241,10 +267,11 @@ namespace ModelEx
 							progressWindow.SetProgress(oldProgress + 1);
 						}
 					}
+
 					Thread.Sleep(20);
 				}
 				while (loadingThread.IsAlive);
-			}));
+			});
 
 			progressThread.Name = "ProgressThread";
 			progressThread.SetApartmentState(ApartmentState.STA);
@@ -467,7 +494,7 @@ namespace ModelEx
 
 			if (_ReloadModelOnRenderModeChange)
 			{
-				LoadCurrentModel();
+				LoadResource();
 			}
 		}
 
@@ -1244,7 +1271,7 @@ namespace ModelEx
 
 		private void reloadCurrentModelToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			LoadCurrentModel();
+			LoadResource();
 		}
 
 		private void interpolatePolygonColoursToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1354,7 +1381,13 @@ namespace ModelEx
 		{
 			sceneTree.Nodes.Clear();
 
-			string selectedItem = ((ComboBox)sender).SelectedItem.ToString();
+			ComboBox comboBox = (ComboBox)sender;
+			if (comboBox.SelectedItem == null)
+			{
+				return;
+			}
+
+			string selectedItem = comboBox.SelectedItem.ToString();
 			RenderManager.Instance.SetCurrentScene(selectedItem);
 
 			if (RenderManager.Instance.CurrentScene == null)
@@ -1410,7 +1443,13 @@ namespace ModelEx
 		{
 			objectTree.Nodes.Clear();
 
-			string selectedItem = ((ComboBox)sender).SelectedItem.ToString();
+			ComboBox comboBox = (ComboBox)sender;
+			if (comboBox.SelectedItem == null)
+			{
+				return;
+			}
+
+			string selectedItem = comboBox.SelectedItem.ToString();
 			RenderManager.Instance.SetCurrentObject(selectedItem);
 
 			if (RenderManager.Instance.CurrentObject == null)
@@ -1458,7 +1497,31 @@ namespace ModelEx
 		{
 			if (SelectResourceToLoad(false, false))
 			{
-				LoadCurrentModel();
+				LoadResource();
+			}
+		}
+
+		private void unloadResourceButton_Click(object sender, EventArgs e)
+		{
+			if (resourceList.SelectedItems.Count > 0)
+			{
+				string selectedItem = resourceList.SelectedItems[0].Text;
+
+				RenderManager.Instance.UnloadResource(selectedItem);
+
+				if (currentObjectCombo.SelectedItem?.ToString() == selectedItem)
+				{
+					currentObjectCombo.SelectedIndex = -1;
+				}
+				currentObjectCombo.Items.Remove(selectedItem);
+
+				if (currentSceneCombo.SelectedItem?.ToString() == selectedItem)
+				{
+					currentSceneCombo.SelectedIndex = -1;
+				}
+				currentSceneCombo.Items.Remove(selectedItem);
+
+				resourceList.Items.Remove(resourceList.SelectedItems[0]);
 			}
 		}
 
@@ -1466,7 +1529,7 @@ namespace ModelEx
 		{
 			if (SelectResourceToLoad(true, false))
 			{
-				LoadCurrentModel();
+				LoadResource();
 			}
 		}
 
@@ -1474,7 +1537,7 @@ namespace ModelEx
 		{
 			if (SelectResourceToLoad(false, true))
 			{
-				LoadCurrentModel();
+				LoadResource();
 			}
 		}
 
@@ -1482,7 +1545,7 @@ namespace ModelEx
 		{
 			int selectedIndex = ((TabControl)sender).SelectedIndex;
 
-			if (selectedIndex == 0)
+			if (selectedIndex == 1)
 			{
 				RenderManager.Instance.ViewMode = ViewMode.Scene;
 			}
@@ -1494,6 +1557,18 @@ namespace ModelEx
 			{
 				RenderManager.Instance.ViewMode = ViewMode.Resources;
 			}
+		}
+
+		private void unloadAllResources_Click(object sender, EventArgs e)
+		{
+			RenderManager.Instance.UnloadResources();
+
+			currentObjectCombo.SelectedIndex = -1;
+			currentSceneCombo.SelectedIndex = -1;
+
+			resourceList.Items.Clear();
+			currentObjectCombo.Items.Clear();
+			currentSceneCombo.Items.Clear();
 		}
 	}
 }

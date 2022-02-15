@@ -31,8 +31,13 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
 			this.menuBar = new System.Windows.Forms.MenuStrip();
 			this.fileMenu = new System.Windows.Forms.ToolStripMenuItem();
-			this.reloadCurrentModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.loadSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.exportObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.exportSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.reloadCurrentModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.cameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.modeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -165,47 +170,43 @@
 			this.ignoreVertexColoursToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.sceneViewContainer = new System.Windows.Forms.SplitContainer();
 			this.optionTabs = new System.Windows.Forms.TabControl();
-			this.sceneTab = new System.Windows.Forms.TabPage();
-			this.sceneTabControls = new System.Windows.Forms.SplitContainer();
-			this.comonControls2 = new ModelEx.CommonControls();
-			this.currentSceneLabel = new System.Windows.Forms.Label();
-			this.currentSceneCombo = new System.Windows.Forms.ComboBox();
-			this.sceneTree = new ModelEx.SceneTreeView();
 			this.resourcesTab = new System.Windows.Forms.TabPage();
 			this.resourcesTabControls = new System.Windows.Forms.SplitContainer();
 			this.unloadResourceButton = new System.Windows.Forms.Button();
 			this.loadResourceButton = new System.Windows.Forms.Button();
 			this.resourceList = new System.Windows.Forms.ListView();
+			this.sceneTab = new System.Windows.Forms.TabPage();
+			this.sceneTabControls = new System.Windows.Forms.SplitContainer();
+			this.currentSceneLabel = new System.Windows.Forms.Label();
+			this.currentSceneCombo = new System.Windows.Forms.ComboBox();
 			this.objectTab = new System.Windows.Forms.TabPage();
 			this.objectTabControls = new System.Windows.Forms.SplitContainer();
-			this.comonControls1 = new ModelEx.CommonControls();
 			this.currentObjectLabel = new System.Windows.Forms.Label();
 			this.currentObjectCombo = new System.Windows.Forms.ComboBox();
-			this.objectTree = new ModelEx.SceneTreeView();
-			this.sceneView = new ModelEx.RenderControl();
 			this.sceneTreeContainer = new System.Windows.Forms.SplitContainer();
 			this.FPSText = new System.Windows.Forms.TextBox();
-			this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.loadObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.loadSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.exportObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.exportSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.comonControls2 = new ModelEx.CommonControls();
+			this.sceneTree = new ModelEx.SceneTreeView();
+			this.comonControls1 = new ModelEx.CommonControls();
+			this.objectTree = new ModelEx.SceneTreeView();
+			this.sceneView = new ModelEx.RenderControl();
+			this.unloadAllResources = new System.Windows.Forms.Button();
 			this.menuBar.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.sceneViewContainer)).BeginInit();
 			this.sceneViewContainer.Panel1.SuspendLayout();
 			this.sceneViewContainer.Panel2.SuspendLayout();
 			this.sceneViewContainer.SuspendLayout();
 			this.optionTabs.SuspendLayout();
-			this.sceneTab.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.sceneTabControls)).BeginInit();
-			this.sceneTabControls.Panel1.SuspendLayout();
-			this.sceneTabControls.Panel2.SuspendLayout();
-			this.sceneTabControls.SuspendLayout();
 			this.resourcesTab.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.resourcesTabControls)).BeginInit();
 			this.resourcesTabControls.Panel1.SuspendLayout();
 			this.resourcesTabControls.Panel2.SuspendLayout();
 			this.resourcesTabControls.SuspendLayout();
+			this.sceneTab.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.sceneTabControls)).BeginInit();
+			this.sceneTabControls.Panel1.SuspendLayout();
+			this.sceneTabControls.Panel2.SuspendLayout();
+			this.sceneTabControls.SuspendLayout();
 			this.objectTab.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.objectTabControls)).BeginInit();
 			this.objectTabControls.Panel1.SuspendLayout();
@@ -240,13 +241,28 @@
 			this.fileMenu.Size = new System.Drawing.Size(37, 20);
 			this.fileMenu.Text = "&File";
 			// 
-			// reloadCurrentModelToolStripMenuItem
+			// loadToolStripMenuItem
 			// 
-			this.reloadCurrentModelToolStripMenuItem.Enabled = false;
-			this.reloadCurrentModelToolStripMenuItem.Name = "reloadCurrentModelToolStripMenuItem";
-			this.reloadCurrentModelToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-			this.reloadCurrentModelToolStripMenuItem.Text = "&Reload Current Model";
-			this.reloadCurrentModelToolStripMenuItem.Click += new System.EventHandler(this.reloadCurrentModelToolStripMenuItem_Click);
+			this.loadToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadObjectToolStripMenuItem,
+            this.loadSceneToolStripMenuItem});
+			this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
+			this.loadToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+			this.loadToolStripMenuItem.Text = "&Load";
+			// 
+			// loadObjectToolStripMenuItem
+			// 
+			this.loadObjectToolStripMenuItem.Name = "loadObjectToolStripMenuItem";
+			this.loadObjectToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+			this.loadObjectToolStripMenuItem.Text = "Load &Object...";
+			this.loadObjectToolStripMenuItem.Click += new System.EventHandler(this.loadObjectToolStripMenuItem_Click);
+			// 
+			// loadSceneToolStripMenuItem
+			// 
+			this.loadSceneToolStripMenuItem.Name = "loadSceneToolStripMenuItem";
+			this.loadSceneToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+			this.loadSceneToolStripMenuItem.Text = "Load &Scene...";
+			this.loadSceneToolStripMenuItem.Click += new System.EventHandler(this.loadSceneToolStripMenuItem_Click);
 			// 
 			// exportToolStripMenuItem
 			// 
@@ -256,6 +272,28 @@
 			this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
 			this.exportToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
 			this.exportToolStripMenuItem.Text = "&Export";
+			// 
+			// exportObjectToolStripMenuItem
+			// 
+			this.exportObjectToolStripMenuItem.Name = "exportObjectToolStripMenuItem";
+			this.exportObjectToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+			this.exportObjectToolStripMenuItem.Text = "Export &Object...";
+			this.exportObjectToolStripMenuItem.Click += new System.EventHandler(this.exportObjectToolStripMenuItem_Click);
+			// 
+			// exportSceneToolStripMenuItem
+			// 
+			this.exportSceneToolStripMenuItem.Name = "exportSceneToolStripMenuItem";
+			this.exportSceneToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+			this.exportSceneToolStripMenuItem.Text = "Export &Scene...";
+			this.exportSceneToolStripMenuItem.Click += new System.EventHandler(this.exportSceneToolStripMenuItem_Click);
+			// 
+			// reloadCurrentModelToolStripMenuItem
+			// 
+			this.reloadCurrentModelToolStripMenuItem.Enabled = false;
+			this.reloadCurrentModelToolStripMenuItem.Name = "reloadCurrentModelToolStripMenuItem";
+			this.reloadCurrentModelToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+			this.reloadCurrentModelToolStripMenuItem.Text = "&Reload Current Model";
+			this.reloadCurrentModelToolStripMenuItem.Click += new System.EventHandler(this.reloadCurrentModelToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
@@ -1325,8 +1363,8 @@
 			// 
 			// optionTabs
 			// 
-			this.optionTabs.Controls.Add(this.sceneTab);
 			this.optionTabs.Controls.Add(this.resourcesTab);
+			this.optionTabs.Controls.Add(this.sceneTab);
 			this.optionTabs.Controls.Add(this.objectTab);
 			this.optionTabs.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.optionTabs.Location = new System.Drawing.Point(0, 0);
@@ -1335,6 +1373,69 @@
 			this.optionTabs.Size = new System.Drawing.Size(267, 611);
 			this.optionTabs.TabIndex = 1;
 			this.optionTabs.SelectedIndexChanged += new System.EventHandler(this.optionTabs_SelectedIndexChanged);
+			// 
+			// resourcesTab
+			// 
+			this.resourcesTab.Controls.Add(this.resourcesTabControls);
+			this.resourcesTab.Location = new System.Drawing.Point(4, 22);
+			this.resourcesTab.Name = "resourcesTab";
+			this.resourcesTab.Padding = new System.Windows.Forms.Padding(3);
+			this.resourcesTab.Size = new System.Drawing.Size(259, 585);
+			this.resourcesTab.TabIndex = 1;
+			this.resourcesTab.Text = "Resources";
+			this.resourcesTab.UseVisualStyleBackColor = true;
+			// 
+			// resourcesTabControls
+			// 
+			this.resourcesTabControls.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.resourcesTabControls.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+			this.resourcesTabControls.Location = new System.Drawing.Point(3, 3);
+			this.resourcesTabControls.Name = "resourcesTabControls";
+			this.resourcesTabControls.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			// 
+			// resourcesTabControls.Panel1
+			// 
+			this.resourcesTabControls.Panel1.Controls.Add(this.unloadAllResources);
+			this.resourcesTabControls.Panel1.Controls.Add(this.unloadResourceButton);
+			this.resourcesTabControls.Panel1.Controls.Add(this.loadResourceButton);
+			// 
+			// resourcesTabControls.Panel2
+			// 
+			this.resourcesTabControls.Panel2.Controls.Add(this.resourceList);
+			this.resourcesTabControls.Size = new System.Drawing.Size(253, 579);
+			this.resourcesTabControls.SplitterDistance = 78;
+			this.resourcesTabControls.TabIndex = 0;
+			// 
+			// unloadResourceButton
+			// 
+			this.unloadResourceButton.Location = new System.Drawing.Point(128, 4);
+			this.unloadResourceButton.Name = "unloadResourceButton";
+			this.unloadResourceButton.Size = new System.Drawing.Size(121, 23);
+			this.unloadResourceButton.TabIndex = 1;
+			this.unloadResourceButton.Text = "Unload Resource";
+			this.unloadResourceButton.UseVisualStyleBackColor = true;
+			this.unloadResourceButton.Click += new System.EventHandler(this.unloadResourceButton_Click);
+			// 
+			// loadResourceButton
+			// 
+			this.loadResourceButton.Location = new System.Drawing.Point(6, 4);
+			this.loadResourceButton.Name = "loadResourceButton";
+			this.loadResourceButton.Size = new System.Drawing.Size(121, 23);
+			this.loadResourceButton.TabIndex = 0;
+			this.loadResourceButton.Text = "Load Resource...";
+			this.loadResourceButton.UseVisualStyleBackColor = true;
+			this.loadResourceButton.Click += new System.EventHandler(this.loadResourceButton_Click);
+			// 
+			// resourceList
+			// 
+			this.resourceList.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.resourceList.HideSelection = false;
+			this.resourceList.Location = new System.Drawing.Point(0, 0);
+			this.resourceList.Name = "resourceList";
+			this.resourceList.Size = new System.Drawing.Size(253, 497);
+			this.resourceList.TabIndex = 0;
+			this.resourceList.UseCompatibleStateImageBehavior = false;
+			this.resourceList.View = System.Windows.Forms.View.List;
 			// 
 			// sceneTab
 			// 
@@ -1368,14 +1469,6 @@
 			this.sceneTabControls.SplitterDistance = 98;
 			this.sceneTabControls.TabIndex = 4;
 			// 
-			// comonControls2
-			// 
-			this.comonControls2.BackColor = System.Drawing.Color.Transparent;
-			this.comonControls2.Location = new System.Drawing.Point(0, 30);
-			this.comonControls2.Name = "comonControls2";
-			this.comonControls2.Size = new System.Drawing.Size(253, 75);
-			this.comonControls2.TabIndex = 16;
-			// 
 			// currentSceneLabel
 			// 
 			this.currentSceneLabel.AutoSize = true;
@@ -1394,77 +1487,6 @@
 			this.currentSceneCombo.Size = new System.Drawing.Size(166, 21);
 			this.currentSceneCombo.TabIndex = 7;
 			this.currentSceneCombo.SelectedIndexChanged += new System.EventHandler(this.currentSceneCombo_SelectedIndexChanged);
-			// 
-			// sceneTree
-			// 
-			this.sceneTree.CheckBoxes = true;
-			this.sceneTree.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.sceneTree.Location = new System.Drawing.Point(0, 0);
-			this.sceneTree.Name = "sceneTree";
-			this.sceneTree.Size = new System.Drawing.Size(253, 477);
-			this.sceneTree.TabIndex = 3;
-			this.sceneTree.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.sceneTree_AfterCheck);
-			// 
-			// resourcesTab
-			// 
-			this.resourcesTab.Controls.Add(this.resourcesTabControls);
-			this.resourcesTab.Location = new System.Drawing.Point(4, 22);
-			this.resourcesTab.Name = "resourcesTab";
-			this.resourcesTab.Padding = new System.Windows.Forms.Padding(3);
-			this.resourcesTab.Size = new System.Drawing.Size(259, 585);
-			this.resourcesTab.TabIndex = 1;
-			this.resourcesTab.Text = "Resources";
-			this.resourcesTab.UseVisualStyleBackColor = true;
-			// 
-			// resourcesTabControls
-			// 
-			this.resourcesTabControls.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.resourcesTabControls.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-			this.resourcesTabControls.Location = new System.Drawing.Point(3, 3);
-			this.resourcesTabControls.Name = "resourcesTabControls";
-			this.resourcesTabControls.Orientation = System.Windows.Forms.Orientation.Horizontal;
-			// 
-			// resourcesTabControls.Panel1
-			// 
-			this.resourcesTabControls.Panel1.Controls.Add(this.unloadResourceButton);
-			this.resourcesTabControls.Panel1.Controls.Add(this.loadResourceButton);
-			// 
-			// resourcesTabControls.Panel2
-			// 
-			this.resourcesTabControls.Panel2.Controls.Add(this.resourceList);
-			this.resourcesTabControls.Size = new System.Drawing.Size(253, 579);
-			this.resourcesTabControls.SplitterDistance = 78;
-			this.resourcesTabControls.TabIndex = 0;
-			// 
-			// unloadResourceButton
-			// 
-			this.unloadResourceButton.Location = new System.Drawing.Point(6, 34);
-			this.unloadResourceButton.Name = "unloadResourceButton";
-			this.unloadResourceButton.Size = new System.Drawing.Size(100, 23);
-			this.unloadResourceButton.TabIndex = 1;
-			this.unloadResourceButton.Text = "Unload Resource";
-			this.unloadResourceButton.UseVisualStyleBackColor = true;
-			// 
-			// loadResourceButton
-			// 
-			this.loadResourceButton.Location = new System.Drawing.Point(6, 4);
-			this.loadResourceButton.Name = "loadResourceButton";
-			this.loadResourceButton.Size = new System.Drawing.Size(100, 23);
-			this.loadResourceButton.TabIndex = 0;
-			this.loadResourceButton.Text = "Load Resource...";
-			this.loadResourceButton.UseVisualStyleBackColor = true;
-			this.loadResourceButton.Click += new System.EventHandler(this.loadResourceButton_Click);
-			// 
-			// resourceList
-			// 
-			this.resourceList.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.resourceList.HideSelection = false;
-			this.resourceList.Location = new System.Drawing.Point(0, 0);
-			this.resourceList.Name = "resourceList";
-			this.resourceList.Size = new System.Drawing.Size(253, 497);
-			this.resourceList.TabIndex = 0;
-			this.resourceList.UseCompatibleStateImageBehavior = false;
-			this.resourceList.View = System.Windows.Forms.View.List;
 			// 
 			// objectTab
 			// 
@@ -1498,14 +1520,6 @@
 			this.objectTabControls.SplitterDistance = 98;
 			this.objectTabControls.TabIndex = 0;
 			// 
-			// comonControls1
-			// 
-			this.comonControls1.BackColor = System.Drawing.Color.Transparent;
-			this.comonControls1.Location = new System.Drawing.Point(0, 30);
-			this.comonControls1.Name = "comonControls1";
-			this.comonControls1.Size = new System.Drawing.Size(253, 75);
-			this.comonControls1.TabIndex = 15;
-			// 
 			// currentObjectLabel
 			// 
 			this.currentObjectLabel.AutoSize = true;
@@ -1524,25 +1538,6 @@
 			this.currentObjectCombo.Size = new System.Drawing.Size(166, 21);
 			this.currentObjectCombo.TabIndex = 13;
 			this.currentObjectCombo.SelectedIndexChanged += new System.EventHandler(this.currentObjectCombo_SelectedIndexChanged);
-			// 
-			// objectTree
-			// 
-			this.objectTree.CheckBoxes = true;
-			this.objectTree.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.objectTree.Location = new System.Drawing.Point(0, 0);
-			this.objectTree.Name = "objectTree";
-			this.objectTree.Size = new System.Drawing.Size(253, 477);
-			this.objectTree.TabIndex = 0;
-			this.objectTree.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.objectTree_AfterCheck);
-			// 
-			// sceneView
-			// 
-			this.sceneView.BackColor = System.Drawing.Color.Gray;
-			this.sceneView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.sceneView.Location = new System.Drawing.Point(0, 0);
-			this.sceneView.Name = "sceneView";
-			this.sceneView.Size = new System.Drawing.Size(672, 611);
-			this.sceneView.TabIndex = 0;
 			// 
 			// sceneTreeContainer
 			// 
@@ -1571,42 +1566,60 @@
 			this.FPSText.TabIndex = 0;
 			this.FPSText.Text = "Testing...\r\nTesting...\r\nTesting...";
 			// 
-			// loadToolStripMenuItem
+			// comonControls2
 			// 
-			this.loadToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadObjectToolStripMenuItem,
-            this.loadSceneToolStripMenuItem});
-			this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-			this.loadToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-			this.loadToolStripMenuItem.Text = "&Load";
+			this.comonControls2.BackColor = System.Drawing.Color.Transparent;
+			this.comonControls2.Location = new System.Drawing.Point(0, 30);
+			this.comonControls2.Name = "comonControls2";
+			this.comonControls2.Size = new System.Drawing.Size(253, 75);
+			this.comonControls2.TabIndex = 16;
 			// 
-			// loadObjectToolStripMenuItem
+			// sceneTree
 			// 
-			this.loadObjectToolStripMenuItem.Name = "loadObjectToolStripMenuItem";
-			this.loadObjectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-			this.loadObjectToolStripMenuItem.Text = "Load &Object...";
-			this.loadObjectToolStripMenuItem.Click += new System.EventHandler(this.loadObjectToolStripMenuItem_Click);
+			this.sceneTree.CheckBoxes = true;
+			this.sceneTree.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.sceneTree.Location = new System.Drawing.Point(0, 0);
+			this.sceneTree.Name = "sceneTree";
+			this.sceneTree.Size = new System.Drawing.Size(253, 477);
+			this.sceneTree.TabIndex = 3;
+			this.sceneTree.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.sceneTree_AfterCheck);
 			// 
-			// loadSceneToolStripMenuItem
+			// comonControls1
 			// 
-			this.loadSceneToolStripMenuItem.Name = "loadSceneToolStripMenuItem";
-			this.loadSceneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-			this.loadSceneToolStripMenuItem.Text = "Load &Scene...";
-			this.loadSceneToolStripMenuItem.Click += new System.EventHandler(this.loadSceneToolStripMenuItem_Click);
+			this.comonControls1.BackColor = System.Drawing.Color.Transparent;
+			this.comonControls1.Location = new System.Drawing.Point(0, 30);
+			this.comonControls1.Name = "comonControls1";
+			this.comonControls1.Size = new System.Drawing.Size(253, 75);
+			this.comonControls1.TabIndex = 15;
 			// 
-			// exportObjectToolStripMenuItem
+			// objectTree
 			// 
-			this.exportObjectToolStripMenuItem.Name = "exportObjectToolStripMenuItem";
-			this.exportObjectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-			this.exportObjectToolStripMenuItem.Text = "Export &Object...";
-			this.exportObjectToolStripMenuItem.Click += new System.EventHandler(this.exportObjectToolStripMenuItem_Click);
+			this.objectTree.CheckBoxes = true;
+			this.objectTree.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.objectTree.Location = new System.Drawing.Point(0, 0);
+			this.objectTree.Name = "objectTree";
+			this.objectTree.Size = new System.Drawing.Size(253, 477);
+			this.objectTree.TabIndex = 0;
+			this.objectTree.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.objectTree_AfterCheck);
 			// 
-			// exportSceneToolStripMenuItem
+			// sceneView
 			// 
-			this.exportSceneToolStripMenuItem.Name = "exportSceneToolStripMenuItem";
-			this.exportSceneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-			this.exportSceneToolStripMenuItem.Text = "Export &Scene...";
-			this.exportSceneToolStripMenuItem.Click += new System.EventHandler(this.exportSceneToolStripMenuItem_Click);
+			this.sceneView.BackColor = System.Drawing.Color.Gray;
+			this.sceneView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.sceneView.Location = new System.Drawing.Point(0, 0);
+			this.sceneView.Name = "sceneView";
+			this.sceneView.Size = new System.Drawing.Size(672, 611);
+			this.sceneView.TabIndex = 0;
+			// 
+			// unloadAllResources
+			// 
+			this.unloadAllResources.Location = new System.Drawing.Point(5, 33);
+			this.unloadAllResources.Name = "unloadAllResources";
+			this.unloadAllResources.Size = new System.Drawing.Size(244, 23);
+			this.unloadAllResources.TabIndex = 2;
+			this.unloadAllResources.Text = "Unload All Resources";
+			this.unloadAllResources.UseVisualStyleBackColor = true;
+			this.unloadAllResources.Click += new System.EventHandler(this.unloadAllResources_Click);
 			// 
 			// MainWindow
 			// 
@@ -1630,17 +1643,17 @@
 			((System.ComponentModel.ISupportInitialize)(this.sceneViewContainer)).EndInit();
 			this.sceneViewContainer.ResumeLayout(false);
 			this.optionTabs.ResumeLayout(false);
+			this.resourcesTab.ResumeLayout(false);
+			this.resourcesTabControls.Panel1.ResumeLayout(false);
+			this.resourcesTabControls.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.resourcesTabControls)).EndInit();
+			this.resourcesTabControls.ResumeLayout(false);
 			this.sceneTab.ResumeLayout(false);
 			this.sceneTabControls.Panel1.ResumeLayout(false);
 			this.sceneTabControls.Panel1.PerformLayout();
 			this.sceneTabControls.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.sceneTabControls)).EndInit();
 			this.sceneTabControls.ResumeLayout(false);
-			this.resourcesTab.ResumeLayout(false);
-			this.resourcesTabControls.Panel1.ResumeLayout(false);
-			this.resourcesTabControls.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.resourcesTabControls)).EndInit();
-			this.resourcesTabControls.ResumeLayout(false);
 			this.objectTab.ResumeLayout(false);
 			this.objectTabControls.Panel1.ResumeLayout(false);
 			this.objectTabControls.Panel1.PerformLayout();
@@ -1819,5 +1832,6 @@
 		private System.Windows.Forms.ToolStripMenuItem loadSceneToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem exportObjectToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem exportSceneToolStripMenuItem;
+		private System.Windows.Forms.Button unloadAllResources;
 	}
 }

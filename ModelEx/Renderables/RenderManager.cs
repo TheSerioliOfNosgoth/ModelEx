@@ -22,6 +22,7 @@ namespace ModelEx
 	{
 		public class LoadRequestCDC
 		{
+			public string ResourceName = "";
 			public string DataFile = "";
 			public string TextureFile = "";
 			public string ObjectListFile = "";
@@ -121,7 +122,7 @@ namespace ModelEx
 			}
 		}
 
-		public string LoadResourceCDC(LoadRequestCDC loadRequest)
+		public void LoadResourceCDC(LoadRequestCDC loadRequest)
 		{
 			SceneCDC.progressLevel = 0;
 			SceneCDC.progressLevels = 1;
@@ -156,7 +157,29 @@ namespace ModelEx
 			SceneCDC.progressLevel = SceneCDC.progressLevels;
 			SceneCDC.ProgressStage = "Done";
 
-			return srFile.Name;
+			loadRequest.ResourceName = srFile.Name;
+		}
+
+		public void UnloadResource(string resourceName)
+		{
+			if (resourceName != "" && Resources.ContainsKey(resourceName))
+			{
+				RenderResource renderResource = Resources[resourceName];
+				Resources.Remove(resourceName);
+				renderResource.Dispose();
+
+				if (CurrentScene != null && CurrentScene.Name == resourceName)
+				{
+					CurrentScene.Dispose();
+					CurrentScene = null;
+				}
+
+				if (CurrentObject != null && CurrentObject.Name == resourceName)
+				{
+					CurrentObject.Dispose();
+					CurrentObject = null;
+				}
+			}
 		}
 
 		public void UnloadResources()

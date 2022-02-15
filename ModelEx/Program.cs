@@ -512,13 +512,12 @@ namespace ModelEx
 					RenderControl sceneView = new RenderControl();
 					sceneView.Initialize();
 
-					string loadedResource = "";
+					RenderManager.LoadRequestCDC loadRequest = new RenderManager.LoadRequestCDC();
 
 					Thread loadingThread = new Thread((() =>
 					{
 						RenderManager.Instance.UnloadResources();
 
-						RenderManager.LoadRequestCDC loadRequest = new RenderManager.LoadRequestCDC();
 						loadRequest.DataFile = inputFilePath;
 						loadRequest.ExportOptions = options;
 						if (mode == "gex") loadRequest.GameType = CDC.Game.Gex;
@@ -563,7 +562,7 @@ namespace ModelEx
 							loadRequest.ObjectListFile = inputFilePath;
 						}
 
-						loadedResource = RenderManager.Instance.LoadResourceCDC(loadRequest);
+						RenderManager.Instance.LoadResourceCDC(loadRequest);
 						CameraManager.Instance.Reset();
 					}));
 
@@ -582,7 +581,7 @@ namespace ModelEx
 					while (loadingThread.IsAlive);
 					Console.WriteLine("Done loading");
 
-					RenderManager.Instance.ExportResourceCDC(loadedResource, outputFilePath, options);
+					RenderManager.Instance.ExportResourceCDC(loadRequest.ResourceName, outputFilePath, options);
 
 					Console.WriteLine("Done exporting");
 

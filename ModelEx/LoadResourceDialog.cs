@@ -555,7 +555,7 @@ namespace ModelEx
 			browserListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 		}
 
-		private void browserTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+		private void browserTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
 		{
 			if (e.Node.Tag != null)
 			{
