@@ -42,7 +42,7 @@ namespace ModelEx
 
 			for (int m = 0; m < srFile.ModelCount; m++)
 			{
-				RenderInstance instance = new RenderInstance(srFile.Name, m, new SlimDX.Vector3());
+				RenderInstance instance = new RenderInstance(srFile.Name, m, new SlimDX.Vector3(), new SlimDX.Vector3());
 				instance.Name = srFile.Models[m].Name + "-" + m.ToString();
 				_renderInstances.Add(instance);
 			}
@@ -56,7 +56,15 @@ namespace ModelEx
 						0.01f * intro.position.z,
 						0.01f * intro.position.y
 					);
-					RenderInstance instance = new RenderInstance(intro.fileName, 0, position);
+
+					// May be different for games besides SR1. Need to check.
+					SlimDX.Vector3 rotation = new SlimDX.Vector3(
+						-intro.rotation.z, // Yaw - Easy to spot from direction of raziel, enemies, flagall.
+						-intro.rotation.y, // Pitch - Can be seen from the angle of hndtrch in huba6.
+						-intro.rotation.x // Roll - Can be seen from the angle of stdorac in oracle3.
+					);
+
+					RenderInstance instance = new RenderInstance(intro.fileName, 0, position, rotation);
 					instance.Name = intro.name;
 
 					_renderInstances.Add(instance);

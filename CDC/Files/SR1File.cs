@@ -242,7 +242,10 @@ namespace CDC.Objects
 				reader.BaseStream.Position += 0x08;
 				_intros[i].index = reader.ReadInt32();
 				_intros[i].ID = reader.ReadInt32();
-				reader.BaseStream.Position += 0x08;
+				_intros[i].rotation.x = (float)(Math.PI * 2 / 4096) * reader.ReadInt16();
+				_intros[i].rotation.y = (float)(Math.PI * 2 / 4096) * reader.ReadInt16();
+				_intros[i].rotation.z = (float)(Math.PI * 2 / 4096) * reader.ReadInt16();
+				reader.BaseStream.Position += 0x02;
 				_intros[i].position.x = (float)reader.ReadInt16();
 				_intros[i].position.y = (float)reader.ReadInt16();
 				_intros[i].position.z = (float)reader.ReadInt16();

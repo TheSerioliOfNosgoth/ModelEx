@@ -9,16 +9,18 @@ namespace ModelEx
 		protected string _resourceName = "";
 		protected int _modelIndex = 0;
 		protected Vector3 _position = new Vector3();
+		protected Vector3 _rotation = new Vector3();
 
 		public readonly VisibilityNode Root = new VisibilityNode();
 
 		protected Model Model { get; set; }
 
-		public RenderInstance(string resourceName, int modelIndex, Vector3 position)
+		public RenderInstance(string resourceName, int modelIndex, Vector3 position, Vector3 rotation)
 		{
 			_resourceName = resourceName;
 			_modelIndex = modelIndex;
 			_position = position;
+			_rotation = rotation;
 
 			UpdateModel();
 		}
@@ -72,7 +74,15 @@ namespace ModelEx
 				}
 
 				float height = (resource.Name == "") ? GetBoundingSphere().Radius : 0.0f;
-				Transform = Matrix.Translation(
+
+				Matrix.RotationYawPitchRoll(
+					_rotation.X,
+					_rotation.Y,
+					_rotation.Z,
+					out Matrix rotationMatrix
+				);
+
+				Transform = rotationMatrix * Matrix.Translation(
 					_position.X,
 					_position.Y + height,
 					_position.Z

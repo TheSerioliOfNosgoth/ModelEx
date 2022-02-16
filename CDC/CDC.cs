@@ -136,6 +136,7 @@ namespace CDC
 		public int index;
 		public int ID;
 		public Vector position;
+		public Vector rotation;
 	}
 
 	public class Material
