@@ -41,8 +41,8 @@ namespace ModelEx
 		public Color BackgroundColour = Color.Gray;
 		public bool Wireframe = false;
 
-		public Renderable CurrentScene { get; private set; }
-		public Renderable CurrentObject { get; private set; }
+		public Scene CurrentScene { get; private set; }
+		public Scene CurrentObject { get; private set; }
 
 		SpriteRenderer _spriteRenderer;
 		public TextBlockRenderer _textBlockRenderer;
@@ -86,8 +86,8 @@ namespace ModelEx
 
 			// This should be the unnamed one with the shapes.
 			RenderResource resource = Resources[Resources.Keys[0]];
-			resource.Dispose();
 			Resources.Remove(Resources.Keys[0]);
+			resource.Dispose();
 
 			_textBlockRenderer.Dispose();
 			_spriteRenderer.Dispose();
@@ -141,8 +141,10 @@ namespace ModelEx
 			if (Resources.ContainsKey(srFile.Name))
 			{
 				renderResource = (RenderResourceCDC)Resources[srFile.Name];
-				renderResource.Dispose();
 				Resources.Remove(srFile.Name);
+				CurrentObject?.UpdateModels();
+				CurrentScene?.UpdateModels();
+				renderResource.Dispose();
 			}
 
 			renderResource = new RenderResourceCDC(srFile);
@@ -153,6 +155,9 @@ namespace ModelEx
 			renderResource.LoadTextures(loadRequest.TextureFile, loadRequest.ExportOptions);
 
 			Resources.Add(renderResource.Name, renderResource);
+
+			CurrentObject?.UpdateModels();
+			CurrentScene?.UpdateModels();
 
 			SceneCDC.progressLevel = SceneCDC.progressLevels;
 			SceneCDC.ProgressStage = "Done";
@@ -166,6 +171,8 @@ namespace ModelEx
 			{
 				RenderResource renderResource = Resources[resourceName];
 				Resources.Remove(resourceName);
+				CurrentObject?.UpdateModels();
+				CurrentScene?.UpdateModels();
 				renderResource.Dispose();
 
 				if (CurrentScene != null && CurrentScene.Name == resourceName)
@@ -201,9 +208,10 @@ namespace ModelEx
 			while (Resources.Count > 1)
 			{
 				RenderResource resource = Resources[Resources.Keys[1]];
-
-				resource.Dispose();
 				Resources.Remove(Resources.Keys[1]);
+				CurrentObject?.UpdateModels();
+				CurrentScene?.UpdateModels();
+				resource.Dispose();
 			}
 		}
 

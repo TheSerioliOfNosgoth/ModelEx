@@ -26,6 +26,18 @@ namespace ModelEx
 			_renderInstances.Clear();
 		}
 
+		public void UpdateModels()
+		{
+			foreach (Renderable renderable in _renderInstances)
+			{
+				if (renderable is RenderInstance)
+				{
+					RenderInstance renderInstance = (RenderInstance)renderable;
+					renderInstance.UpdateModel();
+				}
+			}
+		}
+
 		public override void Render()
 		{
 			// handle attempts to render where the renderInstances collection is modified by another threads

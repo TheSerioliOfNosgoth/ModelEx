@@ -42,7 +42,7 @@ namespace ModelEx
 
 			for (int m = 0; m < srFile.ModelCount; m++)
 			{
-				RenderInstance instance = new RenderInstance(srFile.Name, m);
+				RenderInstance instance = new RenderInstance(srFile.Name, m, new SlimDX.Vector3());
 				instance.Name = srFile.Models[m].Name + "-" + m.ToString();
 				_renderInstances.Add(instance);
 			}
@@ -51,14 +51,13 @@ namespace ModelEx
 			{
 				foreach (CDC.Intro intro in srFile.Intros)
 				{
-					RenderInstance instance = new RenderInstance("", 0);
-					float height = instance.GetBoundingSphere().Radius;
-					instance.Name = intro.name;
-					instance.Transform = SlimDX.Matrix.Translation(
+					SlimDX.Vector3 position = new SlimDX.Vector3(
 						0.01f * intro.position.x,
-						0.01f * intro.position.z + height,
+						0.01f * intro.position.z,
 						0.01f * intro.position.y
 					);
+					RenderInstance instance = new RenderInstance(intro.fileName, 0, position);
+					instance.Name = intro.name;
 
 					_renderInstances.Add(instance);
 				}

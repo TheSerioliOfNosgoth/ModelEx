@@ -158,7 +158,8 @@ namespace CDC.Objects
 				UInt32 objectAddress = reader.ReadUInt32();
 				if (objectAddress == 0)
 				{
-					_intros[i].name = "Unknown-" + _intros[i].ID;
+					_intros[i].name = "Intro-" + _intros[i].ID;
+					_intros[i].fileName = "";
 				}
 				else
 				{
@@ -166,6 +167,7 @@ namespace CDC.Objects
 					reader.BaseStream.Position = reader.ReadUInt32();
 					String strIntroName = new String(reader.ReadChars(8));
 					_intros[i].name = Utility.CleanObjectName(strIntroName) + "-" + _intros[i].ID;
+					_intros[i].fileName = Utility.CleanObjectName(strIntroName);
 				}
 			}
 

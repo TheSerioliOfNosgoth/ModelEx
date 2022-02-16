@@ -14,6 +14,8 @@ namespace CDC
 				return "";
 			}
 
+			 name = name.ToLower();
+
 			int index = name.IndexOfAny(new char[] { '\0' });
 			if (index >= 0)
 			{

@@ -8,35 +8,19 @@ namespace ModelEx
 	{
 		protected string _resourceName = "";
 		protected int _modelIndex = 0;
+		protected Vector3 _position = new Vector3();
 
 		public readonly VisibilityNode Root = new VisibilityNode();
 
 		protected Model Model { get; set; }
 
-		public RenderInstance(string resourceName, int modelIndex)
+		public RenderInstance(string resourceName, int modelIndex, Vector3 position)
 		{
 			_resourceName = resourceName;
 			_modelIndex = modelIndex;
+			_position = position;
 
-			RenderResource resource;
-			if (RenderManager.Instance.Resources.ContainsKey(resourceName))
-			{
-				resource = RenderManager.Instance.Resources[resourceName];
-			}
-			else
-			{
-				resource = RenderManager.Instance.Resources[""];
-			}
-
-			Model = resource.Models[modelIndex];
-
-			Root.Name = Model.Root.Name;
-			foreach (ModelNode modelNode in Model.Root.Nodes)
-			{
-				VisibilityNode visibilityNode = new VisibilityNode();
-				visibilityNode.Name = modelNode.Name;
-				Root.Nodes.Add(visibilityNode);
-			}
+			UpdateModel();
 		}
 
 		public VisibilityNode FindNode(string name)
@@ -61,6 +45,39 @@ namespace ModelEx
 			}
 
 			return null;
+		}
+
+		public void UpdateModel()
+		{
+			RenderResource resource;
+			if (RenderManager.Instance.Resources.ContainsKey(_resourceName))
+			{
+				resource = RenderManager.Instance.Resources[_resourceName];
+			}
+			else
+			{
+				resource = RenderManager.Instance.Resources[""];
+			}
+
+			if (Model != resource.Models[_modelIndex])
+			{
+				Model = resource.Models[_modelIndex];
+
+				Root.Name = Model.Root.Name;
+				foreach (ModelNode modelNode in Model.Root.Nodes)
+				{
+					VisibilityNode visibilityNode = new VisibilityNode();
+					visibilityNode.Name = modelNode.Name;
+					Root.Nodes.Add(visibilityNode);
+				}
+
+				float height = (resource.Name == "") ? GetBoundingSphere().Radius : 0.0f;
+				Transform = Matrix.Translation(
+					_position.X,
+					_position.Y + height,
+					_position.Z
+				);
+			}
 		}
 
 		public override void Render()

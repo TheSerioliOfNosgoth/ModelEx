@@ -106,6 +106,7 @@ namespace CDC.Objects
 				_intros[i].index = reader.ReadInt32();
 				_intros[i].ID = reader.ReadInt32();
 				_intros[i].name = Utility.CleanObjectName(strIntroName) + "-" + _intros[i].ID;
+				_intros[i].fileName = Utility.CleanObjectName(strIntroName);
 			}
 
 			// Object Names
