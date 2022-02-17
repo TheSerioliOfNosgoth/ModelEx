@@ -217,15 +217,15 @@ namespace CDC.Objects.Models
 		protected override void HandleMaterialRead(BinaryReader reader, int p, CDC.Objects.ExportOptions options, byte flags, UInt32 colourOrMaterialPosition)
 		{
 			// WIP
-			UInt32 uMaterialPosition = colourOrMaterialPosition + _materialStart;
+			UInt32 materialPosition = colourOrMaterialPosition + _materialStart;
 			if (_version == SR1File.RETAIL_VERSION &&
-				(((uMaterialPosition - _materialStart) % 0x0C) != 0) &&
-				 ((uMaterialPosition - _materialStart) % 0x14) == 0)
+				(((materialPosition - _materialStart) % 0x0C) != 0) &&
+				 ((materialPosition - _materialStart) % 0x14) == 0)
 			{
 				_platform = Platform.Dreamcast;
 			}
 
-			reader.BaseStream.Position = uMaterialPosition;
+			reader.BaseStream.Position = materialPosition;
 			ReadMaterial(reader, p, options, true);
 			//_polygons[p].material.textureAttributes = _polygons[p].sr1TextureFT3Attributes;
 		}
@@ -269,35 +269,35 @@ namespace CDC.Objects.Models
 			_polygons[p].material.polygonFlags = flags;
 			_polygons[p].material.sortPush = sortPush;
 
-			UInt32 uMaterialOffset;
+			UInt32 materialOffset;
 			if (_version == SR1File.PROTO_19981025_VERSION)
 			{
 				reader.BaseStream.Position += 2;
-				uMaterialOffset = reader.ReadUInt32();
+				materialOffset = reader.ReadUInt32();
 
-				if (uMaterialOffset >= _materialStart)
+				if (materialOffset >= _materialStart)
 				{
-					uMaterialOffset -= _materialStart;
+					materialOffset -= _materialStart;
 				}
 				else
 				{
 					// What would this mean?
 					// It's not an offset in proto, so is there a real material is should point to?
-					uMaterialOffset = 0xFFFFFFFF;
+					materialOffset = 0xFFFFFFFF;
 				}
 			}
 			else
 			{
 				// unsigned short textoff;
-				uMaterialOffset = reader.ReadUInt16();
-				//Console.WriteLine(string.Format("\t\t\tDebug: read textoff: 0x{0:X4}", uMaterialOffset));
-				//_polygons[p].material.textureUsed &= (Boolean)(uMaterialOffset != 0xFFFF && uMaterialOffset != 0xFFFFFFFF);
+				materialOffset = reader.ReadUInt16();
+				//Console.WriteLine(string.Format("\t\t\tDebug: read textoff: 0x{0:X4}", materialOffset));
+				//_polygons[p].material.textureUsed &= (Boolean)(materialOffset != 0xFFFF && materialOffset != 0xFFFFFFFF);
 			}
 
 			bool isTranslucent = false;
 
 			_polygons[p].material.visible = true;
-			if (uMaterialOffset == 0xFFFF || uMaterialOffset == 0xFFFFFFFF)
+			if (materialOffset == 0xFFFF || materialOffset == 0xFFFFFFFF)
 			{
 				_polygons[p].material.visible = false;
 			}
@@ -314,7 +314,7 @@ namespace CDC.Objects.Models
 			}
 			if (ignoreMaterial0)
 			{
-				if (uMaterialOffset == 0x00000000)
+				if (materialOffset == 0x00000000)
 				{
 					_polygons[p].material.visible = false;
 				}
@@ -371,7 +371,7 @@ namespace CDC.Objects.Models
 			//    _polygons[p].colour = _polygons[p].material.colour;
 			//}
 
-			HandlePolygonInfo(reader, p, options, flags, uMaterialOffset, isTranslucent);
+			HandlePolygonInfo(reader, p, options, flags, materialOffset, isTranslucent);
 
 			if (_version == SR1File.PROTO_19981025_VERSION)
 			{

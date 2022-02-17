@@ -64,7 +64,7 @@ namespace ModelEx
 						-intro.rotation.x // Roll - Can be seen from the angle of stdorac in oracle3.
 					);
 
-					RenderInstance instance = new RenderInstance(intro.fileName, 0, position, rotation);
+					RenderInstance instance = new RenderInstance(intro.fileName, intro.modelIndex, position, rotation);
 					instance.Name = intro.name;
 
 					_renderInstances.Add(instance);

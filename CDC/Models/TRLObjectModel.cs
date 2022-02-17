@@ -179,30 +179,30 @@ namespace CDC.Objects.Models
 				return;
 			}
 
-			List<TRLTriangleList> xTriangleListList = new List<TRLTriangleList>();
-			UInt32 uMaterialPosition = _materialStart;
+			List<TRLTriangleList> triangleListList = new List<TRLTriangleList>();
+			UInt32 materialPosition = _materialStart;
 			_groupCount = 0;
 
-			while (uMaterialPosition != 0)
+			while (materialPosition != 0)
 			{
-				reader.BaseStream.Position = uMaterialPosition;
-				TRLTriangleList xTriangleList = new TRLTriangleList();
+				reader.BaseStream.Position = materialPosition;
+				TRLTriangleList triangleList = new TRLTriangleList();
 
-				bool isVisible = (ReadTriangleList(reader, ref xTriangleList) /*&& xTriangleList.m_usGroupID == 0*/);
+				bool isVisible = (ReadTriangleList(reader, ref triangleList) /*&& triangleList.m_usGroupID == 0*/);
 				if (isVisible)
 				{
-					xTriangleListList.Add(xTriangleList);
-					_polygonCount += xTriangleList.m_uPolygonCount;
+					triangleListList.Add(triangleList);
+					_polygonCount += triangleList.polygonCount;
 
-					if ((UInt32)xTriangleList.m_usGroupID > _groupCount)
+					if ((UInt32)triangleList.groupID > _groupCount)
 					{
-						_groupCount = xTriangleList.m_usGroupID;
+						_groupCount = triangleList.groupID;
 					}
 				}
 
-				_materialsList.Add(xTriangleList.m_xMaterial);
+				_materialsList.Add(triangleList.material);
 
-				uMaterialPosition = xTriangleList.m_uNext;
+				materialPosition = triangleList.next;
 			}
 
 			_materialCount = (UInt32)_materialsList.Count;
@@ -214,11 +214,11 @@ namespace CDC.Objects.Models
 				_trees[t] = new Tree();
 				_trees[t].mesh = new Mesh();
 
-				foreach (TRLTriangleList xTriangleList in xTriangleListList)
+				foreach (TRLTriangleList triangleList in triangleListList)
 				{
-					if (t == (UInt32)xTriangleList.m_usGroupID)
+					if (t == (UInt32)triangleList.groupID)
 					{
-						_trees[t].mesh.polygonCount += xTriangleList.m_uPolygonCount;
+						_trees[t].mesh.polygonCount += triangleList.polygonCount;
 					}
 				}
 
@@ -230,20 +230,20 @@ namespace CDC.Objects.Models
 			for (UInt32 t = 0; t < _groupCount; t++)
 			{
 				UInt32 tp = 0;
-				foreach (TRLTriangleList xTriangleList in xTriangleListList)
+				foreach (TRLTriangleList triangleList in triangleListList)
 				{
-					if (t != (UInt32)xTriangleList.m_usGroupID)
+					if (t != (UInt32)triangleList.groupID)
 					{
 						continue;
 					}
 
-					reader.BaseStream.Position = xTriangleList.m_uPolygonStart;
-					for (int pl = 0; pl < xTriangleList.m_uPolygonCount; pl++)
+					reader.BaseStream.Position = triangleList.polygonStart;
+					for (int pl = 0; pl < triangleList.polygonCount; pl++)
 					{
 						_trees[t].mesh.polygons[tp].v1 = _geometry.Vertices[reader.ReadUInt16()];
 						_trees[t].mesh.polygons[tp].v2 = _geometry.Vertices[reader.ReadUInt16()];
 						_trees[t].mesh.polygons[tp].v3 = _geometry.Vertices[reader.ReadUInt16()];
-						_trees[t].mesh.polygons[tp].material = xTriangleList.m_xMaterial;
+						_trees[t].mesh.polygons[tp].material = triangleList.material;
 						tp++;
 					}
 				}
@@ -258,50 +258,50 @@ namespace CDC.Objects.Models
 
 			_polygons = new Polygon[_polygonCount];
 			UInt32 p = 0;
-			foreach (TRLTriangleList xTriangleList in xTriangleListList)
+			foreach (TRLTriangleList triangleList in triangleListList)
 			{
-				reader.BaseStream.Position = xTriangleList.m_uPolygonStart;
-				for (int pl = 0; pl < xTriangleList.m_uPolygonCount; pl++)
+				reader.BaseStream.Position = triangleList.polygonStart;
+				for (int pl = 0; pl < triangleList.polygonCount; pl++)
 				{
 					_polygons[p].v1 = _geometry.Vertices[reader.ReadUInt16()];
 					_polygons[p].v2 = _geometry.Vertices[reader.ReadUInt16()];
 					_polygons[p].v3 = _geometry.Vertices[reader.ReadUInt16()];
-					_polygons[p].material = xTriangleList.m_xMaterial;
+					_polygons[p].material = triangleList.material;
 					p++;
 				}
 			}
 		}
 
-		protected virtual bool ReadTriangleList(BinaryReader reader, ref TRLTriangleList xTriangleList)
+		protected virtual bool ReadTriangleList(BinaryReader reader, ref TRLTriangleList triangleList)
 		{
-			xTriangleList.m_uPolygonCount = (UInt32)reader.ReadUInt16() / 3;
-			xTriangleList.m_usGroupID = reader.ReadUInt16(); // Used by MON_SetAccessories and INSTANCE_UnhideAllDrawGroups
-			xTriangleList.m_uPolygonStart = (UInt32)(reader.BaseStream.Position) + 0x10;
+			triangleList.polygonCount = (UInt32)reader.ReadUInt16() / 3;
+			triangleList.groupID = reader.ReadUInt16(); // Used by MON_SetAccessories and INSTANCE_UnhideAllDrawGroups
+			triangleList.polygonStart = (UInt32)(reader.BaseStream.Position) + 0x10;
 			UInt16 xWord0 = reader.ReadUInt16();
 			UInt16 xWord1 = reader.ReadUInt16();
 			UInt32 xDWord0 = reader.ReadUInt32();
 			UInt32 xDWord1 = reader.ReadUInt32();
-			xTriangleList.m_xMaterial = new Material();
-			xTriangleList.m_xMaterial.visible = true; // ((xWord1 & 0xFF00) == 0);
-			xTriangleList.m_xMaterial.textureID = (UInt16)(xWord0 & 0x1FFF);
-			xTriangleList.m_xMaterial.colour = 0xFFFFFFFF;
-			if (xTriangleList.m_xMaterial.textureID > 0)
+			triangleList.material = new Material();
+			triangleList.material.visible = true; // ((xWord1 & 0xFF00) == 0);
+			triangleList.material.textureID = (UInt16)(xWord0 & 0x1FFF);
+			triangleList.material.colour = 0xFFFFFFFF;
+			if (triangleList.material.textureID > 0)
 			{
-				xTriangleList.m_xMaterial.textureUsed = true;
+				triangleList.material.textureUsed = true;
 			}
 			else
 			{
-				xTriangleList.m_xMaterial.textureUsed = false;
+				triangleList.material.textureUsed = false;
 				//xMaterial.colour = 0x00000000;
 			}
-			xTriangleList.m_uNext = reader.ReadUInt32();
+			triangleList.next = reader.ReadUInt32();
 
-			if (xTriangleList.m_uPolygonCount == 0)
+			if (triangleList.polygonCount == 0)
 			{
-				xTriangleList.m_uNext = 0;
+				triangleList.next = 0;
 			}
 
-			return (xTriangleList.m_xMaterial.visible);
+			return (triangleList.material.visible);
 		}
 	}
 }

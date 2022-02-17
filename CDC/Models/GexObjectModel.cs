@@ -130,9 +130,9 @@ namespace CDC.Objects.Models
 
 			if (_polygons[p].material.textureUsed)
 			{
-				UInt32 uMaterialPosition = reader.ReadUInt32();
+				UInt32 materialPosition = reader.ReadUInt32();
 
-				reader.BaseStream.Position = uMaterialPosition;
+				reader.BaseStream.Position = materialPosition;
 				ReadMaterial(reader, p, options);
 
 				reader.BaseStream.Position += 0x02;

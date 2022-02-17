@@ -15,6 +15,8 @@ namespace CDC.Objects
 		public const UInt32 BETA_19990512_VERSION = 0x3c204139;
 		public const UInt32 RETAIL_VERSION = 0x3C20413B;
 
+		public MonsterAttributes _monsterAttributes;
+
 		public SR1File(String strFileName, CDC.Objects.ExportOptions options)
 			: base(strFileName, Game.SR1, options)
 		{
@@ -103,6 +105,42 @@ namespace CDC.Objects
 			{
 				_platform = ePlatform;
 			}
+
+			/*reader.BaseStream.Position = _dataStart + 0x1C;
+			UInt32 objectDataStart = reader.ReadUInt32();
+			reader.BaseStream.Position = _dataStart + 0x2C;
+			Int32 oflags2 = reader.ReadInt32();
+
+			// MonsterAttributes
+			if ((oflags2 & 0x00080000) != 0 && objectDataStart != 0)
+			{
+				_monsterAttributes = new MonsterAttributes();
+				
+				reader.BaseStream.Position = objectDataStart + 0x24;
+				if (Version <= BETA_19990512_VERSION)
+				{
+					reader.BaseStream.Position += 0x03;
+				}
+				if (Version == BETA_19990512_VERSION)
+				{
+					reader.BaseStream.Position += 0x01;
+				}
+
+				_monsterAttributes.numSubAttributes = reader.ReadSByte();
+				_monsterAttributes.subAttributes = new MonsterSubAttributes[_monsterAttributes.numSubAttributes];
+				reader.BaseStream.Position += 0x07;
+
+				for (int s = 0; s < _monsterAttributes.numSubAttributes; s++)
+				{
+					_monsterAttributes.subAttributes[s].dataStart = reader.ReadUInt32();
+				}
+
+				for (int s = 0; s < _monsterAttributes.numSubAttributes; s++)
+				{
+					reader.BaseStream.Position = _monsterAttributes.subAttributes[s].dataStart + 0x26;
+					_monsterAttributes.subAttributes[s].modelNum = reader.ReadByte();
+				}
+			}*/
 		}
 
 		protected override void ReadUnitData(BinaryReader reader, CDC.Objects.ExportOptions options)
@@ -251,6 +289,35 @@ namespace CDC.Objects
 				_intros[i].position.z = (float)reader.ReadInt16();
 				_intros[i].name = Utility.CleanObjectName(strIntroName) + "-" + _intros[i].ID;
 				_intros[i].fileName = Utility.CleanObjectName(strIntroName);
+
+				reader.BaseStream.Position += 0x0A;
+				UInt32 iniCommand = reader.ReadUInt32();
+				if (iniCommand != 0)
+				{
+					reader.BaseStream.Position = iniCommand;
+
+					while (true)
+					{
+						UInt16 command = reader.ReadUInt16();
+						if (command == 0)
+						{
+							break;
+						}
+
+						UInt16 numParameters = reader.ReadUInt16();
+
+						if (command == 6)
+						{
+							_intros[i].monsterAge = reader.ReadInt32();
+						}
+						else if (command == 18)
+						{
+							_intros[i].modelIndex = reader.ReadInt32();
+						}
+
+						iniCommand += 4u + (4u * numParameters);
+					}
+				}
 			}
 
 			// Object Names

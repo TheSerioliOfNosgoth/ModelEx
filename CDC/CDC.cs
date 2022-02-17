@@ -137,6 +137,20 @@ namespace CDC
 		public int ID;
 		public Vector position;
 		public Vector rotation;
+		public int modelIndex;
+		public int monsterAge;
+	}
+
+	public struct MonsterAttributes
+	{
+		public int numSubAttributes;
+		public MonsterSubAttributes[] subAttributes;
+	}
+
+	public struct MonsterSubAttributes
+	{
+		public uint dataStart;
+		public int modelNum;
 	}
 
 	public class Material

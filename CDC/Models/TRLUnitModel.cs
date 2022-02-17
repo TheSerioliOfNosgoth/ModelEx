@@ -97,9 +97,9 @@ namespace CDC.Objects.Models
 				reader.BaseStream.Position += 0x1C;
 				UInt32 uDataPos = reader.ReadUInt32();
 				reader.BaseStream.Position += 0x48;
-				UInt32 uMaterialListPos = reader.ReadUInt32();
+				UInt32 materialListPos = reader.ReadUInt32();
 
-				reader.BaseStream.Position = uMaterialListPos;
+				reader.BaseStream.Position = materialListPos;
 				UInt32 uNumMaterials = reader.ReadUInt32();
 				List<TRLMaterial> materials = new List<TRLMaterial>();
 

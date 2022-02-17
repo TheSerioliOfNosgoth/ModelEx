@@ -133,10 +133,10 @@ namespace CDC.Objects.Models
 
 			_polygons[p].material.polygonFlags = flags0;
 
-			UInt16 uMaterialOffset = reader.ReadUInt16();
+			UInt16 materialOffset = reader.ReadUInt16();
 
 			_polygons[p].material.visible = true;
-			if (uMaterialOffset == 0xFFFF)
+			if (materialOffset == 0xFFFF)
 			{
 				_polygons[p].material.visible = false;
 			}
@@ -167,9 +167,9 @@ namespace CDC.Objects.Models
 
 			if (_polygons[p].material.textureUsed)
 			{
-				UInt32 uMaterialPosition = uMaterialOffset + _materialStart;
+				UInt32 materialPosition = materialOffset + _materialStart;
 
-				reader.BaseStream.Position = uMaterialPosition;
+				reader.BaseStream.Position = materialPosition;
 
 				ReadMaterial(reader, p, options);
 			}

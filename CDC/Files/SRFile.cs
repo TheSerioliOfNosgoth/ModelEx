@@ -199,7 +199,7 @@ namespace CDC.Objects
 		public Asset Asset { get { return _asset; } }
 		public Platform Platform { get { return _platform; } }
 
-		public static StreamWriter m_xLogFile = null;
+		public static StreamWriter LogFile = null;
 
 		protected SRFile()
 		{
@@ -217,7 +217,7 @@ namespace CDC.Objects
 			BinaryWriter writer = new BinaryWriter(xStream, System.Text.Encoding.ASCII);
 
 			//String strDebugFileName = Path.GetDirectoryName(strFileName) + "\\" + Path.GetFileNameWithoutExtension(strFileName) + "-Debug.txt";
-			//m_xLogFile = File.CreateText(strDebugFileName);
+			//LogFile = File.CreateText(strDebugFileName);
 
 			ResolvePointers(reader, writer);
 			reader.Close();
@@ -236,10 +236,10 @@ namespace CDC.Objects
 
 			reader.Close();
 
-			if (m_xLogFile != null)
+			if (LogFile != null)
 			{
-				m_xLogFile.Close();
-				m_xLogFile = null;
+				LogFile.Close();
+				LogFile = null;
 			}
 		}
 

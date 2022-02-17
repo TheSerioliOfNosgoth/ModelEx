@@ -51,19 +51,24 @@ namespace ModelEx
 
 		public void UpdateModel()
 		{
+			bool foundResource;
 			RenderResource resource;
 			if (RenderManager.Instance.Resources.ContainsKey(_resourceName))
 			{
 				resource = RenderManager.Instance.Resources[_resourceName];
+				foundResource = true;
 			}
 			else
 			{
 				resource = RenderManager.Instance.Resources[""];
+				foundResource = false;
 			}
 
-			if (Model != resource.Models[_modelIndex])
+			Model newModel = resource.Models[foundResource ? _modelIndex : 0];
+
+			if (Model != newModel)
 			{
-				Model = resource.Models[_modelIndex];
+				Model = newModel;
 
 				Root.Name = Model.Root.Name;
 				foreach (ModelNode modelNode in Model.Root.Nodes)

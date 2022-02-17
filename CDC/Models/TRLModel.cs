@@ -8,11 +8,11 @@ namespace CDC.Objects.Models
 	{
 		protected class TRLTriangleList
 		{
-			public Material m_xMaterial;
-			public UInt32 m_uPolygonCount;
-			public UInt32 m_uPolygonStart;
-			public UInt16 m_usGroupID;
-			public UInt32 m_uNext;
+			public Material material;
+			public UInt32 polygonCount;
+			public UInt32 polygonStart;
+			public UInt16 groupID;
+			public UInt32 next;
 		}
 
 		protected class TRLMaterial

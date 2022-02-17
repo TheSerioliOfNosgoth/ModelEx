@@ -150,14 +150,14 @@ namespace CDC.Objects.Models
 		//    if (_polygons[p].material.textureUsed)
 		//    {
 		//        // WIP
-		//        UInt32 uMaterialPosition = _dataStart + reader.ReadUInt32();
-		//        if ((((uMaterialPosition - _materialStart) % 0x10) != 0) &&
-		//             ((uMaterialPosition - _materialStart) % 0x18) == 0)
+		//        UInt32 materialPosition = _dataStart + reader.ReadUInt32();
+		//        if ((((materialPosition - _materialStart) % 0x10) != 0) &&
+		//             ((materialPosition - _materialStart) % 0x18) == 0)
 		//        {
 		//            _platform = Platform.Dreamcast;
 		//        }
 
-		//        reader.BaseStream.Position = uMaterialPosition;
+		//        reader.BaseStream.Position = materialPosition;
 		//        ReadMaterial(reader, p, options);
 
 		//        if (_platform == Platform.Dreamcast)
@@ -186,14 +186,14 @@ namespace CDC.Objects.Models
 		protected override void HandleMaterialRead(BinaryReader reader, int p, CDC.Objects.ExportOptions options, byte flags, UInt32 colourOrMaterialPosition)
 		{
 			// WIP
-			UInt32 uMaterialPosition = _dataStart + colourOrMaterialPosition;
-			if ((((uMaterialPosition - _materialStart) % 0x10) != 0) &&
-				 ((uMaterialPosition - _materialStart) % 0x18) == 0)
+			UInt32 materialPosition = _dataStart + colourOrMaterialPosition;
+			if ((((materialPosition - _materialStart) % 0x10) != 0) &&
+				 ((materialPosition - _materialStart) % 0x18) == 0)
 			{
 				_platform = Platform.Dreamcast;
 			}
 
-			reader.BaseStream.Position = uMaterialPosition;
+			reader.BaseStream.Position = materialPosition;
 			ReadMaterial(reader, p, options, false);
 
 			if (_platform == Platform.Dreamcast)

@@ -266,11 +266,11 @@ namespace CDC.Objects.Models
 
 		protected class SR2TriangleList
 		{
-			public Material m_xMaterial;
-			public UInt32 m_uPolygonCount;
-			public UInt32 m_uPolygonStart;
-			public UInt16 m_usGroupID;
-			public UInt32 m_uNext;
+			public Material material;
+			public UInt32 polygonCount;
+			public UInt32 polygonStart;
+			public UInt16 groupID;
+			public UInt32 next;
 		}
 
 		protected SR2Model(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version) :
