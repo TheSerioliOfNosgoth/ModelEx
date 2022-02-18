@@ -96,6 +96,8 @@ namespace ModelEx
 			ConstantsBuffer?.Dispose();
 			Texture?.Dispose();
 			Sampler?.Dispose();
+
+			base.Dispose();
 		}
 
 		public override void Apply(int pass)

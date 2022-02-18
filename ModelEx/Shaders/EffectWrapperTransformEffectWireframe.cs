@@ -59,6 +59,8 @@ namespace ModelEx
 		{
 			effect?.Dispose();
 			layout?.Dispose();
+
+			base.Dispose();
 		}
 	}
 }

@@ -582,7 +582,6 @@ namespace ModelEx
 
 		private void browserTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
 		{
-			System.Diagnostics.Debug.WriteLine("BeforeExpand");
 			TreeNode treeNode = e.Node;
 			if (treeNode.Tag is DirectoryInfo)
 			{
