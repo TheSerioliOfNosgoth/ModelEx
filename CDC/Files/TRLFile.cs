@@ -33,9 +33,17 @@ namespace CDC.Objects
 			public readonly List<Relocation> Relocations = new List<Relocation>();
 		}
 
+		SortedList<int, string> _objectNamesList = new SortedList<int, string>();
+
 		public TRLFile(String strFileName, CDC.Objects.ExportOptions options)
 			: base(strFileName, Game.TRL, options)
 		{
+		}
+
+		public TRLFile(String strFileName, String strObjectListFileName, CDC.Objects.ExportOptions options)
+			: base(strFileName, Game.Defiance, options)
+		{
+			LoadObjectList(strObjectListFileName);
 		}
 
 		protected override void ReadHeaderData(BinaryReader reader, CDC.Objects.ExportOptions options)
@@ -257,6 +265,23 @@ namespace CDC.Objects
 					// write back relocated pointer
 					writer.BaseStream.Write(pointer, 0, 4);
 				}
+			}
+		}
+
+		public void LoadObjectList(String objectListFile)
+		{
+			if (File.Exists(objectListFile))
+			{
+				StreamReader reader = File.OpenText(objectListFile);
+
+				int numObjects = Int32.Parse(reader.ReadLine());
+				for (int i = 0; i < numObjects; i++)
+				{
+					string[] line = reader.ReadLine().Split(',');
+					_objectNamesList.Add(Int32.Parse(line[0]), line[1]);
+				}
+
+				reader.Close();
 			}
 		}
 	}

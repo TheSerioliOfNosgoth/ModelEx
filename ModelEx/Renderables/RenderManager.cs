@@ -128,7 +128,7 @@ namespace ModelEx
 			SceneCDC.progressLevels = 1;
 			SceneCDC.ProgressStage = "Reading Data";
 
-			SRFile srFile = SRFile.Create(loadRequest.DataFile, loadRequest.GameType, loadRequest.ExportOptions, loadRequest.ChildIndex);
+			SRFile srFile = SRFile.Create(loadRequest.DataFile, loadRequest.ObjectListFile, loadRequest.GameType, loadRequest.ExportOptions, loadRequest.ChildIndex);
 
 			if (srFile == null)
 			{

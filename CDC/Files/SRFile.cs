@@ -211,9 +211,9 @@ namespace CDC.Objects
 			_name = Path.GetFileNameWithoutExtension(strFileName);
 			_game = game;
 
-			FileStream xFile = new FileStream(strFileName, FileMode.Open, FileAccess.Read);
-			BinaryReader reader = new BinaryReader(xFile, System.Text.Encoding.ASCII);
-			MemoryStream xStream = new MemoryStream((int)xFile.Length);
+			FileStream file = new FileStream(strFileName, FileMode.Open, FileAccess.Read);
+			BinaryReader reader = new BinaryReader(file, System.Text.Encoding.ASCII);
+			MemoryStream xStream = new MemoryStream((int)file.Length);
 			BinaryWriter writer = new BinaryWriter(xStream, System.Text.Encoding.ASCII);
 
 			//String strDebugFileName = Path.GetDirectoryName(strFileName) + "\\" + Path.GetFileNameWithoutExtension(strFileName) + "-Debug.txt";
@@ -251,7 +251,7 @@ namespace CDC.Objects
 
 		protected abstract void ResolvePointers(BinaryReader reader, BinaryWriter writer);
 
-		public static SRFile Create(string fileName, Game game, ExportOptions options, int childIndex = -1)
+		public static SRFile Create(string dataFile, string objectListFile, Game game, ExportOptions options, int childIndex = -1)
 		{
 			SRFile srFile;
 
@@ -259,7 +259,7 @@ namespace CDC.Objects
 			{
 				if (game == Game.Gex)
 				{
-					GexFile gexFile = new GexFile(fileName, options);
+					GexFile gexFile = new GexFile(dataFile, options);
 					if (gexFile.Asset == Asset.Unit && childIndex >= 0)
 					{
 						srFile = gexFile.Objects[childIndex];
@@ -271,19 +271,19 @@ namespace CDC.Objects
 				}
 				else if (game == Game.SR1)
 				{
-					srFile = new SR1File(fileName, options);
+					srFile = new SR1File(dataFile, options);
 				}
 				else if (game == Game.SR2)
 				{
-					srFile = new SR2File(fileName, options);
+					srFile = new SR2File(dataFile, options);
 				}
 				else if (game == Game.Defiance)
 				{
-					srFile = new DefianceFile(fileName, options);
+					srFile = new DefianceFile(dataFile, objectListFile, options);
 				}
 				else if (game == Game.TRL)
 				{
-					srFile = new TRLFile(fileName, options);
+					srFile = new TRLFile(dataFile, objectListFile, options);
 				}
 				else
 				{

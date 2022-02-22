@@ -7,9 +7,17 @@ namespace CDC.Objects
 {
 	public class DefianceFile : SRFile
 	{
+		SortedList<int, string> _objectNamesList = new SortedList<int, string>();
+
 		public DefianceFile(String strFileName, CDC.Objects.ExportOptions options)
 			: base(strFileName, Game.Defiance, options)
 		{
+		}
+
+		public DefianceFile(String strFileName, String strObjectListFileName, CDC.Objects.ExportOptions options)
+			: base(strFileName, Game.Defiance, options)
+		{
+			LoadObjectList(strObjectListFileName);
 		}
 
 		protected override void ReadHeaderData(BinaryReader reader, CDC.Objects.ExportOptions options)
@@ -87,29 +95,31 @@ namespace CDC.Objects
 				reader.BaseStream.Position += 0x90;
 			}
 
-			// Intros
-			//reader.BaseStream.Position = _dataStart + 0x44;
+			//// Intros
+			//reader.BaseStream.Position = _dataStart + 0x78;
 			//_introCount = reader.ReadUInt32();
 			//_introStart = _dataStart + reader.ReadUInt32();
 			//_intros = new Intro[_introCount];
 			//for (int i = 0; i < _introCount; i++)
 			//{
 			//	reader.BaseStream.Position = _introStart + 0x60 * i;
-			//	String strIntroName = new String(reader.ReadChars(8));
-			//	_intros[i].name = Utility.CleanObjectName(strIntroName) + "-" + _intros[i].ID;
+			//	_intros[i].name = "Intro-" + _intros[i].ID;
+			//	_intros[i].fileName = "";
 			//}
 
-			// Object Names
-			//reader.BaseStream.Position = _dataStart + 0x4C;
+			//// Object Names
+			//reader.BaseStream.Position = _dataStart + 0x80;
 			//_objectNameStart = _dataStart + reader.ReadUInt32();
 			//reader.BaseStream.Position = _objectNameStart;
 			//List<String> introList = new List<String>();
-			//while (reader.ReadByte() != 0xFF)
+			//while (true)
 			//{
-			//	reader.BaseStream.Position--;
-			//	String strObjectName = new String(reader.ReadChars(8));
-			//	introList.Add(Utility.CleanObjectName(strObjectName));
-			//	reader.BaseStream.Position += 0x08;
+			//	UInt16 objectID = reader.ReadUInt16();
+			//	if (objectID == 0)
+			//	{
+			//		break;
+			//	}
+			//	introList.Add("Object-" + objectID);
 			//}
 			//_objectNames = introList.ToArray();
 
@@ -239,6 +249,23 @@ namespace CDC.Objects
 				}
 
 				uPointerData = uObjectData + uObjectDataSize;
+			}
+		}
+
+		public void LoadObjectList(String objectListFile)
+		{
+			if (File.Exists(objectListFile))
+			{
+				StreamReader reader = File.OpenText(objectListFile);
+
+				int numObjects = Int32.Parse(reader.ReadLine());
+				for (int i = 0; i < numObjects; i++)
+				{
+					string[] line = reader.ReadLine().Split(',');
+					_objectNamesList.Add(Int32.Parse(line[0]), line[1]);
+				}
+
+				reader.Close();
 			}
 		}
 	}
