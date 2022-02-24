@@ -139,7 +139,11 @@ namespace CDC
 		public Vector rotation;
 		public int modelIndex;
 		public int monsterAge;
-	}
+        public override string ToString()
+        {
+			return name;
+        }
+    }
 
 	public struct MonsterAttributes
 	{

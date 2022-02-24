@@ -7,6 +7,7 @@ namespace CDC.Objects
 {
 	public class DefianceFile : SRFile
 	{
+		Int16[] _objectIDs;
 		SortedList<int, string> _objectNamesList = new SortedList<int, string>();
 
 		public DefianceFile(String strFileName, CDC.Objects.ExportOptions options)
@@ -95,36 +96,40 @@ namespace CDC.Objects
 				reader.BaseStream.Position += 0x90;
 			}
 
-			//// Intros
-			//reader.BaseStream.Position = _dataStart + 0x78;
-			//_introCount = reader.ReadUInt32();
-			//_introStart = _dataStart + reader.ReadUInt32();
-			//_intros = new Intro[_introCount];
-			//for (int i = 0; i < _introCount; i++)
-			//{
-			//	reader.BaseStream.Position = _introStart + 0x60 * i;
-			//	_intros[i].name = "Intro-" + _intros[i].ID;
-			//	_intros[i].fileName = "";
-			//}
+            // Intros
+            reader.BaseStream.Position = _dataStart + 0x78;
+            _introCount = reader.ReadUInt32();
+            _introStart = _dataStart + reader.ReadUInt32();
+            _intros = new Intro[_introCount];
+            for (int i = 0; i < _introCount; i++)
+            {
+                reader.BaseStream.Position = _introStart + 0x60 * i;
+				reader.BaseStream.Position += 0x40;
 
-			//// Object Names
-			//reader.BaseStream.Position = _dataStart + 0x80;
-			//_objectNameStart = _dataStart + reader.ReadUInt32();
-			//reader.BaseStream.Position = _objectNameStart;
-			//List<String> introList = new List<String>();
-			//while (true)
-			//{
-			//	UInt16 objectID = reader.ReadUInt16();
-			//	if (objectID == 0)
-			//	{
-			//		break;
-			//	}
-			//	introList.Add("Object-" + objectID);
-			//}
-			//_objectNames = introList.ToArray();
+				_intros[i].ID = reader.ReadInt16();
+                _intros[i].name = "Intro-" + _intros[i].ID;
+                _intros[i].fileName = "";
+            }
 
-			// Unit name
-			reader.BaseStream.Position = _dataStart + 0x84;
+            // Object Names
+            reader.BaseStream.Position = _dataStart + 0x80;
+            _objectNameStart = _dataStart + reader.ReadUInt32();
+            reader.BaseStream.Position = _objectNameStart;
+            List<Int16> objectIDs = new List<Int16>();
+            while (true)
+            {
+                Int16 objectID = reader.ReadInt16();
+                if (objectID == 0)
+                {
+                    break;
+                }
+                objectIDs.Add(objectID);
+            }
+			_objectNames = new string[objectIDs.Count];
+			_objectIDs = objectIDs.ToArray();
+
+            // Unit name
+            reader.BaseStream.Position = _dataStart + 0x84;
 			reader.BaseStream.Position = _dataStart + reader.ReadUInt32();
 			String strModelName = new String(reader.ReadChars(10)); // Need to check
 			_name = Utility.CleanName(strModelName);
@@ -266,6 +271,15 @@ namespace CDC.Objects
 				}
 
 				reader.Close();
+			}
+
+			for (int i = 0; i < _introCount; i++)
+			{
+				if (_objectNamesList.ContainsKey(_intros[i].ID))
+				{
+					_intros[i].name = _objectNamesList[_intros[i].ID] + _intros[i].ID;
+					_intros[i].fileName = _objectNamesList[_intros[i].ID];
+				}
 			}
 		}
 	}

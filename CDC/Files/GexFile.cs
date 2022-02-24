@@ -118,8 +118,8 @@ namespace CDC.Objects
 			reader.BaseStream.Position = _dataStart + 0x3C;
 			_objectNameStart = reader.ReadUInt32();
 			reader.BaseStream.Position = _objectNameStart;
-			List<String> introList = new List<String>();
-			List<SRFile> xObjectList = new List<SRFile>();
+			List<string> objectNames = new List<string>();
+			List<SRFile> objectList = new List<SRFile>();
 			while (true)
 			{
 				UInt32 objectAddress = reader.ReadUInt32();
@@ -132,19 +132,19 @@ namespace CDC.Objects
 
 				reader.BaseStream.Position = objectAddress + 0x00000024;
 				reader.BaseStream.Position = reader.ReadUInt32();
-				String strObjectName = new String(reader.ReadChars(8));
-				strObjectName = Utility.CleanObjectName(strObjectName);
+				string objectName = new string(reader.ReadChars(8));
+				objectName = Utility.CleanObjectName(objectName);
 
 				reader.BaseStream.Position = objectAddress;
-				GexFile gexObject = new GexFile(strObjectName, options, reader);
+				GexFile gexObject = new GexFile(objectName, options, reader);
 
-				introList.Add(strObjectName);
-				xObjectList.Add(gexObject);
+				objectNames.Add(objectName);
+				objectList.Add(gexObject);
 
 				reader.BaseStream.Position = oldPos;
 			}
-			_objectNames = introList.ToArray();
-			_objects = xObjectList.ToArray();
+			_objectNames = objectNames.ToArray();
+			_objects = objectList.ToArray();
 
 			// In
 			reader.BaseStream.Position = _dataStart + 0x7C;

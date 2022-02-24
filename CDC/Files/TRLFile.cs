@@ -136,15 +136,15 @@ namespace CDC.Objects
 			//reader.BaseStream.Position = _dataStart + 0x7C;
 			//_objectNameStart = _dataStart + reader.ReadUInt32();
 			//reader.BaseStream.Position = _objectNameStart;
-			//List<String> introList = new List<String>();
+			//List<String> objectNames = new List<String>();
 			//while (reader.ReadByte() != 0xFF)
 			//{
 			//	reader.BaseStream.Position--;
 			//	String strObjectName = new String(reader.ReadChars(8));
-			//	introList.Add(Utility.CleanObjectName(strObjectName));
+			//	objectNames.Add(Utility.CleanObjectName(strObjectName));
 			//	reader.BaseStream.Position += 0x08;
 			//}
-			//_objectNames = introList.ToArray();
+			//_objectNames = objectNames.ToArray();
 
 			// Unit name
 			reader.BaseStream.Position = _dataStart + 0x80;
