@@ -106,8 +106,8 @@ namespace CDC.Objects
                 reader.BaseStream.Position = _introStart + 0x60 * i;
 				reader.BaseStream.Position += 0x40;
 
-				_intros[i].ID = reader.ReadInt16();
-                _intros[i].name = "Intro-" + _intros[i].ID;
+				_intros[i].objectID = reader.ReadInt16();
+                _intros[i].name = "Intro(" + _intros[i].objectID + ")-" + _intros[i].ID;
                 _intros[i].fileName = "";
             }
 
@@ -275,10 +275,10 @@ namespace CDC.Objects
 
 			for (int i = 0; i < _introCount; i++)
 			{
-				if (_objectNamesList.ContainsKey(_intros[i].ID))
+				if (_objectNamesList.ContainsKey(_intros[i].objectID))
 				{
-					_intros[i].name = _objectNamesList[_intros[i].ID] + _intros[i].ID;
-					_intros[i].fileName = _objectNamesList[_intros[i].ID];
+					_intros[i].name = _objectNamesList[_intros[i].objectID] + _intros[i].ID;
+					_intros[i].fileName = _objectNamesList[_intros[i].objectID];
 				}
 			}
 		}

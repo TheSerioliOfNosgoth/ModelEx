@@ -146,7 +146,7 @@ namespace CDC.Objects
 			_objectNames = objectNames.ToArray();
 			_objects = objectList.ToArray();
 
-			// In
+			// Intros
 			reader.BaseStream.Position = _dataStart + 0x7C;
 			_introCount = reader.ReadUInt32();
 			_introStart = reader.ReadUInt32();
@@ -155,19 +155,19 @@ namespace CDC.Objects
 			{
 				reader.BaseStream.Position = _introStart + 0x34 * i;
 
-				UInt32 objectAddress = reader.ReadUInt32();
-				if (objectAddress == 0)
+				UInt32 objectStart = reader.ReadUInt32();
+				if (objectStart == 0)
 				{
-					_intros[i].name = "Intro-" + _intros[i].ID;
+					_intros[i].name = "Intro(0)-" + _intros[i].ID;
 					_intros[i].fileName = "";
 				}
 				else
 				{
-					reader.BaseStream.Position = objectAddress + 0x00000024;
+					reader.BaseStream.Position = objectStart + 0x00000024;
 					reader.BaseStream.Position = reader.ReadUInt32();
-					String strIntroName = new String(reader.ReadChars(8));
-					_intros[i].name = Utility.CleanObjectName(strIntroName) + "-" + _intros[i].ID;
-					_intros[i].fileName = Utility.CleanObjectName(strIntroName);
+					String introName = new String(reader.ReadChars(8));
+					_intros[i].name = Utility.CleanObjectName(introName) + "-" + _intros[i].ID;
+					_intros[i].fileName = Utility.CleanObjectName(introName);
 				}
 			}
 

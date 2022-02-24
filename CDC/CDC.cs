@@ -135,6 +135,7 @@ namespace CDC
 		public string fileName;
 		public int index;
 		public int ID;
+		public int objectID;
 		public Vector position;
 		public Vector rotation;
 		public int modelIndex;

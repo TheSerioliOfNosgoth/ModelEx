@@ -276,7 +276,7 @@ namespace CDC.Objects
 					reader.BaseStream.Position = _introStart + 0x4C * i;
 				}
 
-				String strIntroName = new String(reader.ReadChars(8));
+				String introName = new String(reader.ReadChars(8));
 				reader.BaseStream.Position += 0x08;
 				_intros[i].index = reader.ReadInt32();
 				_intros[i].ID = reader.ReadInt32();
@@ -287,8 +287,8 @@ namespace CDC.Objects
 				_intros[i].position.x = (float)reader.ReadInt16();
 				_intros[i].position.y = (float)reader.ReadInt16();
 				_intros[i].position.z = (float)reader.ReadInt16();
-				_intros[i].name = Utility.CleanObjectName(strIntroName) + "-" + _intros[i].ID;
-				_intros[i].fileName = Utility.CleanObjectName(strIntroName);
+				_intros[i].name = Utility.CleanObjectName(introName) + "-" + _intros[i].ID;
+				_intros[i].fileName = Utility.CleanObjectName(introName);
 
 				reader.BaseStream.Position += 0x0A;
 				UInt32 iniCommand = reader.ReadUInt32();

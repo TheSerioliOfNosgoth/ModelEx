@@ -128,8 +128,8 @@ namespace CDC.Objects
 			//for (int i = 0; i < _introCount; i++)
 			//{
 			//	reader.BaseStream.Position = _introStart + 0x60 * i;
-			//	String strIntroName = new String(reader.ReadChars(8));
-			//	_intros[i].name = Utility.CleanObjectName(strIntroName) + "-" + _intros[i].ID;
+			//	String introName = new String(reader.ReadChars(8));
+			//	_intros[i].name = Utility.CleanObjectName(introName) + "-" + _intros[i].ID;
 			//}
 
 			// Object Names
