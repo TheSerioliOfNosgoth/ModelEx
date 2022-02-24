@@ -133,8 +133,8 @@ namespace CDC
 	{
 		public string name;
 		public string fileName;
-		public int index;
-		public int ID;
+		public int introNum;
+		public int uniqueID;
 		public int objectID;
 		public Vector position;
 		public Vector rotation;

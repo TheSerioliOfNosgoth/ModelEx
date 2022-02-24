@@ -132,19 +132,16 @@ namespace CDC.Objects
 				_intros[i].rotation.x = reader.ReadSingle();
 				_intros[i].rotation.y = reader.ReadSingle();
 				_intros[i].rotation.x = reader.ReadSingle();
-
 				reader.BaseStream.Position += 0x4;
 				_intros[i].position.x = reader.ReadSingle();
 				_intros[i].position.y = reader.ReadSingle();
 				_intros[i].position.z = reader.ReadSingle();
-
-				reader.BaseStream.Position += 0x34;
+				reader.BaseStream.Position += 0x4;
+				reader.BaseStream.Position += 0x30;
 				_intros[i].objectID = reader.ReadInt16();
-
-				reader.BaseStream.Position += 0x02;
-				_intros[i].ID = reader.ReadInt32();
-
-				_intros[i].name = "Intro(" + _intros[i].objectID + ")-" + _intros[i].ID;
+				_intros[i].introNum = reader.ReadInt16();
+				_intros[i].uniqueID = reader.ReadInt32();
+				_intros[i].name = "Intro(" + _intros[i].objectID + ")-" + _intros[i].uniqueID;
 				_intros[i].fileName = "";
 			}
 
@@ -307,7 +304,7 @@ namespace CDC.Objects
 			{
 				if (_objectNamesList.ContainsKey(_intros[i].objectID))
 				{
-					_intros[i].name = _objectNamesList[_intros[i].objectID] + _intros[i].ID;
+					_intros[i].name = _objectNamesList[_intros[i].objectID] + "-" + _intros[i].uniqueID;
 					_intros[i].fileName = _objectNamesList[_intros[i].objectID];
 				}
 			}

@@ -95,17 +95,19 @@ namespace CDC.Objects
 			for (int i = 0; i < _introCount; i++)
 			{
 				reader.BaseStream.Position = _introStart + 0x60 * i;
-				String introName = new String(reader.ReadChars(8));
-				reader.BaseStream.Position += 0x08;
-				reader.BaseStream.Position += 0x10;
+				String introName = new String(reader.ReadChars(16));
+				_intros[i].rotation.x = reader.ReadSingle();
+				_intros[i].rotation.y = reader.ReadSingle();
+				_intros[i].rotation.z = reader.ReadSingle();
+				reader.BaseStream.Position += 0x04;
 				_intros[i].position.x = reader.ReadSingle();
 				_intros[i].position.y = reader.ReadSingle();
 				_intros[i].position.z = reader.ReadSingle();
 				reader.BaseStream.Position += 0x04;
 				reader.BaseStream.Position += 0x10;
-				_intros[i].index = reader.ReadInt32();
-				_intros[i].ID = reader.ReadInt32();
-				_intros[i].name = Utility.CleanObjectName(introName) + "-" + _intros[i].ID;
+				_intros[i].introNum = reader.ReadInt32();
+				_intros[i].uniqueID = reader.ReadInt32();
+				_intros[i].name = Utility.CleanObjectName(introName) + "-" + _intros[i].uniqueID;
 				_intros[i].fileName = Utility.CleanObjectName(introName);
 			}
 

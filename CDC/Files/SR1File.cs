@@ -278,8 +278,8 @@ namespace CDC.Objects
 
 				String introName = new String(reader.ReadChars(8));
 				reader.BaseStream.Position += 0x08;
-				_intros[i].index = reader.ReadInt32();
-				_intros[i].ID = reader.ReadInt32();
+				_intros[i].introNum = reader.ReadInt32();
+				_intros[i].uniqueID = reader.ReadInt32();
 				_intros[i].rotation.x = (float)(Math.PI * 2 / 4096) * reader.ReadInt16();
 				_intros[i].rotation.y = (float)(Math.PI * 2 / 4096) * reader.ReadInt16();
 				_intros[i].rotation.z = (float)(Math.PI * 2 / 4096) * reader.ReadInt16();
@@ -287,7 +287,7 @@ namespace CDC.Objects
 				_intros[i].position.x = (float)reader.ReadInt16();
 				_intros[i].position.y = (float)reader.ReadInt16();
 				_intros[i].position.z = (float)reader.ReadInt16();
-				_intros[i].name = Utility.CleanObjectName(introName) + "-" + _intros[i].ID;
+				_intros[i].name = Utility.CleanObjectName(introName) + "-" + _intros[i].uniqueID;
 				_intros[i].fileName = Utility.CleanObjectName(introName);
 
 				reader.BaseStream.Position += 0x0A;
