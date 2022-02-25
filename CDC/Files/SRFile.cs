@@ -206,7 +206,7 @@ namespace CDC.Objects
 
 		}
 
-		protected SRFile(String strFileName, Game game, CDC.Objects.ExportOptions options)
+		protected SRFile(String strFileName, Game game, ExportOptions options)
 		{
 			_name = Path.GetFileNameWithoutExtension(strFileName);
 			_game = game;
@@ -243,11 +243,11 @@ namespace CDC.Objects
 			}
 		}
 
-		protected abstract void ReadHeaderData(BinaryReader reader, CDC.Objects.ExportOptions options);
+		protected abstract void ReadHeaderData(BinaryReader reader, ExportOptions options);
 
-		protected abstract void ReadObjectData(BinaryReader reader, CDC.Objects.ExportOptions options);
+		protected abstract void ReadObjectData(BinaryReader reader, ExportOptions options);
 
-		protected abstract void ReadUnitData(BinaryReader reader, CDC.Objects.ExportOptions options);
+		protected abstract void ReadUnitData(BinaryReader reader, ExportOptions options);
 
 		protected abstract void ResolvePointers(BinaryReader reader, BinaryWriter writer);
 
@@ -607,7 +607,7 @@ namespace CDC.Objects
 			return uv3D;
 		}
 
-		protected Assimp.Material GetAssimpMaterial(String name, SRModel model, int materialIndex, CDC.Objects.ExportOptions options)
+		protected Assimp.Material GetAssimpMaterial(String name, SRModel model, int materialIndex, ExportOptions options)
 		{
 			Assimp.Material material = new Assimp.Material();
 

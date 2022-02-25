@@ -10,18 +10,18 @@ namespace CDC.Objects
 		Int16[] _objectIDs;
 		SortedList<int, string> _objectNamesList = new SortedList<int, string>();
 
-		public DefianceFile(String strFileName, CDC.Objects.ExportOptions options)
+		public DefianceFile(String strFileName, ExportOptions options)
 			: base(strFileName, Game.Defiance, options)
 		{
 		}
 
-		public DefianceFile(String strFileName, String strObjectListFileName, CDC.Objects.ExportOptions options)
+		public DefianceFile(String strFileName, String strObjectListFileName, ExportOptions options)
 			: base(strFileName, Game.Defiance, options)
 		{
 			LoadObjectList(strObjectListFileName);
 		}
 
-		protected override void ReadHeaderData(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected override void ReadHeaderData(BinaryReader reader, ExportOptions options)
 		{
 			_dataStart = 0;
 
@@ -36,7 +36,7 @@ namespace CDC.Objects
 			}
 		}
 
-		protected override void ReadObjectData(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected override void ReadObjectData(BinaryReader reader, ExportOptions options)
 		{
 			// Object name. No names in Defiance :(
 			//reader.BaseStream.Position = _dataStart + 0x00000024;
@@ -78,7 +78,7 @@ namespace CDC.Objects
 			}
 		}
 
-		protected override void ReadUnitData(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected override void ReadUnitData(BinaryReader reader, ExportOptions options)
 		{
 			// Adjacent units are seperate from portals.
 			// There can be multiple portals to the same unit.

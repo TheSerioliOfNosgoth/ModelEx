@@ -15,7 +15,7 @@ namespace CDC.Objects
 		protected SRFile[] _objects;
 		public SRFile[] Objects { get { return _objects; } }
 
-		protected GexFile(String name, CDC.Objects.ExportOptions options, BinaryReader reader)
+		protected GexFile(String name, ExportOptions options, BinaryReader reader)
 		{
 			_name = name;
 			_game = Game.Gex;
@@ -25,12 +25,12 @@ namespace CDC.Objects
 			ReadObjectData(reader, options);
 		}
 
-		public GexFile(String strFileName, CDC.Objects.ExportOptions options)
+		public GexFile(String strFileName, ExportOptions options)
 			: base(strFileName, Game.Gex, options)
 		{
 		}
 
-		protected override void ReadHeaderData(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected override void ReadHeaderData(BinaryReader reader, ExportOptions options)
 		{
 			_dataStart = 0;
 
@@ -52,7 +52,7 @@ namespace CDC.Objects
 			//}
 		}
 
-		protected override void ReadObjectData(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected override void ReadObjectData(BinaryReader reader, ExportOptions options)
 		{
 			// Object name
 			reader.BaseStream.Position = _dataStart + 0x00000024;
@@ -90,7 +90,7 @@ namespace CDC.Objects
 			}
 		}
 
-		protected override void ReadUnitData(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected override void ReadUnitData(BinaryReader reader, ExportOptions options)
 		{
 			bool validVersion = false;
 
