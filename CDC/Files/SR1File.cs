@@ -17,31 +17,9 @@ namespace CDC.Objects
 
 		public MonsterAttributes _monsterAttributes;
 
-		public SR1File(String strFileName, ExportOptions options)
-			: base(strFileName, Game.SR1, options)
+		public SR1File(String dataFile, ExportOptions options)
+			: base(dataFile, Game.SR1, options)
 		{
-		}
-
-		protected override void ReadHeaderData(BinaryReader reader, ExportOptions options)
-		{
-			_dataStart = 0;
-
-			// Could use unit version number instead of thing below.
-			// Check that's what SR2 does.
-			//reader.BaseStream.Position = _dataStart + 0xF0;
-			//UInt32 unitVersionNumber = reader.ReadUInt32();
-			//if (unitVersionNumber != 0x3C20413B)
-
-			// Moved to ResolvePointers due to not knowing how else to tell.
-			//reader.BaseStream.Position = 0x00000000;
-			//if (reader.ReadUInt32() == 0x00000000)
-			//{
-			//    m_eFileType = FileType.Unit;
-			//}
-			//else
-			//{
-			//    m_eFileType = FileType.Object;
-			//}
 		}
 
 		protected override void ReadObjectData(BinaryReader reader, ExportOptions options)

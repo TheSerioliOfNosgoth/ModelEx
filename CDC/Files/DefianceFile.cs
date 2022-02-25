@@ -10,31 +10,21 @@ namespace CDC.Objects
 		Int16[] _objectIDs;
 		SortedList<int, string> _objectNamesList = new SortedList<int, string>();
 
-		public DefianceFile(String strFileName, ExportOptions options)
-			: base(strFileName, Game.Defiance, options)
+		public DefianceFile(String dataFile, ExportOptions options)
+			: base(dataFile, Game.Defiance, options)
 		{
 		}
 
-		public DefianceFile(String strFileName, String strObjectListFileName, ExportOptions options)
-			: base(strFileName, Game.Defiance, options)
+		public DefianceFile(String dataFile, String objectListFile, ExportOptions options)
+			: base(dataFile, Game.Defiance, options)
 		{
-			LoadObjectList(strObjectListFileName);
+			LoadObjectList(objectListFile);
 		}
 
-		protected override void ReadHeaderData(BinaryReader reader, ExportOptions options)
-		{
-			_dataStart = 0;
-
-			reader.BaseStream.Position = 0x000000AC;
-			if (reader.ReadUInt32() == 0x04C2046E)
-			{
-				_asset = Asset.Unit;
-			}
-			else
-			{
-				_asset = Asset.Object;
-			}
-		}
+		protected override void ReadData(BinaryReader reader, ExportOptions options)
+        {
+			base.ReadData(reader, options);
+        }
 
 		protected override void ReadObjectData(BinaryReader reader, ExportOptions options)
 		{
@@ -263,6 +253,19 @@ namespace CDC.Objects
 				}
 
 				uPointerData = uObjectData + uObjectDataSize;
+			}
+
+			writer.BaseStream.Position = 0x000000AC;
+			byte[] versionCheck = new byte[4];
+			writer.BaseStream.Read(versionCheck, 0, 4);
+			writer.BaseStream.Position = 0;
+			if (BitConverter.ToUInt32(versionCheck, 0) == 0x04C2046E)
+			{
+				_asset = Asset.Unit;
+			}
+			else
+			{
+				_asset = Asset.Object;
 			}
 		}
 

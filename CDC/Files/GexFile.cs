@@ -25,31 +25,9 @@ namespace CDC.Objects
 			ReadObjectData(reader, options);
 		}
 
-		public GexFile(String strFileName, ExportOptions options)
-			: base(strFileName, Game.Gex, options)
+		public GexFile(String dataFile, ExportOptions options)
+			: base(dataFile, Game.Gex, options)
 		{
-		}
-
-		protected override void ReadHeaderData(BinaryReader reader, ExportOptions options)
-		{
-			_dataStart = 0;
-
-			// Could use unit version number instead of thing below.
-			// Check that's what SR2 does.
-			//reader.BaseStream.Position = _dataStart + 0xF0;
-			//UInt32 unitVersionNumber = reader.ReadUInt32();
-			//if (unitVersionNumber != 0x3C20413B)
-
-			// Moved to ResolvePointers due to not knowing how else to tell.
-			//reader.BaseStream.Position = 0x00000000;
-			//if (reader.ReadUInt32() == 0x00000000)
-			//{
-			//    m_eFileType = FileType.Unit;
-			//}
-			//else
-			//{
-			//    m_eFileType = FileType.Object;
-			//}
 		}
 
 		protected override void ReadObjectData(BinaryReader reader, ExportOptions options)
@@ -199,14 +177,7 @@ namespace CDC.Objects
 		protected override void ResolvePointers(BinaryReader reader, BinaryWriter writer)
 		{
 			UInt32 dataStart = ((reader.ReadUInt32() >> 9) << 11) + 0x00000800;
-			if (reader.ReadUInt32() == 0x00000000)
-			{
-				_asset = Asset.Unit;
-			}
-			else
-			{
-				_asset = Asset.Object;
-			}
+			_asset = Asset.Unit;
 
 			reader.BaseStream.Position = dataStart;
 			writer.BaseStream.Position = 0;

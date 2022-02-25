@@ -7,24 +7,9 @@ namespace CDC.Objects
 {
 	public class SR2File : SRFile
 	{
-		public SR2File(String strFileName, ExportOptions options)
-			: base(strFileName, Game.SR2, options)
+		public SR2File(String dataFile, ExportOptions options)
+			: base(dataFile, Game.SR2, options)
 		{
-		}
-
-		protected override void ReadHeaderData(BinaryReader reader, ExportOptions options)
-		{
-			_dataStart = 0;
-
-			reader.BaseStream.Position = 0x00000080;
-			if (reader.ReadUInt32() == 0x04C2041D)
-			{
-				_asset = Asset.Unit;
-			}
-			else
-			{
-				_asset = Asset.Object;
-			}
 		}
 
 		protected override void ReadObjectData(BinaryReader reader, ExportOptions options)
@@ -225,6 +210,19 @@ namespace CDC.Objects
 				}
 
 				uPointerData = uObjectData + uObjectDataSize;
+			}
+
+			writer.BaseStream.Position = 0x00000080;
+			byte[] versionCheck = new byte[4];
+			writer.BaseStream.Read(versionCheck, 0, 4);
+			writer.BaseStream.Position = 0;
+			if (BitConverter.ToUInt32(versionCheck, 0) == 0x04C2041D)
+			{
+				_asset = Asset.Unit;
+			}
+			else
+			{
+				_asset = Asset.Object;
 			}
 		}
 	}

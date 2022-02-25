@@ -199,32 +199,38 @@ namespace CDC.Objects
 		public Asset Asset { get { return _asset; } }
 		public Platform Platform { get { return _platform; } }
 
-		public static StreamWriter LogFile = null;
+		public static StreamWriter LogFile;
 
 		protected SRFile()
 		{
 
 		}
 
-		protected SRFile(String strFileName, Game game, ExportOptions options)
+		protected SRFile(String dataFile, Game game, ExportOptions options)
 		{
-			_name = Path.GetFileNameWithoutExtension(strFileName);
+			_name = Path.GetFileNameWithoutExtension(dataFile);
 			_game = game;
-
-			FileStream file = new FileStream(strFileName, FileMode.Open, FileAccess.Read);
-			BinaryReader reader = new BinaryReader(file, System.Text.Encoding.ASCII);
-			MemoryStream xStream = new MemoryStream((int)file.Length);
-			BinaryWriter writer = new BinaryWriter(xStream, System.Text.Encoding.ASCII);
 
 			//String strDebugFileName = Path.GetDirectoryName(strFileName) + "\\" + Path.GetFileNameWithoutExtension(strFileName) + "-Debug.txt";
 			//LogFile = File.CreateText(strDebugFileName);
 
+			FileStream file = new FileStream(dataFile, FileMode.Open, FileAccess.Read);
+			BinaryReader reader = new BinaryReader(file, System.Text.Encoding.ASCII);
+			MemoryStream stream = new MemoryStream((int)file.Length);
+			BinaryWriter writer = new BinaryWriter(stream, System.Text.Encoding.ASCII);
+
 			ResolvePointers(reader, writer);
 			reader.Close();
-			reader = new BinaryReader(xStream, System.Text.Encoding.ASCII);
+			reader = new BinaryReader(stream, System.Text.Encoding.ASCII);
 
-			ReadHeaderData(reader, options);
+			ReadData(reader, options);
 
+			reader.Close();
+			LogFile?.Close();
+		}
+
+		protected virtual void ReadData(BinaryReader reader, ExportOptions options)
+        {
 			if (_asset == Asset.Object)
 			{
 				ReadObjectData(reader, options);
@@ -233,17 +239,7 @@ namespace CDC.Objects
 			{
 				ReadUnitData(reader, options);
 			}
-
-			reader.Close();
-
-			if (LogFile != null)
-			{
-				LogFile.Close();
-				LogFile = null;
-			}
 		}
-
-		protected abstract void ReadHeaderData(BinaryReader reader, ExportOptions options);
 
 		protected abstract void ReadObjectData(BinaryReader reader, ExportOptions options);
 

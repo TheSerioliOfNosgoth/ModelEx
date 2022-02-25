@@ -36,30 +36,20 @@ namespace CDC.Objects
 		Int16[] _objectIDs;
 		SortedList<int, string> _objectNamesList = new SortedList<int, string>();
 
-		public TRLFile(String strFileName, ExportOptions options)
-			: base(strFileName, Game.TRL, options)
+		public TRLFile(String dataFile, ExportOptions options)
+			: base(dataFile, Game.TRL, options)
 		{
 		}
 
-		public TRLFile(String strFileName, String strObjectListFileName, ExportOptions options)
-			: base(strFileName, Game.Defiance, options)
+		public TRLFile(String dataFile, String objectListFile, ExportOptions options)
+			: base(dataFile, Game.Defiance, options)
 		{
-			LoadObjectList(strObjectListFileName);
+			LoadObjectList(objectListFile);
 		}
 
-		protected override void ReadHeaderData(BinaryReader reader, ExportOptions options)
+		protected override void ReadData(BinaryReader reader, ExportOptions options)
 		{
-			_dataStart = 0;
-
-			reader.BaseStream.Position = 0x000000A8;
-			if (reader.ReadUInt32() == 0x04C204BB)
-			{
-				_asset = Asset.Unit;
-			}
-			else
-			{
-				_asset = Asset.Object;
-			}
+			base.ReadData(reader, options);
 		}
 
 		protected override void ReadObjectData(BinaryReader reader, ExportOptions options)
@@ -281,6 +271,19 @@ namespace CDC.Objects
 					// write back relocated pointer
 					writer.BaseStream.Write(pointer, 0, 4);
 				}
+			}
+
+			writer.BaseStream.Position = 0x000000A8;
+			byte[] versionCheck = new byte[4];
+			writer.BaseStream.Read(versionCheck, 0, 4);
+			writer.BaseStream.Position = 0;
+			if (BitConverter.ToUInt32(versionCheck, 0) == 0x04C204BB)
+			{
+				_asset = Asset.Unit;
+			}
+			else
+			{
+				_asset = Asset.Object;
 			}
 		}
 
