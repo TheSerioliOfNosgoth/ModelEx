@@ -9,7 +9,7 @@ namespace ModelEx
 {
 	public partial class LoadResourceDialog : Form
 	{
-		public string InitialDirectory { get; set; }
+		public string CurrentFolder { get; set; }
 		public string DataFile { get; private set; } = "";
 		public string TextureFile { get; private set; } = "";
 		public string ObjectListFile { get; private set; } = "";
@@ -149,7 +149,7 @@ namespace ModelEx
 					expandDirectory = expandDirectory.Parent;
 				}*/
 
-				recentLocationsComboBox.Items.Add(InitialDirectory);
+				recentLocationsComboBox.Items.Add(CurrentFolder);
 				recentLocationsComboBox.SelectedIndex = 0;
 			}
 			catch (Exception)
@@ -160,6 +160,8 @@ namespace ModelEx
 
 		private void LoadResourceDialog_FormClosing(object sender, FormClosingEventArgs e)
 		{
+			CurrentFolder = _currentDirectory.FullName;
+
 			if (DialogResult != DialogResult.OK)
 			{
 				return;

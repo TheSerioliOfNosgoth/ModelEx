@@ -19,9 +19,7 @@ namespace ModelEx
 		protected bool _ClearLoadedResources;
 		protected bool _SelectObjectOnLoaded;
 		protected bool _SelectSceneOnLoaded;
-		protected string _LastOpenDirectory = "";
 		protected string _LastExportDirectory = "";
-		protected CDC.Game _LastSelectedGameType = CDC.Game.Gex;
 		protected RenderManager.LoadRequestCDC _LoadRequest;
 
 		protected void UIMonitor()
@@ -153,9 +151,10 @@ namespace ModelEx
 			_LoadRequest = new RenderManager.LoadRequestCDC();
 			LoadResourceDialog loadResourceDialog = new LoadResourceDialog();
 
-			if (Directory.Exists(_LastOpenDirectory))
+			if (Properties.Settings.Default.RecentFolder != null &&
+				Directory.Exists(Properties.Settings.Default.RecentFolder))
 			{
-				loadResourceDialog.InitialDirectory = _LastOpenDirectory;
+				loadResourceDialog.CurrentFolder = Properties.Settings.Default.RecentFolder;
 			}
 
 			if (selectObjectOnLoaded)
@@ -173,6 +172,10 @@ namespace ModelEx
 
 			if (loadResourceDialog.ShowDialog() != DialogResult.OK)
 			{
+				Properties.Settings.Default.RecentFolder = loadResourceDialog.CurrentFolder;
+				Properties.Settings.Default.RecentGame = (int)loadResourceDialog.GameType;
+				Properties.Settings.Default.RecentPlatform = (int)loadResourceDialog.Platform;
+				Properties.Settings.Default.Save();
 				loadResourceDialog.Dispose();
 				return false;
 			}
@@ -216,8 +219,11 @@ namespace ModelEx
 			_ClearLoadedResources = loadResourceDialog.ClearLoadedFiles;
 			_SelectObjectOnLoaded = selectObjectOnLoaded;
 			_SelectSceneOnLoaded = selectSceneOnLoaded;
-			_LastOpenDirectory = Path.GetDirectoryName(loadResourceDialog.DataFile);
-			_LastSelectedGameType = loadResourceDialog.GameType;
+
+			Properties.Settings.Default.RecentFolder = loadResourceDialog.CurrentFolder;
+			Properties.Settings.Default.RecentGame = (int)loadResourceDialog.GameType;
+			Properties.Settings.Default.RecentPlatform = (int)loadResourceDialog.Platform;
+			Properties.Settings.Default.Save();
 
 			reloadCurrentModelToolStripMenuItem.Enabled = true;
 
