@@ -141,6 +141,12 @@
     <Compile Include="Renderables\RenderManager.cs" />
     <Compile Include="Scenes\Scene.cs" />
     <Compile Include="Scenes\SceneCDC.cs" />
+    <Compile Include="ResourceControls.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ResourceControls.Designer.cs">
+      <DependentUpon>ResourceControls.cs</DependentUpon>
+    </Compile>
     <Compile Include="SceneTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -189,6 +195,9 @@
     </Compile>
     <EmbeddedResource Include="RenderControl.resx">
       <DependentUpon>RenderControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ResourceControls.resx">
+      <DependentUpon>ResourceControls.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

@@ -85,12 +85,12 @@ namespace ModelEx
 
 			if (_ClearLoadedResources)
 			{
-				currentObjectCombo.SelectedIndex = -1;
-				currentSceneCombo.SelectedIndex = -1;
+				objectControls.ResourceCombo.SelectedIndex = -1;
+				sceneControls.ResourceCombo.SelectedIndex = -1;
 
 				resourceList.Items.Clear();
-				currentObjectCombo.Items.Clear();
-				currentSceneCombo.Items.Clear();
+				objectControls.ResourceCombo.Items.Clear();
+				sceneControls.ResourceCombo.Items.Clear();
 			}
 		}
 
@@ -105,29 +105,29 @@ namespace ModelEx
 						resourceList.Items.Add(resourceName, resourceName, -1);
 					}
 
-					if (!currentObjectCombo.Items.Contains(resourceName))
+					if (!objectControls.ResourceCombo.Items.Contains(resourceName))
 					{
-						currentObjectCombo.Items.Add(resourceName);
+						objectControls.ResourceCombo.Items.Add(resourceName);
 					}
 
-					if (!currentSceneCombo.Items.Contains(resourceName))
+					if (!sceneControls.ResourceCombo.Items.Contains(resourceName))
 					{
 						// Maybe filter for only levels here?
-						currentSceneCombo.Items.Add(resourceName);
+						sceneControls.ResourceCombo.Items.Add(resourceName);
 					}
 				}
 			}
 
-			if (_SelectObjectOnLoaded && currentObjectCombo.Items.Contains(_LoadRequest.ResourceName))
+			if (_SelectObjectOnLoaded && objectControls.ResourceCombo.Items.Contains(_LoadRequest.ResourceName))
 			{
-				currentObjectCombo.SelectedIndex = currentObjectCombo.Items.IndexOf(_LoadRequest.ResourceName);
+				objectControls.ResourceCombo.SelectedIndex = objectControls.ResourceCombo.Items.IndexOf(_LoadRequest.ResourceName);
 				optionTabs.SelectedIndex = 2;
 				CameraManager.Instance.Reset();
 			}
 
-			if (_SelectSceneOnLoaded && currentSceneCombo.Items.Contains(_LoadRequest.ResourceName))
+			if (_SelectSceneOnLoaded && sceneControls.ResourceCombo.Items.Contains(_LoadRequest.ResourceName))
 			{
-				currentSceneCombo.SelectedIndex = currentSceneCombo.Items.IndexOf(_LoadRequest.ResourceName);
+				sceneControls.ResourceCombo.SelectedIndex = sceneControls.ResourceCombo.Items.IndexOf(_LoadRequest.ResourceName);
 				optionTabs.SelectedIndex = 1;
 				CameraManager.Instance.Reset();
 			}
@@ -1385,7 +1385,7 @@ namespace ModelEx
 
 		private void currentSceneCombo_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			sceneTree.Nodes.Clear();
+			sceneControls.ResourceTree.Nodes.Clear();
 
 			ComboBox comboBox = (ComboBox)sender;
 			if (comboBox.SelectedItem == null)
@@ -1440,15 +1440,15 @@ namespace ModelEx
 
 			if (sceneTreeNode.Nodes.Count > 0)
 			{
-				sceneTree.Nodes.Add(sceneTreeNode);
-				sceneTree.Nodes[0].Expand();
-				sceneTree.Nodes[0].Nodes[0].Expand();
+				sceneControls.ResourceTree.Nodes.Add(sceneTreeNode);
+				sceneControls.ResourceTree.Nodes[0].Expand();
+				sceneControls.ResourceTree.Nodes[0].Nodes[0].Expand();
 			}
 		}
 
 		private void currentObjectCombo_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			objectTree.Nodes.Clear();
+			objectControls.ResourceTree.Nodes.Clear();
 
 			ComboBox comboBox = (ComboBox)sender;
 			if (comboBox.SelectedItem == null)
@@ -1498,8 +1498,8 @@ namespace ModelEx
 
 			if (objectSceneTreeNode.Nodes.Count > 0)
 			{
-				objectTree.Nodes.Add(objectSceneTreeNode);
-				objectTree.Nodes[0].Expand();
+				objectControls.ResourceTree.Nodes.Add(objectSceneTreeNode);
+				objectControls.ResourceTree.Nodes[0].Expand();
 			}
 		}
 
@@ -1519,17 +1519,17 @@ namespace ModelEx
 
 				RenderManager.Instance.UnloadResource(selectedItem);
 
-				if (currentObjectCombo.SelectedItem?.ToString() == selectedItem)
+				if (objectControls.ResourceCombo.SelectedItem?.ToString() == selectedItem)
 				{
-					currentObjectCombo.SelectedIndex = -1;
+					objectControls.ResourceCombo.SelectedIndex = -1;
 				}
-				currentObjectCombo.Items.Remove(selectedItem);
+				objectControls.ResourceCombo.Items.Remove(selectedItem);
 
-				if (currentSceneCombo.SelectedItem?.ToString() == selectedItem)
+				if (sceneControls.ResourceCombo.SelectedItem?.ToString() == selectedItem)
 				{
-					currentSceneCombo.SelectedIndex = -1;
+					sceneControls.ResourceCombo.SelectedIndex = -1;
 				}
-				currentSceneCombo.Items.Remove(selectedItem);
+				sceneControls.ResourceCombo.Items.Remove(selectedItem);
 
 				resourceList.Items.Remove(resourceList.SelectedItems[0]);
 			}
@@ -1573,12 +1573,12 @@ namespace ModelEx
 		{
 			RenderManager.Instance.UnloadResources();
 
-			currentObjectCombo.SelectedIndex = -1;
-			currentSceneCombo.SelectedIndex = -1;
+			objectControls.ResourceCombo.SelectedIndex = -1;
+			sceneControls.ResourceCombo.SelectedIndex = -1;
 
 			resourceList.Items.Clear();
-			currentObjectCombo.Items.Clear();
-			currentSceneCombo.Items.Clear();
+			objectControls.ResourceCombo.Items.Clear();
+			sceneControls.ResourceCombo.Items.Clear();
 		}
 	}
 }
