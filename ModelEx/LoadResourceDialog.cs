@@ -9,12 +9,12 @@ namespace ModelEx
 {
 	public partial class LoadResourceDialog : Form
 	{
-		public string CurrentFolder { get; set; }
+		public string SelectedFolder { get; set; } = "";
 		public string DataFile { get; private set; } = "";
 		public string TextureFile { get; private set; } = "";
 		public string ObjectListFile { get; private set; } = "";
-		public CDC.Game GameType { get; private set; } = CDC.Game.Gex;
-		public CDC.Platform Platform { get; private set; } = CDC.Platform.PC;
+		public CDC.Game SelectedGameType { get; set; } = CDC.Game.Gex;
+		public CDC.Platform SelectedPlatform { get; set; } = CDC.Platform.PC;
 		public bool ClearLoadedFiles { get; private set; } = false;
 		private DirectoryInfo _currentDirectory;
 
@@ -74,9 +74,6 @@ namespace ModelEx
 			gameTypeComboBox.Items.Add("Soul Reaver 2 Files (*.drm)");
 			gameTypeComboBox.Items.Add("Defiance Files (*.drm)");
 			gameTypeComboBox.Items.Add("Tomb Raider Files(*.drm)");
-			gameTypeComboBox.SelectedIndex = 1;
-
-			// UpdateGameType will be called automatically by setting the selected index.
 		}
 
 		private void LoadResourceDialog_Load(object sender, System.EventArgs e)
@@ -149,18 +146,21 @@ namespace ModelEx
 					expandDirectory = expandDirectory.Parent;
 				}*/
 
-				recentLocationsComboBox.Items.Add(CurrentFolder);
+				recentLocationsComboBox.Items.Add(SelectedFolder);
 				recentLocationsComboBox.SelectedIndex = 0;
 			}
 			catch (Exception)
 			{
 				breadCrumbs.Clear();
 			}
+
+			gameTypeComboBox.SelectedIndex = (int)SelectedGameType;
+			platformComboBox.SelectedIndex = (int)SelectedPlatform;
 		}
 
 		private void LoadResourceDialog_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			CurrentFolder = _currentDirectory.FullName;
+			SelectedFolder = _currentDirectory.FullName;
 
 			if (DialogResult != DialogResult.OK)
 			{
@@ -310,21 +310,21 @@ namespace ModelEx
 
 		private void UpdateGameType()
 		{
-			GameType = (CDC.Game)gameTypeComboBox.SelectedIndex;
+			SelectedGameType = (CDC.Game)gameTypeComboBox.SelectedIndex;
 
 			platformComboBox.Items.Clear();
 
-			if (GameType == CDC.Game.Gex)
+			if (SelectedGameType == CDC.Game.Gex)
 			{
 				platformComboBox.Items.Add(new PlatformNode(CDC.Platform.PSX));
 			}
-			else if (GameType == CDC.Game.SR1)
+			else if (SelectedGameType == CDC.Game.SR1)
 			{
 				platformComboBox.Items.Add(new PlatformNode(CDC.Platform.PC));
 				platformComboBox.Items.Add(new PlatformNode(CDC.Platform.PSX));
 				platformComboBox.Items.Add(new PlatformNode(CDC.Platform.Dreamcast));
 			}
-			else if (GameType == CDC.Game.SR2 || GameType == CDC.Game.Defiance)
+			else if (SelectedGameType == CDC.Game.SR2 || SelectedGameType == CDC.Game.Defiance)
 			{
 				platformComboBox.Items.Add(new PlatformNode(CDC.Platform.PC));
 				platformComboBox.Items.Add(new PlatformNode(CDC.Platform.PlayStation2));
@@ -341,7 +341,7 @@ namespace ModelEx
 
 		private void UpdatePlatform()
 		{
-			Platform = ((PlatformNode)platformComboBox.SelectedItem).Platform;
+			SelectedPlatform = ((PlatformNode)platformComboBox.SelectedItem).Platform;
 
 			UpdateSelections();
 		}
@@ -366,7 +366,7 @@ namespace ModelEx
 
 					string rootDirectory = Path.GetDirectoryName(fileInfo.FullName);
 					string rootFolderName = "";
-					switch (GameType)
+					switch (SelectedGameType)
 					{
 						case CDC.Game.Gex: rootFolderName = "g3"; break;
 						case CDC.Game.SR1: rootFolderName = "kain2"; break;
@@ -400,16 +400,16 @@ namespace ModelEx
 
 					#region Textures
 					string textureFileName = fileInfo.FullName;
-					switch (GameType)
+					switch (SelectedGameType)
 					{
 						case CDC.Game.SR1:
 						{
-							if (Platform == CDC.Platform.PSX)
+							if (SelectedPlatform == CDC.Platform.PSX)
 							{
 								textureFileName = Path.ChangeExtension(fileInfo.FullName, "crm");
 								textureFileComboBox.Items.Add(new FileNode(textureFileName, true));
 							}
-							else if (Platform == CDC.Platform.PC)
+							else if (SelectedPlatform == CDC.Platform.PC)
 							{
 								textureFileName = Path.Combine(rootDirectory, "textures.big");
 								textureFileComboBox.Items.Add(new FileNode(textureFileName, foundRoot));
@@ -417,7 +417,7 @@ namespace ModelEx
 								textureFileComboBox.Items.Add(new FileNode(textureFileName, true));
 								textureFileComboBox.Enabled = true;
 							}
-							else if (Platform == CDC.Platform.Dreamcast)
+							else if (SelectedPlatform == CDC.Platform.Dreamcast)
 							{
 								textureFileName = Path.Combine(rootDirectory, "textures.vq");
 								textureFileComboBox.Items.Add(new FileNode(textureFileName, foundRoot));
@@ -450,11 +450,11 @@ namespace ModelEx
 
 					#region Object List
 					string objectListFileName = fileInfo.FullName;
-					if (GameType == CDC.Game.Defiance || GameType == CDC.Game.TRL)
+					if (SelectedGameType == CDC.Game.Defiance || SelectedGameType == CDC.Game.TRL)
 					{
 						if (foundRoot)
 						{
-							string gameFolderName = (GameType == CDC.Game.Defiance) ? "sr3" : "tr7";
+							string gameFolderName = (SelectedGameType == CDC.Game.Defiance) ? "sr3" : "tr7";
 							objectListFileName = Path.Combine(rootDirectory, gameFolderName, rootFolderName, "objectlist.txt");
 						}
 						else

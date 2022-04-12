@@ -13,7 +13,7 @@ namespace ModelEx
 {
 	public enum ViewMode : int
 	{
-		Resources = 0,
+		None = 0,
 		Object = 1,
 		Scene = 2
 	}
@@ -37,7 +37,7 @@ namespace ModelEx
 
 		public bool Resize = false;
 
-		public ViewMode ViewMode = ViewMode.Scene;
+		public ViewMode SceneMode = ViewMode.Scene;
 		public Color BackgroundColour = Color.Gray;
 		public bool Wireframe = false;
 
@@ -271,12 +271,12 @@ namespace ModelEx
 
 		public Renderable GetCameraTarget()
 		{
-			if (ViewMode == ViewMode.Object)
+			if (SceneMode == ViewMode.Object)
 			{
 				return CurrentObject;
 			}
 
-			if (ViewMode == ViewMode.Scene)
+			if (SceneMode == ViewMode.Scene)
 			{
 				return CurrentScene;
 			}
@@ -321,14 +321,14 @@ namespace ModelEx
 				SlimDX.Direct3D11.ShaderResourceView[] oldShaderResources = DeviceManager.Instance.context.PixelShader.GetShaderResources(0, 10);
 				SlimDX.Direct3D11.GeometryShader oldGeometryShader = DeviceManager.Instance.context.GeometryShader.Get();
 
-				if (ViewMode == ViewMode.Scene)
+				if (SceneMode == ViewMode.Scene)
 				{
 					if (CurrentScene != null)
 					{
 						CurrentScene.Render();
 					}
 				}
-				else if (ViewMode == ViewMode.Object)
+				else if (SceneMode == ViewMode.Object)
 				{
 					if (CurrentObject != null)
 					{

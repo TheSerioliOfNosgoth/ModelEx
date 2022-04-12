@@ -10,8 +10,8 @@ namespace ModelEx
 {
 	public partial class MainWindow : Form
 	{
-		ProgressWindow progressWindow;
-		CDC.Objects.ExportOptions ImportExportOptions;
+		ProgressWindow _ProgressWindow;
+		CDC.Objects.ExportOptions _ImportExportOptions;
 		int _MainSplitPanelPosition;
 		protected bool _RunUIMonitoringThread;
 		protected bool _ReloadModelOnRenderModeChange;
@@ -21,6 +21,41 @@ namespace ModelEx
 		protected bool _SelectSceneOnLoaded;
 		protected string _LastExportDirectory = "";
 		protected RenderManager.LoadRequestCDC _LoadRequest;
+
+		int _SceneMode;
+		public int SceneMode
+		{
+			get { return _SceneMode; }
+			set
+			{
+				_SceneMode = value;
+
+				if (_SceneMode == 0)
+				{
+					RenderManager.Instance.SceneMode = ViewMode.Scene;
+					sceneControls.Visible = true;
+					objectControls.Visible = false;
+					sceneToolStripMenuItem.Checked = true;
+					objectToolStripMenuItem.Checked = false;
+				}
+				else if (_SceneMode == 1)
+				{
+					RenderManager.Instance.SceneMode = ViewMode.Object;
+					sceneControls.Visible = false;
+					objectControls.Visible = true;
+					sceneToolStripMenuItem.Checked = false;
+					objectToolStripMenuItem.Checked = true;
+				}
+				else
+				{
+					RenderManager.Instance.SceneMode = ViewMode.None;
+					sceneControls.Visible = false;
+					objectControls.Visible = false;
+					sceneToolStripMenuItem.Checked = false;
+					objectToolStripMenuItem.Checked = false;
+				}
+			}
+		}
 
 		protected void UIMonitor()
 		{
@@ -47,7 +82,8 @@ namespace ModelEx
 		{
 			_RunUIMonitoringThread = true;
 			InitializeComponent();
-			ImportExportOptions = new CDC.Objects.ExportOptions();
+			SceneMode = 0;
+			_ImportExportOptions = new CDC.Objects.ExportOptions();
 			UpdateSplitPanelPosition();
 			ThreadStart tsUIMonitor = new ThreadStart(UIMonitor);
 			Thread uiMonitor = new Thread(tsUIMonitor);
@@ -67,21 +103,21 @@ namespace ModelEx
 			_ResetCameraOnModelLoad = resetCameraPositionWhenModelIsLoadedToolStripMenuItem.Checked;
 			ResetPlatformDetection();
 			autodetectToolStripMenuItem.Checked = true;
-			ImportExportOptions.ForcedPlatform = CDC.Platform.None;
+			_ImportExportOptions.ForcedPlatform = CDC.Platform.None;
 		}
 
 		protected void BeginLoading()
 		{
 			Enabled = false;
-			progressWindow?.Dispose();
-			progressWindow = new ProgressWindow();
-			progressWindow.Title = "Loading";
-			progressWindow.SetMessage("");
+			_ProgressWindow?.Dispose();
+			_ProgressWindow = new ProgressWindow();
+			_ProgressWindow.Title = "Loading";
+			_ProgressWindow.SetMessage("");
 			//progressWindow.Icon = this.Icon;
-			progressWindow.Owner = this;
-			progressWindow.TopLevel = true;
-			progressWindow.ShowInTaskbar = false;
-			progressWindow.Show();
+			_ProgressWindow.Owner = this;
+			_ProgressWindow.TopLevel = true;
+			_ProgressWindow.ShowInTaskbar = false;
+			_ProgressWindow.Show();
 
 			if (_ClearLoadedResources)
 			{
@@ -121,7 +157,8 @@ namespace ModelEx
 			if (_SelectObjectOnLoaded && objectControls.ResourceCombo.Items.Contains(_LoadRequest.ResourceName))
 			{
 				objectControls.ResourceCombo.SelectedIndex = objectControls.ResourceCombo.Items.IndexOf(_LoadRequest.ResourceName);
-				optionTabs.SelectedIndex = 2;
+				optionTabs.SelectedIndex = 1;
+				SceneMode = 1;
 				CameraManager.Instance.Reset();
 			}
 
@@ -129,6 +166,7 @@ namespace ModelEx
 			{
 				sceneControls.ResourceCombo.SelectedIndex = sceneControls.ResourceCombo.Items.IndexOf(_LoadRequest.ResourceName);
 				optionTabs.SelectedIndex = 1;
+				SceneMode = 0;
 				CameraManager.Instance.Reset();
 			}
 
@@ -142,8 +180,8 @@ namespace ModelEx
 			}
 
 			Enabled = true;
-			progressWindow.Hide();
-			progressWindow.Dispose();
+			_ProgressWindow.Hide();
+			_ProgressWindow.Dispose();
 		}
 
 		protected bool SelectResourceToLoad(bool selectObjectOnLoaded, bool selectSceneOnLoaded)
@@ -154,8 +192,11 @@ namespace ModelEx
 			if (Properties.Settings.Default.RecentFolder != null &&
 				Directory.Exists(Properties.Settings.Default.RecentFolder))
 			{
-				loadResourceDialog.CurrentFolder = Properties.Settings.Default.RecentFolder;
+				loadResourceDialog.SelectedFolder = Properties.Settings.Default.RecentFolder;
 			}
+
+			loadResourceDialog.SelectedGameType = (CDC.Game)Properties.Settings.Default.RecentGame;
+			loadResourceDialog.SelectedPlatform = (CDC.Platform)Properties.Settings.Default.RecentPlatform;
 
 			if (selectObjectOnLoaded)
 			{
@@ -172,9 +213,9 @@ namespace ModelEx
 
 			if (loadResourceDialog.ShowDialog() != DialogResult.OK)
 			{
-				Properties.Settings.Default.RecentFolder = loadResourceDialog.CurrentFolder;
-				Properties.Settings.Default.RecentGame = (int)loadResourceDialog.GameType;
-				Properties.Settings.Default.RecentPlatform = (int)loadResourceDialog.Platform;
+				Properties.Settings.Default.RecentFolder = loadResourceDialog.SelectedFolder;
+				Properties.Settings.Default.RecentGame = (int)loadResourceDialog.SelectedGameType;
+				Properties.Settings.Default.RecentPlatform = (int)loadResourceDialog.SelectedPlatform;
 				Properties.Settings.Default.Save();
 				loadResourceDialog.Dispose();
 				return false;
@@ -182,14 +223,14 @@ namespace ModelEx
 
 			loadResourceDialog.Dispose();
 
-			if (loadResourceDialog.GameType == CDC.Game.Gex)
+			if (loadResourceDialog.SelectedGameType == CDC.Game.Gex)
 			{
 				CDC.Objects.GexFile gexFile;
 				ObjectSelectWindow objectSelectDlg = new ObjectSelectWindow();
 
 				try
 				{
-					gexFile = new CDC.Objects.GexFile(loadResourceDialog.DataFile, ImportExportOptions);
+					gexFile = new CDC.Objects.GexFile(loadResourceDialog.DataFile, _ImportExportOptions);
 					if (gexFile.Asset == CDC.Asset.Unit)
 					{
 						objectSelectDlg.SetObjectNames(gexFile.ObjectNames);
@@ -213,16 +254,16 @@ namespace ModelEx
 			_LoadRequest.DataFile = loadResourceDialog.DataFile;
 			_LoadRequest.TextureFile = loadResourceDialog.TextureFile;
 			_LoadRequest.ObjectListFile = loadResourceDialog.ObjectListFile;
-			_LoadRequest.GameType = loadResourceDialog.GameType;
-			_LoadRequest.ExportOptions = ImportExportOptions;
+			_LoadRequest.GameType = loadResourceDialog.SelectedGameType;
+			_LoadRequest.ExportOptions = _ImportExportOptions;
 
 			_ClearLoadedResources = loadResourceDialog.ClearLoadedFiles;
 			_SelectObjectOnLoaded = selectObjectOnLoaded;
 			_SelectSceneOnLoaded = selectSceneOnLoaded;
 
-			Properties.Settings.Default.RecentFolder = loadResourceDialog.CurrentFolder;
-			Properties.Settings.Default.RecentGame = (int)loadResourceDialog.GameType;
-			Properties.Settings.Default.RecentPlatform = (int)loadResourceDialog.Platform;
+			Properties.Settings.Default.RecentFolder = loadResourceDialog.SelectedFolder;
+			Properties.Settings.Default.RecentGame = (int)loadResourceDialog.SelectedGameType;
+			Properties.Settings.Default.RecentPlatform = (int)loadResourceDialog.SelectedPlatform;
 			Properties.Settings.Default.Save();
 
 			reloadCurrentModelToolStripMenuItem.Enabled = true;
@@ -260,17 +301,17 @@ namespace ModelEx
 			{
 				do
 				{
-					if (progressWindow != null)
+					if (_ProgressWindow != null)
 					{
 						lock (SceneCDC.ProgressStage)
 						{
-							progressWindow.SetMessage(SceneCDC.ProgressStage);
+							_ProgressWindow.SetMessage(SceneCDC.ProgressStage);
 						}
 
-						int oldProgress = progressWindow.GetProgress();
+						int oldProgress = _ProgressWindow.GetProgress();
 						if (oldProgress < SceneCDC.ProgressPercent)
 						{
-							progressWindow.SetProgress(oldProgress + 1);
+							_ProgressWindow.SetProgress(oldProgress + 1);
 						}
 					}
 
@@ -304,7 +345,7 @@ namespace ModelEx
 			if (SaveDlg.ShowDialog() == DialogResult.OK)
 			{
 				_LastExportDirectory = Path.GetDirectoryName(SaveDlg.FileName);
-				RenderManager.Instance.ExportCurrentObject(SaveDlg.FileName, ImportExportOptions);
+				RenderManager.Instance.ExportCurrentObject(SaveDlg.FileName, _ImportExportOptions);
 			}
 		}
 
@@ -328,7 +369,7 @@ namespace ModelEx
 			if (SaveDlg.ShowDialog() == DialogResult.OK)
 			{
 				_LastExportDirectory = Path.GetDirectoryName(SaveDlg.FileName);
-				RenderManager.Instance.ExportCurrentScene(SaveDlg.FileName, ImportExportOptions);
+				RenderManager.Instance.ExportCurrentScene(SaveDlg.FileName, _ImportExportOptions);
 			}
 		}
 
@@ -496,7 +537,7 @@ namespace ModelEx
 
 		protected void HandleRenderModeChange()
 		{
-			RenderManager.Instance.Wireframe = ImportExportOptions.RenderMode == CDC.Objects.RenderMode.Wireframe;
+			RenderManager.Instance.Wireframe = _ImportExportOptions.RenderMode == CDC.Objects.RenderMode.Wireframe;
 
 			if (_ReloadModelOnRenderModeChange)
 			{
@@ -508,7 +549,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			standardToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.Standard;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.Standard;
 			HandleRenderModeChange();
 		}
 
@@ -516,7 +557,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			wireframeToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.Wireframe;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.Wireframe;
 			HandleRenderModeChange();
 		}
 
@@ -524,68 +565,68 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			noTexturemapsToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.NoTextures;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.NoTextures;
 			HandleRenderModeChange();
 		}
 
 		private void unhide100InvisibleTexturesToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			unhide100InvisibleTexturesToolStripMenuItem.Checked = !unhide100InvisibleTexturesToolStripMenuItem.Checked;
-			ImportExportOptions.UnhideCompletelyTransparentTextures = unhide100InvisibleTexturesToolStripMenuItem.Checked;
+			_ImportExportOptions.UnhideCompletelyTransparentTextures = unhide100InvisibleTexturesToolStripMenuItem.Checked;
 		}
 
 		private void discardHiddenPolygonsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			discardHiddenPolygonsToolStripMenuItem.Checked = !discardHiddenPolygonsToolStripMenuItem.Checked;
-			ImportExportOptions.DiscardNonVisible = discardHiddenPolygonsToolStripMenuItem.Checked;
+			_ImportExportOptions.DiscardNonVisible = discardHiddenPolygonsToolStripMenuItem.Checked;
 		}
 
 		private void missingPalettesInGreyscaleToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			missingPalettesInGreyscaleToolStripMenuItem.Checked = !missingPalettesInGreyscaleToolStripMenuItem.Checked;
-			ImportExportOptions.AlwaysUseGreyscaleForMissingPalettes = missingPalettesInGreyscaleToolStripMenuItem.Checked;
+			_ImportExportOptions.AlwaysUseGreyscaleForMissingPalettes = missingPalettesInGreyscaleToolStripMenuItem.Checked;
 		}
 
 		private void exportDoubleSidedMaterialsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			exportDoubleSidedMaterialsToolStripMenuItem.Checked = !exportDoubleSidedMaterialsToolStripMenuItem.Checked;
-			ImportExportOptions.ExportDoubleSidedMaterials = exportDoubleSidedMaterialsToolStripMenuItem.Checked;
+			_ImportExportOptions.ExportDoubleSidedMaterials = exportDoubleSidedMaterialsToolStripMenuItem.Checked;
 		}
 
 		private void exportSpectralVersionOfAreaFilesToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			exportSpectralVersionOfAreaFilesToolStripMenuItem.Checked = !exportSpectralVersionOfAreaFilesToolStripMenuItem.Checked;
-			ImportExportOptions.ExportSpectral = exportSpectralVersionOfAreaFilesToolStripMenuItem.Checked;
+			_ImportExportOptions.ExportSpectral = exportSpectralVersionOfAreaFilesToolStripMenuItem.Checked;
 		}
 
 		private void makeAllPolygonsVisibleToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			makeAllPolygonsVisibleToolStripMenuItem.Checked = !makeAllPolygonsVisibleToolStripMenuItem.Checked;
-			ImportExportOptions.MakeAllPolygonsVisible = makeAllPolygonsVisibleToolStripMenuItem.Checked;
+			_ImportExportOptions.MakeAllPolygonsVisible = makeAllPolygonsVisibleToolStripMenuItem.Checked;
 		}
 
 		private void makeAllPolygonsOpaqueToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			makeAllPolygonsOpaqueToolStripMenuItem.Checked = !makeAllPolygonsOpaqueToolStripMenuItem.Checked;
-			ImportExportOptions.MakeAllPolygonsOpaque = makeAllPolygonsOpaqueToolStripMenuItem.Checked;
+			_ImportExportOptions.MakeAllPolygonsOpaque = makeAllPolygonsOpaqueToolStripMenuItem.Checked;
 		}
 
 		private void oRAllPolygonColoursWithGreenToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			oRAllPolygonColoursWithGreenToolStripMenuItem.Checked = !oRAllPolygonColoursWithGreenToolStripMenuItem.Checked;
-			ImportExportOptions.SetAllPolygonColoursToValue = oRAllPolygonColoursWithGreenToolStripMenuItem.Checked;
+			_ImportExportOptions.SetAllPolygonColoursToValue = oRAllPolygonColoursWithGreenToolStripMenuItem.Checked;
 		}
 
 		private void includeTreeRootFlagsInORdParentFlagsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			includeTreeRootFlagsInORdParentFlagsToolStripMenuItem.Checked = !includeTreeRootFlagsInORdParentFlagsToolStripMenuItem.Checked;
-			ImportExportOptions.BSPRenderingIncludeRootTreeFlagsWhenORing = includeTreeRootFlagsInORdParentFlagsToolStripMenuItem.Checked;
+			_ImportExportOptions.BSPRenderingIncludeRootTreeFlagsWhenORing = includeTreeRootFlagsInORdParentFlagsToolStripMenuItem.Checked;
 		}
 
 		private void includeLeafFlagsInORdParentFlagsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			includeLeafFlagsInORdParentFlagsToolStripMenuItem.Checked = !includeLeafFlagsInORdParentFlagsToolStripMenuItem.Checked;
-			ImportExportOptions.BSPRenderingIncludeLeafFlagsWhenORing = includeLeafFlagsInORdParentFlagsToolStripMenuItem.Checked;
+			_ImportExportOptions.BSPRenderingIncludeLeafFlagsWhenORing = includeLeafFlagsInORdParentFlagsToolStripMenuItem.Checked;
 		}
 
 		private void MainWindow_Resize(object sender, EventArgs e)
@@ -659,7 +700,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugPolygonFlags1ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlags1;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlags1;
 			HandleRenderModeChange();
 		}
 
@@ -667,7 +708,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugPolygonFlags2ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlags2;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlags2;
 			HandleRenderModeChange();
 		}
 
@@ -675,7 +716,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugPolygonFlags3ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlags3;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlags3;
 			HandleRenderModeChange();
 		}
 
@@ -683,7 +724,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugPolygonFlagsSoulReaverAToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlagsSoulReaverA;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlagsSoulReaverA;
 			HandleRenderModeChange();
 		}
 
@@ -691,7 +732,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTextureAttributes1ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes1;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes1;
 			HandleRenderModeChange();
 		}
 
@@ -699,7 +740,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTextureAttributes2ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes2;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes2;
 			HandleRenderModeChange();
 		}
 
@@ -707,7 +748,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTextureAttributes3ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes3;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes3;
 			HandleRenderModeChange();
 		}
 
@@ -715,7 +756,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTextureAttributes4ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes4;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes4;
 			HandleRenderModeChange();
 		}
 
@@ -723,7 +764,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTextureAttributes5ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes5;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes5;
 			HandleRenderModeChange();
 		}
 
@@ -731,7 +772,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTextureAttributes6ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes6;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes6;
 			HandleRenderModeChange();
 		}
 
@@ -739,7 +780,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTextureAttributesAHashToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesAHash;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesAHash;
 			HandleRenderModeChange();
 		}
 
@@ -747,7 +788,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTextureAttributesA1ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA1;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA1;
 			HandleRenderModeChange();
 		}
 
@@ -755,7 +796,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTextureAttributesA2ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA2;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA2;
 			HandleRenderModeChange();
 		}
 
@@ -763,7 +804,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTextureAttributesA3ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA3;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA3;
 			HandleRenderModeChange();
 		}
 
@@ -771,7 +812,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTextureAttributesA4ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA4;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA4;
 			HandleRenderModeChange();
 		}
 
@@ -779,7 +820,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTextureAttributesA5ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA5;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA5;
 			HandleRenderModeChange();
 		}
 
@@ -787,7 +828,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTextureAttributesA6ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA6;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA6;
 			HandleRenderModeChange();
 		}
 
@@ -795,7 +836,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTexturePage1ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePage1;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePage1;
 			HandleRenderModeChange();
 		}
 
@@ -803,7 +844,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTexturePage2ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePage2;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePage2;
 			HandleRenderModeChange();
 		}
 
@@ -811,7 +852,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTexturePage3ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePage3;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePage3;
 			HandleRenderModeChange();
 		}
 
@@ -819,7 +860,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTexturePage4ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePage4;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePage4;
 			HandleRenderModeChange();
 		}
 
@@ -827,7 +868,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTexturePage5ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePage5;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePage5;
 			HandleRenderModeChange();
 		}
 
@@ -835,7 +876,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTexturePage6ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePage6;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePage6;
 			HandleRenderModeChange();
 		}
 
@@ -843,7 +884,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			rootBSPTreeNumberToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeNumber;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeNumber;
 			HandleRenderModeChange();
 		}
 
@@ -851,7 +892,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeNodeIDToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeNodeID;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeNodeID;
 			HandleRenderModeChange();
 		}
 
@@ -859,7 +900,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeRootFlags1ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags1;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags1;
 			HandleRenderModeChange();
 		}
 
@@ -867,7 +908,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeRootFlags2ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags2;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags2;
 			HandleRenderModeChange();
 		}
 
@@ -875,7 +916,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeRootFlags3ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags3;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags3;
 			HandleRenderModeChange();
 		}
 
@@ -883,7 +924,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeRootFlags4ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags4;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags4;
 			HandleRenderModeChange();
 		}
 
@@ -891,7 +932,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeRootFlags5ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags5;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags5;
 			HandleRenderModeChange();
 		}
 
@@ -899,7 +940,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeRootFlags6ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags6;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags6;
 			HandleRenderModeChange();
 		}
 
@@ -907,7 +948,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeNodeFlags1ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags1;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags1;
 			HandleRenderModeChange();
 		}
 
@@ -915,7 +956,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeNodeFlags2ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags2;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags2;
 			HandleRenderModeChange();
 		}
 
@@ -923,7 +964,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeNodeFlags3ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags3;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags3;
 			HandleRenderModeChange();
 		}
 
@@ -931,7 +972,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeNodeFlags4ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags4;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags4;
 			HandleRenderModeChange();
 		}
 
@@ -939,7 +980,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeNodeFlags5ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags5;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags5;
 			HandleRenderModeChange();
 		}
 
@@ -947,7 +988,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeNodeFlags6ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags6;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags6;
 			HandleRenderModeChange();
 		}
 
@@ -955,7 +996,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeParentNodeFlagsORd1ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd1;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd1;
 			HandleRenderModeChange();
 		}
 
@@ -963,7 +1004,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeParentNodeFlagsORd2ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd2;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd2;
 			HandleRenderModeChange();
 		}
 
@@ -971,7 +1012,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeParentNodeFlagsORd3ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd3;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd3;
 			HandleRenderModeChange();
 		}
 
@@ -979,7 +1020,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeParentNodeFlagsORd4ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd4;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd4;
 			HandleRenderModeChange();
 		}
 
@@ -987,7 +1028,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeParentNodeFlagsORd5ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd5;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd5;
 			HandleRenderModeChange();
 		}
 
@@ -995,7 +1036,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeParentNodeFlagsORd6ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd6;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd6;
 			HandleRenderModeChange();
 		}
 
@@ -1003,7 +1044,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeLeafFlags1ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags1;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags1;
 			HandleRenderModeChange();
 		}
 
@@ -1011,7 +1052,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeLeafFlags2ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags2;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags2;
 			HandleRenderModeChange();
 		}
 
@@ -1019,7 +1060,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeLeafFlags3ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags3;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags3;
 			HandleRenderModeChange();
 		}
 
@@ -1027,7 +1068,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeLeafFlags4ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags4;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags4;
 			HandleRenderModeChange();
 		}
 
@@ -1035,7 +1076,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeLeafFlags5ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags5;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags5;
 			HandleRenderModeChange();
 		}
 
@@ -1043,7 +1084,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeLeafFlags6ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags6;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags6;
 			HandleRenderModeChange();
 		}
 
@@ -1051,7 +1092,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugPolygonFlagsHashToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlagsHash;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlagsHash;
 			HandleRenderModeChange();
 		}
 
@@ -1059,7 +1100,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTextureAttributesHashToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesHash;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesHash;
 			HandleRenderModeChange();
 		}
 
@@ -1067,7 +1108,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTexturePageHashToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePageHash;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePageHash;
 			HandleRenderModeChange();
 		}
 
@@ -1075,7 +1116,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeRootFlagsHashToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlagsHash;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlagsHash;
 			HandleRenderModeChange();
 		}
 
@@ -1083,7 +1124,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeNodeFlagsHashToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlagsHash;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlagsHash;
 			HandleRenderModeChange();
 		}
 
@@ -1091,7 +1132,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeParentNodeFlagsORdHashToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORdHash;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORdHash;
 			HandleRenderModeChange();
 		}
 
@@ -1099,7 +1140,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			bSPTreeLeafFlagsHashToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlagsHash;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlagsHash;
 			HandleRenderModeChange();
 		}
 
@@ -1107,7 +1148,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTexturePageUpper28BitsHashToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePageUpper28BitsHash;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePageUpper28BitsHash;
 			HandleRenderModeChange();
 		}
 
@@ -1115,7 +1156,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugTexturePageUpper5BitsHashToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePageUpper5BitsHash;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePageUpper5BitsHash;
 			HandleRenderModeChange();
 		}
 
@@ -1123,7 +1164,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			cLUTHashToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUTHash;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUTHash;
 			HandleRenderModeChange();
 		}
 
@@ -1131,7 +1172,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			cLUT1ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUT1;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUT1;
 			HandleRenderModeChange();
 		}
 
@@ -1139,7 +1180,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			cLUT2ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUT2;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUT2;
 			HandleRenderModeChange();
 		}
 
@@ -1147,7 +1188,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			cLUT3ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUT3;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUT3;
 			HandleRenderModeChange();
 		}
 
@@ -1155,7 +1196,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			cLUT4ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUT4;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUT4;
 			HandleRenderModeChange();
 		}
 
@@ -1163,7 +1204,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			cLUT5ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUT5;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUT5;
 			HandleRenderModeChange();
 		}
 
@@ -1171,7 +1212,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			cLUT6ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUT6;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUT6;
 			HandleRenderModeChange();
 		}
 
@@ -1179,7 +1220,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			cLUTNonRowColBitsHashToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUTNonRowColBitsHash;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUTNonRowColBitsHash;
 			HandleRenderModeChange();
 		}
 
@@ -1187,7 +1228,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			cLUTNonRowColBits1ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUTNonRowColBits1;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUTNonRowColBits1;
 			HandleRenderModeChange();
 		}
 
@@ -1195,7 +1236,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			cLUTNonRowColBits2ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUTNonRowColBits2;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUTNonRowColBits2;
 			HandleRenderModeChange();
 		}
 
@@ -1203,7 +1244,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			boneIDHashToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBoneIDHash;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBoneIDHash;
 			HandleRenderModeChange();
 		}
 
@@ -1211,7 +1252,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugSortPushHashToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugSortPushHash;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugSortPushHash;
 			HandleRenderModeChange();
 		}
 
@@ -1219,7 +1260,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugSortPushFlags1ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugSortPushFlags1;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugSortPushFlags1;
 			HandleRenderModeChange();
 		}
 
@@ -1227,7 +1268,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugSortPushFlags2ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugSortPushFlags2;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugSortPushFlags2;
 			HandleRenderModeChange();
 		}
 
@@ -1235,7 +1276,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			debugSortPushFlags3ToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugSortPushFlags3;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugSortPushFlags3;
 			HandleRenderModeChange();
 		}
 
@@ -1243,7 +1284,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			averageVertexAlphaToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.AverageVertexAlpha;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.AverageVertexAlpha;
 			HandleRenderModeChange();
 		}
 
@@ -1251,7 +1292,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			polygonAlphaToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.PolygonAlpha;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.PolygonAlpha;
 			HandleRenderModeChange();
 		}
 
@@ -1259,7 +1300,7 @@ namespace ModelEx
 		{
 			resetRenderModeMenu();
 			polygonOpacityToolStripMenuItem.Checked = true;
-			ImportExportOptions.RenderMode = CDC.Objects.RenderMode.PolygonOpacity;
+			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.PolygonOpacity;
 			HandleRenderModeChange();
 		}
 
@@ -1283,47 +1324,47 @@ namespace ModelEx
 		private void interpolatePolygonColoursToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			interpolatePolygonColoursToolStripMenuItem.Checked = !interpolatePolygonColoursToolStripMenuItem.Checked;
-			ImportExportOptions.InterpolatePolygonColoursWhenColouringBasedOnVertices = interpolatePolygonColoursToolStripMenuItem.Checked;
+			_ImportExportOptions.InterpolatePolygonColoursWhenColouringBasedOnVertices = interpolatePolygonColoursToolStripMenuItem.Checked;
 			HandleRenderModeChange();
 		}
 
 		private void useEachUniqueTextureCLUTVariationToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			useEachUniqueTextureCLUTVariationToolStripMenuItem.Checked = !useEachUniqueTextureCLUTVariationToolStripMenuItem.Checked;
-			ImportExportOptions.UseEachUniqueTextureCLUTVariation = useEachUniqueTextureCLUTVariationToolStripMenuItem.Checked;
+			_ImportExportOptions.UseEachUniqueTextureCLUTVariation = useEachUniqueTextureCLUTVariationToolStripMenuItem.Checked;
 			HandleRenderModeChange();
 		}
 
 		private void augmentAlphaMaskingFlagsBasedOnImageContentToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			augmentAlphaMaskingFlagsBasedOnImageContentToolStripMenuItem.Checked = !augmentAlphaMaskingFlagsBasedOnImageContentToolStripMenuItem.Checked;
-			ImportExportOptions.AlsoInferAlphaMaskingFromTexturePixels = augmentAlphaMaskingFlagsBasedOnImageContentToolStripMenuItem.Checked;
+			_ImportExportOptions.AlsoInferAlphaMaskingFromTexturePixels = augmentAlphaMaskingFlagsBasedOnImageContentToolStripMenuItem.Checked;
 			HandleRenderModeChange();
 		}
 
 		private void ignorePolygonFlag2ForTerrainToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			ignorePolygonFlag2ForTerrainToolStripMenuItem.Checked = !ignorePolygonFlag2ForTerrainToolStripMenuItem.Checked;
-			ImportExportOptions.IgnorePolygonFlag2ForTerrain = ignorePolygonFlag2ForTerrainToolStripMenuItem.Checked;
+			_ImportExportOptions.IgnorePolygonFlag2ForTerrain = ignorePolygonFlag2ForTerrainToolStripMenuItem.Checked;
 			HandleRenderModeChange();
 		}
 
 		private void createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem.Checked = !createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem.Checked;
-			ImportExportOptions.DistinctMaterialsForAllFlags = createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem.Checked;
+			_ImportExportOptions.DistinctMaterialsForAllFlags = createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem.Checked;
 		}
 
 		private void adjustUVCoordinatesForBilinearFilteringToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			adjustUVCoordinatesForBilinearFilteringToolStripMenuItem.Checked = !adjustUVCoordinatesForBilinearFilteringToolStripMenuItem.Checked;
-			ImportExportOptions.AdjustUVs = adjustUVCoordinatesForBilinearFilteringToolStripMenuItem.Checked;
+			_ImportExportOptions.AdjustUVs = adjustUVCoordinatesForBilinearFilteringToolStripMenuItem.Checked;
 		}
 
 		private void ignoreVertexColoursToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			ignoreVertexColoursToolStripMenuItem.Checked = !ignoreVertexColoursToolStripMenuItem.Checked;
-			ImportExportOptions.IgnoreVertexColours = ignoreVertexColoursToolStripMenuItem.Checked;
+			_ImportExportOptions.IgnoreVertexColours = ignoreVertexColoursToolStripMenuItem.Checked;
 		}
 
 		protected void ResetPlatformDetection()
@@ -1340,42 +1381,42 @@ namespace ModelEx
 		{
 			ResetPlatformDetection();
 			autodetectToolStripMenuItem.Checked = true;
-			ImportExportOptions.ForcedPlatform = CDC.Platform.None;
+			_ImportExportOptions.ForcedPlatform = CDC.Platform.None;
 		}
 
 		private void forcePlayStationToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			ResetPlatformDetection();
 			forcePlayStationToolStripMenuItem.Checked = true;
-			ImportExportOptions.ForcedPlatform = CDC.Platform.PSX;
+			_ImportExportOptions.ForcedPlatform = CDC.Platform.PSX;
 		}
 
 		private void forcePCToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			ResetPlatformDetection();
 			forcePCToolStripMenuItem.Checked = true;
-			ImportExportOptions.ForcedPlatform = CDC.Platform.PC;
+			_ImportExportOptions.ForcedPlatform = CDC.Platform.PC;
 		}
 
 		private void forceDreamcastToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			ResetPlatformDetection();
 			forceDreamcastToolStripMenuItem.Checked = true;
-			ImportExportOptions.ForcedPlatform = CDC.Platform.Dreamcast;
+			_ImportExportOptions.ForcedPlatform = CDC.Platform.Dreamcast;
 		}
 
 		private void forcePlayStation2ToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			ResetPlatformDetection();
 			forcePlayStation2ToolStripMenuItem.Checked = true;
-			ImportExportOptions.ForcedPlatform = CDC.Platform.PlayStation2;
+			_ImportExportOptions.ForcedPlatform = CDC.Platform.PlayStation2;
 		}
 
 		private void forceXboxToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			ResetPlatformDetection();
 			forceXboxToolStripMenuItem.Checked = true;
-			ImportExportOptions.ForcedPlatform = CDC.Platform.Xbox;
+			_ImportExportOptions.ForcedPlatform = CDC.Platform.Xbox;
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1553,20 +1594,6 @@ namespace ModelEx
 
 		private void optionTabs_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			int selectedIndex = ((TabControl)sender).SelectedIndex;
-
-			if (selectedIndex == 1)
-			{
-				RenderManager.Instance.ViewMode = ViewMode.Scene;
-			}
-			else if (selectedIndex == 2)
-			{
-				RenderManager.Instance.ViewMode = ViewMode.Object;
-			}
-			else
-			{
-				RenderManager.Instance.ViewMode = ViewMode.Resources;
-			}
 		}
 
 		private void unloadAllResources_Click(object sender, EventArgs e)
@@ -1580,5 +1607,15 @@ namespace ModelEx
 			objectControls.ResourceCombo.Items.Clear();
 			sceneControls.ResourceCombo.Items.Clear();
 		}
-	}
+
+        private void sceneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+			SceneMode = 0;
+		}
+
+        private void objectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+			SceneMode = 1;
+		}
+    }
 }
