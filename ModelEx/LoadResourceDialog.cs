@@ -154,8 +154,16 @@ namespace ModelEx
 				breadCrumbs.Clear();
 			}
 
+			CDC.Platform selectedPlatform = SelectedPlatform;
 			gameTypeComboBox.SelectedIndex = (int)SelectedGameType;
-			platformComboBox.SelectedIndex = (int)SelectedPlatform;
+			for (int platformIndex = 0; platformIndex < gameTypeComboBox.Items.Count; platformIndex++)
+            {
+				if (((PlatformNode)platformComboBox.Items[platformIndex]).Platform == selectedPlatform)
+                {
+					platformComboBox.SelectedIndex = platformIndex;
+					break;
+                }
+            }
 		}
 
 		private void LoadResourceDialog_FormClosing(object sender, FormClosingEventArgs e)

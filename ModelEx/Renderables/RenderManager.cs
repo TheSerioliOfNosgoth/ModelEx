@@ -11,11 +11,13 @@ using SRFile = CDC.Objects.SRFile;
 
 namespace ModelEx
 {
-	public enum ViewMode : int
+	public enum SceneMode : int
 	{
+		Current = -1,
 		None = 0,
-		Object = 1,
-		Scene = 2
+		Scene = 1,
+		Object = 2,
+		Debug = 3
 	}
 
 	public class RenderManager
@@ -29,6 +31,7 @@ namespace ModelEx
 			public Game GameType = Game.Gex;
 			public int ChildIndex = -1;
 			public ExportOptions ExportOptions;
+			public bool IsDebugResource = false;
 		};
 
 		private Thread renderThread;
@@ -37,12 +40,14 @@ namespace ModelEx
 
 		public bool Resize = false;
 
-		public ViewMode SceneMode = ViewMode.Scene;
+		public SceneMode SceneMode = SceneMode.Scene;
 		public Color BackgroundColour = Color.Gray;
 		public bool Wireframe = false;
 
 		public Scene CurrentScene { get; private set; }
 		public Scene CurrentObject { get; private set; }
+		public Scene CurrentDebugObject { get; private set; }
+		public RenderResource CurrentDebugResource { get; private set; }
 
 		SpriteRenderer _spriteRenderer;
 		public TextBlockRenderer _textBlockRenderer;
@@ -138,7 +143,13 @@ namespace ModelEx
 
 			RenderResourceCDC renderResource;
 
-			if (Resources.ContainsKey(srFile.Name))
+			if (loadRequest.IsDebugResource)
+            {
+				CurrentDebugObject = null;
+				CurrentDebugResource?.Dispose();
+				CurrentDebugResource = null;
+            }
+			else if (Resources.ContainsKey(srFile.Name))
 			{
 				renderResource = (RenderResourceCDC)Resources[srFile.Name];
 				Resources.Remove(srFile.Name);
@@ -154,10 +165,17 @@ namespace ModelEx
 
 			renderResource.LoadTextures(loadRequest.TextureFile, loadRequest.ExportOptions);
 
-			Resources.Add(renderResource.Name, renderResource);
-
-			CurrentObject?.UpdateModels();
-			CurrentScene?.UpdateModels();
+			if (loadRequest.IsDebugResource)
+			{
+				CurrentDebugResource = renderResource;
+				CurrentDebugObject = new SceneCDC(renderResource.File,  renderResource);
+			}
+			else
+			{
+				Resources.Add(renderResource.Name, renderResource);
+				CurrentObject?.UpdateModels();
+				CurrentScene?.UpdateModels();
+			}
 
 			SceneCDC.progressLevel = SceneCDC.progressLevels;
 			SceneCDC.ProgressStage = "Done";
@@ -271,17 +289,13 @@ namespace ModelEx
 
 		public Renderable GetCameraTarget()
 		{
-			if (SceneMode == ViewMode.Object)
-			{
-				return CurrentObject;
-			}
-
-			if (SceneMode == ViewMode.Scene)
-			{
-				return CurrentScene;
-			}
-
-			return null;
+			switch (SceneMode)
+            {
+				case SceneMode.Scene: return CurrentScene;
+				case SceneMode.Object: return CurrentObject;
+				case SceneMode.Debug: return CurrentDebugObject;
+				default: return null;
+            }
 		}
 
 		public void DrawString(string text, Vector2 position, float realFontSize, Color4 color)
@@ -321,19 +335,12 @@ namespace ModelEx
 				SlimDX.Direct3D11.ShaderResourceView[] oldShaderResources = DeviceManager.Instance.context.PixelShader.GetShaderResources(0, 10);
 				SlimDX.Direct3D11.GeometryShader oldGeometryShader = DeviceManager.Instance.context.GeometryShader.Get();
 
-				if (SceneMode == ViewMode.Scene)
+				switch (SceneMode)
 				{
-					if (CurrentScene != null)
-					{
-						CurrentScene.Render();
-					}
-				}
-				else if (SceneMode == ViewMode.Object)
-				{
-					if (CurrentObject != null)
-					{
-						CurrentObject.Render();
-					}
+					case SceneMode.Scene: CurrentScene?.Render(); break;
+					case SceneMode.Object: CurrentObject?.Render(); break;
+					case SceneMode.Debug: CurrentDebugObject?.Render(); break;
+					default: break;
 				}
 
 				DeviceManager.Instance.context.OutputMerger.DepthStencilState = oldDSState;

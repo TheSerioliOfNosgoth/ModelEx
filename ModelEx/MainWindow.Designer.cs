@@ -34,14 +34,22 @@
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadDebugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reloadCurrentModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.egoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.orbitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.orbitPanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetPositionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sceneModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.objectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renderModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.standardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wireframeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -134,12 +142,6 @@
             this.polygonAlphaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.polygonOpacityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.boneIDHashToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cameraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.modeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.egoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.orbitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.orbitPanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.resetPositionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reloadModelWhenRenderModeIsChangedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetCameraPositionWhenModelIsLoadedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -180,6 +182,7 @@
             this.loadResourceButton = new System.Windows.Forms.Button();
             this.resourceList = new System.Windows.Forms.ListView();
             this.sceneTab = new System.Windows.Forms.TabPage();
+            this.debugControls = new ModelEx.ResourceControls();
             this.objectControls = new ModelEx.ResourceControls();
             this.sceneControls = new ModelEx.ResourceControls();
             this.sceneView = new ModelEx.RenderControl();
@@ -231,7 +234,8 @@
             // 
             this.loadToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loadSceneToolStripMenuItem,
-            this.loadObjectToolStripMenuItem});
+            this.loadObjectToolStripMenuItem,
+            this.loadDebugToolStripMenuItem});
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
             this.loadToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.loadToolStripMenuItem.Text = "&Load";
@@ -249,6 +253,13 @@
             this.loadObjectToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.loadObjectToolStripMenuItem.Text = "Load &Object...";
             this.loadObjectToolStripMenuItem.Click += new System.EventHandler(this.loadObjectToolStripMenuItem_Click);
+            // 
+            // loadDebugToolStripMenuItem
+            // 
+            this.loadDebugToolStripMenuItem.Name = "loadDebugToolStripMenuItem";
+            this.loadDebugToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.loadDebugToolStripMenuItem.Text = "Load &Debug...";
+            this.loadDebugToolStripMenuItem.Click += new System.EventHandler(this.loadDebugToolStripMenuItem_Click);
             // 
             // exportToolStripMenuItem
             // 
@@ -288,11 +299,61 @@
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
+            // cameraToolStripMenuItem
+            // 
+            this.cameraToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.modeToolStripMenuItem,
+            this.resetPositionToolStripMenuItem});
+            this.cameraToolStripMenuItem.Name = "cameraToolStripMenuItem";
+            this.cameraToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
+            this.cameraToolStripMenuItem.Text = "&Camera";
+            // 
+            // modeToolStripMenuItem
+            // 
+            this.modeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.egoToolStripMenuItem,
+            this.orbitToolStripMenuItem,
+            this.orbitPanToolStripMenuItem});
+            this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
+            this.modeToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.modeToolStripMenuItem.Text = "&Mode";
+            // 
+            // egoToolStripMenuItem
+            // 
+            this.egoToolStripMenuItem.Checked = true;
+            this.egoToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.egoToolStripMenuItem.Name = "egoToolStripMenuItem";
+            this.egoToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.egoToolStripMenuItem.Text = "&Ego";
+            this.egoToolStripMenuItem.Click += new System.EventHandler(this.EgoToolStripMenuItem_Click);
+            // 
+            // orbitToolStripMenuItem
+            // 
+            this.orbitToolStripMenuItem.Name = "orbitToolStripMenuItem";
+            this.orbitToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.orbitToolStripMenuItem.Text = "&Orbit";
+            this.orbitToolStripMenuItem.Click += new System.EventHandler(this.OrbitToolStripMenuItem_Click);
+            // 
+            // orbitPanToolStripMenuItem
+            // 
+            this.orbitPanToolStripMenuItem.Name = "orbitPanToolStripMenuItem";
+            this.orbitPanToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.orbitPanToolStripMenuItem.Text = "Orbit &Pan";
+            this.orbitPanToolStripMenuItem.Click += new System.EventHandler(this.OrbitPanToolStripMenuItem_Click);
+            // 
+            // resetPositionToolStripMenuItem
+            // 
+            this.resetPositionToolStripMenuItem.Name = "resetPositionToolStripMenuItem";
+            this.resetPositionToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.resetPositionToolStripMenuItem.Text = "&Reset Position";
+            this.resetPositionToolStripMenuItem.Click += new System.EventHandler(this.ResetPositionToolStripMenuItem_Click);
+            // 
             // sceneModeToolStripMenuItem
             // 
             this.sceneModeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.sceneToolStripMenuItem,
-            this.objectToolStripMenuItem});
+            this.objectToolStripMenuItem,
+            this.debugToolStripMenuItem});
             this.sceneModeToolStripMenuItem.Name = "sceneModeToolStripMenuItem";
             this.sceneModeToolStripMenuItem.Size = new System.Drawing.Size(84, 20);
             this.sceneModeToolStripMenuItem.Text = "&Scene Mode";
@@ -302,16 +363,23 @@
             this.sceneToolStripMenuItem.Checked = true;
             this.sceneToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.sceneToolStripMenuItem.Name = "sceneToolStripMenuItem";
-            this.sceneToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
+            this.sceneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.sceneToolStripMenuItem.Text = "&Scene";
             this.sceneToolStripMenuItem.Click += new System.EventHandler(this.sceneToolStripMenuItem_Click);
             // 
             // objectToolStripMenuItem
             // 
             this.objectToolStripMenuItem.Name = "objectToolStripMenuItem";
-            this.objectToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
+            this.objectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.objectToolStripMenuItem.Text = "&Object";
             this.objectToolStripMenuItem.Click += new System.EventHandler(this.objectToolStripMenuItem_Click);
+            // 
+            // debugToolStripMenuItem
+            // 
+            this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
+            this.debugToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.debugToolStripMenuItem.Text = "&Debug";
+            this.debugToolStripMenuItem.Click += new System.EventHandler(this.debugToolStripMenuItem_Click);
             // 
             // renderModeToolStripMenuItem
             // 
@@ -1050,55 +1118,6 @@
             this.boneIDHashToolStripMenuItem.Text = "Bone ID Hash";
             this.boneIDHashToolStripMenuItem.Click += new System.EventHandler(this.boneIDHashToolStripMenuItem_Click);
             // 
-            // cameraToolStripMenuItem
-            // 
-            this.cameraToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.modeToolStripMenuItem,
-            this.resetPositionToolStripMenuItem});
-            this.cameraToolStripMenuItem.Name = "cameraToolStripMenuItem";
-            this.cameraToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
-            this.cameraToolStripMenuItem.Text = "&Camera";
-            // 
-            // modeToolStripMenuItem
-            // 
-            this.modeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.egoToolStripMenuItem,
-            this.orbitToolStripMenuItem,
-            this.orbitPanToolStripMenuItem});
-            this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
-            this.modeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.modeToolStripMenuItem.Text = "&Mode";
-            // 
-            // egoToolStripMenuItem
-            // 
-            this.egoToolStripMenuItem.Checked = true;
-            this.egoToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.egoToolStripMenuItem.Name = "egoToolStripMenuItem";
-            this.egoToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.egoToolStripMenuItem.Text = "&Ego";
-            this.egoToolStripMenuItem.Click += new System.EventHandler(this.EgoToolStripMenuItem_Click);
-            // 
-            // orbitToolStripMenuItem
-            // 
-            this.orbitToolStripMenuItem.Name = "orbitToolStripMenuItem";
-            this.orbitToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.orbitToolStripMenuItem.Text = "&Orbit";
-            this.orbitToolStripMenuItem.Click += new System.EventHandler(this.OrbitToolStripMenuItem_Click);
-            // 
-            // orbitPanToolStripMenuItem
-            // 
-            this.orbitPanToolStripMenuItem.Name = "orbitPanToolStripMenuItem";
-            this.orbitPanToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.orbitPanToolStripMenuItem.Text = "Orbit &Pan";
-            this.orbitPanToolStripMenuItem.Click += new System.EventHandler(this.OrbitPanToolStripMenuItem_Click);
-            // 
-            // resetPositionToolStripMenuItem
-            // 
-            this.resetPositionToolStripMenuItem.Name = "resetPositionToolStripMenuItem";
-            this.resetPositionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.resetPositionToolStripMenuItem.Text = "&Reset Position";
-            this.resetPositionToolStripMenuItem.Click += new System.EventHandler(this.ResetPositionToolStripMenuItem_Click);
-            // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1459,6 +1478,7 @@
             // 
             // sceneTab
             // 
+            this.sceneTab.Controls.Add(this.debugControls);
             this.sceneTab.Controls.Add(this.objectControls);
             this.sceneTab.Controls.Add(this.sceneControls);
             this.sceneTab.Location = new System.Drawing.Point(4, 22);
@@ -1468,6 +1488,15 @@
             this.sceneTab.TabIndex = 0;
             this.sceneTab.Text = "Scene";
             this.sceneTab.UseVisualStyleBackColor = true;
+            // 
+            // debugControls
+            // 
+            this.debugControls.BackColor = System.Drawing.Color.Transparent;
+            this.debugControls.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.debugControls.Location = new System.Drawing.Point(3, 3);
+            this.debugControls.Name = "debugControls";
+            this.debugControls.Size = new System.Drawing.Size(253, 579);
+            this.debugControls.TabIndex = 2;
             // 
             // objectControls
             // 
@@ -1722,5 +1751,8 @@
         private System.Windows.Forms.ToolStripMenuItem sceneModeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sceneToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem objectToolStripMenuItem;
+        private ResourceControls debugControls;
+        private System.Windows.Forms.ToolStripMenuItem loadDebugToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem debugToolStripMenuItem;
     }
 }

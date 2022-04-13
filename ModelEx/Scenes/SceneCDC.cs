@@ -72,6 +72,19 @@ namespace ModelEx
 			}
 		}
 
+		public SceneCDC(SRFile srFile, RenderResource resource)
+			: base(false)
+		{
+			Name = srFile.Name;
+
+			for (int m = 0; m < srFile.ModelCount; m++)
+			{
+				RenderInstance instance = new RenderInstance(srFile.Name, m, new SlimDX.Vector3(), new SlimDX.Vector3(), resource);
+				instance.Name = srFile.Models[m].Name + "-" + m.ToString();
+				_renderInstances.Add(instance);
+			}
+		}
+
 		public override void Render()
 		{
 			SlimDX.Direct3D11.DepthStencilState oldDSState = DeviceManager.Instance.context.OutputMerger.DepthStencilState;

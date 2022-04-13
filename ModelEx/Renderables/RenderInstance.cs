@@ -25,6 +25,16 @@ namespace ModelEx
 			UpdateModel();
 		}
 
+		public RenderInstance(string resourceName, int modelIndex, Vector3 position, Vector3 rotation, RenderResource resource)
+		{
+			_resourceName = resourceName;
+			_modelIndex = modelIndex;
+			_position = position;
+			_rotation = rotation;
+
+			UpdateModel(resource, _modelIndex);
+		}
+
 		public VisibilityNode FindNode(string name)
 		{
 			return FindNode(name, Root);
@@ -64,7 +74,12 @@ namespace ModelEx
 				foundResource = false;
 			}
 
-			Model newModel = resource.Models[foundResource ? _modelIndex : 0];
+			UpdateModel(resource, foundResource ? _modelIndex : 0);
+		}
+
+		public void UpdateModel(RenderResource resource, int modelIndex)
+		{
+			Model newModel = resource.Models[modelIndex];
 
 			if (Model != newModel)
 			{

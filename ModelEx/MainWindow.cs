@@ -15,44 +15,61 @@ namespace ModelEx
 		int _MainSplitPanelPosition;
 		protected bool _RunUIMonitoringThread;
 		protected bool _ReloadModelOnRenderModeChange;
+		protected bool _ClearResourcesOnLoad;
 		protected bool _ResetCameraOnModelLoad;
-		protected bool _ClearLoadedResources;
-		protected bool _SelectObjectOnLoaded;
-		protected bool _SelectSceneOnLoaded;
+		protected SceneMode _SceneModeOnLoad = SceneMode.Current;
 		protected string _LastExportDirectory = "";
 		protected RenderManager.LoadRequestCDC _LoadRequest;
 
-		int _SceneMode;
-		public int SceneMode
+		SceneMode _SceneMode;
+		public SceneMode SceneMode
 		{
 			get { return _SceneMode; }
 			set
 			{
-				_SceneMode = value;
-
-				if (_SceneMode == 0)
+				if (value == SceneMode.Scene)
 				{
-					RenderManager.Instance.SceneMode = ViewMode.Scene;
+					_SceneMode = value;
+					RenderManager.Instance.SceneMode = value;
 					sceneControls.Visible = true;
 					objectControls.Visible = false;
+					debugControls.Visible = false;
 					sceneToolStripMenuItem.Checked = true;
 					objectToolStripMenuItem.Checked = false;
+					debugToolStripMenuItem.Checked = false;
 				}
-				else if (_SceneMode == 1)
+				else if (value == SceneMode.Object)
 				{
-					RenderManager.Instance.SceneMode = ViewMode.Object;
+					_SceneMode = value;
+					RenderManager.Instance.SceneMode = value;
 					sceneControls.Visible = false;
 					objectControls.Visible = true;
+					debugControls.Visible = false;
 					sceneToolStripMenuItem.Checked = false;
 					objectToolStripMenuItem.Checked = true;
+					debugToolStripMenuItem.Checked = false;
+				}
+				else if (value == SceneMode.Debug)
+				{
+					_SceneMode = value;
+					RenderManager.Instance.SceneMode = value;
+					sceneControls.Visible = false;
+					objectControls.Visible = false;
+					debugControls.Visible = true;
+					sceneToolStripMenuItem.Checked = false;
+					objectToolStripMenuItem.Checked = false;
+					debugToolStripMenuItem.Checked = true;
 				}
 				else
 				{
-					RenderManager.Instance.SceneMode = ViewMode.None;
+					_SceneMode = SceneMode.None;
+					RenderManager.Instance.SceneMode = SceneMode.None;
 					sceneControls.Visible = false;
 					objectControls.Visible = false;
+					debugControls.Visible = false;
 					sceneToolStripMenuItem.Checked = false;
 					objectToolStripMenuItem.Checked = false;
+					debugToolStripMenuItem.Checked = false;
 				}
 			}
 		}
@@ -82,7 +99,7 @@ namespace ModelEx
 		{
 			_RunUIMonitoringThread = true;
 			InitializeComponent();
-			SceneMode = 0;
+			SceneMode = SceneMode.Scene;
 			_ImportExportOptions = new CDC.Objects.ExportOptions();
 			UpdateSplitPanelPosition();
 			ThreadStart tsUIMonitor = new ThreadStart(UIMonitor);
@@ -119,7 +136,7 @@ namespace ModelEx
 			_ProgressWindow.ShowInTaskbar = false;
 			_ProgressWindow.Show();
 
-			if (_ClearLoadedResources)
+			if (_ClearResourcesOnLoad)
 			{
 				objectControls.ResourceCombo.SelectedIndex = -1;
 				sceneControls.ResourceCombo.SelectedIndex = -1;
@@ -154,25 +171,39 @@ namespace ModelEx
 				}
 			}
 
-			if (_SelectObjectOnLoaded && objectControls.ResourceCombo.Items.Contains(_LoadRequest.ResourceName))
+			if (_SceneModeOnLoad == SceneMode.Scene)
 			{
-				objectControls.ResourceCombo.SelectedIndex = objectControls.ResourceCombo.Items.IndexOf(_LoadRequest.ResourceName);
+				if (sceneControls.ResourceCombo.Items.Contains(_LoadRequest.ResourceName))
+				{
+					sceneControls.ResourceCombo.SelectedIndex = sceneControls.ResourceCombo.Items.IndexOf(_LoadRequest.ResourceName);
+				}
+
 				optionTabs.SelectedIndex = 1;
-				SceneMode = 1;
+				SceneMode = _SceneModeOnLoad;
 				CameraManager.Instance.Reset();
 			}
 
-			if (_SelectSceneOnLoaded && sceneControls.ResourceCombo.Items.Contains(_LoadRequest.ResourceName))
+			if (_SceneModeOnLoad == SceneMode.Object)
 			{
-				sceneControls.ResourceCombo.SelectedIndex = sceneControls.ResourceCombo.Items.IndexOf(_LoadRequest.ResourceName);
+				if (objectControls.ResourceCombo.Items.Contains(_LoadRequest.ResourceName))
+				{
+					objectControls.ResourceCombo.SelectedIndex = objectControls.ResourceCombo.Items.IndexOf(_LoadRequest.ResourceName);
+				}
+
 				optionTabs.SelectedIndex = 1;
-				SceneMode = 0;
+				SceneMode = _SceneModeOnLoad;
 				CameraManager.Instance.Reset();
 			}
 
-			_SelectObjectOnLoaded = false;
-			_SelectSceneOnLoaded = false;
-			_ClearLoadedResources = false;
+			if (_SceneModeOnLoad == SceneMode.Debug)
+			{
+				optionTabs.SelectedIndex = 1;
+				SceneMode = _SceneModeOnLoad;
+				CameraManager.Instance.Reset();
+			}
+
+			_ClearResourcesOnLoad = false;
+			_SceneModeOnLoad = SceneMode.Current;
 
 			if (_ResetCameraOnModelLoad)
 			{
@@ -184,7 +215,7 @@ namespace ModelEx
 			_ProgressWindow.Dispose();
 		}
 
-		protected bool SelectResourceToLoad(bool selectObjectOnLoaded, bool selectSceneOnLoaded)
+		protected bool SelectResourceToLoad(SceneMode sceneModeOnLoad)
 		{
 			_LoadRequest = new RenderManager.LoadRequestCDC();
 			LoadResourceDialog loadResourceDialog = new LoadResourceDialog();
@@ -198,13 +229,17 @@ namespace ModelEx
 			loadResourceDialog.SelectedGameType = (CDC.Game)Properties.Settings.Default.RecentGame;
 			loadResourceDialog.SelectedPlatform = (CDC.Platform)Properties.Settings.Default.RecentPlatform;
 
-			if (selectObjectOnLoaded)
+			if (sceneModeOnLoad == SceneMode.Scene)
+			{
+				loadResourceDialog.Text = "Load Scene...";
+			}
+			else if (sceneModeOnLoad == SceneMode.Object)
 			{
 				loadResourceDialog.Text = "Load Object...";
 			}
-			else if (selectSceneOnLoaded)
+			else if (sceneModeOnLoad == SceneMode.Debug)
 			{
-				loadResourceDialog.Text = "Load Scene...";
+				loadResourceDialog.Text = "Load Debug...";
 			}
 			else
 			{
@@ -256,10 +291,10 @@ namespace ModelEx
 			_LoadRequest.ObjectListFile = loadResourceDialog.ObjectListFile;
 			_LoadRequest.GameType = loadResourceDialog.SelectedGameType;
 			_LoadRequest.ExportOptions = _ImportExportOptions;
+			_LoadRequest.IsDebugResource = sceneModeOnLoad == SceneMode.Debug;
 
-			_ClearLoadedResources = loadResourceDialog.ClearLoadedFiles;
-			_SelectObjectOnLoaded = selectObjectOnLoaded;
-			_SelectSceneOnLoaded = selectSceneOnLoaded;
+			_ClearResourcesOnLoad = loadResourceDialog.ClearLoadedFiles;
+			_SceneModeOnLoad = sceneModeOnLoad;
 
 			Properties.Settings.Default.RecentFolder = loadResourceDialog.SelectedFolder;
 			Properties.Settings.Default.RecentGame = (int)loadResourceDialog.SelectedGameType;
@@ -282,7 +317,7 @@ namespace ModelEx
 			{
 				Invoke(new MethodInvoker(BeginLoading));
 
-				if (_ClearLoadedResources)
+				if (_ClearResourcesOnLoad)
 				{
 					RenderManager.Instance.UnloadResources();
 				}
@@ -1546,7 +1581,7 @@ namespace ModelEx
 
 		private void loadResourceButton_Click(object sender, EventArgs e)
 		{
-			if (SelectResourceToLoad(false, false))
+			if (SelectResourceToLoad(SceneMode.Current))
 			{
 				LoadResource();
 			}
@@ -1576,17 +1611,25 @@ namespace ModelEx
 			}
 		}
 
-		private void loadObjectToolStripMenuItem_Click(object sender, EventArgs e)
+		private void loadSceneToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (SelectResourceToLoad(true, false))
+			if (SelectResourceToLoad(SceneMode.Scene))
 			{
 				LoadResource();
 			}
 		}
 
-		private void loadSceneToolStripMenuItem_Click(object sender, EventArgs e)
+		private void loadObjectToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (SelectResourceToLoad(false, true))
+			if (SelectResourceToLoad(SceneMode.Object))
+			{
+				LoadResource();
+			}
+		}
+
+		private void loadDebugToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (SelectResourceToLoad(SceneMode.Debug))
 			{
 				LoadResource();
 			}
@@ -1610,12 +1653,17 @@ namespace ModelEx
 
         private void sceneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-			SceneMode = 0;
+			SceneMode = SceneMode.Scene;
 		}
 
         private void objectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-			SceneMode = 1;
+			SceneMode = SceneMode.Object;
+		}
+
+        private void debugToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			SceneMode = SceneMode.Debug;
 		}
     }
 }
