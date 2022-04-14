@@ -98,10 +98,16 @@ namespace ModelEx
 		public MainWindow()
 		{
 			_RunUIMonitoringThread = true;
+
 			InitializeComponent();
+			UpdateSplitPanelPosition();
+			sceneControls.ResourceLabel.Text = "Current Scene";
+			objectControls.ResourceLabel.Text = "Current Object";
+			debugControls.ResourceLabel.Text = "Current Debug";
+			debugControls.ResourceCombo.Enabled = false;
 			SceneMode = SceneMode.Scene;
 			_ImportExportOptions = new CDC.Objects.ExportOptions();
-			UpdateSplitPanelPosition();
+
 			ThreadStart tsUIMonitor = new ThreadStart(UIMonitor);
 			Thread uiMonitor = new Thread(tsUIMonitor);
 			uiMonitor.Start();
@@ -136,6 +142,12 @@ namespace ModelEx
 			_ProgressWindow.ShowInTaskbar = false;
 			_ProgressWindow.Show();
 
+			if (_LoadRequest.IsDebugResource)
+			{
+				debugControls.ResourceCombo.SelectedIndex = -1;
+				debugControls.ResourceCombo.Items.Clear();
+			}
+
 			if (_ClearResourcesOnLoad)
 			{
 				objectControls.ResourceCombo.SelectedIndex = -1;
@@ -149,24 +161,32 @@ namespace ModelEx
 
 		protected void EndLoading()
 		{
-			foreach (string resourceName in RenderManager.Instance.Resources.Keys)
+			if (_LoadRequest.IsDebugResource)
 			{
-				if (resourceName != "")
+				string resourceName = RenderManager.Instance.DebugResource.Name;
+				debugControls.ResourceCombo.Items.Add(resourceName);
+			}
+			else
+			{
+				foreach (string resourceName in RenderManager.Instance.Resources.Keys)
 				{
-					if (!resourceList.Items.ContainsKey(resourceName))
+					if (resourceName != "")
 					{
-						resourceList.Items.Add(resourceName, resourceName, -1);
-					}
+						if (!resourceList.Items.ContainsKey(resourceName))
+						{
+							resourceList.Items.Add(resourceName, resourceName, -1);
+						}
 
-					if (!objectControls.ResourceCombo.Items.Contains(resourceName))
-					{
-						objectControls.ResourceCombo.Items.Add(resourceName);
-					}
+						if (!objectControls.ResourceCombo.Items.Contains(resourceName))
+						{
+							objectControls.ResourceCombo.Items.Add(resourceName);
+						}
 
-					if (!sceneControls.ResourceCombo.Items.Contains(resourceName))
-					{
-						// Maybe filter for only levels here?
-						sceneControls.ResourceCombo.Items.Add(resourceName);
+						if (!sceneControls.ResourceCombo.Items.Contains(resourceName))
+						{
+							// Maybe filter for only levels here?
+							sceneControls.ResourceCombo.Items.Add(resourceName);
+						}
 					}
 				}
 			}
@@ -197,6 +217,11 @@ namespace ModelEx
 
 			if (_SceneModeOnLoad == SceneMode.Debug)
 			{
+				if (debugControls.ResourceCombo.Items.Contains(_LoadRequest.ResourceName))
+				{
+					debugControls.ResourceCombo.SelectedIndex = debugControls.ResourceCombo.Items.IndexOf(_LoadRequest.ResourceName);
+				}
+
 				optionTabs.SelectedIndex = 1;
 				SceneMode = _SceneModeOnLoad;
 				CameraManager.Instance.Reset();
@@ -439,6 +464,31 @@ namespace ModelEx
 			if (currentObject != null)
 			{
 				foreach (Renderable renderable in currentObject.RenderInstances)
+				{
+					if (renderable is RenderInstance)
+					{
+						if (renderable.Name == e.Node.Text)
+						{
+							((RenderInstance)renderable).Root.Visible = e.Node.Checked;
+							continue;
+						}
+
+						VisibilityNode node = ((RenderInstance)renderable).FindNode(e.Node.Text);
+						if (node != null)
+						{
+							node.Visible = e.Node.Checked;
+						}
+					}
+				}
+			}
+		}
+
+		private void debugTree_AfterCheck(object sender, TreeViewEventArgs e)
+		{
+			Scene currentDebug = (Scene)RenderManager.Instance.CurrentDebug;
+			if (currentDebug != null)
+			{
+				foreach (Renderable renderable in currentDebug.RenderInstances)
 				{
 					if (renderable is RenderInstance)
 					{
@@ -1576,6 +1626,60 @@ namespace ModelEx
 			{
 				objectControls.ResourceTree.Nodes.Add(objectSceneTreeNode);
 				objectControls.ResourceTree.Nodes[0].Expand();
+			}
+		}
+
+		private void currentDebugCombo_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			debugControls.ResourceTree.Nodes.Clear();
+
+			ComboBox comboBox = (ComboBox)sender;
+			if (comboBox.SelectedItem == null)
+			{
+				return;
+			}
+
+			if (RenderManager.Instance.CurrentDebug == null)
+			{
+				return;
+			}
+
+			Scene currentDebug = (Scene)RenderManager.Instance.CurrentDebug;
+
+			TreeNode debugSceneTreeNode = new TreeNode("Debug");
+			debugSceneTreeNode.Checked = true;
+
+			foreach (Renderable renderable in currentDebug.RenderInstances)
+			{
+				if (renderable is RenderInstance)
+				{
+					VisibilityNode debugNode = ((RenderInstance)renderable).Root;
+					TreeNode debugTreeNode = new TreeNode(renderable.Name);
+					debugTreeNode.Checked = debugNode.Visible;
+
+					foreach (VisibilityNode modelNode in debugNode.Nodes)
+					{
+						TreeNode modelTreeNode = new TreeNode(modelNode.Name);
+						modelTreeNode.Checked = modelNode.Visible;
+
+						foreach (VisibilityNode groupNode in modelNode.Nodes)
+						{
+							TreeNode groupTreeNode = new TreeNode(groupNode.Name);
+							groupTreeNode.Checked = groupNode.Visible;
+							modelTreeNode.Nodes.Add(groupTreeNode);
+						}
+
+						debugTreeNode.Nodes.Add(modelTreeNode);
+					}
+
+					debugSceneTreeNode.Nodes.Add(debugTreeNode);
+				}
+			}
+
+			if (debugSceneTreeNode.Nodes.Count > 0)
+			{
+				debugControls.ResourceTree.Nodes.Add(debugSceneTreeNode);
+				debugControls.ResourceTree.Nodes[0].Expand();
 			}
 		}
 

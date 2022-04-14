@@ -363,21 +363,21 @@
             this.sceneToolStripMenuItem.Checked = true;
             this.sceneToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.sceneToolStripMenuItem.Name = "sceneToolStripMenuItem";
-            this.sceneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sceneToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
             this.sceneToolStripMenuItem.Text = "&Scene";
             this.sceneToolStripMenuItem.Click += new System.EventHandler(this.sceneToolStripMenuItem_Click);
             // 
             // objectToolStripMenuItem
             // 
             this.objectToolStripMenuItem.Name = "objectToolStripMenuItem";
-            this.objectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.objectToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
             this.objectToolStripMenuItem.Text = "&Object";
             this.objectToolStripMenuItem.Click += new System.EventHandler(this.objectToolStripMenuItem_Click);
             // 
             // debugToolStripMenuItem
             // 
             this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
-            this.debugToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.debugToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
             this.debugToolStripMenuItem.Text = "&Debug";
             this.debugToolStripMenuItem.Click += new System.EventHandler(this.debugToolStripMenuItem_Click);
             // 
@@ -1497,6 +1497,8 @@
             this.debugControls.Name = "debugControls";
             this.debugControls.Size = new System.Drawing.Size(253, 579);
             this.debugControls.TabIndex = 2;
+            this.debugControls.SelectedResourceChanged += new System.EventHandler(this.currentDebugCombo_SelectedIndexChanged);
+            this.debugControls.AfterResourceNodeCheck += new System.Windows.Forms.TreeViewEventHandler(this.debugTree_AfterCheck);
             // 
             // objectControls
             // 

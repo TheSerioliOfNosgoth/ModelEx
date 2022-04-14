@@ -46,8 +46,8 @@ namespace ModelEx
 
 		public Scene CurrentScene { get; private set; }
 		public Scene CurrentObject { get; private set; }
-		public Scene CurrentDebugObject { get; private set; }
-		public RenderResource CurrentDebugResource { get; private set; }
+		public Scene CurrentDebug { get; private set; }
+		public RenderResource DebugResource { get; private set; }
 
 		SpriteRenderer _spriteRenderer;
 		public TextBlockRenderer _textBlockRenderer;
@@ -145,9 +145,9 @@ namespace ModelEx
 
 			if (loadRequest.IsDebugResource)
             {
-				CurrentDebugObject = null;
-				CurrentDebugResource?.Dispose();
-				CurrentDebugResource = null;
+				CurrentDebug = null;
+				DebugResource?.Dispose();
+				DebugResource = null;
             }
 			else if (Resources.ContainsKey(srFile.Name))
 			{
@@ -167,8 +167,8 @@ namespace ModelEx
 
 			if (loadRequest.IsDebugResource)
 			{
-				CurrentDebugResource = renderResource;
-				CurrentDebugObject = new SceneCDC(renderResource.File,  renderResource);
+				DebugResource = renderResource;
+				CurrentDebug = new SceneCDC(renderResource.File,  renderResource);
 			}
 			else
 			{
@@ -293,7 +293,7 @@ namespace ModelEx
             {
 				case SceneMode.Scene: return CurrentScene;
 				case SceneMode.Object: return CurrentObject;
-				case SceneMode.Debug: return CurrentDebugObject;
+				case SceneMode.Debug: return CurrentDebug;
 				default: return null;
             }
 		}
@@ -339,7 +339,7 @@ namespace ModelEx
 				{
 					case SceneMode.Scene: CurrentScene?.Render(); break;
 					case SceneMode.Object: CurrentObject?.Render(); break;
-					case SceneMode.Debug: CurrentDebugObject?.Render(); break;
+					case SceneMode.Debug: CurrentDebug?.Render(); break;
 					default: break;
 				}
 
