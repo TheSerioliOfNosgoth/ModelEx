@@ -520,6 +520,7 @@ namespace ModelEx
 
 						loadRequest.DataFile = inputFilePath;
 						loadRequest.ExportOptions = options;
+						loadRequest.IsDebugResource = true;
 						if (mode == "gex") loadRequest.GameType = CDC.Game.Gex;
 						else if (mode == "sr1") loadRequest.GameType = CDC.Game.SR1;
 						else if (mode == "sr2") loadRequest.GameType = CDC.Game.SR2;

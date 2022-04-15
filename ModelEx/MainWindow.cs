@@ -95,6 +95,109 @@ namespace ModelEx
 			//Console.WriteLine(string.Format("Reset splitter position to {0}", _MainSplitPanelPosition));
 		}
 
+		protected void ResetRenderModeMenu()
+		{
+			standardToolStripMenuItem.Checked = false;
+			wireframeToolStripMenuItem.Checked = false;
+			noTexturemapsToolStripMenuItem.Checked = false;
+			debugPolygonFlags1ToolStripMenuItem.Checked = false;
+			debugPolygonFlags2ToolStripMenuItem.Checked = false;
+			debugPolygonFlags3ToolStripMenuItem.Checked = false;
+			debugPolygonFlagsSoulReaverAToolStripMenuItem.Checked = false;
+			debugPolygonFlagsHashToolStripMenuItem.Checked = false;
+			debugTextureAttributes1ToolStripMenuItem.Checked = false;
+			debugTextureAttributes2ToolStripMenuItem.Checked = false;
+			debugTextureAttributes3ToolStripMenuItem.Checked = false;
+			debugTextureAttributes4ToolStripMenuItem.Checked = false;
+			debugTextureAttributes5ToolStripMenuItem.Checked = false;
+			debugTextureAttributes6ToolStripMenuItem.Checked = false;
+			debugTextureAttributesHashToolStripMenuItem.Checked = false;
+			debugTextureAttributesAHashToolStripMenuItem.Checked = false;
+			debugTextureAttributesA1ToolStripMenuItem.Checked = false;
+			debugTextureAttributesA2ToolStripMenuItem.Checked = false;
+			debugTextureAttributesA3ToolStripMenuItem.Checked = false;
+			debugTextureAttributesA4ToolStripMenuItem.Checked = false;
+			debugTextureAttributesA5ToolStripMenuItem.Checked = false;
+			debugTextureAttributesA6ToolStripMenuItem.Checked = false;
+			debugTexturePage1ToolStripMenuItem.Checked = false;
+			debugTexturePage2ToolStripMenuItem.Checked = false;
+			debugTexturePage3ToolStripMenuItem.Checked = false;
+			debugTexturePage4ToolStripMenuItem.Checked = false;
+			debugTexturePage5ToolStripMenuItem.Checked = false;
+			debugTexturePage6ToolStripMenuItem.Checked = false;
+			debugTexturePageHashToolStripMenuItem.Checked = false;
+			debugTexturePageUpper28BitsHashToolStripMenuItem.Checked = false;
+			debugTexturePageUpper5BitsHashToolStripMenuItem.Checked = false;
+			rootBSPTreeNumberToolStripMenuItem.Checked = false;
+			bSPTreeRootFlagsHashToolStripMenuItem.Checked = false;
+			bSPTreeNodeIDToolStripMenuItem.Checked = false;
+			bSPTreeRootFlags1ToolStripMenuItem.Checked = false;
+			bSPTreeRootFlags2ToolStripMenuItem.Checked = false;
+			bSPTreeRootFlags3ToolStripMenuItem.Checked = false;
+			bSPTreeRootFlags4ToolStripMenuItem.Checked = false;
+			bSPTreeRootFlags5ToolStripMenuItem.Checked = false;
+			bSPTreeRootFlags6ToolStripMenuItem.Checked = false;
+			bSPTreeNodeFlags1ToolStripMenuItem.Checked = false;
+			bSPTreeNodeFlags2ToolStripMenuItem.Checked = false;
+			bSPTreeNodeFlags3ToolStripMenuItem.Checked = false;
+			bSPTreeNodeFlags4ToolStripMenuItem.Checked = false;
+			bSPTreeNodeFlags5ToolStripMenuItem.Checked = false;
+			bSPTreeNodeFlags6ToolStripMenuItem.Checked = false;
+			bSPTreeParentNodeFlagsORd1ToolStripMenuItem.Checked = false;
+			bSPTreeParentNodeFlagsORd2ToolStripMenuItem.Checked = false;
+			bSPTreeParentNodeFlagsORd3ToolStripMenuItem.Checked = false;
+			bSPTreeParentNodeFlagsORd4ToolStripMenuItem.Checked = false;
+			bSPTreeParentNodeFlagsORd5ToolStripMenuItem.Checked = false;
+			bSPTreeParentNodeFlagsORd6ToolStripMenuItem.Checked = false;
+			bSPTreeParentNodeFlagsORdHashToolStripMenuItem.Checked = false;
+			bSPTreeLeafFlags1ToolStripMenuItem.Checked = false;
+			bSPTreeLeafFlags2ToolStripMenuItem.Checked = false;
+			bSPTreeLeafFlags3ToolStripMenuItem.Checked = false;
+			bSPTreeLeafFlags4ToolStripMenuItem.Checked = false;
+			bSPTreeLeafFlags5ToolStripMenuItem.Checked = false;
+			bSPTreeLeafFlags6ToolStripMenuItem.Checked = false;
+			bSPTreeNodeFlagsHashToolStripMenuItem.Checked = false;
+			bSPTreeLeafFlagsHashToolStripMenuItem.Checked = false;
+			cLUT1ToolStripMenuItem.Checked = false;
+			cLUT2ToolStripMenuItem.Checked = false;
+			cLUT3ToolStripMenuItem.Checked = false;
+			cLUT4ToolStripMenuItem.Checked = false;
+			cLUT5ToolStripMenuItem.Checked = false;
+			cLUT6ToolStripMenuItem.Checked = false;
+			cLUTHashToolStripMenuItem.Checked = false;
+			cLUTNonRowColBitsHashToolStripMenuItem.Checked = false;
+			cLUTNonRowColBits1ToolStripMenuItem.Checked = false;
+			cLUTNonRowColBits2ToolStripMenuItem.Checked = false;
+			boneIDHashToolStripMenuItem.Checked = false;
+			debugSortPushHashToolStripMenuItem.Checked = false;
+			debugSortPushFlags1ToolStripMenuItem.Checked = false;
+			debugSortPushFlags2ToolStripMenuItem.Checked = false;
+			debugSortPushFlags3ToolStripMenuItem.Checked = false;
+			averageVertexAlphaToolStripMenuItem.Checked = false;
+			polygonAlphaToolStripMenuItem.Checked = false;
+			polygonOpacityToolStripMenuItem.Checked = false;
+		}
+
+		protected void HandleRenderModeChange()
+		{
+			RenderManager.Instance.Wireframe = _ImportExportOptions.RenderMode == CDC.Objects.RenderMode.Wireframe;
+
+			if (_ReloadModelOnRenderModeChange)
+			{
+				LoadResource();
+			}
+		}
+
+		protected void ResetPlatformDetection()
+		{
+			autodetectToolStripMenuItem.Checked = false;
+			forcePlayStationToolStripMenuItem.Checked = false;
+			forcePCToolStripMenuItem.Checked = false;
+			forceDreamcastToolStripMenuItem.Checked = false;
+			forcePlayStation2ToolStripMenuItem.Checked = false;
+			forceXboxToolStripMenuItem.Checked = false;
+		}
+
 		public MainWindow()
 		{
 			_RunUIMonitoringThread = true;
@@ -290,7 +393,7 @@ namespace ModelEx
 
 				try
 				{
-					gexFile = new CDC.Objects.GexFile(loadResourceDialog.DataFile, _ImportExportOptions);
+					gexFile = new CDC.Objects.GexFile(loadResourceDialog.DataFile, new CDC.Objects.ExportOptions());
 					if (gexFile.Asset == CDC.Asset.Unit)
 					{
 						objectSelectDlg.SetObjectNames(gexFile.ObjectNames);
@@ -315,7 +418,7 @@ namespace ModelEx
 			_LoadRequest.TextureFile = loadResourceDialog.TextureFile;
 			_LoadRequest.ObjectListFile = loadResourceDialog.ObjectListFile;
 			_LoadRequest.GameType = loadResourceDialog.SelectedGameType;
-			_LoadRequest.ExportOptions = _ImportExportOptions;
+			_LoadRequest.ExportOptions = sceneModeOnLoad == SceneMode.Debug ? _ImportExportOptions null;
 			_LoadRequest.IsDebugResource = sceneModeOnLoad == SceneMode.Debug;
 
 			_ClearResourcesOnLoad = loadResourceDialog.ClearLoadedFiles;
@@ -405,7 +508,7 @@ namespace ModelEx
 			if (SaveDlg.ShowDialog() == DialogResult.OK)
 			{
 				_LastExportDirectory = Path.GetDirectoryName(SaveDlg.FileName);
-				RenderManager.Instance.ExportCurrentObject(SaveDlg.FileName, _ImportExportOptions);
+				RenderManager.Instance.ExportCurrentObject(SaveDlg.FileName, new CDC.Objects.ExportOptions());
 			}
 		}
 
@@ -429,7 +532,7 @@ namespace ModelEx
 			if (SaveDlg.ShowDialog() == DialogResult.OK)
 			{
 				_LastExportDirectory = Path.GetDirectoryName(SaveDlg.FileName);
-				RenderManager.Instance.ExportCurrentScene(SaveDlg.FileName, _ImportExportOptions);
+				RenderManager.Instance.ExportCurrentScene(SaveDlg.FileName, new CDC.Objects.ExportOptions());
 			}
 		}
 
@@ -537,159 +640,6 @@ namespace ModelEx
 			orbitPanToolStripMenuItem.Checked = true;
 		}
 
-		protected void resetRenderModeMenu()
-		{
-			standardToolStripMenuItem.Checked = false;
-			wireframeToolStripMenuItem.Checked = false;
-			noTexturemapsToolStripMenuItem.Checked = false;
-			debugPolygonFlags1ToolStripMenuItem.Checked = false;
-			debugPolygonFlags2ToolStripMenuItem.Checked = false;
-			debugPolygonFlags3ToolStripMenuItem.Checked = false;
-			debugPolygonFlagsSoulReaverAToolStripMenuItem.Checked = false;
-			debugPolygonFlagsHashToolStripMenuItem.Checked = false;
-			debugTextureAttributes1ToolStripMenuItem.Checked = false;
-			debugTextureAttributes2ToolStripMenuItem.Checked = false;
-			debugTextureAttributes3ToolStripMenuItem.Checked = false;
-			debugTextureAttributes4ToolStripMenuItem.Checked = false;
-			debugTextureAttributes5ToolStripMenuItem.Checked = false;
-			debugTextureAttributes6ToolStripMenuItem.Checked = false;
-			debugTextureAttributesHashToolStripMenuItem.Checked = false;
-			debugTextureAttributesAHashToolStripMenuItem.Checked = false;
-			debugTextureAttributesA1ToolStripMenuItem.Checked = false;
-			debugTextureAttributesA2ToolStripMenuItem.Checked = false;
-			debugTextureAttributesA3ToolStripMenuItem.Checked = false;
-			debugTextureAttributesA4ToolStripMenuItem.Checked = false;
-			debugTextureAttributesA5ToolStripMenuItem.Checked = false;
-			debugTextureAttributesA6ToolStripMenuItem.Checked = false;
-			debugTexturePage1ToolStripMenuItem.Checked = false;
-			debugTexturePage2ToolStripMenuItem.Checked = false;
-			debugTexturePage3ToolStripMenuItem.Checked = false;
-			debugTexturePage4ToolStripMenuItem.Checked = false;
-			debugTexturePage5ToolStripMenuItem.Checked = false;
-			debugTexturePage6ToolStripMenuItem.Checked = false;
-			debugTexturePageHashToolStripMenuItem.Checked = false;
-			debugTexturePageUpper28BitsHashToolStripMenuItem.Checked = false;
-			debugTexturePageUpper5BitsHashToolStripMenuItem.Checked = false;
-			rootBSPTreeNumberToolStripMenuItem.Checked = false;
-			bSPTreeRootFlagsHashToolStripMenuItem.Checked = false;
-			bSPTreeNodeIDToolStripMenuItem.Checked = false;
-			bSPTreeRootFlags1ToolStripMenuItem.Checked = false;
-			bSPTreeRootFlags2ToolStripMenuItem.Checked = false;
-			bSPTreeRootFlags3ToolStripMenuItem.Checked = false;
-			bSPTreeRootFlags4ToolStripMenuItem.Checked = false;
-			bSPTreeRootFlags5ToolStripMenuItem.Checked = false;
-			bSPTreeRootFlags6ToolStripMenuItem.Checked = false;
-			bSPTreeNodeFlags1ToolStripMenuItem.Checked = false;
-			bSPTreeNodeFlags2ToolStripMenuItem.Checked = false;
-			bSPTreeNodeFlags3ToolStripMenuItem.Checked = false;
-			bSPTreeNodeFlags4ToolStripMenuItem.Checked = false;
-			bSPTreeNodeFlags5ToolStripMenuItem.Checked = false;
-			bSPTreeNodeFlags6ToolStripMenuItem.Checked = false;
-			bSPTreeParentNodeFlagsORd1ToolStripMenuItem.Checked = false;
-			bSPTreeParentNodeFlagsORd2ToolStripMenuItem.Checked = false;
-			bSPTreeParentNodeFlagsORd3ToolStripMenuItem.Checked = false;
-			bSPTreeParentNodeFlagsORd4ToolStripMenuItem.Checked = false;
-			bSPTreeParentNodeFlagsORd5ToolStripMenuItem.Checked = false;
-			bSPTreeParentNodeFlagsORd6ToolStripMenuItem.Checked = false;
-			bSPTreeParentNodeFlagsORdHashToolStripMenuItem.Checked = false;
-			bSPTreeLeafFlags1ToolStripMenuItem.Checked = false;
-			bSPTreeLeafFlags2ToolStripMenuItem.Checked = false;
-			bSPTreeLeafFlags3ToolStripMenuItem.Checked = false;
-			bSPTreeLeafFlags4ToolStripMenuItem.Checked = false;
-			bSPTreeLeafFlags5ToolStripMenuItem.Checked = false;
-			bSPTreeLeafFlags6ToolStripMenuItem.Checked = false;
-			bSPTreeNodeFlagsHashToolStripMenuItem.Checked = false;
-			bSPTreeLeafFlagsHashToolStripMenuItem.Checked = false;
-			cLUT1ToolStripMenuItem.Checked = false;
-			cLUT2ToolStripMenuItem.Checked = false;
-			cLUT3ToolStripMenuItem.Checked = false;
-			cLUT4ToolStripMenuItem.Checked = false;
-			cLUT5ToolStripMenuItem.Checked = false;
-			cLUT6ToolStripMenuItem.Checked = false;
-			cLUTHashToolStripMenuItem.Checked = false;
-			cLUTNonRowColBitsHashToolStripMenuItem.Checked = false;
-			cLUTNonRowColBits1ToolStripMenuItem.Checked = false;
-			cLUTNonRowColBits2ToolStripMenuItem.Checked = false;
-			boneIDHashToolStripMenuItem.Checked = false;
-			debugSortPushHashToolStripMenuItem.Checked = false;
-			debugSortPushFlags1ToolStripMenuItem.Checked = false;
-			debugSortPushFlags2ToolStripMenuItem.Checked = false;
-			debugSortPushFlags3ToolStripMenuItem.Checked = false;
-			averageVertexAlphaToolStripMenuItem.Checked = false;
-			polygonAlphaToolStripMenuItem.Checked = false;
-			polygonOpacityToolStripMenuItem.Checked = false;
-		}
-
-		protected void HandleRenderModeChange()
-		{
-			RenderManager.Instance.Wireframe = _ImportExportOptions.RenderMode == CDC.Objects.RenderMode.Wireframe;
-
-			if (_ReloadModelOnRenderModeChange)
-			{
-				LoadResource();
-			}
-		}
-
-		private void unhide100InvisibleTexturesToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			unhide100InvisibleTexturesToolStripMenuItem.Checked = !unhide100InvisibleTexturesToolStripMenuItem.Checked;
-			_ImportExportOptions.UnhideCompletelyTransparentTextures = unhide100InvisibleTexturesToolStripMenuItem.Checked;
-		}
-
-		private void discardHiddenPolygonsToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			discardHiddenPolygonsToolStripMenuItem.Checked = !discardHiddenPolygonsToolStripMenuItem.Checked;
-			_ImportExportOptions.DiscardNonVisible = discardHiddenPolygonsToolStripMenuItem.Checked;
-		}
-
-		private void missingPalettesInGreyscaleToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			missingPalettesInGreyscaleToolStripMenuItem.Checked = !missingPalettesInGreyscaleToolStripMenuItem.Checked;
-			_ImportExportOptions.AlwaysUseGreyscaleForMissingPalettes = missingPalettesInGreyscaleToolStripMenuItem.Checked;
-		}
-
-		private void exportDoubleSidedMaterialsToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			exportDoubleSidedMaterialsToolStripMenuItem.Checked = !exportDoubleSidedMaterialsToolStripMenuItem.Checked;
-			_ImportExportOptions.ExportDoubleSidedMaterials = exportDoubleSidedMaterialsToolStripMenuItem.Checked;
-		}
-
-		private void exportSpectralVersionOfAreaFilesToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			exportSpectralVersionOfAreaFilesToolStripMenuItem.Checked = !exportSpectralVersionOfAreaFilesToolStripMenuItem.Checked;
-			_ImportExportOptions.ExportSpectral = exportSpectralVersionOfAreaFilesToolStripMenuItem.Checked;
-		}
-
-		private void makeAllPolygonsVisibleToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			makeAllPolygonsVisibleToolStripMenuItem.Checked = !makeAllPolygonsVisibleToolStripMenuItem.Checked;
-			_ImportExportOptions.MakeAllPolygonsVisible = makeAllPolygonsVisibleToolStripMenuItem.Checked;
-		}
-
-		private void makeAllPolygonsOpaqueToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			makeAllPolygonsOpaqueToolStripMenuItem.Checked = !makeAllPolygonsOpaqueToolStripMenuItem.Checked;
-			_ImportExportOptions.MakeAllPolygonsOpaque = makeAllPolygonsOpaqueToolStripMenuItem.Checked;
-		}
-
-		private void oRAllPolygonColoursWithGreenToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			oRAllPolygonColoursWithGreenToolStripMenuItem.Checked = !oRAllPolygonColoursWithGreenToolStripMenuItem.Checked;
-			_ImportExportOptions.SetAllPolygonColoursToValue = oRAllPolygonColoursWithGreenToolStripMenuItem.Checked;
-		}
-
-		private void includeTreeRootFlagsInORdParentFlagsToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			includeTreeRootFlagsInORdParentFlagsToolStripMenuItem.Checked = !includeTreeRootFlagsInORdParentFlagsToolStripMenuItem.Checked;
-			_ImportExportOptions.BSPRenderingIncludeRootTreeFlagsWhenORing = includeTreeRootFlagsInORdParentFlagsToolStripMenuItem.Checked;
-		}
-
-		private void includeLeafFlagsInORdParentFlagsToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			includeLeafFlagsInORdParentFlagsToolStripMenuItem.Checked = !includeLeafFlagsInORdParentFlagsToolStripMenuItem.Checked;
-			_ImportExportOptions.BSPRenderingIncludeLeafFlagsWhenORing = includeLeafFlagsInORdParentFlagsToolStripMenuItem.Checked;
-		}
-
 		private void MainWindow_Resize(object sender, EventArgs e)
 		{
 			ResetSplitPanelPosition();
@@ -755,12 +705,13 @@ namespace ModelEx
 			UpdateSplitPanelPosition();
 		}
 
-		private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+		private void debugRenderModeToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			resetRenderModeMenu();
+			ResetRenderModeMenu();
 			((ToolStripMenuItem)sender).Checked = true;
+			CDC.Objects.ExportOptions options = _ImportExportOptions;
 
-			_ImportExportOptions.RenderMode =
+			options.RenderMode =
 				(sender == standardToolStripMenuItem) ? CDC.Objects.RenderMode.Standard :
 				(sender == wireframeToolStripMenuItem) ? CDC.Objects.RenderMode.Wireframe :
 				(sender == noTexturemapsToolStripMenuItem) ? CDC.Objects.RenderMode.NoTextures :
@@ -840,9 +791,53 @@ namespace ModelEx
 				(sender == averageVertexAlphaToolStripMenuItem) ? CDC.Objects.RenderMode.AverageVertexAlpha :
 				(sender == polygonAlphaToolStripMenuItem) ? CDC.Objects.RenderMode.PolygonAlpha :
 				(sender == polygonOpacityToolStripMenuItem) ? CDC.Objects.RenderMode.PolygonOpacity :
-				_ImportExportOptions.RenderMode;
+				options.RenderMode;
 
 			HandleRenderModeChange();
+		}
+
+		private void debugToggleToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			CDC.Objects.ExportOptions options = _ImportExportOptions;
+			ToolStripMenuItem menuItem = ((ToolStripMenuItem)sender);
+			menuItem.Checked ^= true;
+
+			if (sender == unhide100InvisibleTexturesToolStripMenuItem) options.UnhideCompletelyTransparentTextures = menuItem.Checked;
+			if (sender == discardHiddenPolygonsToolStripMenuItem) options.DiscardNonVisible = menuItem.Checked;
+			if (sender == missingPalettesInGreyscaleToolStripMenuItem) options.AlwaysUseGreyscaleForMissingPalettes = menuItem.Checked;
+			if (sender == exportDoubleSidedMaterialsToolStripMenuItem) options.ExportDoubleSidedMaterials = menuItem.Checked;
+			if (sender == exportSpectralVersionOfAreaFilesToolStripMenuItem) options.ExportSpectral = menuItem.Checked;
+			if (sender == makeAllPolygonsVisibleToolStripMenuItem) options.MakeAllPolygonsVisible = menuItem.Checked;
+			if (sender == makeAllPolygonsOpaqueToolStripMenuItem) options.MakeAllPolygonsOpaque = menuItem.Checked;
+			if (sender == unhide100InvisibleTexturesToolStripMenuItem) options.UnhideCompletelyTransparentTextures = menuItem.Checked;
+			if (sender == oRAllPolygonColoursWithGreenToolStripMenuItem) options.SetAllPolygonColoursToValue = menuItem.Checked;
+			if (sender == includeTreeRootFlagsInORdParentFlagsToolStripMenuItem) options.BSPRenderingIncludeRootTreeFlagsWhenORing = menuItem.Checked;
+			if (sender == includeLeafFlagsInORdParentFlagsToolStripMenuItem) options.BSPRenderingIncludeLeafFlagsWhenORing = menuItem.Checked;
+			if (sender == ignorePolygonFlag2ForTerrainToolStripMenuItem) options.IgnorePolygonFlag2ForTerrain = menuItem.Checked;
+			if (sender == createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem) options.DistinctMaterialsForAllFlags = menuItem.Checked;
+			if (sender == adjustUVCoordinatesForBilinearFilteringToolStripMenuItem) options.AdjustUVs = menuItem.Checked;
+			if (sender == ignoreVertexColoursToolStripMenuItem) options.IgnoreVertexColours = menuItem.Checked;
+			if (sender == interpolatePolygonColoursToolStripMenuItem) options.InterpolatePolygonColoursWhenColouringBasedOnVertices = menuItem.Checked;
+			if (sender == useEachUniqueTextureCLUTVariationToolStripMenuItem) options.UseEachUniqueTextureCLUTVariation = menuItem.Checked;
+			if (sender == augmentAlphaMaskingFlagsBasedOnImageContentToolStripMenuItem) options.AlsoInferAlphaMaskingFromTexturePixels = menuItem.Checked;
+
+			HandleRenderModeChange();
+		}
+
+		private void forcedPlatformToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			ResetPlatformDetection();
+			((ToolStripMenuItem)sender).Checked = true;
+			CDC.Objects.ExportOptions options = _ImportExportOptions;
+
+			options.ForcedPlatform =
+				(sender == autodetectToolStripMenuItem) ? CDC.Platform.None :
+				(sender == forcePlayStationToolStripMenuItem) ? CDC.Platform.PSX :
+				(sender == forcePCToolStripMenuItem) ? CDC.Platform.PC :
+				(sender == forceDreamcastToolStripMenuItem) ? CDC.Platform.Dreamcast :
+				(sender == forcePlayStation2ToolStripMenuItem) ? CDC.Platform.PlayStation2 :
+				(sender == forceXboxToolStripMenuItem) ? CDC.Platform.Xbox :
+				options.ForcedPlatform;
 		}
 
 		private void reloadModelWhenRenderModeIsChangedToolStripMenuItem_Click(object sender, EventArgs e)
@@ -860,104 +855,6 @@ namespace ModelEx
 		private void reloadCurrentModelToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			LoadResource();
-		}
-
-		private void interpolatePolygonColoursToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			interpolatePolygonColoursToolStripMenuItem.Checked = !interpolatePolygonColoursToolStripMenuItem.Checked;
-			_ImportExportOptions.InterpolatePolygonColoursWhenColouringBasedOnVertices = interpolatePolygonColoursToolStripMenuItem.Checked;
-			HandleRenderModeChange();
-		}
-
-		private void useEachUniqueTextureCLUTVariationToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			useEachUniqueTextureCLUTVariationToolStripMenuItem.Checked = !useEachUniqueTextureCLUTVariationToolStripMenuItem.Checked;
-			_ImportExportOptions.UseEachUniqueTextureCLUTVariation = useEachUniqueTextureCLUTVariationToolStripMenuItem.Checked;
-			HandleRenderModeChange();
-		}
-
-		private void augmentAlphaMaskingFlagsBasedOnImageContentToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			augmentAlphaMaskingFlagsBasedOnImageContentToolStripMenuItem.Checked = !augmentAlphaMaskingFlagsBasedOnImageContentToolStripMenuItem.Checked;
-			_ImportExportOptions.AlsoInferAlphaMaskingFromTexturePixels = augmentAlphaMaskingFlagsBasedOnImageContentToolStripMenuItem.Checked;
-			HandleRenderModeChange();
-		}
-
-		private void ignorePolygonFlag2ForTerrainToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			ignorePolygonFlag2ForTerrainToolStripMenuItem.Checked = !ignorePolygonFlag2ForTerrainToolStripMenuItem.Checked;
-			_ImportExportOptions.IgnorePolygonFlag2ForTerrain = ignorePolygonFlag2ForTerrainToolStripMenuItem.Checked;
-			HandleRenderModeChange();
-		}
-
-		private void createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem.Checked = !createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem.Checked;
-			_ImportExportOptions.DistinctMaterialsForAllFlags = createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem.Checked;
-		}
-
-		private void adjustUVCoordinatesForBilinearFilteringToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			adjustUVCoordinatesForBilinearFilteringToolStripMenuItem.Checked = !adjustUVCoordinatesForBilinearFilteringToolStripMenuItem.Checked;
-			_ImportExportOptions.AdjustUVs = adjustUVCoordinatesForBilinearFilteringToolStripMenuItem.Checked;
-		}
-
-		private void ignoreVertexColoursToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			ignoreVertexColoursToolStripMenuItem.Checked = !ignoreVertexColoursToolStripMenuItem.Checked;
-			_ImportExportOptions.IgnoreVertexColours = ignoreVertexColoursToolStripMenuItem.Checked;
-		}
-
-		protected void ResetPlatformDetection()
-		{
-			autodetectToolStripMenuItem.Checked = false;
-			forcePlayStationToolStripMenuItem.Checked = false;
-			forcePCToolStripMenuItem.Checked = false;
-			forceDreamcastToolStripMenuItem.Checked = false;
-			forcePlayStation2ToolStripMenuItem.Checked = false;
-			forceXboxToolStripMenuItem.Checked = false;
-		}
-
-		private void autodetectToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			ResetPlatformDetection();
-			autodetectToolStripMenuItem.Checked = true;
-			_ImportExportOptions.ForcedPlatform = CDC.Platform.None;
-		}
-
-		private void forcePlayStationToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			ResetPlatformDetection();
-			forcePlayStationToolStripMenuItem.Checked = true;
-			_ImportExportOptions.ForcedPlatform = CDC.Platform.PSX;
-		}
-
-		private void forcePCToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			ResetPlatformDetection();
-			forcePCToolStripMenuItem.Checked = true;
-			_ImportExportOptions.ForcedPlatform = CDC.Platform.PC;
-		}
-
-		private void forceDreamcastToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			ResetPlatformDetection();
-			forceDreamcastToolStripMenuItem.Checked = true;
-			_ImportExportOptions.ForcedPlatform = CDC.Platform.Dreamcast;
-		}
-
-		private void forcePlayStation2ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			ResetPlatformDetection();
-			forcePlayStation2ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.ForcedPlatform = CDC.Platform.PlayStation2;
-		}
-
-		private void forceXboxToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			ResetPlatformDetection();
-			forceXboxToolStripMenuItem.Checked = true;
-			_ImportExportOptions.ForcedPlatform = CDC.Platform.Xbox;
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)

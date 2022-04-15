@@ -133,7 +133,10 @@ namespace ModelEx
 			SceneCDC.progressLevels = 1;
 			SceneCDC.ProgressStage = "Reading Data";
 
-			SRFile srFile = SRFile.Create(loadRequest.DataFile, loadRequest.ObjectListFile, loadRequest.GameType, loadRequest.ExportOptions, loadRequest.ChildIndex);
+			ExportOptions options = loadRequest.ExportOptions != null ?
+				loadRequest.ExportOptions : new ExportOptions();
+
+			SRFile srFile = SRFile.Create(loadRequest.DataFile, loadRequest.ObjectListFile, loadRequest.GameType, options, loadRequest.ChildIndex);
 
 			if (srFile == null)
 			{
@@ -159,11 +162,11 @@ namespace ModelEx
 			}
 
 			renderResource = new RenderResourceCDC(srFile);
-			renderResource.LoadModels(loadRequest.ExportOptions);
+			renderResource.LoadModels(options);
 
 			SceneCDC.progressLevel = 1;
 
-			renderResource.LoadTextures(loadRequest.TextureFile, loadRequest.ExportOptions);
+			renderResource.LoadTextures(loadRequest.TextureFile, options);
 
 			if (loadRequest.IsDebugResource)
 			{
