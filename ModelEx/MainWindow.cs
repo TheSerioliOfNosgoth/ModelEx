@@ -630,30 +630,6 @@ namespace ModelEx
 			}
 		}
 
-		private void standardToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			standardToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.Standard;
-			HandleRenderModeChange();
-		}
-
-		private void wireframeToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			wireframeToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.Wireframe;
-			HandleRenderModeChange();
-		}
-
-		private void noTexturemapsToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			noTexturemapsToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.NoTextures;
-			HandleRenderModeChange();
-		}
-
 		private void unhide100InvisibleTexturesToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			unhide100InvisibleTexturesToolStripMenuItem.Checked = !unhide100InvisibleTexturesToolStripMenuItem.Checked;
@@ -779,613 +755,93 @@ namespace ModelEx
 			UpdateSplitPanelPosition();
 		}
 
+		private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			resetRenderModeMenu();
+			((ToolStripMenuItem)sender).Checked = true;
+
+			_ImportExportOptions.RenderMode =
+				(sender == standardToolStripMenuItem) ? CDC.Objects.RenderMode.Standard :
+				(sender == wireframeToolStripMenuItem) ? CDC.Objects.RenderMode.Wireframe :
+				(sender == noTexturemapsToolStripMenuItem) ? CDC.Objects.RenderMode.NoTextures :
+				(sender == debugPolygonFlags1ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugPolygonFlags1 :
+				(sender == debugPolygonFlags2ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugPolygonFlags2 :
+				(sender == debugPolygonFlags3ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugPolygonFlags3 :
+				(sender == debugPolygonFlagsSoulReaverAToolStripMenuItem) ? CDC.Objects.RenderMode.DebugPolygonFlagsSoulReaverA :
+				(sender == debugPolygonFlagsHashToolStripMenuItem) ? CDC.Objects.RenderMode.DebugPolygonFlagsHash :
+				(sender == debugTextureAttributes1ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTextureAttributes1 :
+				(sender == debugTextureAttributes2ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTextureAttributes2 :
+				(sender == debugTextureAttributes3ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTextureAttributes3 :
+				(sender == debugTextureAttributes4ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTextureAttributes4 :
+				(sender == debugTextureAttributes5ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTextureAttributes5 :
+				(sender == debugTextureAttributes6ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTextureAttributes6 :
+				(sender == debugTextureAttributesHashToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTextureAttributesHash :
+				(sender == debugTextureAttributesA1ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTextureAttributesA1 :
+				(sender == debugTextureAttributesA2ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTextureAttributesA2 :
+				(sender == debugTextureAttributesA3ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTextureAttributesA3 :
+				(sender == debugTextureAttributesA4ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTextureAttributesA4 :
+				(sender == debugTextureAttributesA5ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTextureAttributesA5 :
+				(sender == debugTextureAttributesA6ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTextureAttributesA6 :
+				(sender == debugTextureAttributesAHashToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTextureAttributesAHash :
+				(sender == cLUT1ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugCLUT1 :
+				(sender == cLUT2ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugCLUT2 :
+				(sender == cLUT3ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugCLUT3 :
+				(sender == cLUT4ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugCLUT4 :
+				(sender == cLUT5ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugCLUT5 :
+				(sender == cLUT6ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugCLUT6 :
+				(sender == cLUTHashToolStripMenuItem) ? CDC.Objects.RenderMode.DebugCLUTHash :
+				(sender == cLUTNonRowColBits1ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugCLUTNonRowColBits1 :
+				(sender == cLUTNonRowColBits2ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugCLUTNonRowColBits2 :
+				(sender == cLUTNonRowColBitsHashToolStripMenuItem) ? CDC.Objects.RenderMode.DebugCLUTNonRowColBitsHash :
+				(sender == debugTexturePage1ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTexturePage1 :
+				(sender == debugTexturePage2ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTexturePage2 :
+				(sender == debugTexturePage3ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTexturePage3 :
+				(sender == debugTexturePage4ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTexturePage4 :
+				(sender == debugTexturePage5ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTexturePage5 :
+				(sender == debugTexturePage6ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTexturePage6 :
+				(sender == debugTexturePageHashToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTexturePageHash :
+				(sender == debugTexturePageUpper28BitsHashToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTexturePageUpper28BitsHash :
+				(sender == debugTexturePageUpper5BitsHashToolStripMenuItem) ? CDC.Objects.RenderMode.DebugTexturePageUpper5BitsHash :
+				(sender == rootBSPTreeNumberToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPRootTreeNumber :
+				(sender == bSPTreeNodeIDToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeNodeID :
+				(sender == bSPTreeRootFlags1ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPRootTreeFlags1 :
+				(sender == bSPTreeRootFlags2ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPRootTreeFlags2 :
+				(sender == bSPTreeRootFlags3ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPRootTreeFlags3 :
+				(sender == bSPTreeRootFlags4ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPRootTreeFlags4 :
+				(sender == bSPTreeRootFlags5ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPRootTreeFlags5 :
+				(sender == bSPTreeRootFlags6ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPRootTreeFlags6 :
+				(sender == bSPTreeRootFlagsHashToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPRootTreeFlagsHash :
+				(sender == bSPTreeNodeFlags1ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags1 :
+				(sender == bSPTreeNodeFlags2ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags2 :
+				(sender == bSPTreeNodeFlags3ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags3 :
+				(sender == bSPTreeNodeFlags4ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags4 :
+				(sender == bSPTreeNodeFlags5ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags5 :
+				(sender == bSPTreeNodeFlags6ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags6 :
+				(sender == bSPTreeNodeFlagsHashToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlagsHash :
+				(sender == bSPTreeParentNodeFlagsORd1ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd1 :
+				(sender == bSPTreeParentNodeFlagsORd2ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd2 :
+				(sender == bSPTreeParentNodeFlagsORd3ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd3 :
+				(sender == bSPTreeParentNodeFlagsORd4ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd4 :
+				(sender == bSPTreeParentNodeFlagsORd5ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd5 :
+				(sender == bSPTreeParentNodeFlagsORd6ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd6 :
+				(sender == bSPTreeParentNodeFlagsORdHashToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORdHash :
+				(sender == bSPTreeLeafFlags1ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeLeafFlags1 :
+				(sender == bSPTreeLeafFlags2ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeLeafFlags2 :
+				(sender == bSPTreeLeafFlags3ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeLeafFlags3 :
+				(sender == bSPTreeLeafFlags4ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeLeafFlags4 :
+				(sender == bSPTreeLeafFlags5ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeLeafFlags5 :
+				(sender == bSPTreeLeafFlags6ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeLeafFlags6 :
+				(sender == bSPTreeLeafFlagsHashToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBSPTreeLeafFlagsHash :
+				(sender == boneIDHashToolStripMenuItem) ? CDC.Objects.RenderMode.DebugBoneIDHash :
+				(sender == debugSortPushHashToolStripMenuItem) ? CDC.Objects.RenderMode.DebugSortPushHash :
+				(sender == debugSortPushFlags1ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugSortPushFlags1 :
+				(sender == debugSortPushFlags2ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugSortPushFlags2 :
+				(sender == debugSortPushFlags3ToolStripMenuItem) ? CDC.Objects.RenderMode.DebugSortPushFlags3 :
+				(sender == averageVertexAlphaToolStripMenuItem) ? CDC.Objects.RenderMode.AverageVertexAlpha :
+				(sender == polygonAlphaToolStripMenuItem) ? CDC.Objects.RenderMode.PolygonAlpha :
+				(sender == polygonOpacityToolStripMenuItem) ? CDC.Objects.RenderMode.PolygonOpacity :
+				_ImportExportOptions.RenderMode;
 
-
-		private void debugPolygonFlags1ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugPolygonFlags1ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlags1;
-			HandleRenderModeChange();
-		}
-
-		private void debugPolygonFlags2ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugPolygonFlags2ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlags2;
-			HandleRenderModeChange();
-		}
-
-		private void debugPolygonFlags3ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugPolygonFlags3ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlags3;
-			HandleRenderModeChange();
-		}
-
-		private void debugPolygonFlagsSoulReaverAToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugPolygonFlagsSoulReaverAToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlagsSoulReaverA;
-			HandleRenderModeChange();
-		}
-
-		private void debugTextureAttributes1ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTextureAttributes1ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes1;
-			HandleRenderModeChange();
-		}
-
-		private void debugTextureAttributes2ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTextureAttributes2ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes2;
-			HandleRenderModeChange();
-		}
-
-		private void debugTextureAttributes3ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTextureAttributes3ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes3;
-			HandleRenderModeChange();
-		}
-
-		private void debugTextureAttributes4ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTextureAttributes4ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes4;
-			HandleRenderModeChange();
-		}
-
-		private void debugTextureAttributes5ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTextureAttributes5ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes5;
-			HandleRenderModeChange();
-		}
-
-		private void debugTextureAttributes6ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTextureAttributes6ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes6;
-			HandleRenderModeChange();
-		}
-
-		private void debugTextureAttributesAHashToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTextureAttributesAHashToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesAHash;
-			HandleRenderModeChange();
-		}
-
-		private void debugTextureAttributesA1ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTextureAttributesA1ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA1;
-			HandleRenderModeChange();
-		}
-
-		private void debugTextureAttributesA2ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTextureAttributesA2ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA2;
-			HandleRenderModeChange();
-		}
-
-		private void debugTextureAttributesA3ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTextureAttributesA3ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA3;
-			HandleRenderModeChange();
-		}
-
-		private void debugTextureAttributesA4ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTextureAttributesA4ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA4;
-			HandleRenderModeChange();
-		}
-
-		private void debugTextureAttributesA5ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTextureAttributesA5ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA5;
-			HandleRenderModeChange();
-		}
-
-		private void debugTextureAttributesA6ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTextureAttributesA6ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA6;
-			HandleRenderModeChange();
-		}
-
-		private void debugTexturePage1ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTexturePage1ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePage1;
-			HandleRenderModeChange();
-		}
-
-		private void debugTexturePage2ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTexturePage2ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePage2;
-			HandleRenderModeChange();
-		}
-
-		private void debugTexturePage3ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTexturePage3ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePage3;
-			HandleRenderModeChange();
-		}
-
-		private void debugTexturePage4ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTexturePage4ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePage4;
-			HandleRenderModeChange();
-		}
-
-		private void debugTexturePage5ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTexturePage5ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePage5;
-			HandleRenderModeChange();
-		}
-
-		private void debugTexturePage6ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTexturePage6ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePage6;
-			HandleRenderModeChange();
-		}
-
-		private void rootBSPTreeNumberToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			rootBSPTreeNumberToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeNumber;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeNodeIDToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeNodeIDToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeNodeID;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeRootFlags1ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeRootFlags1ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags1;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeRootFlags2ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeRootFlags2ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags2;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeRootFlags3ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeRootFlags3ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags3;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeRootFlags4ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeRootFlags4ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags4;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeRootFlags5ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeRootFlags5ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags5;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeRootFlags6ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeRootFlags6ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags6;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeNodeFlags1ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeNodeFlags1ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags1;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeNodeFlags2ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeNodeFlags2ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags2;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeNodeFlags3ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeNodeFlags3ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags3;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeNodeFlags4ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeNodeFlags4ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags4;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeNodeFlags5ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeNodeFlags5ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags5;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeNodeFlags6ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeNodeFlags6ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags6;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeParentNodeFlagsORd1ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeParentNodeFlagsORd1ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd1;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeParentNodeFlagsORd2ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeParentNodeFlagsORd2ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd2;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeParentNodeFlagsORd3ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeParentNodeFlagsORd3ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd3;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeParentNodeFlagsORd4ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeParentNodeFlagsORd4ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd4;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeParentNodeFlagsORd5ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeParentNodeFlagsORd5ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd5;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeParentNodeFlagsORd6ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeParentNodeFlagsORd6ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd6;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeLeafFlags1ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeLeafFlags1ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags1;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeLeafFlags2ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeLeafFlags2ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags2;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeLeafFlags3ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeLeafFlags3ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags3;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeLeafFlags4ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeLeafFlags4ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags4;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeLeafFlags5ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeLeafFlags5ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags5;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeLeafFlags6ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeLeafFlags6ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags6;
-			HandleRenderModeChange();
-		}
-
-		private void debugPolygonFlagsHashToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugPolygonFlagsHashToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlagsHash;
-			HandleRenderModeChange();
-		}
-
-		private void debugTextureAttributesHashToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTextureAttributesHashToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesHash;
-			HandleRenderModeChange();
-		}
-
-		private void debugTexturePageHashToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTexturePageHashToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePageHash;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeRootFlagsHashToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeRootFlagsHashToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlagsHash;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeNodeFlagsHashToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeNodeFlagsHashToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlagsHash;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeParentNodeFlagsORdHashToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeParentNodeFlagsORdHashToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORdHash;
-			HandleRenderModeChange();
-		}
-
-		private void bSPTreeLeafFlagsHashToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			bSPTreeLeafFlagsHashToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlagsHash;
-			HandleRenderModeChange();
-		}
-
-		private void debugTexturePageUpper24BitsHashToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTexturePageUpper28BitsHashToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePageUpper28BitsHash;
-			HandleRenderModeChange();
-		}
-
-		private void debugTexturePageUpper5BitsHashToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugTexturePageUpper5BitsHashToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugTexturePageUpper5BitsHash;
-			HandleRenderModeChange();
-		}
-
-		private void cLUTHashToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			cLUTHashToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUTHash;
-			HandleRenderModeChange();
-		}
-
-		private void cLUT1ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			cLUT1ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUT1;
-			HandleRenderModeChange();
-		}
-
-		private void cLUT2ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			cLUT2ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUT2;
-			HandleRenderModeChange();
-		}
-
-		private void cLUT3ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			cLUT3ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUT3;
-			HandleRenderModeChange();
-		}
-
-		private void cLUT4ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			cLUT4ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUT4;
-			HandleRenderModeChange();
-		}
-
-		private void cLUT5ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			cLUT5ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUT5;
-			HandleRenderModeChange();
-		}
-
-		private void cLUT6ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			cLUT6ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUT6;
-			HandleRenderModeChange();
-		}
-
-		private void cLUTNonRowColBitsHashToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			cLUTNonRowColBitsHashToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUTNonRowColBitsHash;
-			HandleRenderModeChange();
-		}
-
-		private void cLUTNonRowColBits1ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			cLUTNonRowColBits1ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUTNonRowColBits1;
-			HandleRenderModeChange();
-		}
-
-		private void cLUTNonRowColBits2ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			cLUTNonRowColBits2ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugCLUTNonRowColBits2;
-			HandleRenderModeChange();
-		}
-
-		private void boneIDHashToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			boneIDHashToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugBoneIDHash;
-			HandleRenderModeChange();
-		}
-
-		private void debugSortPushHashToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugSortPushHashToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugSortPushHash;
-			HandleRenderModeChange();
-		}
-
-		private void debugSortPushFlags1ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugSortPushFlags1ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugSortPushFlags1;
-			HandleRenderModeChange();
-		}
-
-		private void debugSortPushFlags2ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugSortPushFlags2ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugSortPushFlags2;
-			HandleRenderModeChange();
-		}
-
-		private void debugSortPushFlags3ToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			debugSortPushFlags3ToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.DebugSortPushFlags3;
-			HandleRenderModeChange();
-		}
-
-		private void averageVertexAlphaToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			averageVertexAlphaToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.AverageVertexAlpha;
-			HandleRenderModeChange();
-		}
-
-		private void polygonAlphaToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			polygonAlphaToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.PolygonAlpha;
-			HandleRenderModeChange();
-		}
-
-		private void polygonOpacityToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			resetRenderModeMenu();
-			polygonOpacityToolStripMenuItem.Checked = true;
-			_ImportExportOptions.RenderMode = CDC.Objects.RenderMode.PolygonOpacity;
 			HandleRenderModeChange();
 		}
 

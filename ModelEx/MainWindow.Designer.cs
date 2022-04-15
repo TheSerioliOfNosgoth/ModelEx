@@ -407,21 +407,21 @@
             this.standardToolStripMenuItem.Name = "standardToolStripMenuItem";
             this.standardToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
             this.standardToolStripMenuItem.Text = "&Standard";
-            this.standardToolStripMenuItem.Click += new System.EventHandler(this.standardToolStripMenuItem_Click);
+            this.standardToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // wireframeToolStripMenuItem
             // 
             this.wireframeToolStripMenuItem.Name = "wireframeToolStripMenuItem";
             this.wireframeToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
             this.wireframeToolStripMenuItem.Text = "&Wireframe";
-            this.wireframeToolStripMenuItem.Click += new System.EventHandler(this.wireframeToolStripMenuItem_Click);
+            this.wireframeToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // noTexturemapsToolStripMenuItem
             // 
             this.noTexturemapsToolStripMenuItem.Name = "noTexturemapsToolStripMenuItem";
             this.noTexturemapsToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
             this.noTexturemapsToolStripMenuItem.Text = "&No Textures";
-            this.noTexturemapsToolStripMenuItem.Click += new System.EventHandler(this.noTexturemapsToolStripMenuItem_Click);
+            this.noTexturemapsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // polygonFlagsToolStripMenuItem
             // 
@@ -440,35 +440,35 @@
             this.debugPolygonFlagsHashToolStripMenuItem.Name = "debugPolygonFlagsHashToolStripMenuItem";
             this.debugPolygonFlagsHashToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
             this.debugPolygonFlagsHashToolStripMenuItem.Text = "DebugPolygonFlagsHash";
-            this.debugPolygonFlagsHashToolStripMenuItem.Click += new System.EventHandler(this.debugPolygonFlagsHashToolStripMenuItem_Click);
+            this.debugPolygonFlagsHashToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugPolygonFlags1ToolStripMenuItem
             // 
             this.debugPolygonFlags1ToolStripMenuItem.Name = "debugPolygonFlags1ToolStripMenuItem";
             this.debugPolygonFlags1ToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
             this.debugPolygonFlags1ToolStripMenuItem.Text = "DebugPolygonFlags1";
-            this.debugPolygonFlags1ToolStripMenuItem.Click += new System.EventHandler(this.debugPolygonFlags1ToolStripMenuItem_Click);
+            this.debugPolygonFlags1ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugPolygonFlags2ToolStripMenuItem
             // 
             this.debugPolygonFlags2ToolStripMenuItem.Name = "debugPolygonFlags2ToolStripMenuItem";
             this.debugPolygonFlags2ToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
             this.debugPolygonFlags2ToolStripMenuItem.Text = "DebugPolygonFlags2";
-            this.debugPolygonFlags2ToolStripMenuItem.Click += new System.EventHandler(this.debugPolygonFlags2ToolStripMenuItem_Click);
+            this.debugPolygonFlags2ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugPolygonFlags3ToolStripMenuItem
             // 
             this.debugPolygonFlags3ToolStripMenuItem.Name = "debugPolygonFlags3ToolStripMenuItem";
             this.debugPolygonFlags3ToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
             this.debugPolygonFlags3ToolStripMenuItem.Text = "DebugPolygonFlags3";
-            this.debugPolygonFlags3ToolStripMenuItem.Click += new System.EventHandler(this.debugPolygonFlags3ToolStripMenuItem_Click);
+            this.debugPolygonFlags3ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugPolygonFlagsSoulReaverAToolStripMenuItem
             // 
             this.debugPolygonFlagsSoulReaverAToolStripMenuItem.Name = "debugPolygonFlagsSoulReaverAToolStripMenuItem";
             this.debugPolygonFlagsSoulReaverAToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
             this.debugPolygonFlagsSoulReaverAToolStripMenuItem.Text = "DebugPolygonFlagsSoulReaverA";
-            this.debugPolygonFlagsSoulReaverAToolStripMenuItem.Click += new System.EventHandler(this.debugPolygonFlagsSoulReaverAToolStripMenuItem_Click);
+            this.debugPolygonFlagsSoulReaverAToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // colourLookupTableToolStripMenuItem
             // 
@@ -492,70 +492,70 @@
             this.cLUTHashToolStripMenuItem.Name = "cLUTHashToolStripMenuItem";
             this.cLUTHashToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
             this.cLUTHashToolStripMenuItem.Text = "CLUTHash";
-            this.cLUTHashToolStripMenuItem.Click += new System.EventHandler(this.cLUTHashToolStripMenuItem_Click);
+            this.cLUTHashToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // cLUTNonRowColBitsHashToolStripMenuItem
             // 
             this.cLUTNonRowColBitsHashToolStripMenuItem.Name = "cLUTNonRowColBitsHashToolStripMenuItem";
             this.cLUTNonRowColBitsHashToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
             this.cLUTNonRowColBitsHashToolStripMenuItem.Text = "CLUTNonRowColBitsHash";
-            this.cLUTNonRowColBitsHashToolStripMenuItem.Click += new System.EventHandler(this.cLUTNonRowColBitsHashToolStripMenuItem_Click);
+            this.cLUTNonRowColBitsHashToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // cLUTNonRowColBits1ToolStripMenuItem
             // 
             this.cLUTNonRowColBits1ToolStripMenuItem.Name = "cLUTNonRowColBits1ToolStripMenuItem";
             this.cLUTNonRowColBits1ToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
             this.cLUTNonRowColBits1ToolStripMenuItem.Text = "CLUTNonRowColBits1";
-            this.cLUTNonRowColBits1ToolStripMenuItem.Click += new System.EventHandler(this.cLUTNonRowColBits1ToolStripMenuItem_Click);
+            this.cLUTNonRowColBits1ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // cLUTNonRowColBits2ToolStripMenuItem
             // 
             this.cLUTNonRowColBits2ToolStripMenuItem.Name = "cLUTNonRowColBits2ToolStripMenuItem";
             this.cLUTNonRowColBits2ToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
             this.cLUTNonRowColBits2ToolStripMenuItem.Text = "CLUTNonRowColBits2";
-            this.cLUTNonRowColBits2ToolStripMenuItem.Click += new System.EventHandler(this.cLUTNonRowColBits2ToolStripMenuItem_Click);
+            this.cLUTNonRowColBits2ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // cLUT1ToolStripMenuItem
             // 
             this.cLUT1ToolStripMenuItem.Name = "cLUT1ToolStripMenuItem";
             this.cLUT1ToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
             this.cLUT1ToolStripMenuItem.Text = "CLUT1";
-            this.cLUT1ToolStripMenuItem.Click += new System.EventHandler(this.cLUT1ToolStripMenuItem_Click);
+            this.cLUT1ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // cLUT2ToolStripMenuItem
             // 
             this.cLUT2ToolStripMenuItem.Name = "cLUT2ToolStripMenuItem";
             this.cLUT2ToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
             this.cLUT2ToolStripMenuItem.Text = "CLUT2";
-            this.cLUT2ToolStripMenuItem.Click += new System.EventHandler(this.cLUT2ToolStripMenuItem_Click);
+            this.cLUT2ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // cLUT3ToolStripMenuItem
             // 
             this.cLUT3ToolStripMenuItem.Name = "cLUT3ToolStripMenuItem";
             this.cLUT3ToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
             this.cLUT3ToolStripMenuItem.Text = "CLUT3";
-            this.cLUT3ToolStripMenuItem.Click += new System.EventHandler(this.cLUT3ToolStripMenuItem_Click);
+            this.cLUT3ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // cLUT4ToolStripMenuItem
             // 
             this.cLUT4ToolStripMenuItem.Name = "cLUT4ToolStripMenuItem";
             this.cLUT4ToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
             this.cLUT4ToolStripMenuItem.Text = "CLUT4";
-            this.cLUT4ToolStripMenuItem.Click += new System.EventHandler(this.cLUT4ToolStripMenuItem_Click);
+            this.cLUT4ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // cLUT5ToolStripMenuItem
             // 
             this.cLUT5ToolStripMenuItem.Name = "cLUT5ToolStripMenuItem";
             this.cLUT5ToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
             this.cLUT5ToolStripMenuItem.Text = "CLUT5";
-            this.cLUT5ToolStripMenuItem.Click += new System.EventHandler(this.cLUT5ToolStripMenuItem_Click);
+            this.cLUT5ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // cLUT6ToolStripMenuItem
             // 
             this.cLUT6ToolStripMenuItem.Name = "cLUT6ToolStripMenuItem";
             this.cLUT6ToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
             this.cLUT6ToolStripMenuItem.Text = "CLUT6";
-            this.cLUT6ToolStripMenuItem.Click += new System.EventHandler(this.cLUT6ToolStripMenuItem_Click);
+            this.cLUT6ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // textureAttributesToolStripMenuItem
             // 
@@ -576,49 +576,49 @@
             this.debugTextureAttributesHashToolStripMenuItem.Name = "debugTextureAttributesHashToolStripMenuItem";
             this.debugTextureAttributesHashToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
             this.debugTextureAttributesHashToolStripMenuItem.Text = "DebugTextureAttributesHash";
-            this.debugTextureAttributesHashToolStripMenuItem.Click += new System.EventHandler(this.debugTextureAttributesHashToolStripMenuItem_Click);
+            this.debugTextureAttributesHashToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTextureAttributes1ToolStripMenuItem
             // 
             this.debugTextureAttributes1ToolStripMenuItem.Name = "debugTextureAttributes1ToolStripMenuItem";
             this.debugTextureAttributes1ToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
             this.debugTextureAttributes1ToolStripMenuItem.Text = "DebugTextureAttributes1";
-            this.debugTextureAttributes1ToolStripMenuItem.Click += new System.EventHandler(this.debugTextureAttributes1ToolStripMenuItem_Click);
+            this.debugTextureAttributes1ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTextureAttributes2ToolStripMenuItem
             // 
             this.debugTextureAttributes2ToolStripMenuItem.Name = "debugTextureAttributes2ToolStripMenuItem";
             this.debugTextureAttributes2ToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
             this.debugTextureAttributes2ToolStripMenuItem.Text = "DebugTextureAttributes2";
-            this.debugTextureAttributes2ToolStripMenuItem.Click += new System.EventHandler(this.debugTextureAttributes2ToolStripMenuItem_Click);
+            this.debugTextureAttributes2ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTextureAttributes3ToolStripMenuItem
             // 
             this.debugTextureAttributes3ToolStripMenuItem.Name = "debugTextureAttributes3ToolStripMenuItem";
             this.debugTextureAttributes3ToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
             this.debugTextureAttributes3ToolStripMenuItem.Text = "DebugTextureAttributes3";
-            this.debugTextureAttributes3ToolStripMenuItem.Click += new System.EventHandler(this.debugTextureAttributes3ToolStripMenuItem_Click);
+            this.debugTextureAttributes3ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTextureAttributes4ToolStripMenuItem
             // 
             this.debugTextureAttributes4ToolStripMenuItem.Name = "debugTextureAttributes4ToolStripMenuItem";
             this.debugTextureAttributes4ToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
             this.debugTextureAttributes4ToolStripMenuItem.Text = "DebugTextureAttributes4";
-            this.debugTextureAttributes4ToolStripMenuItem.Click += new System.EventHandler(this.debugTextureAttributes4ToolStripMenuItem_Click);
+            this.debugTextureAttributes4ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTextureAttributes5ToolStripMenuItem
             // 
             this.debugTextureAttributes5ToolStripMenuItem.Name = "debugTextureAttributes5ToolStripMenuItem";
             this.debugTextureAttributes5ToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
             this.debugTextureAttributes5ToolStripMenuItem.Text = "DebugTextureAttributes5";
-            this.debugTextureAttributes5ToolStripMenuItem.Click += new System.EventHandler(this.debugTextureAttributes5ToolStripMenuItem_Click);
+            this.debugTextureAttributes5ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTextureAttributes6ToolStripMenuItem
             // 
             this.debugTextureAttributes6ToolStripMenuItem.Name = "debugTextureAttributes6ToolStripMenuItem";
             this.debugTextureAttributes6ToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
             this.debugTextureAttributes6ToolStripMenuItem.Text = "DebugTextureAttributes6";
-            this.debugTextureAttributes6ToolStripMenuItem.Click += new System.EventHandler(this.debugTextureAttributes6ToolStripMenuItem_Click);
+            this.debugTextureAttributes6ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // textureAttributesAToolStripMenuItem
             // 
@@ -639,49 +639,49 @@
             this.debugTextureAttributesAHashToolStripMenuItem.Name = "debugTextureAttributesAHashToolStripMenuItem";
             this.debugTextureAttributesAHashToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
             this.debugTextureAttributesAHashToolStripMenuItem.Text = "DebugTextureAttributesAHash";
-            this.debugTextureAttributesAHashToolStripMenuItem.Click += new System.EventHandler(this.debugTextureAttributesAHashToolStripMenuItem_Click);
+            this.debugTextureAttributesAHashToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTextureAttributesA1ToolStripMenuItem
             // 
             this.debugTextureAttributesA1ToolStripMenuItem.Name = "debugTextureAttributesA1ToolStripMenuItem";
             this.debugTextureAttributesA1ToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
             this.debugTextureAttributesA1ToolStripMenuItem.Text = "DebugTextureAttributesA1";
-            this.debugTextureAttributesA1ToolStripMenuItem.Click += new System.EventHandler(this.debugTextureAttributesA1ToolStripMenuItem_Click);
+            this.debugTextureAttributesA1ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTextureAttributesA2ToolStripMenuItem
             // 
             this.debugTextureAttributesA2ToolStripMenuItem.Name = "debugTextureAttributesA2ToolStripMenuItem";
             this.debugTextureAttributesA2ToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
             this.debugTextureAttributesA2ToolStripMenuItem.Text = "DebugTextureAttributesA2";
-            this.debugTextureAttributesA2ToolStripMenuItem.Click += new System.EventHandler(this.debugTextureAttributesA2ToolStripMenuItem_Click);
+            this.debugTextureAttributesA2ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTextureAttributesA3ToolStripMenuItem
             // 
             this.debugTextureAttributesA3ToolStripMenuItem.Name = "debugTextureAttributesA3ToolStripMenuItem";
             this.debugTextureAttributesA3ToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
             this.debugTextureAttributesA3ToolStripMenuItem.Text = "DebugTextureAttributesA3";
-            this.debugTextureAttributesA3ToolStripMenuItem.Click += new System.EventHandler(this.debugTextureAttributesA3ToolStripMenuItem_Click);
+            this.debugTextureAttributesA3ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTextureAttributesA4ToolStripMenuItem
             // 
             this.debugTextureAttributesA4ToolStripMenuItem.Name = "debugTextureAttributesA4ToolStripMenuItem";
             this.debugTextureAttributesA4ToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
             this.debugTextureAttributesA4ToolStripMenuItem.Text = "DebugTextureAttributesA4";
-            this.debugTextureAttributesA4ToolStripMenuItem.Click += new System.EventHandler(this.debugTextureAttributesA4ToolStripMenuItem_Click);
+            this.debugTextureAttributesA4ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTextureAttributesA5ToolStripMenuItem
             // 
             this.debugTextureAttributesA5ToolStripMenuItem.Name = "debugTextureAttributesA5ToolStripMenuItem";
             this.debugTextureAttributesA5ToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
             this.debugTextureAttributesA5ToolStripMenuItem.Text = "DebugTextureAttributesA5";
-            this.debugTextureAttributesA5ToolStripMenuItem.Click += new System.EventHandler(this.debugTextureAttributesA5ToolStripMenuItem_Click);
+            this.debugTextureAttributesA5ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTextureAttributesA6ToolStripMenuItem
             // 
             this.debugTextureAttributesA6ToolStripMenuItem.Name = "debugTextureAttributesA6ToolStripMenuItem";
             this.debugTextureAttributesA6ToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
             this.debugTextureAttributesA6ToolStripMenuItem.Text = "DebugTextureAttributesA6";
-            this.debugTextureAttributesA6ToolStripMenuItem.Click += new System.EventHandler(this.debugTextureAttributesA6ToolStripMenuItem_Click);
+            this.debugTextureAttributesA6ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // texturePageToolStripMenuItem
             // 
@@ -704,63 +704,63 @@
             this.debugTexturePageHashToolStripMenuItem.Name = "debugTexturePageHashToolStripMenuItem";
             this.debugTexturePageHashToolStripMenuItem.Size = new System.Drawing.Size(333, 22);
             this.debugTexturePageHashToolStripMenuItem.Text = "DebugTexturePageHash";
-            this.debugTexturePageHashToolStripMenuItem.Click += new System.EventHandler(this.debugTexturePageHashToolStripMenuItem_Click);
+            this.debugTexturePageHashToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTexturePageUpper28BitsHashToolStripMenuItem
             // 
             this.debugTexturePageUpper28BitsHashToolStripMenuItem.Name = "debugTexturePageUpper28BitsHashToolStripMenuItem";
             this.debugTexturePageUpper28BitsHashToolStripMenuItem.Size = new System.Drawing.Size(333, 22);
             this.debugTexturePageUpper28BitsHashToolStripMenuItem.Text = "DebugTexturePageUpper28BitsHash (PlayStation)";
-            this.debugTexturePageUpper28BitsHashToolStripMenuItem.Click += new System.EventHandler(this.debugTexturePageUpper24BitsHashToolStripMenuItem_Click);
+            this.debugTexturePageUpper28BitsHashToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTexturePageUpper5BitsHashToolStripMenuItem
             // 
             this.debugTexturePageUpper5BitsHashToolStripMenuItem.Name = "debugTexturePageUpper5BitsHashToolStripMenuItem";
             this.debugTexturePageUpper5BitsHashToolStripMenuItem.Size = new System.Drawing.Size(333, 22);
             this.debugTexturePageUpper5BitsHashToolStripMenuItem.Text = "DebugTexturePageUpper5BitsHash";
-            this.debugTexturePageUpper5BitsHashToolStripMenuItem.Click += new System.EventHandler(this.debugTexturePageUpper5BitsHashToolStripMenuItem_Click);
+            this.debugTexturePageUpper5BitsHashToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTexturePage1ToolStripMenuItem
             // 
             this.debugTexturePage1ToolStripMenuItem.Name = "debugTexturePage1ToolStripMenuItem";
             this.debugTexturePage1ToolStripMenuItem.Size = new System.Drawing.Size(333, 22);
             this.debugTexturePage1ToolStripMenuItem.Text = "DebugTexturePage1";
-            this.debugTexturePage1ToolStripMenuItem.Click += new System.EventHandler(this.debugTexturePage1ToolStripMenuItem_Click);
+            this.debugTexturePage1ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTexturePage2ToolStripMenuItem
             // 
             this.debugTexturePage2ToolStripMenuItem.Name = "debugTexturePage2ToolStripMenuItem";
             this.debugTexturePage2ToolStripMenuItem.Size = new System.Drawing.Size(333, 22);
             this.debugTexturePage2ToolStripMenuItem.Text = "DebugTexturePage2";
-            this.debugTexturePage2ToolStripMenuItem.Click += new System.EventHandler(this.debugTexturePage2ToolStripMenuItem_Click);
+            this.debugTexturePage2ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTexturePage3ToolStripMenuItem
             // 
             this.debugTexturePage3ToolStripMenuItem.Name = "debugTexturePage3ToolStripMenuItem";
             this.debugTexturePage3ToolStripMenuItem.Size = new System.Drawing.Size(333, 22);
             this.debugTexturePage3ToolStripMenuItem.Text = "DebugTexturePage3";
-            this.debugTexturePage3ToolStripMenuItem.Click += new System.EventHandler(this.debugTexturePage3ToolStripMenuItem_Click);
+            this.debugTexturePage3ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTexturePage4ToolStripMenuItem
             // 
             this.debugTexturePage4ToolStripMenuItem.Name = "debugTexturePage4ToolStripMenuItem";
             this.debugTexturePage4ToolStripMenuItem.Size = new System.Drawing.Size(333, 22);
             this.debugTexturePage4ToolStripMenuItem.Text = "DebugTexturePage4";
-            this.debugTexturePage4ToolStripMenuItem.Click += new System.EventHandler(this.debugTexturePage4ToolStripMenuItem_Click);
+            this.debugTexturePage4ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTexturePage5ToolStripMenuItem
             // 
             this.debugTexturePage5ToolStripMenuItem.Name = "debugTexturePage5ToolStripMenuItem";
             this.debugTexturePage5ToolStripMenuItem.Size = new System.Drawing.Size(333, 22);
             this.debugTexturePage5ToolStripMenuItem.Text = "DebugTexturePage5";
-            this.debugTexturePage5ToolStripMenuItem.Click += new System.EventHandler(this.debugTexturePage5ToolStripMenuItem_Click);
+            this.debugTexturePage5ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugTexturePage6ToolStripMenuItem
             // 
             this.debugTexturePage6ToolStripMenuItem.Name = "debugTexturePage6ToolStripMenuItem";
             this.debugTexturePage6ToolStripMenuItem.Size = new System.Drawing.Size(333, 22);
             this.debugTexturePage6ToolStripMenuItem.Text = "DebugTexturePage6";
-            this.debugTexturePage6ToolStripMenuItem.Click += new System.EventHandler(this.debugTexturePage6ToolStripMenuItem_Click);
+            this.debugTexturePage6ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeInfoToolStripMenuItem
             // 
@@ -780,14 +780,14 @@
             this.rootBSPTreeNumberToolStripMenuItem.Name = "rootBSPTreeNumberToolStripMenuItem";
             this.rootBSPTreeNumberToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
             this.rootBSPTreeNumberToolStripMenuItem.Text = "Root BSP Tree Number Hash";
-            this.rootBSPTreeNumberToolStripMenuItem.Click += new System.EventHandler(this.rootBSPTreeNumberToolStripMenuItem_Click);
+            this.rootBSPTreeNumberToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeNodeIDToolStripMenuItem
             // 
             this.bSPTreeNodeIDToolStripMenuItem.Name = "bSPTreeNodeIDToolStripMenuItem";
             this.bSPTreeNodeIDToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
             this.bSPTreeNodeIDToolStripMenuItem.Text = "BSP Tree Node ID Hash";
-            this.bSPTreeNodeIDToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeNodeIDToolStripMenuItem_Click);
+            this.bSPTreeNodeIDToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeRootFlagsToolStripMenuItem
             // 
@@ -808,49 +808,49 @@
             this.bSPTreeRootFlagsHashToolStripMenuItem.Name = "bSPTreeRootFlagsHashToolStripMenuItem";
             this.bSPTreeRootFlagsHashToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
             this.bSPTreeRootFlagsHashToolStripMenuItem.Text = "BSPTreeRootFlagsHash";
-            this.bSPTreeRootFlagsHashToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeRootFlagsHashToolStripMenuItem_Click);
+            this.bSPTreeRootFlagsHashToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeRootFlags1ToolStripMenuItem
             // 
             this.bSPTreeRootFlags1ToolStripMenuItem.Name = "bSPTreeRootFlags1ToolStripMenuItem";
             this.bSPTreeRootFlags1ToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
             this.bSPTreeRootFlags1ToolStripMenuItem.Text = "BSPTreeRootFlags1";
-            this.bSPTreeRootFlags1ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeRootFlags1ToolStripMenuItem_Click);
+            this.bSPTreeRootFlags1ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeRootFlags2ToolStripMenuItem
             // 
             this.bSPTreeRootFlags2ToolStripMenuItem.Name = "bSPTreeRootFlags2ToolStripMenuItem";
             this.bSPTreeRootFlags2ToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
             this.bSPTreeRootFlags2ToolStripMenuItem.Text = "BSPTreeRootFlags2";
-            this.bSPTreeRootFlags2ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeRootFlags2ToolStripMenuItem_Click);
+            this.bSPTreeRootFlags2ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeRootFlags3ToolStripMenuItem
             // 
             this.bSPTreeRootFlags3ToolStripMenuItem.Name = "bSPTreeRootFlags3ToolStripMenuItem";
             this.bSPTreeRootFlags3ToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
             this.bSPTreeRootFlags3ToolStripMenuItem.Text = "BSPTreeRootFlags3";
-            this.bSPTreeRootFlags3ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeRootFlags3ToolStripMenuItem_Click);
+            this.bSPTreeRootFlags3ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeRootFlags4ToolStripMenuItem
             // 
             this.bSPTreeRootFlags4ToolStripMenuItem.Name = "bSPTreeRootFlags4ToolStripMenuItem";
             this.bSPTreeRootFlags4ToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
             this.bSPTreeRootFlags4ToolStripMenuItem.Text = "BSPTreeRootFlags4";
-            this.bSPTreeRootFlags4ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeRootFlags4ToolStripMenuItem_Click);
+            this.bSPTreeRootFlags4ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeRootFlags5ToolStripMenuItem
             // 
             this.bSPTreeRootFlags5ToolStripMenuItem.Name = "bSPTreeRootFlags5ToolStripMenuItem";
             this.bSPTreeRootFlags5ToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
             this.bSPTreeRootFlags5ToolStripMenuItem.Text = "BSPTreeRootFlags5";
-            this.bSPTreeRootFlags5ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeRootFlags5ToolStripMenuItem_Click);
+            this.bSPTreeRootFlags5ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeRootFlags6ToolStripMenuItem
             // 
             this.bSPTreeRootFlags6ToolStripMenuItem.Name = "bSPTreeRootFlags6ToolStripMenuItem";
             this.bSPTreeRootFlags6ToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
             this.bSPTreeRootFlags6ToolStripMenuItem.Text = "BSPTreeRootFlags6";
-            this.bSPTreeRootFlags6ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeRootFlags6ToolStripMenuItem_Click);
+            this.bSPTreeRootFlags6ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeNodeFlagsToolStripMenuItem
             // 
@@ -871,49 +871,49 @@
             this.bSPTreeNodeFlagsHashToolStripMenuItem.Name = "bSPTreeNodeFlagsHashToolStripMenuItem";
             this.bSPTreeNodeFlagsHashToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.bSPTreeNodeFlagsHashToolStripMenuItem.Text = "BSPTreeNodeFlagsHash";
-            this.bSPTreeNodeFlagsHashToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeNodeFlagsHashToolStripMenuItem_Click);
+            this.bSPTreeNodeFlagsHashToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeNodeFlags1ToolStripMenuItem
             // 
             this.bSPTreeNodeFlags1ToolStripMenuItem.Name = "bSPTreeNodeFlags1ToolStripMenuItem";
             this.bSPTreeNodeFlags1ToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.bSPTreeNodeFlags1ToolStripMenuItem.Text = "BSPTreeNodeFlags1";
-            this.bSPTreeNodeFlags1ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeNodeFlags1ToolStripMenuItem_Click);
+            this.bSPTreeNodeFlags1ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeNodeFlags2ToolStripMenuItem
             // 
             this.bSPTreeNodeFlags2ToolStripMenuItem.Name = "bSPTreeNodeFlags2ToolStripMenuItem";
             this.bSPTreeNodeFlags2ToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.bSPTreeNodeFlags2ToolStripMenuItem.Text = "BSPTreeNodeFlags2";
-            this.bSPTreeNodeFlags2ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeNodeFlags2ToolStripMenuItem_Click);
+            this.bSPTreeNodeFlags2ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeNodeFlags3ToolStripMenuItem
             // 
             this.bSPTreeNodeFlags3ToolStripMenuItem.Name = "bSPTreeNodeFlags3ToolStripMenuItem";
             this.bSPTreeNodeFlags3ToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.bSPTreeNodeFlags3ToolStripMenuItem.Text = "BSPTreeNodeFlags3";
-            this.bSPTreeNodeFlags3ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeNodeFlags3ToolStripMenuItem_Click);
+            this.bSPTreeNodeFlags3ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeNodeFlags4ToolStripMenuItem
             // 
             this.bSPTreeNodeFlags4ToolStripMenuItem.Name = "bSPTreeNodeFlags4ToolStripMenuItem";
             this.bSPTreeNodeFlags4ToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.bSPTreeNodeFlags4ToolStripMenuItem.Text = "BSPTreeNodeFlags4";
-            this.bSPTreeNodeFlags4ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeNodeFlags4ToolStripMenuItem_Click);
+            this.bSPTreeNodeFlags4ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeNodeFlags5ToolStripMenuItem
             // 
             this.bSPTreeNodeFlags5ToolStripMenuItem.Name = "bSPTreeNodeFlags5ToolStripMenuItem";
             this.bSPTreeNodeFlags5ToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.bSPTreeNodeFlags5ToolStripMenuItem.Text = "BSPTreeNodeFlags5";
-            this.bSPTreeNodeFlags5ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeNodeFlags5ToolStripMenuItem_Click);
+            this.bSPTreeNodeFlags5ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeNodeFlags6ToolStripMenuItem
             // 
             this.bSPTreeNodeFlags6ToolStripMenuItem.Name = "bSPTreeNodeFlags6ToolStripMenuItem";
             this.bSPTreeNodeFlags6ToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.bSPTreeNodeFlags6ToolStripMenuItem.Text = "BSPTreeNodeFlags6";
-            this.bSPTreeNodeFlags6ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeNodeFlags6ToolStripMenuItem_Click);
+            this.bSPTreeNodeFlags6ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeParentNodeFlagsORdToolStripMenuItem
             // 
@@ -934,49 +934,49 @@
             this.bSPTreeParentNodeFlagsORdHashToolStripMenuItem.Name = "bSPTreeParentNodeFlagsORdHashToolStripMenuItem";
             this.bSPTreeParentNodeFlagsORdHashToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
             this.bSPTreeParentNodeFlagsORdHashToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORdHash";
-            this.bSPTreeParentNodeFlagsORdHashToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeParentNodeFlagsORdHashToolStripMenuItem_Click);
+            this.bSPTreeParentNodeFlagsORdHashToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeParentNodeFlagsORd1ToolStripMenuItem
             // 
             this.bSPTreeParentNodeFlagsORd1ToolStripMenuItem.Name = "bSPTreeParentNodeFlagsORd1ToolStripMenuItem";
             this.bSPTreeParentNodeFlagsORd1ToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
             this.bSPTreeParentNodeFlagsORd1ToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORd1";
-            this.bSPTreeParentNodeFlagsORd1ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeParentNodeFlagsORd1ToolStripMenuItem_Click);
+            this.bSPTreeParentNodeFlagsORd1ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeParentNodeFlagsORd2ToolStripMenuItem
             // 
             this.bSPTreeParentNodeFlagsORd2ToolStripMenuItem.Name = "bSPTreeParentNodeFlagsORd2ToolStripMenuItem";
             this.bSPTreeParentNodeFlagsORd2ToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
             this.bSPTreeParentNodeFlagsORd2ToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORd2";
-            this.bSPTreeParentNodeFlagsORd2ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeParentNodeFlagsORd2ToolStripMenuItem_Click);
+            this.bSPTreeParentNodeFlagsORd2ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeParentNodeFlagsORd3ToolStripMenuItem
             // 
             this.bSPTreeParentNodeFlagsORd3ToolStripMenuItem.Name = "bSPTreeParentNodeFlagsORd3ToolStripMenuItem";
             this.bSPTreeParentNodeFlagsORd3ToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
             this.bSPTreeParentNodeFlagsORd3ToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORd3";
-            this.bSPTreeParentNodeFlagsORd3ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeParentNodeFlagsORd3ToolStripMenuItem_Click);
+            this.bSPTreeParentNodeFlagsORd3ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeParentNodeFlagsORd4ToolStripMenuItem
             // 
             this.bSPTreeParentNodeFlagsORd4ToolStripMenuItem.Name = "bSPTreeParentNodeFlagsORd4ToolStripMenuItem";
             this.bSPTreeParentNodeFlagsORd4ToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
             this.bSPTreeParentNodeFlagsORd4ToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORd4";
-            this.bSPTreeParentNodeFlagsORd4ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeParentNodeFlagsORd4ToolStripMenuItem_Click);
+            this.bSPTreeParentNodeFlagsORd4ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeParentNodeFlagsORd5ToolStripMenuItem
             // 
             this.bSPTreeParentNodeFlagsORd5ToolStripMenuItem.Name = "bSPTreeParentNodeFlagsORd5ToolStripMenuItem";
             this.bSPTreeParentNodeFlagsORd5ToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
             this.bSPTreeParentNodeFlagsORd5ToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORd5";
-            this.bSPTreeParentNodeFlagsORd5ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeParentNodeFlagsORd5ToolStripMenuItem_Click);
+            this.bSPTreeParentNodeFlagsORd5ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeParentNodeFlagsORd6ToolStripMenuItem
             // 
             this.bSPTreeParentNodeFlagsORd6ToolStripMenuItem.Name = "bSPTreeParentNodeFlagsORd6ToolStripMenuItem";
             this.bSPTreeParentNodeFlagsORd6ToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
             this.bSPTreeParentNodeFlagsORd6ToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORd6";
-            this.bSPTreeParentNodeFlagsORd6ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeParentNodeFlagsORd6ToolStripMenuItem_Click);
+            this.bSPTreeParentNodeFlagsORd6ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeLeafFlagsToolStripMenuItem
             // 
@@ -997,49 +997,49 @@
             this.bSPTreeLeafFlagsHashToolStripMenuItem.Name = "bSPTreeLeafFlagsHashToolStripMenuItem";
             this.bSPTreeLeafFlagsHashToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.bSPTreeLeafFlagsHashToolStripMenuItem.Text = "BSPTreeLeafFlagsHash";
-            this.bSPTreeLeafFlagsHashToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeLeafFlagsHashToolStripMenuItem_Click);
+            this.bSPTreeLeafFlagsHashToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeLeafFlags1ToolStripMenuItem
             // 
             this.bSPTreeLeafFlags1ToolStripMenuItem.Name = "bSPTreeLeafFlags1ToolStripMenuItem";
             this.bSPTreeLeafFlags1ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.bSPTreeLeafFlags1ToolStripMenuItem.Text = "BSPTreeLeafFlags1";
-            this.bSPTreeLeafFlags1ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeLeafFlags1ToolStripMenuItem_Click);
+            this.bSPTreeLeafFlags1ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeLeafFlags2ToolStripMenuItem
             // 
             this.bSPTreeLeafFlags2ToolStripMenuItem.Name = "bSPTreeLeafFlags2ToolStripMenuItem";
             this.bSPTreeLeafFlags2ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.bSPTreeLeafFlags2ToolStripMenuItem.Text = "BSPTreeLeafFlags2";
-            this.bSPTreeLeafFlags2ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeLeafFlags2ToolStripMenuItem_Click);
+            this.bSPTreeLeafFlags2ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeLeafFlags3ToolStripMenuItem
             // 
             this.bSPTreeLeafFlags3ToolStripMenuItem.Name = "bSPTreeLeafFlags3ToolStripMenuItem";
             this.bSPTreeLeafFlags3ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.bSPTreeLeafFlags3ToolStripMenuItem.Text = "BSPTreeLeafFlags3";
-            this.bSPTreeLeafFlags3ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeLeafFlags3ToolStripMenuItem_Click);
+            this.bSPTreeLeafFlags3ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeLeafFlags4ToolStripMenuItem
             // 
             this.bSPTreeLeafFlags4ToolStripMenuItem.Name = "bSPTreeLeafFlags4ToolStripMenuItem";
             this.bSPTreeLeafFlags4ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.bSPTreeLeafFlags4ToolStripMenuItem.Text = "BSPTreeLeafFlags4";
-            this.bSPTreeLeafFlags4ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeLeafFlags4ToolStripMenuItem_Click);
+            this.bSPTreeLeafFlags4ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeLeafFlags5ToolStripMenuItem
             // 
             this.bSPTreeLeafFlags5ToolStripMenuItem.Name = "bSPTreeLeafFlags5ToolStripMenuItem";
             this.bSPTreeLeafFlags5ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.bSPTreeLeafFlags5ToolStripMenuItem.Text = "BSPTreeLeafFlags5";
-            this.bSPTreeLeafFlags5ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeLeafFlags5ToolStripMenuItem_Click);
+            this.bSPTreeLeafFlags5ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // bSPTreeLeafFlags6ToolStripMenuItem
             // 
             this.bSPTreeLeafFlags6ToolStripMenuItem.Name = "bSPTreeLeafFlags6ToolStripMenuItem";
             this.bSPTreeLeafFlags6ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.bSPTreeLeafFlags6ToolStripMenuItem.Text = "BSPTreeLeafFlags6";
-            this.bSPTreeLeafFlags6ToolStripMenuItem.Click += new System.EventHandler(this.bSPTreeLeafFlags6ToolStripMenuItem_Click);
+            this.bSPTreeLeafFlags6ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // sortPushToolStripMenuItem
             // 
@@ -1057,28 +1057,28 @@
             this.debugSortPushHashToolStripMenuItem.Name = "debugSortPushHashToolStripMenuItem";
             this.debugSortPushHashToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.debugSortPushHashToolStripMenuItem.Text = "DebugSortPushHash";
-            this.debugSortPushHashToolStripMenuItem.Click += new System.EventHandler(this.debugSortPushHashToolStripMenuItem_Click);
+            this.debugSortPushHashToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugSortPushFlags1ToolStripMenuItem
             // 
             this.debugSortPushFlags1ToolStripMenuItem.Name = "debugSortPushFlags1ToolStripMenuItem";
             this.debugSortPushFlags1ToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.debugSortPushFlags1ToolStripMenuItem.Text = "DebugSortPushFlags1";
-            this.debugSortPushFlags1ToolStripMenuItem.Click += new System.EventHandler(this.debugSortPushFlags1ToolStripMenuItem_Click);
+            this.debugSortPushFlags1ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugSortPushFlags2ToolStripMenuItem
             // 
             this.debugSortPushFlags2ToolStripMenuItem.Name = "debugSortPushFlags2ToolStripMenuItem";
             this.debugSortPushFlags2ToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.debugSortPushFlags2ToolStripMenuItem.Text = "DebugSortPushFlags2";
-            this.debugSortPushFlags2ToolStripMenuItem.Click += new System.EventHandler(this.debugSortPushFlags2ToolStripMenuItem_Click);
+            this.debugSortPushFlags2ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // debugSortPushFlags3ToolStripMenuItem
             // 
             this.debugSortPushFlags3ToolStripMenuItem.Name = "debugSortPushFlags3ToolStripMenuItem";
             this.debugSortPushFlags3ToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.debugSortPushFlags3ToolStripMenuItem.Text = "DebugSortPushFlags3";
-            this.debugSortPushFlags3ToolStripMenuItem.Click += new System.EventHandler(this.debugSortPushFlags3ToolStripMenuItem_Click);
+            this.debugSortPushFlags3ToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // alphaValuesToolStripMenuItem
             // 
@@ -1095,28 +1095,28 @@
             this.averageVertexAlphaToolStripMenuItem.Name = "averageVertexAlphaToolStripMenuItem";
             this.averageVertexAlphaToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.averageVertexAlphaToolStripMenuItem.Text = "Average Vertex Alpha";
-            this.averageVertexAlphaToolStripMenuItem.Click += new System.EventHandler(this.averageVertexAlphaToolStripMenuItem_Click);
+            this.averageVertexAlphaToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // polygonAlphaToolStripMenuItem
             // 
             this.polygonAlphaToolStripMenuItem.Name = "polygonAlphaToolStripMenuItem";
             this.polygonAlphaToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.polygonAlphaToolStripMenuItem.Text = "Polygon Alpha";
-            this.polygonAlphaToolStripMenuItem.Click += new System.EventHandler(this.polygonAlphaToolStripMenuItem_Click);
+            this.polygonAlphaToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // polygonOpacityToolStripMenuItem
             // 
             this.polygonOpacityToolStripMenuItem.Name = "polygonOpacityToolStripMenuItem";
             this.polygonOpacityToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.polygonOpacityToolStripMenuItem.Text = "Polygon Opacity";
-            this.polygonOpacityToolStripMenuItem.Click += new System.EventHandler(this.polygonOpacityToolStripMenuItem_Click);
+            this.polygonOpacityToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // boneIDHashToolStripMenuItem
             // 
             this.boneIDHashToolStripMenuItem.Name = "boneIDHashToolStripMenuItem";
             this.boneIDHashToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
             this.boneIDHashToolStripMenuItem.Text = "Bone ID Hash";
-            this.boneIDHashToolStripMenuItem.Click += new System.EventHandler(this.boneIDHashToolStripMenuItem_Click);
+            this.boneIDHashToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
