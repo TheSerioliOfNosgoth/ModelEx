@@ -418,7 +418,7 @@ namespace ModelEx
 			_LoadRequest.TextureFile = loadResourceDialog.TextureFile;
 			_LoadRequest.ObjectListFile = loadResourceDialog.ObjectListFile;
 			_LoadRequest.GameType = loadResourceDialog.SelectedGameType;
-			_LoadRequest.ExportOptions = sceneModeOnLoad == SceneMode.Debug ? _ImportExportOptions null;
+			_LoadRequest.ExportOptions = sceneModeOnLoad == SceneMode.Debug ? _ImportExportOptions : null;
 			_LoadRequest.IsDebugResource = sceneModeOnLoad == SceneMode.Debug;
 
 			_ClearResourcesOnLoad = loadResourceDialog.ClearLoadedFiles;
