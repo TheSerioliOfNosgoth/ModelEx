@@ -116,7 +116,6 @@ namespace CDC.Objects
 		public bool IgnoreVertexColours;
 		public List<string> TextureFileLocations;
 		public RenderMode RenderMode;
-		public Platform ForcedPlatform;
 
 		public ExportOptions()
 		{
@@ -145,7 +144,6 @@ namespace CDC.Objects
 			IgnoreVertexColours = false;
 			TextureFileLocations = new List<string>();
 			RenderMode = RenderMode.Standard;
-			ForcedPlatform = Platform.None;
 		}
 
 		public bool TextureLoadRequired()
@@ -206,10 +204,11 @@ namespace CDC.Objects
 
 		}
 
-		protected SRFile(String dataFile, Game game, ExportOptions options)
+		protected SRFile(String dataFile, Game game, Platform platform, ExportOptions options)
 		{
 			_name = Path.GetFileNameWithoutExtension(dataFile);
 			_game = game;
+			_platform = platform;
 
 			//String strDebugFileName = Path.GetDirectoryName(strFileName) + "\\" + Path.GetFileNameWithoutExtension(strFileName) + "-Debug.txt";
 			//LogFile = File.CreateText(strDebugFileName);
@@ -247,7 +246,7 @@ namespace CDC.Objects
 
 		protected abstract void ResolvePointers(BinaryReader reader, BinaryWriter writer);
 
-		public static SRFile Create(string dataFile, string objectListFile, Game game, ExportOptions options, int childIndex = -1)
+		public static SRFile Create(string dataFile, string objectListFile, Game game, Platform platform, ExportOptions options, int childIndex = -1)
 		{
 			SRFile srFile;
 
@@ -255,7 +254,7 @@ namespace CDC.Objects
 			{
 				if (game == Game.Gex)
 				{
-					GexFile gexFile = new GexFile(dataFile, options);
+					GexFile gexFile = new GexFile(dataFile, platform, options);
 					if (gexFile.Asset == Asset.Unit && childIndex >= 0)
 					{
 						srFile = gexFile.Objects[childIndex];
@@ -267,19 +266,19 @@ namespace CDC.Objects
 				}
 				else if (game == Game.SR1)
 				{
-					srFile = new SR1File(dataFile, options);
+					srFile = new SR1File(dataFile, platform, options);
 				}
 				else if (game == Game.SR2)
 				{
-					srFile = new SR2File(dataFile, options);
+					srFile = new SR2File(dataFile, platform, options);
 				}
 				else if (game == Game.Defiance)
 				{
-					srFile = new DefianceFile(dataFile, objectListFile, options);
+					srFile = new DefianceFile(dataFile, objectListFile, platform, options);
 				}
 				else if (game == Game.TRL)
 				{
-					srFile = new TRLFile(dataFile, objectListFile, options);
+					srFile = new TRLFile(dataFile, objectListFile, platform, options);
 				}
 				else
 				{

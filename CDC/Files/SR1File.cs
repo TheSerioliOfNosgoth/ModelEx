@@ -17,8 +17,8 @@ namespace CDC.Objects
 
 		public MonsterAttributes _monsterAttributes;
 
-		public SR1File(String dataFile, ExportOptions options)
-			: base(dataFile, Game.SR1, options)
+		public SR1File(String dataFile, Platform platform, ExportOptions options)
+			: base(dataFile, Game.SR1, platform, options)
 		{
 		}
 
@@ -44,7 +44,7 @@ namespace CDC.Objects
 			}
 
 			// Texture type
-			if (options.ForcedPlatform == CDC.Platform.None)
+			if (_platform == Platform.None)
 			{
 				reader.BaseStream.Position = _dataStart + 0x44;
 				if (_version == PROTO_19981025_VERSION || reader.ReadUInt64() != 0xFFFFFFFFFFFFFFFF)
@@ -55,10 +55,6 @@ namespace CDC.Objects
 				{
 					_platform = Platform.PC;
 				}
-			}
-			else
-			{
-				_platform = options.ForcedPlatform;
 			}
 
 			// Model data
@@ -74,12 +70,12 @@ namespace CDC.Objects
 			{
 				Console.WriteLine(string.Format("Debug: reading object model {0} / {1}", m, (_modelCount - 1)));
 				_models[m] = SR1ObjectModel.Load(reader, _dataStart, _modelStart, _name, _platform, m, _version, options);
-				if ((options.ForcedPlatform == CDC.Platform.None) && (_models[m].Platform == Platform.Dreamcast))
+				if ((_platform == Platform.None) && (_models[m].Platform == Platform.Dreamcast))
 				{
 					ePlatform = _models[m].Platform;
 				}
 			}
-			if (options.ForcedPlatform == CDC.Platform.None)
+			if (_platform == Platform.None)
 			{
 				_platform = ePlatform;
 			}
@@ -124,11 +120,6 @@ namespace CDC.Objects
 		protected override void ReadUnitData(BinaryReader reader, ExportOptions options)
 		{
 			bool validVersion = false;
-
-			if (options.ForcedPlatform != Platform.None)
-			{
-				_platform = options.ForcedPlatform;
-			}
 
 			if (!validVersion)
 			{
@@ -360,7 +351,7 @@ namespace CDC.Objects
 				_version == ALPHA_19990204_VERSION_2 ||
 				_version == ALPHA_19990216_VERSION_3)
 			{
-				if (options.ForcedPlatform == CDC.Platform.None)
+				if (_platform == Platform.None)
 				{
 					_platform = Platform.PSX;
 				}
@@ -371,7 +362,7 @@ namespace CDC.Objects
 			{
 				reader.BaseStream.Position = _dataStart + 0x9C;
 				UInt64 checkVal = reader.ReadUInt64();
-				if (options.ForcedPlatform == CDC.Platform.None)
+				if (_platform == Platform.None)
 				{
 					if (checkVal != 0xFFFFFFFFFFFFFFFF)
 					{
@@ -381,10 +372,6 @@ namespace CDC.Objects
 					{
 						_platform = Platform.PC;
 					}
-				}
-				else
-				{
-					_platform = options.ForcedPlatform;
 				}
 			}
 

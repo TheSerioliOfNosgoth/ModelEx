@@ -22,16 +22,20 @@ namespace ModelEx
 	public class RenderResourceCDC : RenderResource
 	{
 		public SRFile File { get; private set; }
+		public LoadRequestCDC LoadRequest { get; private set; }
 
 		public const string TextureExtension = ".png";
+		private CDC.Objects.ExportOptions ExportOptions;
 
-		public RenderResourceCDC(SRFile srFile)
+		public RenderResourceCDC(SRFile srFile, LoadRequestCDC loadRequest)
 			: base(srFile.Name)
 		{
 			File = srFile;
+			LoadRequest = (LoadRequestCDC)loadRequest.Clone();
+			ExportOptions = LoadRequest.ExportOptions;
 		}
 
-		public void LoadModels(CDC.Objects.ExportOptions options)
+		public void LoadModels()
 		{
 			foreach (Model model in Models)
 			{
@@ -41,7 +45,7 @@ namespace ModelEx
 			for (int modelIndex = 0; modelIndex < File.Models.Length; modelIndex++)
 			{
 				SRModelParser modelParser = new SRModelParser(File.Name, File);
-				modelParser.BuildModel(this, modelIndex, options);
+				modelParser.BuildModel(this, modelIndex, ExportOptions);
 				if (File.Asset == CDC.Asset.Unit)
 				{
 					Models.Add(modelParser.Model);
@@ -53,7 +57,7 @@ namespace ModelEx
 			}
 		}
 
-		public void LoadTextures(string fileName, CDC.Objects.ExportOptions options)
+		public void LoadTextures(string fileName)
 		{
 			FileShaderResourceViewDictionary.Clear();
 
@@ -276,7 +280,7 @@ namespace ModelEx
 						}
 						bool drawGreyscaleFirst = false;
 						bool quantizeBounds = true;
-						textureFile.BuildTexturesFromPolygonData(polygons, drawGreyscaleFirst, quantizeBounds, options);
+						textureFile.BuildTexturesFromPolygonData(polygons, drawGreyscaleFirst, quantizeBounds, ExportOptions);
 
 						// For all models
 						for (int t = 0; t < textureFile.TextureCount; t++)
@@ -293,7 +297,7 @@ namespace ModelEx
 							Bitmap b = textureFile.GetTextureAsBitmap(t);
 							// this is a hack that's being done here for now because I don't know for sure which of the flags/attributes controls
 							// textures that should be alpha-masked. Alpha-masking EVERY texture is expensive.
-							if (options.AlsoInferAlphaMaskingFromTexturePixels)
+							if (ExportOptions.AlsoInferAlphaMaskingFromTexturePixels)
 							{
 								if (BitmapHasTransparentPixels(b))
 								{
@@ -323,7 +327,7 @@ namespace ModelEx
 						}
 
 						// for models that use index/CLUT textures, if the user has enabled this option
-						if (options.UseEachUniqueTextureCLUTVariation)
+						if (ExportOptions.UseEachUniqueTextureCLUTVariation)
 						{
 							foreach (int textureID in textureFile.TexturesByCLUT.Keys)
 							{
@@ -401,7 +405,7 @@ namespace ModelEx
 
 					bool drawGreyscaleFirst = false;
 					bool quantizeBounds = true;
-					textureFile.BuildTexturesFromPolygonData(polygons, ((GexFile)File).TPages, drawGreyscaleFirst, quantizeBounds, options);
+					textureFile.BuildTexturesFromPolygonData(polygons, ((GexFile)File).TPages, drawGreyscaleFirst, quantizeBounds, ExportOptions);
 
 					// For all models
 					for (int t = 0; t < textureFile.TextureCount; t++)
@@ -418,7 +422,7 @@ namespace ModelEx
 						Bitmap b = textureFile.GetTextureAsBitmap(t);
 						// this is a hack that's being done here for now because I don't know for sure which of the flags/attributes controls
 						// textures that should be alpha-masked. Alpha-masking EVERY texture is expensive.
-						if (options.AlsoInferAlphaMaskingFromTexturePixels)
+						if (ExportOptions.AlsoInferAlphaMaskingFromTexturePixels)
 						{
 							if (BitmapHasTransparentPixels(b))
 							{
@@ -446,7 +450,7 @@ namespace ModelEx
 					}
 
 					// for models that use index/CLUT textures, if the user has enabled this option
-					if (options.UseEachUniqueTextureCLUTVariation)
+					if (ExportOptions.UseEachUniqueTextureCLUTVariation)
 					{
 						foreach (int textureID in textureFile.TexturesByCLUT.Keys)
 						{
@@ -492,11 +496,11 @@ namespace ModelEx
 			}
 		}
 
-		public void ExportToFile(string fileName, CDC.Objects.ExportOptions options)
+		public void ExportToFile(string fileName)
 		{
 			string filePath = Path.GetFullPath(fileName);
 			DeleteExistingFile(filePath);
-			File.ExportToFile(fileName, options);
+			File.ExportToFile(fileName, ExportOptions);
 			string baseExportDirectory = Path.GetDirectoryName(fileName);
 			foreach (string textureFileName in _TexturesAsPNGs.Keys)
 			{

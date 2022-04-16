@@ -6,6 +6,7 @@ using SlimDX;
 using SlimDX.Direct3D11;
 using SlimDX.DXGI;
 using Game = CDC.Game;
+using Platform = CDC.Platform;
 using ExportOptions = CDC.Objects.ExportOptions;
 using SRFile = CDC.Objects.SRFile;
 
@@ -20,20 +21,26 @@ namespace ModelEx
 		Debug = 3
 	}
 
+	public class LoadRequestCDC : System.ICloneable
+	{
+		public string ResourceName = "";
+		public string DataFile = "";
+		public string TextureFile = "";
+		public string ObjectListFile = "";
+		public Game GameType = Game.Gex;
+		public Platform Platform = Platform.PC;
+		public int ChildIndex = -1;
+		public ExportOptions ExportOptions;
+		public bool IsDebugResource = false;
+
+		public object Clone()
+		{
+			return MemberwiseClone();
+		}
+	};
+
 	public class RenderManager
 	{
-		public class LoadRequestCDC
-		{
-			public string ResourceName = "";
-			public string DataFile = "";
-			public string TextureFile = "";
-			public string ObjectListFile = "";
-			public Game GameType = Game.Gex;
-			public int ChildIndex = -1;
-			public ExportOptions ExportOptions;
-			public bool IsDebugResource = false;
-		};
-
 		private Thread renderThread;
 		private int syncInterval = 1;
 		private FrameCounter frameCounter = FrameCounter.Instance;
@@ -133,10 +140,7 @@ namespace ModelEx
 			SceneCDC.progressLevels = 1;
 			SceneCDC.ProgressStage = "Reading Data";
 
-			ExportOptions options = loadRequest.ExportOptions != null ?
-				loadRequest.ExportOptions : new ExportOptions();
-
-			SRFile srFile = SRFile.Create(loadRequest.DataFile, loadRequest.ObjectListFile, loadRequest.GameType, options, loadRequest.ChildIndex);
+			SRFile srFile = SRFile.Create(loadRequest.DataFile, loadRequest.ObjectListFile, loadRequest.GameType, loadRequest.Platform, loadRequest.ExportOptions, loadRequest.ChildIndex);
 
 			if (srFile == null)
 			{
@@ -161,12 +165,12 @@ namespace ModelEx
 				renderResource.Dispose();
 			}
 
-			renderResource = new RenderResourceCDC(srFile);
-			renderResource.LoadModels(options);
+			renderResource = new RenderResourceCDC(srFile, loadRequest);
+			renderResource.LoadModels();
 
 			SceneCDC.progressLevel = 1;
 
-			renderResource.LoadTextures(loadRequest.TextureFile, options);
+			renderResource.LoadTextures(loadRequest.TextureFile);
 
 			if (loadRequest.IsDebugResource)
 			{
@@ -236,12 +240,21 @@ namespace ModelEx
 			}
 		}
 
-		public void ExportResourceCDC(string resourceName, string filename, ExportOptions options)
+		public void ReloadDebugResource()
+		{
+			if (DebugResource != null)
+			{
+				LoadRequestCDC loadRequest = ((RenderResourceCDC)DebugResource).LoadRequest;
+				LoadResourceCDC(loadRequest);
+			}
+		}
+
+		public void ExportResourceCDC(string resourceName, string filename)
 		{
 			if (resourceName != "" && Resources.ContainsKey(resourceName))
 			{
 				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[resourceName];
-				renderResource.ExportToFile(filename, options);
+				renderResource.ExportToFile(filename);
 			}
 		}
 
@@ -259,11 +272,11 @@ namespace ModelEx
 			}
 		}
 
-		public void ExportCurrentObject(string fileName, ExportOptions options)
+		public void ExportCurrentObject(string fileName)
 		{
 			if (CurrentObject != null)
 			{
-				ExportResourceCDC(CurrentObject.Name, fileName, options);
+				ExportResourceCDC(CurrentObject.Name, fileName);
 			}
 		}
 
@@ -282,11 +295,11 @@ namespace ModelEx
 			}
 		}
 
-		public void ExportCurrentScene(string fileName, ExportOptions options)
+		public void ExportCurrentScene(string fileName)
 		{
 			if (CurrentScene != null)
 			{
-				ExportResourceCDC(CurrentScene.Name, fileName, options);
+				ExportResourceCDC(CurrentScene.Name, fileName);
 			}
 		}
 

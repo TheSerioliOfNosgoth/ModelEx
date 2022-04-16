@@ -7,8 +7,8 @@ namespace CDC.Objects
 {
 	public class SR2File : SRFile
 	{
-		public SR2File(String dataFile, ExportOptions options)
-			: base(dataFile, Game.SR2, options)
+		public SR2File(String dataFile, Platform platform, ExportOptions options)
+			: base(dataFile, Game.SR2, platform, options)
 		{
 		}
 
@@ -28,13 +28,9 @@ namespace CDC.Objects
 			//}
 			//else
 			//{
-			if (options.ForcedPlatform == CDC.Platform.None)
+			if (_platform == Platform.None)
 			{
 				_platform = Platform.PC;
-			}
-			else
-			{
-				_platform = options.ForcedPlatform;
 			}
 			//}
 
@@ -124,13 +120,9 @@ namespace CDC.Objects
 			//}
 			//else
 			//{
-			if (options.ForcedPlatform == CDC.Platform.None)
+			if (_platform == Platform.None)
 			{
 				_platform = Platform.PC;
-			}
-			else
-			{
-				_platform = options.ForcedPlatform;
 			}
 			//}
 

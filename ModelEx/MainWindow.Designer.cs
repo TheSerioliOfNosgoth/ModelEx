@@ -151,13 +151,6 @@
             this.createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.indexedTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useEachUniqueTextureCLUTVariationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.soulReaverPlatformDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.autodetectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.forceDreamcastToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.forcePlayStationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.forcePlayStation2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.forcePCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.forceXboxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.unhide100InvisibleTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.discardHiddenPolygonsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.missingPalettesInGreyscaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -1126,7 +1119,6 @@
             this.exportSpectralVersionOfAreaFilesToolStripMenuItem,
             this.flagHandlingToolStripMenuItem,
             this.indexedTexturesToolStripMenuItem,
-            this.soulReaverPlatformDetectionToolStripMenuItem,
             this.unhide100InvisibleTexturesToolStripMenuItem,
             this.discardHiddenPolygonsToolStripMenuItem,
             this.missingPalettesInGreyscaleToolStripMenuItem,
@@ -1201,61 +1193,6 @@
             this.useEachUniqueTextureCLUTVariationToolStripMenuItem.Size = new System.Drawing.Size(285, 22);
             this.useEachUniqueTextureCLUTVariationToolStripMenuItem.Text = "Use Each Unique Texture/CLUT Variation";
             this.useEachUniqueTextureCLUTVariationToolStripMenuItem.Click += new System.EventHandler(this.debugToggleToolStripMenuItem_Click);
-            // 
-            // soulReaverPlatformDetectionToolStripMenuItem
-            // 
-            this.soulReaverPlatformDetectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.autodetectToolStripMenuItem,
-            this.forceDreamcastToolStripMenuItem,
-            this.forcePlayStationToolStripMenuItem,
-            this.forcePlayStation2ToolStripMenuItem,
-            this.forcePCToolStripMenuItem,
-            this.forceXboxToolStripMenuItem});
-            this.soulReaverPlatformDetectionToolStripMenuItem.Name = "soulReaverPlatformDetectionToolStripMenuItem";
-            this.soulReaverPlatformDetectionToolStripMenuItem.Size = new System.Drawing.Size(369, 22);
-            this.soulReaverPlatformDetectionToolStripMenuItem.Text = "Platform Detection";
-            // 
-            // autodetectToolStripMenuItem
-            // 
-            this.autodetectToolStripMenuItem.Name = "autodetectToolStripMenuItem";
-            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.autodetectToolStripMenuItem.Text = "Autodetect";
-            this.autodetectToolStripMenuItem.Click += new System.EventHandler(this.forcedPlatformToolStripMenuItem_Click);
-            // 
-            // forceDreamcastToolStripMenuItem
-            // 
-            this.forceDreamcastToolStripMenuItem.Name = "forceDreamcastToolStripMenuItem";
-            this.forceDreamcastToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.forceDreamcastToolStripMenuItem.Text = "Force Dreamcast";
-            this.forceDreamcastToolStripMenuItem.Click += new System.EventHandler(this.forcedPlatformToolStripMenuItem_Click);
-            // 
-            // forcePlayStationToolStripMenuItem
-            // 
-            this.forcePlayStationToolStripMenuItem.Name = "forcePlayStationToolStripMenuItem";
-            this.forcePlayStationToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.forcePlayStationToolStripMenuItem.Text = "Force PlayStation";
-            this.forcePlayStationToolStripMenuItem.Click += new System.EventHandler(this.forcedPlatformToolStripMenuItem_Click);
-            // 
-            // forcePlayStation2ToolStripMenuItem
-            // 
-            this.forcePlayStation2ToolStripMenuItem.Name = "forcePlayStation2ToolStripMenuItem";
-            this.forcePlayStation2ToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.forcePlayStation2ToolStripMenuItem.Text = "Force PlayStation 2";
-            this.forcePlayStation2ToolStripMenuItem.Click += new System.EventHandler(this.forcedPlatformToolStripMenuItem_Click);
-            // 
-            // forcePCToolStripMenuItem
-            // 
-            this.forcePCToolStripMenuItem.Name = "forcePCToolStripMenuItem";
-            this.forcePCToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.forcePCToolStripMenuItem.Text = "Force PC";
-            this.forcePCToolStripMenuItem.Click += new System.EventHandler(this.forcedPlatformToolStripMenuItem_Click);
-            // 
-            // forceXboxToolStripMenuItem
-            // 
-            this.forceXboxToolStripMenuItem.Name = "forceXboxToolStripMenuItem";
-            this.forceXboxToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.forceXboxToolStripMenuItem.Text = "Force Xbox";
-            this.forceXboxToolStripMenuItem.Click += new System.EventHandler(this.forcedPlatformToolStripMenuItem_Click);
             // 
             // unhide100InvisibleTexturesToolStripMenuItem
             // 
@@ -1705,13 +1642,6 @@
 		private System.Windows.Forms.ToolStripMenuItem debugColouringBasedOnVerticesToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem interpolatePolygonColoursToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem debugTexturePageUpper5BitsHashToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem soulReaverPlatformDetectionToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem autodetectToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem forcePlayStationToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem forcePCToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem forceDreamcastToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem forcePlayStation2ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem forceXboxToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem textureAttributesAToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem debugTextureAttributesAHashToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem debugTextureAttributesA1ToolStripMenuItem;

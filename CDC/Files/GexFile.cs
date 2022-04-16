@@ -25,8 +25,8 @@ namespace CDC.Objects
 			ReadObjectData(reader, options);
 		}
 
-		public GexFile(String dataFile, ExportOptions options)
-			: base(dataFile, Game.Gex, options)
+		public GexFile(String dataFile, Platform platform, ExportOptions options)
+			: base(dataFile, Game.Gex, platform, options)
 		{
 		}
 
@@ -39,13 +39,9 @@ namespace CDC.Objects
 			_name = Utility.CleanObjectName(strModelName);
 
 			// Texture type
-			if (options.ForcedPlatform == CDC.Platform.None)
+			if (_platform == Platform.None)
 			{
 				_platform = Platform.PSX;
-			}
-			else
-			{
-				_platform = options.ForcedPlatform;
 			}
 
 			// Model data
@@ -56,26 +52,16 @@ namespace CDC.Objects
 			_animStart = reader.ReadUInt32();
 
 			_models = new GexModel[_modelCount];
-			Platform ePlatform = _platform;
 			for (UInt16 m = 0; m < _modelCount; m++)
 			{
 				Console.WriteLine(string.Format("Debug: reading object model {0} / {1}", m, (_modelCount - 1)));
 				_models[m] = GexObjectModel.Load(reader, _dataStart, _modelStart, _name, _platform, m, _version, _tPages, options);
-			}
-			if (options.ForcedPlatform == CDC.Platform.None)
-			{
-				_platform = ePlatform;
 			}
 		}
 
 		protected override void ReadUnitData(BinaryReader reader, ExportOptions options)
 		{
 			bool validVersion = false;
-
-			if (options.ForcedPlatform != Platform.None)
-			{
-				_platform = options.ForcedPlatform;
-			}
 
 			if (!validVersion)
 			{
@@ -156,7 +142,7 @@ namespace CDC.Objects
 			//_name = Utility.CleanName(strModelName);
 
 			// Texture type
-			if (options.ForcedPlatform == CDC.Platform.None)
+			if (_platform == Platform.None)
 			{
 				_platform = Platform.PSX;
 			}

@@ -36,6 +36,7 @@ namespace ModelEx
 					string outputFilePath = "";
 					string mode = "sr1";
 					CDC.Objects.ExportOptions options = new CDC.Objects.ExportOptions();
+					CDC.Platform platform = CDC.Platform.None;
 
 					ArrayList arguments = new ArrayList();
 					for (int i = 0; i < args.Length; i++)
@@ -102,26 +103,26 @@ namespace ModelEx
 								{
 									case "auto":
 									case "autodetect":
-										options.ForcedPlatform = CDC.Platform.None;
+										platform = CDC.Platform.None;
 										break;
 									case "playstation":
 									case "psx":
-										options.ForcedPlatform = CDC.Platform.PSX;
+										platform = CDC.Platform.PSX;
 										break;
 									case "playstation2":
 									case "ps2":
-										options.ForcedPlatform = CDC.Platform.PlayStation2;
+										platform = CDC.Platform.PlayStation2;
 										break;
 									case "pc":
 									case "windows":
-										options.ForcedPlatform = CDC.Platform.PC;
+										platform = CDC.Platform.PC;
 										break;
 									case "dc":
 									case "dreamcast":
-										options.ForcedPlatform = CDC.Platform.Dreamcast;
+										platform = CDC.Platform.Dreamcast;
 										break;
 									case "xbox":
-										options.ForcedPlatform = CDC.Platform.Xbox;
+										platform = CDC.Platform.Xbox;
 										break;
 								}
 								i++;
@@ -512,7 +513,7 @@ namespace ModelEx
 					RenderControl sceneView = new RenderControl();
 					sceneView.Initialize();
 
-					RenderManager.LoadRequestCDC loadRequest = new RenderManager.LoadRequestCDC();
+					LoadRequestCDC loadRequest = new LoadRequestCDC();
 
 					Thread loadingThread = new Thread((() =>
 					{
@@ -529,7 +530,7 @@ namespace ModelEx
 
 						if (loadRequest.GameType == CDC.Game.SR1)
 						{
-							CDC.Objects.SR1File srFile = new CDC.Objects.SR1File(inputFilePath, options);
+							CDC.Objects.SR1File srFile = new CDC.Objects.SR1File(inputFilePath, platform, options);
 
 							if (srFile.Platform == CDC.Platform.PC)
 							{
@@ -582,7 +583,7 @@ namespace ModelEx
 					while (loadingThread.IsAlive);
 					Console.WriteLine("Done loading");
 
-					RenderManager.Instance.ExportResourceCDC(loadRequest.ResourceName, outputFilePath, options);
+					RenderManager.Instance.ExportResourceCDC(loadRequest.ResourceName, outputFilePath);
 
 					Console.WriteLine("Done exporting");
 

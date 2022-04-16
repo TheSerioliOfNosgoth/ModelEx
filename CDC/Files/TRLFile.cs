@@ -36,13 +36,13 @@ namespace CDC.Objects
 		Int16[] _objectIDs;
 		SortedList<int, string> _objectNamesList = new SortedList<int, string>();
 
-		public TRLFile(String dataFile, ExportOptions options)
-			: base(dataFile, Game.TRL, options)
+		public TRLFile(String dataFile, Platform platform, ExportOptions options)
+			: base(dataFile, Game.TRL, platform, options)
 		{
 		}
 
-		public TRLFile(String dataFile, String objectListFile, ExportOptions options)
-			: base(dataFile, Game.Defiance, options)
+		public TRLFile(String dataFile, String objectListFile, Platform platform, ExportOptions options)
+			: base(dataFile, Game.Defiance, platform, options)
 		{
 			LoadObjectList(objectListFile);
 		}
@@ -68,13 +68,9 @@ namespace CDC.Objects
 			//}
 			//else
 			//{
-			if (options.ForcedPlatform == CDC.Platform.None)
+			if (_platform == Platform.None)
 			{
 				_platform = Platform.PC;
-			}
-			else
-			{
-				_platform = options.ForcedPlatform;
 			}
 			//}
 
@@ -166,13 +162,9 @@ namespace CDC.Objects
 			//}
 			//else
 			//{
-			if (options.ForcedPlatform == CDC.Platform.None)
+			if (_platform == Platform.None)
 			{
 				_platform = Platform.PC;
-			}
-			else
-			{
-				_platform = options.ForcedPlatform;
 			}
 			//}
 

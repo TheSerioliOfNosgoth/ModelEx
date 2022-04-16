@@ -19,7 +19,7 @@ namespace ModelEx
 		protected bool _ResetCameraOnModelLoad;
 		protected SceneMode _SceneModeOnLoad = SceneMode.Current;
 		protected string _LastExportDirectory = "";
-		protected RenderManager.LoadRequestCDC _LoadRequest;
+		protected LoadRequestCDC _LoadRequest;
 
 		SceneMode _SceneMode;
 		public SceneMode SceneMode
@@ -184,18 +184,8 @@ namespace ModelEx
 
 			if (_ReloadModelOnRenderModeChange)
 			{
-				LoadResource();
+				LoadResource(true);
 			}
-		}
-
-		protected void ResetPlatformDetection()
-		{
-			autodetectToolStripMenuItem.Checked = false;
-			forcePlayStationToolStripMenuItem.Checked = false;
-			forcePCToolStripMenuItem.Checked = false;
-			forceDreamcastToolStripMenuItem.Checked = false;
-			forcePlayStation2ToolStripMenuItem.Checked = false;
-			forceXboxToolStripMenuItem.Checked = false;
 		}
 
 		public MainWindow()
@@ -227,9 +217,6 @@ namespace ModelEx
 			sceneView.Initialize();
 			_ReloadModelOnRenderModeChange = reloadModelWhenRenderModeIsChangedToolStripMenuItem.Checked;
 			_ResetCameraOnModelLoad = resetCameraPositionWhenModelIsLoadedToolStripMenuItem.Checked;
-			ResetPlatformDetection();
-			autodetectToolStripMenuItem.Checked = true;
-			_ImportExportOptions.ForcedPlatform = CDC.Platform.None;
 		}
 
 		protected void BeginLoading()
@@ -345,7 +332,7 @@ namespace ModelEx
 
 		protected bool SelectResourceToLoad(SceneMode sceneModeOnLoad)
 		{
-			_LoadRequest = new RenderManager.LoadRequestCDC();
+			_LoadRequest = new LoadRequestCDC();
 			LoadResourceDialog loadResourceDialog = new LoadResourceDialog();
 
 			if (Properties.Settings.Default.RecentFolder != null &&
@@ -393,7 +380,7 @@ namespace ModelEx
 
 				try
 				{
-					gexFile = new CDC.Objects.GexFile(loadResourceDialog.DataFile, new CDC.Objects.ExportOptions());
+					gexFile = new CDC.Objects.GexFile(loadResourceDialog.DataFile, loadResourceDialog.SelectedPlatform, new CDC.Objects.ExportOptions());
 					if (gexFile.Asset == CDC.Asset.Unit)
 					{
 						objectSelectDlg.SetObjectNames(gexFile.ObjectNames);
@@ -418,7 +405,8 @@ namespace ModelEx
 			_LoadRequest.TextureFile = loadResourceDialog.TextureFile;
 			_LoadRequest.ObjectListFile = loadResourceDialog.ObjectListFile;
 			_LoadRequest.GameType = loadResourceDialog.SelectedGameType;
-			_LoadRequest.ExportOptions = sceneModeOnLoad == SceneMode.Debug ? _ImportExportOptions : null;
+			_LoadRequest.Platform = loadResourceDialog.SelectedPlatform;
+			_LoadRequest.ExportOptions = sceneModeOnLoad == SceneMode.Debug ? _ImportExportOptions : new CDC.Objects.ExportOptions();
 			_LoadRequest.IsDebugResource = sceneModeOnLoad == SceneMode.Debug;
 
 			_ClearResourcesOnLoad = loadResourceDialog.ClearLoadedFiles;
@@ -434,9 +422,9 @@ namespace ModelEx
 			return true;
 		}
 
-		protected void LoadResource()
+		protected void LoadResource(bool reloadDebugResourse = false)
 		{
-			if (!File.Exists(_LoadRequest.DataFile))
+			if (!reloadDebugResourse && !File.Exists(_LoadRequest.DataFile))
 			{
 				return;
 			}
@@ -450,7 +438,14 @@ namespace ModelEx
 					RenderManager.Instance.UnloadResources();
 				}
 
-				RenderManager.Instance.LoadResourceCDC(_LoadRequest);
+				if (reloadDebugResourse)
+				{
+					RenderManager.Instance.ReloadDebugResource();
+				}
+				else
+				{
+					RenderManager.Instance.LoadResourceCDC(_LoadRequest);
+				}
 
 				Invoke(new MethodInvoker(EndLoading));
 			}));
@@ -508,7 +503,7 @@ namespace ModelEx
 			if (SaveDlg.ShowDialog() == DialogResult.OK)
 			{
 				_LastExportDirectory = Path.GetDirectoryName(SaveDlg.FileName);
-				RenderManager.Instance.ExportCurrentObject(SaveDlg.FileName, new CDC.Objects.ExportOptions());
+				RenderManager.Instance.ExportCurrentObject(SaveDlg.FileName);
 			}
 		}
 
@@ -532,7 +527,7 @@ namespace ModelEx
 			if (SaveDlg.ShowDialog() == DialogResult.OK)
 			{
 				_LastExportDirectory = Path.GetDirectoryName(SaveDlg.FileName);
-				RenderManager.Instance.ExportCurrentScene(SaveDlg.FileName, new CDC.Objects.ExportOptions());
+				RenderManager.Instance.ExportCurrentScene(SaveDlg.FileName);
 			}
 		}
 
@@ -824,22 +819,6 @@ namespace ModelEx
 			HandleRenderModeChange();
 		}
 
-		private void forcedPlatformToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			ResetPlatformDetection();
-			((ToolStripMenuItem)sender).Checked = true;
-			CDC.Objects.ExportOptions options = _ImportExportOptions;
-
-			options.ForcedPlatform =
-				(sender == autodetectToolStripMenuItem) ? CDC.Platform.None :
-				(sender == forcePlayStationToolStripMenuItem) ? CDC.Platform.PSX :
-				(sender == forcePCToolStripMenuItem) ? CDC.Platform.PC :
-				(sender == forceDreamcastToolStripMenuItem) ? CDC.Platform.Dreamcast :
-				(sender == forcePlayStation2ToolStripMenuItem) ? CDC.Platform.PlayStation2 :
-				(sender == forceXboxToolStripMenuItem) ? CDC.Platform.Xbox :
-				options.ForcedPlatform;
-		}
-
 		private void reloadModelWhenRenderModeIsChangedToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			reloadModelWhenRenderModeIsChangedToolStripMenuItem.Checked = !reloadModelWhenRenderModeIsChangedToolStripMenuItem.Checked;
@@ -854,7 +833,7 @@ namespace ModelEx
 
 		private void reloadCurrentModelToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			LoadResource();
+			LoadResource(true);
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)

@@ -10,13 +10,13 @@ namespace CDC.Objects
 		Int16[] _objectIDs;
 		SortedList<int, string> _objectNamesList = new SortedList<int, string>();
 
-		public DefianceFile(String dataFile, ExportOptions options)
-			: base(dataFile, Game.Defiance, options)
+		public DefianceFile(String dataFile, Platform platform, ExportOptions options)
+			: base(dataFile, Game.Defiance, platform, options)
 		{
 		}
 
-		public DefianceFile(String dataFile, String objectListFile, ExportOptions options)
-			: base(dataFile, Game.Defiance, options)
+		public DefianceFile(String dataFile, String objectListFile, Platform platform, ExportOptions options)
+			: base(dataFile, Game.Defiance, platform, options)
 		{
 			LoadObjectList(objectListFile);
 		}
@@ -42,13 +42,9 @@ namespace CDC.Objects
 			//}
 			//else
 			//{
-			if (options.ForcedPlatform == CDC.Platform.None)
+			if (_platform == Platform.None)
 			{
 				_platform = Platform.PC;
-			}
-			else
-			{
-				_platform = options.ForcedPlatform;
 			}
 			//}
 
@@ -141,13 +137,9 @@ namespace CDC.Objects
 			//}
 			//else
 			//{
-			if (options.ForcedPlatform == CDC.Platform.None)
+			if (_platform == Platform.None)
 			{
 				_platform = Platform.PC;
-			}
-			else
-			{
-				_platform = options.ForcedPlatform;
 			}
 			//}
 
