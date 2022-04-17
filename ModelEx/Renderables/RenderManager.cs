@@ -33,9 +33,24 @@ namespace ModelEx
 		public ExportOptions ExportOptions;
 		public bool IsDebugResource = false;
 
+		public void CopyFrom(LoadRequestCDC loadRequest)
+        {
+			ResourceName = loadRequest.ResourceName;
+			DataFile = loadRequest.DataFile;
+			TextureFile = loadRequest.TextureFile;
+			ObjectListFile = loadRequest.ObjectListFile;
+			GameType = loadRequest.GameType;
+			Platform = loadRequest.Platform;
+			ChildIndex = loadRequest.ChildIndex;
+			ExportOptions = loadRequest.ExportOptions;
+			IsDebugResource = loadRequest.IsDebugResource;
+        }
+
 		public object Clone()
 		{
-			return MemberwiseClone();
+			LoadRequestCDC loadRequest = new LoadRequestCDC();
+			loadRequest.CopyFrom(this);
+			return loadRequest;
 		}
 	};
 
@@ -237,15 +252,6 @@ namespace ModelEx
 				CurrentObject?.UpdateModels();
 				CurrentScene?.UpdateModels();
 				resource.Dispose();
-			}
-		}
-
-		public void ReloadDebugResource()
-		{
-			if (DebugResource != null)
-			{
-				LoadRequestCDC loadRequest = ((RenderResourceCDC)DebugResource).LoadRequest;
-				LoadResourceCDC(loadRequest);
 			}
 		}
 

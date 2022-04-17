@@ -184,7 +184,13 @@ namespace ModelEx
 
 			if (_ReloadModelOnRenderModeChange)
 			{
-				LoadResource(true);
+				if (RenderManager.Instance.DebugResource != null)
+				{
+					RenderResourceCDC debugRenderResource = (RenderResourceCDC)RenderManager.Instance.DebugResource;
+					_LoadRequest.CopyFrom(debugRenderResource.LoadRequest);
+
+					LoadResource();
+				}
 			}
 		}
 
@@ -255,6 +261,11 @@ namespace ModelEx
 			{
 				string resourceName = RenderManager.Instance.DebugResource.Name;
 				debugControls.ResourceCombo.Items.Add(resourceName);
+
+				if (debugControls.ResourceCombo.Items.Contains(_LoadRequest.ResourceName))
+				{
+					debugControls.ResourceCombo.SelectedIndex = debugControls.ResourceCombo.Items.IndexOf(_LoadRequest.ResourceName);
+				}
 			}
 			else
 			{
@@ -279,15 +290,20 @@ namespace ModelEx
 						}
 					}
 				}
-			}
 
-			if (_SceneModeOnLoad == SceneMode.Scene)
-			{
 				if (sceneControls.ResourceCombo.Items.Contains(_LoadRequest.ResourceName))
 				{
 					sceneControls.ResourceCombo.SelectedIndex = sceneControls.ResourceCombo.Items.IndexOf(_LoadRequest.ResourceName);
 				}
 
+				if (objectControls.ResourceCombo.Items.Contains(_LoadRequest.ResourceName))
+				{
+					objectControls.ResourceCombo.SelectedIndex = objectControls.ResourceCombo.Items.IndexOf(_LoadRequest.ResourceName);
+				}
+			}
+
+			if (_SceneModeOnLoad == SceneMode.Scene)
+			{
 				optionTabs.SelectedIndex = 1;
 				SceneMode = _SceneModeOnLoad;
 				CameraManager.Instance.Reset();
@@ -295,11 +311,6 @@ namespace ModelEx
 
 			if (_SceneModeOnLoad == SceneMode.Object)
 			{
-				if (objectControls.ResourceCombo.Items.Contains(_LoadRequest.ResourceName))
-				{
-					objectControls.ResourceCombo.SelectedIndex = objectControls.ResourceCombo.Items.IndexOf(_LoadRequest.ResourceName);
-				}
-
 				optionTabs.SelectedIndex = 1;
 				SceneMode = _SceneModeOnLoad;
 				CameraManager.Instance.Reset();
@@ -307,11 +318,6 @@ namespace ModelEx
 
 			if (_SceneModeOnLoad == SceneMode.Debug)
 			{
-				if (debugControls.ResourceCombo.Items.Contains(_LoadRequest.ResourceName))
-				{
-					debugControls.ResourceCombo.SelectedIndex = debugControls.ResourceCombo.Items.IndexOf(_LoadRequest.ResourceName);
-				}
-
 				optionTabs.SelectedIndex = 1;
 				SceneMode = _SceneModeOnLoad;
 				CameraManager.Instance.Reset();
@@ -422,9 +428,9 @@ namespace ModelEx
 			return true;
 		}
 
-		protected void LoadResource(bool reloadDebugResourse = false)
+		protected void LoadResource()
 		{
-			if (!reloadDebugResourse && !File.Exists(_LoadRequest.DataFile))
+			if (!File.Exists(_LoadRequest.DataFile))
 			{
 				return;
 			}
@@ -438,14 +444,7 @@ namespace ModelEx
 					RenderManager.Instance.UnloadResources();
 				}
 
-				if (reloadDebugResourse)
-				{
-					RenderManager.Instance.ReloadDebugResource();
-				}
-				else
-				{
-					RenderManager.Instance.LoadResourceCDC(_LoadRequest);
-				}
+				RenderManager.Instance.LoadResourceCDC(_LoadRequest);
 
 				Invoke(new MethodInvoker(EndLoading));
 			}));
@@ -833,7 +832,13 @@ namespace ModelEx
 
 		private void reloadCurrentModelToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			LoadResource(true);
+			if (RenderManager.Instance.DebugResource != null)
+			{
+				RenderResourceCDC debugRenderResource = (RenderResourceCDC)RenderManager.Instance.DebugResource;
+				_LoadRequest.CopyFrom(debugRenderResource.LoadRequest);
+
+				LoadResource();
+			}
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
