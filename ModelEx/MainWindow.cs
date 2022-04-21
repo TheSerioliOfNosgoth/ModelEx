@@ -1106,5 +1106,26 @@ namespace ModelEx
 		{
 			SceneMode = SceneMode.Debug;
 		}
+
+        private void sceneControls_RefreshClick(object sender, EventArgs e)
+        {
+
+        }
+
+        private void objectControls_RefreshClick(object sender, EventArgs e)
+        {
+
+        }
+
+        private void debugControls_RefreshClick(object sender, EventArgs e)
+        {
+			if (RenderManager.Instance.DebugResource != null)
+			{
+				RenderResourceCDC debugRenderResource = (RenderResourceCDC)RenderManager.Instance.DebugResource;
+				_LoadRequest.CopyFrom(debugRenderResource.LoadRequest);
+
+				LoadResource();
+			}
+		}
     }
 }

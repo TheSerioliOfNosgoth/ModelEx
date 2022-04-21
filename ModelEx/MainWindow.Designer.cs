@@ -1436,6 +1436,7 @@
             this.debugControls.TabIndex = 2;
             this.debugControls.SelectedResourceChanged += new System.EventHandler(this.currentDebugCombo_SelectedIndexChanged);
             this.debugControls.AfterResourceNodeCheck += new System.Windows.Forms.TreeViewEventHandler(this.debugTree_AfterCheck);
+            this.debugControls.RefreshClick += new System.EventHandler(this.debugControls_RefreshClick);
             // 
             // objectControls
             // 
@@ -1447,6 +1448,7 @@
             this.objectControls.TabIndex = 1;
             this.objectControls.SelectedResourceChanged += new System.EventHandler(this.currentObjectCombo_SelectedIndexChanged);
             this.objectControls.AfterResourceNodeCheck += new System.Windows.Forms.TreeViewEventHandler(this.objectTree_AfterCheck);
+            this.objectControls.RefreshClick += new System.EventHandler(this.objectControls_RefreshClick);
             // 
             // sceneControls
             // 
@@ -1458,6 +1460,7 @@
             this.sceneControls.TabIndex = 0;
             this.sceneControls.SelectedResourceChanged += new System.EventHandler(this.currentSceneCombo_SelectedIndexChanged);
             this.sceneControls.AfterResourceNodeCheck += new System.Windows.Forms.TreeViewEventHandler(this.sceneTree_AfterCheck);
+            this.sceneControls.RefreshClick += new System.EventHandler(this.sceneControls_RefreshClick);
             // 
             // sceneView
             // 

@@ -30,9 +30,20 @@ namespace ModelEx
             remove { resourceTree.AfterCheck -= value; }
         }
 
+        public event EventHandler RefreshClick
+        {
+            add { refreshButton.Click  += value; }
+            remove { refreshButton.Click -= value; }
+        }
+
         public ResourceControls()
         {
             InitializeComponent();
+        }
+
+        private void refreshButton_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

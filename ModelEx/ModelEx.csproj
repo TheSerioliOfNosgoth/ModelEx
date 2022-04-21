@@ -217,6 +217,8 @@
     <Content Include="DimensionSymbol.ico" />
     <Content Include="NavigateUpIcon.ico" />
     <Content Include="RefreshIcon.ico" />
+    <None Include="RefreshIcon2.ico" />
+    <None Include="RefreshIconDisabled2.ico" />
     <Content Include="Shaders\Constants.fx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -238,6 +240,9 @@
       <Project>{d56c2540-e1f6-4e37-bcb0-d4f3afdf5619}</Project>
       <Name>CDC</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\AssimpNet.4.1.0\build\AssimpNet.targets" Condition="Exists('packages\AssimpNet.4.1.0\build\AssimpNet.targets')" />
