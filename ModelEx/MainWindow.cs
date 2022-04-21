@@ -1108,16 +1108,32 @@ namespace ModelEx
 		}
 
         private void sceneControls_RefreshClick(object sender, EventArgs e)
-        {
+		{
+			if (RenderManager.Instance.CurrentScene != null)
+			{
+				Scene scene = RenderManager.Instance.CurrentScene;
+				RenderResource renderResource = RenderManager.Instance.Resources[scene.Name];
+				RenderResourceCDC sceneRenderResource = (RenderResourceCDC)renderResource;
+				_LoadRequest.CopyFrom(sceneRenderResource.LoadRequest);
 
-        }
+				LoadResource();
+			}
+		}
 
         private void objectControls_RefreshClick(object sender, EventArgs e)
         {
+			if (RenderManager.Instance.CurrentObject != null)
+			{
+				Scene scene = RenderManager.Instance.CurrentObject;
+				RenderResource renderResource = RenderManager.Instance.Resources[scene.Name];
+				RenderResourceCDC objectRenderResource = (RenderResourceCDC)renderResource;
+				_LoadRequest.CopyFrom(objectRenderResource.LoadRequest);
 
-        }
+				LoadResource();
+			}
+		}
 
-        private void debugControls_RefreshClick(object sender, EventArgs e)
+		private void debugControls_RefreshClick(object sender, EventArgs e)
         {
 			if (RenderManager.Instance.DebugResource != null)
 			{
