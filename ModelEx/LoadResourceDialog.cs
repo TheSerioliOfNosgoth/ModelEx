@@ -13,6 +13,7 @@ namespace ModelEx
 		public string DataFile { get; private set; } = "";
 		public string TextureFile { get; private set; } = "";
 		public string ObjectListFile { get; private set; } = "";
+		public string ProjectFolder { get; private set; } = "";
 		public CDC.Game SelectedGameType { get; set; } = CDC.Game.Gex;
 		public CDC.Platform SelectedPlatform { get; set; } = CDC.Platform.PC;
 		public bool ClearLoadedFiles { get; private set; } = false;
@@ -169,6 +170,7 @@ namespace ModelEx
 		private void LoadResourceDialog_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			SelectedFolder = _currentDirectory.FullName;
+			ProjectFolder = projectFolderTextBox.Text;
 
 			if (DialogResult != DialogResult.OK)
 			{

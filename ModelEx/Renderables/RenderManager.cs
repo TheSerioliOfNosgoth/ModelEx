@@ -27,6 +27,7 @@ namespace ModelEx
 		public string DataFile = "";
 		public string TextureFile = "";
 		public string ObjectListFile = "";
+		public string ProjectFolder = "";
 		public Game GameType = Game.Gex;
 		public Platform Platform = Platform.PC;
 		public int ChildIndex = -1;
@@ -39,6 +40,7 @@ namespace ModelEx
 			DataFile = loadRequest.DataFile;
 			TextureFile = loadRequest.TextureFile;
 			ObjectListFile = loadRequest.ObjectListFile;
+			ProjectFolder = loadRequest.ProjectFolder;
 			GameType = loadRequest.GameType;
 			Platform = loadRequest.Platform;
 			ChildIndex = loadRequest.ChildIndex;

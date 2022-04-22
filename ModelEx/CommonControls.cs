@@ -22,8 +22,12 @@ namespace ModelEx
 				PropertyChanged?.Invoke(this, e);
 			}
 		}
-
 		static Bindables _Bindables = new Bindables();
+		
+		public Label ResourceLabel { get { return resourceLabel; } }
+		public ComboBox ResourceCombo { get { return resourceCombo; } }
+
+		public Button RefreshButton { get { return refreshButton; } }
 
 		public CommonControls()
 		{
