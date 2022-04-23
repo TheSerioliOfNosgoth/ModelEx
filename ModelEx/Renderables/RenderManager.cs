@@ -32,7 +32,6 @@ namespace ModelEx
 		public Platform Platform = Platform.PC;
 		public int ChildIndex = -1;
 		public ExportOptions ExportOptions;
-		public bool IsDebugResource = false;
 
 		public void CopyFrom(LoadRequestCDC loadRequest)
         {
@@ -45,7 +44,6 @@ namespace ModelEx
 			Platform = loadRequest.Platform;
 			ChildIndex = loadRequest.ChildIndex;
 			ExportOptions = loadRequest.ExportOptions;
-			IsDebugResource = loadRequest.IsDebugResource;
         }
 
 		public object Clone()
@@ -151,7 +149,7 @@ namespace ModelEx
 			}
 		}
 
-		public void LoadResourceCDC(LoadRequestCDC loadRequest)
+		public void LoadResourceCDC(LoadRequestCDC loadRequest, bool loadDependancies = false, bool loadDebugResource = false)
 		{
 			SceneCDC.progressLevel = 0;
 			SceneCDC.progressLevels = 1;
@@ -167,7 +165,7 @@ namespace ModelEx
 
 			RenderResourceCDC renderResource;
 
-			if (loadRequest.IsDebugResource)
+			if (loadDebugResource)
             {
 				CurrentDebug = null;
 				DebugResource?.Dispose();
@@ -189,7 +187,7 @@ namespace ModelEx
 
 			renderResource.LoadTextures(loadRequest.TextureFile);
 
-			if (loadRequest.IsDebugResource)
+			if (loadDebugResource)
 			{
 				DebugResource = renderResource;
 				CurrentDebug = new SceneCDC(renderResource.File,  renderResource);
@@ -205,6 +203,48 @@ namespace ModelEx
 			SceneCDC.ProgressStage = "Done";
 
 			loadRequest.ResourceName = srFile.Name;
+
+			if (loadDependancies)
+			{
+				foreach (string objectName in srFile.ObjectNames)
+                {
+					LoadRequestCDC objectLoadRequest = new LoadRequestCDC();
+
+					if (loadRequest.GameType == Game.SR1)
+					{
+						if (loadRequest.ProjectFolder != "")
+						{
+							objectLoadRequest.DataFile = System.IO.Path.Combine(loadRequest.ProjectFolder, "kain2\\object", objectName, objectName + ".pcm");
+						}
+                        else
+                        {
+							string projectFolder = System.IO.Path.GetDirectoryName(loadRequest.DataFile);
+							objectLoadRequest.DataFile = System.IO.Path.Combine(projectFolder, objectName, ".crm");
+						}
+
+						if (!System.IO.File.Exists(objectLoadRequest.DataFile))
+                        {
+							continue;
+                        }
+
+						if (loadRequest.Platform != Platform.PSX)
+						{
+							objectLoadRequest.TextureFile = loadRequest.TextureFile;
+						}
+						else
+						{
+							objectLoadRequest.TextureFile = System.IO.Path.ChangeExtension(objectLoadRequest.DataFile, "crm");
+						}
+
+						objectLoadRequest.ObjectListFile = loadRequest.ObjectListFile;
+						objectLoadRequest.ProjectFolder = loadRequest.ProjectFolder;
+						objectLoadRequest.GameType = loadRequest.GameType;
+						objectLoadRequest.Platform = loadRequest.Platform;
+						objectLoadRequest.ExportOptions = loadRequest.ExportOptions;
+						LoadResourceCDC(objectLoadRequest);
+					}
+				}
+			}
 		}
 
 		public void UnloadResource(string resourceName)

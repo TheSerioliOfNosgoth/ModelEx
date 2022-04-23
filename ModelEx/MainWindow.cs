@@ -15,6 +15,8 @@ namespace ModelEx
 		int _MainSplitPanelPosition;
 		protected bool _RunUIMonitoringThread;
 		protected bool _ReloadModelOnRenderModeChange;
+		protected bool _LoadDebugResource;
+		protected bool _LoadDependancies;
 		protected bool _ClearResourcesOnLoad;
 		protected bool _ResetCameraOnModelLoad;
 		protected SceneMode _SceneModeOnLoad = SceneMode.Current;
@@ -189,6 +191,10 @@ namespace ModelEx
 					RenderResourceCDC debugRenderResource = (RenderResourceCDC)RenderManager.Instance.DebugResource;
 					_LoadRequest.CopyFrom(debugRenderResource.LoadRequest);
 
+					_LoadDebugResource = true;
+					_LoadDependancies = false;
+					_ClearResourcesOnLoad = false;
+
 					LoadResource();
 				}
 			}
@@ -238,7 +244,7 @@ namespace ModelEx
 			_ProgressWindow.ShowInTaskbar = false;
 			_ProgressWindow.Show();
 
-			if (_LoadRequest.IsDebugResource)
+			if (_LoadDebugResource)
 			{
 				debugControls.ResourceCombo.SelectedIndex = -1;
 				debugControls.ResourceCombo.Items.Clear();
@@ -257,14 +263,16 @@ namespace ModelEx
 
 		protected void EndLoading()
 		{
-			if (_LoadRequest.IsDebugResource)
+			LoadRequestCDC loadRequest = _LoadRequest;
+
+			if (_LoadDebugResource)
 			{
 				string resourceName = RenderManager.Instance.DebugResource.Name;
 				debugControls.ResourceCombo.Items.Add(resourceName);
 
-				if (debugControls.ResourceCombo.Items.Contains(_LoadRequest.ResourceName))
+				if (debugControls.ResourceCombo.Items.Contains(loadRequest.ResourceName))
 				{
-					debugControls.ResourceCombo.SelectedIndex = debugControls.ResourceCombo.Items.IndexOf(_LoadRequest.ResourceName);
+					debugControls.ResourceCombo.SelectedIndex = debugControls.ResourceCombo.Items.IndexOf(loadRequest.ResourceName);
 				}
 			}
 			else
@@ -291,14 +299,14 @@ namespace ModelEx
 					}
 				}
 
-				if (sceneControls.ResourceCombo.Items.Contains(_LoadRequest.ResourceName))
+				if (sceneControls.ResourceCombo.Items.Contains(loadRequest.ResourceName))
 				{
-					sceneControls.ResourceCombo.SelectedIndex = sceneControls.ResourceCombo.Items.IndexOf(_LoadRequest.ResourceName);
+					sceneControls.ResourceCombo.SelectedIndex = sceneControls.ResourceCombo.Items.IndexOf(loadRequest.ResourceName);
 				}
 
-				if (objectControls.ResourceCombo.Items.Contains(_LoadRequest.ResourceName))
+				if (objectControls.ResourceCombo.Items.Contains(loadRequest.ResourceName))
 				{
-					objectControls.ResourceCombo.SelectedIndex = objectControls.ResourceCombo.Items.IndexOf(_LoadRequest.ResourceName);
+					objectControls.ResourceCombo.SelectedIndex = objectControls.ResourceCombo.Items.IndexOf(loadRequest.ResourceName);
 				}
 			}
 
@@ -323,6 +331,8 @@ namespace ModelEx
 				CameraManager.Instance.Reset();
 			}
 
+			_LoadDebugResource = false;
+			_LoadDependancies = false;
 			_ClearResourcesOnLoad = false;
 			_SceneModeOnLoad = SceneMode.Current;
 
@@ -338,7 +348,7 @@ namespace ModelEx
 
 		protected bool SelectResourceToLoad(SceneMode sceneModeOnLoad)
 		{
-			_LoadRequest = new LoadRequestCDC();
+			LoadRequestCDC loadRequest = new LoadRequestCDC();
 			LoadResourceDialog loadResourceDialog = new LoadResourceDialog();
 
 			if (Properties.Settings.Default.RecentFolder != null &&
@@ -404,17 +414,20 @@ namespace ModelEx
 					return false;
 				}
 
-				_LoadRequest.ChildIndex = objectSelectDlg.SelectedObject;
+				loadRequest.ChildIndex = objectSelectDlg.SelectedObject;
 			}
 
-			_LoadRequest.DataFile = loadResourceDialog.DataFile;
-			_LoadRequest.TextureFile = loadResourceDialog.TextureFile;
-			_LoadRequest.ObjectListFile = loadResourceDialog.ObjectListFile;
-			_LoadRequest.GameType = loadResourceDialog.SelectedGameType;
-			_LoadRequest.Platform = loadResourceDialog.SelectedPlatform;
-			_LoadRequest.ExportOptions = sceneModeOnLoad == SceneMode.Debug ? _ImportExportOptions : new CDC.Objects.ExportOptions();
-			_LoadRequest.IsDebugResource = sceneModeOnLoad == SceneMode.Debug;
+			loadRequest.DataFile = loadResourceDialog.DataFile;
+			loadRequest.TextureFile = loadResourceDialog.TextureFile;
+			loadRequest.ObjectListFile = loadResourceDialog.ObjectListFile;
+			loadRequest.ProjectFolder = loadResourceDialog.ProjectFolder;
+			loadRequest.GameType = loadResourceDialog.SelectedGameType;
+			loadRequest.Platform = loadResourceDialog.SelectedPlatform;
+			loadRequest.ExportOptions = sceneModeOnLoad == SceneMode.Debug ? _ImportExportOptions : new CDC.Objects.ExportOptions();
 
+			_LoadRequest = loadRequest;
+			_LoadDebugResource = sceneModeOnLoad == SceneMode.Debug;
+			_LoadDependancies = false;
 			_ClearResourcesOnLoad = loadResourceDialog.ClearLoadedFiles;
 			_SceneModeOnLoad = sceneModeOnLoad;
 
@@ -444,7 +457,7 @@ namespace ModelEx
 					RenderManager.Instance.UnloadResources();
 				}
 
-				RenderManager.Instance.LoadResourceCDC(_LoadRequest);
+				RenderManager.Instance.LoadResourceCDC(_LoadRequest, _LoadDependancies, _LoadDebugResource);
 
 				Invoke(new MethodInvoker(EndLoading));
 			}));
@@ -837,6 +850,10 @@ namespace ModelEx
 				RenderResourceCDC debugRenderResource = (RenderResourceCDC)RenderManager.Instance.DebugResource;
 				_LoadRequest.CopyFrom(debugRenderResource.LoadRequest);
 
+				_LoadDebugResource = true;
+				_LoadDependancies = false;
+				_ClearResourcesOnLoad = false;
+
 				LoadResource();
 			}
 		}
@@ -1116,6 +1133,10 @@ namespace ModelEx
 				RenderResourceCDC sceneRenderResource = (RenderResourceCDC)renderResource;
 				_LoadRequest.CopyFrom(sceneRenderResource.LoadRequest);
 
+				_LoadDebugResource = false;
+				_LoadDependancies = false;
+				_ClearResourcesOnLoad = false;
+
 				LoadResource();
 			}
 		}
@@ -1129,6 +1150,10 @@ namespace ModelEx
 				RenderResourceCDC objectRenderResource = (RenderResourceCDC)renderResource;
 				_LoadRequest.CopyFrom(objectRenderResource.LoadRequest);
 
+				_LoadDebugResource = false;
+				_LoadDependancies = false;
+				_ClearResourcesOnLoad = false;
+
 				LoadResource();
 			}
 		}
@@ -1139,6 +1164,27 @@ namespace ModelEx
 			{
 				RenderResourceCDC debugRenderResource = (RenderResourceCDC)RenderManager.Instance.DebugResource;
 				_LoadRequest.CopyFrom(debugRenderResource.LoadRequest);
+
+				_LoadDebugResource = true;
+				_LoadDependancies = false;
+				_ClearResourcesOnLoad = false;
+
+				LoadResource();
+			}
+		}
+
+        private void loadDependanciesButton_Click(object sender, EventArgs e)
+		{
+			if (resourceList.SelectedItems.Count > 0)
+			{
+				string selectedItem = resourceList.SelectedItems[0].Text;
+				RenderResource renderResource = RenderManager.Instance.Resources[selectedItem];
+				RenderResourceCDC sceneRenderResource = (RenderResourceCDC)renderResource;
+				_LoadRequest.CopyFrom(sceneRenderResource.LoadRequest);
+
+				_LoadDebugResource = false;
+				_LoadDependancies = true;
+				_ClearResourcesOnLoad = false;
 
 				LoadResource();
 			}

@@ -170,7 +170,6 @@ namespace ModelEx
 		private void LoadResourceDialog_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			SelectedFolder = _currentDirectory.FullName;
-			ProjectFolder = projectFolderTextBox.Text;
 
 			if (DialogResult != DialogResult.OK)
 			{
@@ -244,6 +243,7 @@ namespace ModelEx
 				DataFile = dataFileTextBox.Text;
 				TextureFile = textureFileNode.FileName;
 				ObjectListFile = objectListFileNode.FileName;
+				ProjectFolder = projectFolderTextBox.Text;
 				ClearLoadedFiles = clearLoadedFilesCheckBox.Checked;
 			}
 			catch (Exception)
@@ -400,11 +400,13 @@ namespace ModelEx
 
 					if (foundRoot)
 					{
+						ProjectFolder = rootDirectory;
 						projectFolderTextBox.Text = rootDirectory;
 					}
 					else
 					{
 						rootDirectory = "";
+						ProjectFolder = "";
 						projectFolderTextBox.Text = "(NOT FOUND)";
 					}
 
@@ -490,6 +492,7 @@ namespace ModelEx
 					projectFolderTextBox.Text = "";
 					textureFileComboBox.Items.Clear();
 					objectListFileComboBox.Items.Clear();
+					ProjectFolder = "";
 				}
 			}
 			else
@@ -498,6 +501,7 @@ namespace ModelEx
 				projectFolderTextBox.Text = "";
 				textureFileComboBox.Items.Clear();
 				objectListFileComboBox.Items.Clear();
+				ProjectFolder = "";
 			}
 		}
 

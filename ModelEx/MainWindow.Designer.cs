@@ -181,6 +181,7 @@
             this.sceneView = new ModelEx.RenderControl();
             this.sceneTreeContainer = new System.Windows.Forms.SplitContainer();
             this.FPSText = new System.Windows.Forms.TextBox();
+            this.loadDependanciesButton = new System.Windows.Forms.Button();
             this.menuBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.sceneViewContainer)).BeginInit();
             this.sceneViewContainer.Panel1.SuspendLayout();
@@ -1361,6 +1362,7 @@
             // 
             // resourcesTabControls.Panel1
             // 
+            this.resourcesTabControls.Panel1.Controls.Add(this.loadDependanciesButton);
             this.resourcesTabControls.Panel1.Controls.Add(this.unloadAllResources);
             this.resourcesTabControls.Panel1.Controls.Add(this.unloadResourceButton);
             this.resourcesTabControls.Panel1.Controls.Add(this.loadResourceButton);
@@ -1369,12 +1371,13 @@
             // 
             this.resourcesTabControls.Panel2.Controls.Add(this.resourceList);
             this.resourcesTabControls.Size = new System.Drawing.Size(253, 579);
-            this.resourcesTabControls.SplitterDistance = 78;
+            this.resourcesTabControls.SplitterDistance = 85;
             this.resourcesTabControls.TabIndex = 0;
             // 
             // unloadAllResources
             // 
-            this.unloadAllResources.Location = new System.Drawing.Point(5, 33);
+            this.unloadAllResources.Location = new System.Drawing.Point(5, 30);
+            this.unloadAllResources.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this.unloadAllResources.Name = "unloadAllResources";
             this.unloadAllResources.Size = new System.Drawing.Size(244, 23);
             this.unloadAllResources.TabIndex = 2;
@@ -1408,7 +1411,7 @@
             this.resourceList.HideSelection = false;
             this.resourceList.Location = new System.Drawing.Point(0, 0);
             this.resourceList.Name = "resourceList";
-            this.resourceList.Size = new System.Drawing.Size(253, 497);
+            this.resourceList.Size = new System.Drawing.Size(253, 490);
             this.resourceList.TabIndex = 0;
             this.resourceList.UseCompatibleStateImageBehavior = false;
             this.resourceList.View = System.Windows.Forms.View.List;
@@ -1497,6 +1500,17 @@
             this.FPSText.Size = new System.Drawing.Size(672, 166);
             this.FPSText.TabIndex = 0;
             this.FPSText.Text = "Testing...\r\nTesting...\r\nTesting...";
+            // 
+            // loadDependanciesButton
+            // 
+            this.loadDependanciesButton.Location = new System.Drawing.Point(6, 56);
+            this.loadDependanciesButton.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
+            this.loadDependanciesButton.Name = "loadDependanciesButton";
+            this.loadDependanciesButton.Size = new System.Drawing.Size(243, 23);
+            this.loadDependanciesButton.TabIndex = 3;
+            this.loadDependanciesButton.Text = "Load Dependancies";
+            this.loadDependanciesButton.UseVisualStyleBackColor = true;
+            this.loadDependanciesButton.Click += new System.EventHandler(this.loadDependanciesButton_Click);
             // 
             // MainWindow
             // 
@@ -1689,5 +1703,6 @@
         private ResourceControls debugControls;
         private System.Windows.Forms.ToolStripMenuItem loadDebugToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem debugToolStripMenuItem;
+        private System.Windows.Forms.Button loadDependanciesButton;
     }
 }
