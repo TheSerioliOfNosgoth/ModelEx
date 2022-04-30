@@ -42,13 +42,30 @@ namespace ModelEx
 
 			for (int m = 0; m < srFile.ModelCount; m++)
 			{
-				RenderInstance instance = new RenderInstance(srFile.Name, m, new SlimDX.Vector3(), new SlimDX.Vector3());
+				RenderInstance instance = new RenderInstance(srFile.Name, m, new SlimDX.Vector3(), new SlimDX.Quaternion(), new SlimDX.Vector3(1.0f, 1.0f, 1.0f));
 				instance.Name = srFile.Models[m].Name + "-" + m.ToString();
 				_renderInstances.Add(instance);
 			}
 
 			if (includeObjects && srFile.Asset == CDC.Asset.Unit && srFile.IntroCount > 0)
 			{
+				bool foundUprightSword = false;
+				SlimDX.Vector3 saveSwdPos = new SlimDX.Vector3();
+				foreach (CDC.Intro intro in srFile.Intros)
+				{
+					if (intro.fileName == "saveswd" && Math.Abs(intro.rotation.x) < 3.0f)
+					{
+						saveSwdPos = new SlimDX.Vector3(
+							0.01f * intro.position.x,
+							0.01f * intro.position.z,
+							0.01f * intro.position.y
+						);
+
+						foundUprightSword = true;
+						break;
+					}
+				}
+
 				foreach (CDC.Intro intro in srFile.Intros)
 				{
 					SlimDX.Vector3 position = new SlimDX.Vector3(
@@ -57,14 +74,44 @@ namespace ModelEx
 						0.01f * intro.position.y
 					);
 
-					// May be different for games besides SR1. Need to check.
-					SlimDX.Vector3 rotation = new SlimDX.Vector3(
-						-intro.rotation.z, // Yaw - Easy to spot from direction of raziel, enemies, flagall.
-						-intro.rotation.y, // Pitch - Can be seen from the angle of hndtrch in huba6.
-						-intro.rotation.x // Roll - Can be seen from the angle of stdorac in oracle3.
-					);
+					SlimDX.Vector3 scale = new SlimDX.Vector3(1.0f, 1.0f, 1.0f);
 
-					RenderInstance instance = new RenderInstance(intro.fileName, intro.modelIndex, position, rotation);
+					SlimDX.Quaternion rotation;
+					if (srFile.Game == CDC.Game.Gex || srFile.Game == CDC.Game.SR1)
+					{
+						rotation = SlimDX.Quaternion.RotationYawPitchRoll(
+							-intro.rotation.z, // Yaw - Easy to spot from direction of raziel, enemies, flagall.
+							-intro.rotation.y, // Pitch - Can be seen from the angle of hndtrch in huba6.
+							-intro.rotation.x // Roll - Can be seen from the angle of stdorac in oracle3.
+						);
+					}
+					else
+					{
+						SlimDX.Matrix.RotationX(-intro.rotation.x, out SlimDX.Matrix rotationMatrixX);
+						SlimDX.Matrix.RotationY(-intro.rotation.z, out SlimDX.Matrix rotationMatrixY);
+						SlimDX.Matrix.RotationZ(-intro.rotation.y, out SlimDX.Matrix rotationMatrixZ);
+						SlimDX.Matrix rotationMatrix = rotationMatrixZ * rotationMatrixY * rotationMatrixX;
+						SlimDX.Quaternion.RotationMatrix(ref rotationMatrix, out rotation);
+
+						/*rotation = SlimDX.Quaternion.RotationYawPitchRoll(
+							-intro.rotation.z,
+							-intro.rotation.y,
+							-intro.rotation.x
+						);*/
+					}
+
+					if (intro.fileName == "saveswd" && Math.Abs(intro.rotation.x) >= 3.0f)
+					{
+						if (foundUprightSword)
+						{
+							position.X = saveSwdPos.X;
+							position.Z = saveSwdPos.Z;
+						}
+
+						scale.Z = -1.0f;
+					}
+
+					RenderInstance instance = new RenderInstance(intro.fileName, intro.modelIndex, position, rotation, scale);
 					instance.Name = intro.name;
 
 					_renderInstances.Add(instance);
@@ -79,7 +126,7 @@ namespace ModelEx
 
 			for (int m = 0; m < srFile.ModelCount; m++)
 			{
-				RenderInstance instance = new RenderInstance(srFile.Name, m, new SlimDX.Vector3(), new SlimDX.Vector3(), resource);
+				RenderInstance instance = new RenderInstance(srFile.Name, m, new SlimDX.Vector3(), new SlimDX.Quaternion(), new SlimDX.Vector3(1.0f, 1.0f, 1.0f), resource);
 				instance.Name = srFile.Models[m].Name + "-" + m.ToString();
 				_renderInstances.Add(instance);
 			}

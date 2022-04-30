@@ -117,7 +117,7 @@ namespace CDC.Objects
 				reader.BaseStream.Position = _introStart + 0x70 * i;
 				_intros[i].rotation.x = reader.ReadSingle();
 				_intros[i].rotation.y = reader.ReadSingle();
-				_intros[i].rotation.x = reader.ReadSingle();
+				_intros[i].rotation.z = reader.ReadSingle();
 				reader.BaseStream.Position += 0x4;
 				_intros[i].position.x = reader.ReadSingle();
 				_intros[i].position.y = reader.ReadSingle();

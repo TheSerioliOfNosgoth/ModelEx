@@ -69,6 +69,7 @@ namespace CDC.Objects
 			}
 
 			// Intros
+			bool hasRaziel = false;
 			reader.BaseStream.Position = _dataStart + 0x44;
 			_introCount = reader.ReadUInt32();
 			_introStart = _dataStart + reader.ReadUInt32();
@@ -77,9 +78,11 @@ namespace CDC.Objects
 			{
 				reader.BaseStream.Position = _introStart + 0x60 * i;
 				String introName = new String(reader.ReadChars(16));
-				_intros[i].rotation.x = reader.ReadSingle();
-				_intros[i].rotation.y = reader.ReadSingle();
-				_intros[i].rotation.z = reader.ReadSingle();
+				//float pi = (float)Math.PI;
+				float tau = (float)(Math.PI * 2.0);
+				_intros[i].rotation.x = reader.ReadSingle() * tau;
+				_intros[i].rotation.y = reader.ReadSingle() * tau;
+				_intros[i].rotation.z = reader.ReadSingle() * tau;
 				reader.BaseStream.Position += 0x04;
 				_intros[i].position.x = reader.ReadSingle();
 				_intros[i].position.y = reader.ReadSingle();
@@ -90,6 +93,11 @@ namespace CDC.Objects
 				_intros[i].uniqueID = reader.ReadInt32();
 				_intros[i].name = Utility.CleanObjectName(introName) + "-" + _intros[i].uniqueID;
 				_intros[i].fileName = Utility.CleanObjectName(introName);
+
+				if (_intros[i].fileName == "raziel")
+                {
+					hasRaziel = true;
+                }
 			}
 
 			// Object Names
@@ -104,6 +112,12 @@ namespace CDC.Objects
 				objectNames.Add(Utility.CleanObjectName(strObjectName));
 				reader.BaseStream.Position += 0x08;
 			}
+
+			if (hasRaziel && !objectNames.Contains("raziel"))
+            {
+				objectNames.Add("raziel");
+            }
+
 			_objectNames = objectNames.ToArray();
 
 			// Unit name

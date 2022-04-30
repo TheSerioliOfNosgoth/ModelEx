@@ -157,7 +157,7 @@ namespace ModelEx
 
 			CDC.Platform selectedPlatform = SelectedPlatform;
 			gameTypeComboBox.SelectedIndex = (int)SelectedGameType;
-			for (int platformIndex = 0; platformIndex < gameTypeComboBox.Items.Count; platformIndex++)
+			for (int platformIndex = 0; platformIndex < platformComboBox.Items.Count; platformIndex++)
             {
 				if (((PlatformNode)platformComboBox.Items[platformIndex]).Platform == selectedPlatform)
                 {

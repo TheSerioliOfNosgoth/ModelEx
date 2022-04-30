@@ -9,28 +9,31 @@ namespace ModelEx
 		protected string _resourceName = "";
 		protected int _modelIndex = 0;
 		protected Vector3 _position = new Vector3();
-		protected Vector3 _rotation = new Vector3();
+		protected Quaternion _rotation = new Quaternion();
+		protected Vector3 _scale = new Vector3();
 
 		public readonly VisibilityNode Root = new VisibilityNode();
 
 		protected Model Model { get; set; }
 
-		public RenderInstance(string resourceName, int modelIndex, Vector3 position, Vector3 rotation)
+		public RenderInstance(string resourceName, int modelIndex, Vector3 position, Quaternion rotation, Vector3 scale)
 		{
 			_resourceName = resourceName;
 			_modelIndex = modelIndex;
 			_position = position;
 			_rotation = rotation;
+			_scale = scale;
 
 			UpdateModel();
 		}
 
-		public RenderInstance(string resourceName, int modelIndex, Vector3 position, Vector3 rotation, RenderResource resource)
+		public RenderInstance(string resourceName, int modelIndex, Vector3 position, Quaternion rotation, Vector3 scale, RenderResource resource)
 		{
 			_resourceName = resourceName;
 			_modelIndex = modelIndex;
 			_position = position;
 			_rotation = rotation;
+			_scale = scale;
 
 			UpdateModel(resource, _modelIndex);
 		}
@@ -95,14 +98,9 @@ namespace ModelEx
 
 				float height = (resource.Name == "") ? GetBoundingSphere().Radius : 0.0f;
 
-				Matrix.RotationYawPitchRoll(
-					_rotation.X,
-					_rotation.Y,
-					_rotation.Z,
-					out Matrix rotationMatrix
-				);
-
-				Transform = rotationMatrix * Matrix.Translation(
+				Matrix.RotationQuaternion(ref _rotation, out Matrix rotationMatrix);
+				Matrix scaleMatrix = Matrix.Scaling(_scale);
+				Transform = scaleMatrix * rotationMatrix * Matrix.Translation(
 					_position.X,
 					_position.Y + height,
 					_position.Z

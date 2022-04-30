@@ -166,11 +166,11 @@ namespace ModelEx
 			RenderResourceCDC renderResource;
 
 			if (loadDebugResource)
-            {
+			{
 				CurrentDebug = null;
 				DebugResource?.Dispose();
 				DebugResource = null;
-            }
+			}
 			else if (Resources.ContainsKey(srFile.Name))
 			{
 				renderResource = (RenderResourceCDC)Resources[srFile.Name];
@@ -190,7 +190,7 @@ namespace ModelEx
 			if (loadDebugResource)
 			{
 				DebugResource = renderResource;
-				CurrentDebug = new SceneCDC(renderResource.File,  renderResource);
+				CurrentDebug = new SceneCDC(renderResource.File, renderResource);
 			}
 			else
 			{
@@ -204,10 +204,10 @@ namespace ModelEx
 
 			loadRequest.ResourceName = srFile.Name;
 
-			if (loadDependancies)
+			if (loadDependancies && srFile.ObjectNames != null && srFile.ObjectNames.Length > 0)
 			{
 				foreach (string objectName in srFile.ObjectNames)
-                {
+				{
 					LoadRequestCDC objectLoadRequest = new LoadRequestCDC();
 
 					if (loadRequest.GameType == Game.SR1)
@@ -216,16 +216,16 @@ namespace ModelEx
 						{
 							objectLoadRequest.DataFile = System.IO.Path.Combine(loadRequest.ProjectFolder, "kain2\\object", objectName, objectName + ".pcm");
 						}
-                        else
-                        {
+						else
+						{
 							string projectFolder = System.IO.Path.GetDirectoryName(loadRequest.DataFile);
-							objectLoadRequest.DataFile = System.IO.Path.Combine(projectFolder, objectName, ".crm");
+							objectLoadRequest.DataFile = System.IO.Path.Combine(projectFolder, objectName, ".pcm");
 						}
 
 						if (!System.IO.File.Exists(objectLoadRequest.DataFile))
-                        {
+						{
 							continue;
-                        }
+						}
 
 						if (loadRequest.Platform != Platform.PSX)
 						{
@@ -235,6 +235,32 @@ namespace ModelEx
 						{
 							objectLoadRequest.TextureFile = System.IO.Path.ChangeExtension(objectLoadRequest.DataFile, "crm");
 						}
+
+						objectLoadRequest.ObjectListFile = loadRequest.ObjectListFile;
+						objectLoadRequest.ProjectFolder = loadRequest.ProjectFolder;
+						objectLoadRequest.GameType = loadRequest.GameType;
+						objectLoadRequest.Platform = loadRequest.Platform;
+						objectLoadRequest.ExportOptions = loadRequest.ExportOptions;
+						LoadResourceCDC(objectLoadRequest);
+					}
+					else if (loadRequest.GameType == Game.SR2)
+					{
+						if (loadRequest.ProjectFolder != "")
+						{
+							objectLoadRequest.DataFile = System.IO.Path.Combine(loadRequest.ProjectFolder, "pcenglish", objectName + ".drm");
+						}
+						else
+						{
+							string projectFolder = System.IO.Path.GetDirectoryName(loadRequest.DataFile);
+							objectLoadRequest.DataFile = System.IO.Path.Combine(projectFolder, objectName, ".drm");
+						}
+
+						if (!System.IO.File.Exists(objectLoadRequest.DataFile))
+						{
+							continue;
+						}
+
+						objectLoadRequest.TextureFile = System.IO.Path.ChangeExtension(objectLoadRequest.DataFile, "vrm");
 
 						objectLoadRequest.ObjectListFile = loadRequest.ObjectListFile;
 						objectLoadRequest.ProjectFolder = loadRequest.ProjectFolder;
