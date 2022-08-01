@@ -212,14 +212,16 @@ namespace ModelEx
 
 					if (loadRequest.GameType == Game.SR1)
 					{
+						string extension = (loadRequest.Platform == Platform.PC) ? ".pcm" : ".drm";
+
 						if (loadRequest.ProjectFolder != "")
 						{
-							objectLoadRequest.DataFile = System.IO.Path.Combine(loadRequest.ProjectFolder, "kain2\\object", objectName, objectName + ".pcm");
+							objectLoadRequest.DataFile = System.IO.Path.Combine(loadRequest.ProjectFolder, "kain2\\object", objectName, objectName + extension);
 						}
 						else
 						{
 							string projectFolder = System.IO.Path.GetDirectoryName(loadRequest.DataFile);
-							objectLoadRequest.DataFile = System.IO.Path.Combine(projectFolder, objectName, ".pcm");
+							objectLoadRequest.DataFile = System.IO.Path.Combine(projectFolder, objectName, extension);
 						}
 
 						if (!System.IO.File.Exists(objectLoadRequest.DataFile))
