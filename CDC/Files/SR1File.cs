@@ -15,6 +15,9 @@ namespace CDC.Objects
 		public const UInt32 BETA_19990512_VERSION = 0x3c204139;
 		public const UInt32 RETAIL_VERSION = 0x3C20413B;
 
+		protected List<ushort> _tPages = new List<ushort>();
+		public ushort[] TPages { get { return _tPages.ToArray(); } }
+
 		public MonsterAttributes _monsterAttributes;
 
 		public SR1File(String dataFile, Platform platform, ExportOptions options)
@@ -69,7 +72,7 @@ namespace CDC.Objects
 			for (UInt16 m = 0; m < _modelCount; m++)
 			{
 				Console.WriteLine(string.Format("Debug: reading object model {0} / {1}", m, (_modelCount - 1)));
-				_models[m] = SR1ObjectModel.Load(reader, _dataStart, _modelStart, _name, _platform, m, _version, options);
+				_models[m] = SR1ObjectModel.Load(reader, _dataStart, _modelStart, _name, _platform, m, _version, _tPages, options);
 				if ((_platform == Platform.None) && (_models[m].Platform == Platform.Dreamcast))
 				{
 					ePlatform = _models[m].Platform;
@@ -412,7 +415,7 @@ namespace CDC.Objects
 
 			// Material data
 			Console.WriteLine("Debug: reading area model 0");
-			_models[0] = SR1UnitModel.Load(reader, _dataStart, m_uModelData, _name, _platform, _version, options);
+			_models[0] = SR1UnitModel.Load(reader, _dataStart, m_uModelData, _name, _platform, _version, _tPages, options);
 
 			//if (m_axModels[0].Platform == Platform.Dreamcast ||
 			//    m_axModels[1].Platform == Platform.Dreamcast)

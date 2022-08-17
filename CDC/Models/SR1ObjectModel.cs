@@ -6,8 +6,8 @@ namespace CDC.Objects.Models
 {
 	public class SR1ObjectModel : SR1Model
 	{
-		public SR1ObjectModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
-			: base(reader, dataStart, modelData, strModelName, ePlatform, version)
+		public SR1ObjectModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, List<ushort> tPages)
+			: base(reader, dataStart, modelData, strModelName, ePlatform, version, tPages)
 		{
 			_modelTypePrefix = "o_";
 			reader.BaseStream.Position = _modelData;
@@ -29,7 +29,7 @@ namespace CDC.Objects.Models
 			_trees = new Tree[_groupCount];
 		}
 
-		public static SR1ObjectModel Load(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 version, CDC.Objects.ExportOptions options)
+		public static SR1ObjectModel Load(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 version, List<ushort> tPages, CDC.Objects.ExportOptions options)
 		{
 			long newPosition = modelData + (0x00000004 * usIndex);
 			if ((newPosition < 0) || (newPosition > reader.BaseStream.Length))
@@ -40,7 +40,7 @@ namespace CDC.Objects.Models
 			reader.BaseStream.Position = newPosition;
 			modelData = dataStart + reader.ReadUInt32();
 			reader.BaseStream.Position = modelData;
-			SR1ObjectModel xModel = new SR1ObjectModel(reader, dataStart, modelData, strModelName, ePlatform, version);
+			SR1ObjectModel xModel = new SR1ObjectModel(reader, dataStart, modelData, strModelName, ePlatform, version, tPages);
 			xModel.ReadData(reader, options);
 			return xModel;
 		}

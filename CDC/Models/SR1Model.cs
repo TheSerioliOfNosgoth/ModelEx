@@ -259,9 +259,12 @@ namespace CDC.Objects.Models
 		};
 		#endregion
 
-		protected SR1Model(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version) :
+		protected List<ushort> _tPages = null;
+
+		protected SR1Model(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, List<ushort> tPages) :
 			base(reader, dataStart, modelData, strModelName, ePlatform, version)
 		{
+			_tPages = tPages;
 		}
 
 		protected virtual void ReadData(BinaryReader reader, CDC.Objects.ExportOptions options)
@@ -525,15 +528,7 @@ namespace CDC.Objects.Models
 
 				if (_platform == Platform.PSX)
 				{
-					// unsigned short clut;
-					ushort paletteVal = reader.ReadUInt16();
-					ushort rowVal = (ushort)((ushort)(paletteVal << 2) >> 8);
-					ushort colVal = (ushort)((ushort)(paletteVal << 11) >> 11);
-					ushort clutWithoutRowOrColumn = (ushort)(paletteVal & 0xC0E0);
-					//Console.WriteLine(string.Format("Debug: rowVal is {0:X4}, colVal is {1:X4}, original clut value is {2:X4}, without row/col bits is {3:X4}", rowVal, colVal, paletteVal, clutWithoutRowOrColumn));
-					_polygons[p].material.clutValue = paletteVal;
-					_polygons[p].paletteColumn = colVal;
-					_polygons[p].paletteRow = rowVal;
+					_polygons[p].material.clutValue = reader.ReadUInt16();
 				}
 				else
 				{
@@ -553,15 +548,13 @@ namespace CDC.Objects.Models
 				bool echoAttributes = false;
 				if (_platform == Platform.PSX)
 				{
-					// unsigned short tpage;
 					_polygons[p].material.texturePage = reader.ReadUInt16();
-					_polygons[p].material.textureID = (UInt16)(((_polygons[p].material.texturePage & 0x07FF) - 8) % 8);
-
-					//if ((UInt16)(((_polygons[p].material.texturePage) - 8)) != _polygons[p].material.textureID)
-					//{
-					//    Console.WriteLine(string.Format("Debug: texture ID is {0:X4}, interpreting as {1:X4}", _polygons[p].material.texturePage, _polygons[p].material.textureID));
-					//    echoAttributes = true;
-					//}
+					_polygons[p].material.textureID = (ushort)_tPages.FindIndex(x => x == _polygons[p].material.texturePage);
+					if (_polygons[p].material.textureID == 0xFFFF)
+					{
+						_polygons[p].material.textureID = (ushort)_tPages.Count;
+						_tPages.Add(_polygons[p].material.texturePage);
+					}
 				}
 				else
 				{

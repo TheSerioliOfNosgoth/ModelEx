@@ -12,7 +12,7 @@ using TRLFile = CDC.Objects.TRLFile;
 using SRModel = CDC.Objects.Models.SRModel;
 using Gex3PSTextureFile = BenLincoln.TheLostWorlds.CDTextures.Gex3PlaystationVRMTextureFile;
 using SR1PCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPCTextureFile;
-using SR1PSTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPlaystationTextureFile;
+using SR1PSTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPlaystationCRMTextureFile;
 using SR1DCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverDreamcastTextureFile;
 using SR2PCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaver2PCVRMTextureFile;
 using TRLPCTextureFile = BenLincoln.TheLostWorlds.CDTextures.TombRaiderPCDRMTextureFile;
@@ -232,22 +232,14 @@ namespace ModelEx
 					{
 						SR1PSTextureFile textureFile = new SR1PSTextureFile(fileName);
 
-						SceneCDC.progressLevel = 0;
-						SceneCDC.progressLevels = 100; // Arbitrarily large number.
-						SceneCDC.ProgressStage = "Loading Textures";
-
-						// Trick it into showing a progress bar.
-						System.Threading.Thread.Sleep(100);
-						SceneCDC.progressLevel = 100;
-
 						UInt32 polygonCountAllModels = 0;
 						foreach (SRModel srModel in File.Models)
 						{
 							polygonCountAllModels += srModel.PolygonCount;
 						}
 
-						SR1PSTextureFile.SoulReaverPlaystationPolygonTextureData[] polygons =
-							new SR1PSTextureFile.SoulReaverPlaystationPolygonTextureData[polygonCountAllModels];
+						SR1PSTextureFile.SoulReaverPlaystationTextureData[] polygons =
+							new SR1PSTextureFile.SoulReaverPlaystationTextureData[polygonCountAllModels];
 
 						int polygonNum = 0;
 						foreach (SRModel srModel in File.Models)
@@ -278,9 +270,10 @@ namespace ModelEx
 								polygonNum++;
 							}
 						}
+
 						bool drawGreyscaleFirst = false;
 						bool quantizeBounds = true;
-						textureFile.BuildTexturesFromPolygonData(polygons, drawGreyscaleFirst, quantizeBounds, ExportOptions);
+						textureFile.BuildTexturesFromPolygonData(polygons, ((SR1File)File).TPages, drawGreyscaleFirst, quantizeBounds, ExportOptions);
 
 						// For all models
 						for (int t = 0; t < textureFile.TextureCount; t++)
@@ -322,8 +315,6 @@ namespace ModelEx
 							//    tex.Save(@"C:\Debug\Tex-" + texNum + ".png", ImageFormat.Png);
 							//    texNum++;
 							//}
-
-							SceneCDC.progressLevel++;
 						}
 
 						// for models that use index/CLUT textures, if the user has enabled this option
@@ -342,8 +333,6 @@ namespace ModelEx
 									}
 									Bitmap b = textureFile.TexturesByCLUT[textureID][clut];
 									_TexturesAsPNGs.Add(textureName, b);
-
-									SceneCDC.progressLevel++;
 								}
 							}
 						}
