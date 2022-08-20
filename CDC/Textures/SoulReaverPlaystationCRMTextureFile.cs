@@ -5,29 +5,13 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Security.Cryptography;
+using TPage = BenLincoln.TheLostWorlds.CDTextures.PlaystationTexturePage;
+using CLUT = BenLincoln.TheLostWorlds.CDTextures.PlaystationColorTable;
 
 namespace BenLincoln.TheLostWorlds.CDTextures
 {
 	public class SoulReaverPlaystationCRMTextureFile : BenLincoln.TheLostWorlds.CDTextures.TextureFile
 	{
-		protected class TexturePage
-		{
-			public ushort tPage;
-			public int tp;
-			public int abr;
-			public int x;
-			public int y;
-			public ushort[,] pixels;
-		}
-
-		protected class ColourTable
-		{
-			public ushort clut;
-			public int x;
-			public int y;
-			public Color[] colours;
-		}
-
 		public struct SoulReaverPlaystationTextureData
 		{
 			public int[] u;             // 0-255 each
@@ -42,7 +26,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			public ushort tPage;
 		}
 
-		protected TexturePage[] _TPages;
+		protected TPage[] _TPages;
 		protected ushort[,] _TextureData;
 		protected Bitmap[] _Textures;
 		protected int _TotalWidth;
@@ -97,125 +81,14 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			}
 		}
 
-		protected TexturePage GetTexturePage(ushort tPage)
-		{
-			TexturePage texturePage = new TexturePage
-			{
-				tPage = tPage,
-				tp = 0, //(tPage >> 7) & 0x03,//(tPage >> 7) & 0x003,
-				abr = 0,
-				x = ((tPage << 6) & 0x7c0) % _TotalWidth, // % 1024
-				y = ((tPage << 4) & 0x100) + ((tPage >> 2) & 0x200),
-				pixels = new ushort[_ImageHeight, _ImageWidth]
-			};
-
-			int width = _TextureData.GetUpperBound(1);
-			int height = _TextureData.GetUpperBound(0);
-
-			if (texturePage.y > _TextureData.GetUpperBound(0))
-			{
-				return texturePage;
-			}
-
-			if (texturePage.x > _TextureData.GetUpperBound(1))
-			{
-				return texturePage;
-			}
-
-			for (int y = 0; y < _ImageHeight; y++)
-			{
-				for (int x = 0; x < _ImageWidth;)
-				{
-					if (texturePage.tp == 0) // 4 bit
-					{
-						ushort val = _TextureData[texturePage.y + y, texturePage.x + (x / 4)];
-						texturePage.pixels[y, x++] = (ushort)(val & 0x000F);
-						texturePage.pixels[y, x++] = (ushort)((val & 0x00F0) >> 4);
-						texturePage.pixels[y, x++] = (ushort)((val & 0x0F00) >> 8);
-						texturePage.pixels[y, x++] = (ushort)((val & 0xF000) >> 12);
-					}
-					else if (texturePage.tp == 1) // 8 bit
-					{
-						ushort val = _TextureData[texturePage.y + y, texturePage.x + (x / 2)];
-						texturePage.pixels[y, x++] = (ushort)(val & 0x00FF);
-						texturePage.pixels[y, x++] = (ushort)((val & 0xFF00) >> 8);
-					}
-					else if (texturePage.tp == 2) // 16 bit
-					{
-						ushort val = _TextureData[texturePage.y + y, texturePage.x + x];
-						texturePage.pixels[y, x++] = val;
-					}
-				}
-			}
-
-			return texturePage;
-		}
-
-		protected ColourTable GetTextureClut(ushort clut, int length)
-		{
-			ColourTable colourTable = new ColourTable
-			{
-				clut = clut,
-				x = ((clut & 0x3F) << 4) % _TotalWidth, // % 1024
-				y = clut >> 6,
-				colours = new Color[length]
-			};
-
-			int width = _TextureData.GetUpperBound(1);
-			int height = _TextureData.GetUpperBound(0);
-
-			if (colourTable.y > _TextureData.GetUpperBound(0))
-			{
-				return colourTable;
-			}
-
-			if (colourTable.x > _TextureData.GetUpperBound(1))
-			{
-				return colourTable;
-			}
-
-			for (int x = 0; x < length; x++)
-			{
-				ushort val = _TextureData[colourTable.y, colourTable.x + x];
-				ushort alpha = (ushort)(val >> 15);
-				ushort blue = (ushort)(((ushort)(val << 1) >> 11) << 3);
-				ushort green = (ushort)(((ushort)(val << 6) >> 11) << 3);
-				ushort red = (ushort)(((ushort)(val << 11) >> 11) << 3);
-
-				if (alpha != 0 || blue != 0 || green != 0 || red != 0)
-				{
-					alpha = 255;
-				}
-				else
-				{
-					alpha = 0;
-				}
-
-				colourTable.colours[x] = Color.FromArgb(alpha, red, green, blue);
-			}
-
-			return colourTable;
-		}
-
 		protected Color[] GetGreyscalePalette(int index)
 		{
-			TexturePage tPage = _TPages[(ushort)index];
-
-			int paletteSize = (tPage.tp == 0) ? 16 : 256;
-			Color[] greyPalette = new Color[paletteSize];
-			for (int i = 0; i < paletteSize; i++)
-			{
-				int luma = (i * 256) / paletteSize;
-				greyPalette[i] = Color.FromArgb(luma, luma, luma);
-			}
-
-			return greyPalette;
+			return _TPages[index].GetGreyscalePallete();
 		}
 
 		protected Color[] GetPalette(int index, ushort clut)
 		{
-			TexturePage texturePage = _TPages[index];
-			return GetTextureClut(clut, texturePage.tp == 0 ? 16 : 256).colours;
+			return _TPages[index].GetPallete(clut);
 		}
 
 		public static bool ByteArraysAreEqual(byte[] arr1, byte[] arr2)
@@ -300,22 +173,16 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			}
 		}
 
-		public void BuildTexturesFromGreyscalePallete(ushort[] texturePages)
+		public void BuildTexturesFromGreyscalePallete(TPage[] texturePages)
 		{
 			if (_TPages == null)
 			{
-				List<TexturePage> tPages = new List<TexturePage>();
-
-				for (int i = 0; i < texturePages.Length; i++)
+				_TPages = texturePages;
+				foreach (TPage tPage in _TPages)
 				{
-					ushort tPage = (ushort)(texturePages[i] & 0x0000FFFFu);
-					if (tPages.FindIndex(x => x.tPage == tPage) < 0)
-					{
-						tPages.Add(GetTexturePage(tPage));
-					}
+					tPage.Initialize(_TextureData, _ImageWidth, _ImageHeight, _TotalWidth);
 				}
 
-				_TPages = tPages.ToArray();
 				_TextureCount = _TPages.Length;
 				_Textures = new Bitmap[_TPages.Length];
 			}
@@ -326,22 +193,16 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			}
 		}
 
-		public void BuildTexturesFromPolygonData(SoulReaverPlaystationTextureData[] texData, ushort[] texturePages, bool drawGreyScaleFirst, bool quantizeBounds, CDC.Objects.ExportOptions options)
+		public void BuildTexturesFromPolygonData(SoulReaverPlaystationTextureData[] texData, TPage[] texturePages, bool drawGreyScaleFirst, bool quantizeBounds, CDC.Objects.ExportOptions options)
 		{
 			if (_TPages == null)
 			{
-				List<TexturePage> tPages = new List<TexturePage>();
-
-				for (int i = 0; i < texturePages.Length; i++)
+				_TPages = texturePages;
+				foreach (TPage tPage in _TPages)
 				{
-					ushort tPage = (ushort)(texturePages[i] & 0x0000FFFFu);
-					if (tPages.FindIndex(x => x.tPage == tPage) < 0)
-					{
-						tPages.Add(GetTexturePage(tPage));
-					}
+					tPage.Initialize(_TextureData, _ImageWidth, _ImageHeight, _TotalWidth);
 				}
 
-				_TPages = tPages.ToArray();
 				_TextureCount = _TPages.Length;
 				_Textures = new Bitmap[_TPages.Length];
 			}
@@ -382,7 +243,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			// use the polygon data to colour in all possible parts of the textures
 			foreach (SoulReaverPlaystationTextureData poly in texData)
 			{
-				TexturePage texturePage = _TPages[poly.textureID];
+				TPage texturePage = _TPages[poly.textureID];
 
 				bool dumpPreviousTextureVersion = false;
 				bool wrotePixels = false;
@@ -662,7 +523,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 						for (int texNum = 0; texNum < _Textures.Length; texNum++)
 						{
-							TexturePage texturePage = _TPages[texNum];
+							TPage texturePage = _TPages[texNum];
 							Bitmap exportTemp = (Bitmap)_Textures[texNum].Clone();
 							Color[] palette = GetPalette(texNum, clut);
 							bool exportThisTexture = false;
@@ -713,7 +574,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 				for (int texNum = 0; texNum < _Textures.Length; texNum++)
 				{
-					TexturePage texturePage = _TPages[texNum];
+					TPage texturePage = _TPages[texNum];
 
 					// find the most frequently-used palette
 					string palID = "";
@@ -820,7 +681,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 		{
 			Bitmap tex = new Bitmap(_ImageWidth, _ImageHeight);
 
-			TexturePage texturePage = _TPages[index];
+			TPage texturePage = _TPages[index];
 			for (int y = 0; y < _ImageHeight; y++)
 			{
 				for (int x = 0; x < _ImageWidth; x++)

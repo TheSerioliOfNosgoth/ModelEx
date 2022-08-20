@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using TPage = BenLincoln.TheLostWorlds.CDTextures.PlaystationTexturePage;
 
 namespace CDC.Objects.Models
 {
@@ -259,9 +260,9 @@ namespace CDC.Objects.Models
 		};
 		#endregion
 
-		protected List<ushort> _tPages = null;
+		protected List<TPage> _tPages = null;
 
-		protected SR1Model(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, List<ushort> tPages) :
+		protected SR1Model(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, List<TPage> tPages) :
 			base(reader, dataStart, modelData, strModelName, ePlatform, version)
 		{
 			_tPages = tPages;
@@ -548,13 +549,22 @@ namespace CDC.Objects.Models
 				bool echoAttributes = false;
 				if (_platform == Platform.PSX)
 				{
+					TPage tPage = null;
 					_polygons[p].material.texturePage = reader.ReadUInt16();
-					_polygons[p].material.textureID = (ushort)_tPages.FindIndex(x => x == _polygons[p].material.texturePage);
+					_polygons[p].material.textureID = (ushort)_tPages.FindIndex(x => x.tPage == _polygons[p].material.texturePage);
 					if (_polygons[p].material.textureID == 0xFFFF)
 					{
 						_polygons[p].material.textureID = (ushort)_tPages.Count;
-						_tPages.Add(_polygons[p].material.texturePage);
+
+						tPage = new TPage(_polygons[p].material.texturePage);
+						_tPages.Add(tPage);
 					}
+					else
+					{
+						tPage = _tPages[_polygons[p].material.textureID];
+					}
+
+					tPage.AddColorTable(_polygons[p].material.clutValue);
 				}
 				else
 				{

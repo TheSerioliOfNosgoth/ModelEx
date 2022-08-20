@@ -91,6 +91,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			if (clutID == 0xFFFF)
 			{
 				PlaystationColorTable colorTable = new PlaystationColorTable(clut);
+				colorTables.Add(colorTable);
 			}
 		}
 
