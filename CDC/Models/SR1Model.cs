@@ -592,6 +592,7 @@ namespace CDC.Objects.Models
 						_polygons[p].material.blendMode = 1;
 					}
 				}
+
 				//if (echoAttributes)
 				//{
 				//    Console.WriteLine(string.Format("Debug: sr1TextureFT3Attributes = {0:X4}", _polygons[p].sr1TextureFT3Attributes));

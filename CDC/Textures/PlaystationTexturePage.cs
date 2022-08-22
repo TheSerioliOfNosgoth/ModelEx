@@ -36,22 +36,14 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 		public void Initialize(ushort[,] textureData, int imageWidth, int imageHeight, int totalWidth)
 		{
-			X = ((tPage << 6) & 0x7c0) % totalWidth; // % 1024;
-			Y = ((tPage << 4) & 0x100) + ((tPage >> 2) & 0x200);
+			// X = (((tPage & 0x07FF) - 8) % 8) / 2;
+			X = ((tPage << 6) & 0x1c0) % totalWidth; // % 1024;
+			// Y = 0;
+			Y = (tPage << 4) & 0x100; // + ((tPage >> 2) & 0x200);
 			pixels = new ushort[imageHeight, imageWidth];
 
-			int width = textureData.GetUpperBound(1);
-			int height = textureData.GetUpperBound(0);
-
-			if (Y > height)
-			{
-				return;
-			}
-
-			if (X > width)
-			{
-				return;
-			}
+			int width = textureData.GetUpperBound(1) + 1;
+			int height = textureData.GetUpperBound(0) + 1;
 
 			for (int y = 0; y < imageHeight; y++)
 			{
@@ -59,7 +51,12 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 				{
 					if (tp == 0) // 4 bit
 					{
-						ushort val = textureData[Y + y, X + (x / 4)];
+						ushort val = 0;
+						if ((Y + y) < height && (X + (x / 4)) < width)
+						{
+							val = textureData[Y + y, X + (x / 4)];
+						}
+
 						pixels[y, x++] = (ushort)(val & 0x000F);
 						pixels[y, x++] = (ushort)((val & 0x00F0) >> 4);
 						pixels[y, x++] = (ushort)((val & 0x0F00) >> 8);
@@ -67,13 +64,23 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 					}
 					else if (tp == 1) // 8 bit
 					{
-						ushort val = textureData[Y + y, X + (x / 2)];
+						ushort val = 0;
+						if ((Y + y) < height && (X + (x / 2)) < width)
+						{
+							val = textureData[Y + y, X + (x / 2)];
+						}
+
 						pixels[y, x++] = (ushort)(val & 0x00FF);
 						pixels[y, x++] = (ushort)((val & 0xFF00) >> 8);
 					}
 					else if (tp == 2) // 16 bit
 					{
-						ushort val = textureData[Y + y, X + x];
+						ushort val = 0;
+						if ((Y + y) < height && (X + x) < width)
+						{
+							val = textureData[Y + y, X + x];
+						}
+
 						pixels[y, x++] = val;
 					}
 				}

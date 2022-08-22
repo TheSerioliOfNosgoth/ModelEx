@@ -550,7 +550,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 								{
 									Directory.CreateDirectory("Texture_Debugging");
 								}
-								string fileName = string.Format(@"Texture_Debugging\Texture-{0:X8}-count_{1:X8}-palette_texture_ID_{2:X8}-clut_{4:X8}.png", texNum, useCount, tID, clut);
+								string fileName = string.Format(@"Texture_Debugging\Texture-{0:X8}-count_{1:X8}-palette_texture_ID_{2:X8}-clut_{3:X8}.png", texNum, useCount, tID, clut);
 								exportTemp.Save(fileName, ImageFormat.Png);
 							}
 						}
