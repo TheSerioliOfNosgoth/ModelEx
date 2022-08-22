@@ -90,6 +90,7 @@
     <Compile Include="Models\TRLObjectModel.cs" />
     <Compile Include="Models\TRLUnitModel.cs" />
     <Compile Include="Textures\PlaystationColorTable.cs" />
+    <Compile Include="Textures\PlaystationTextureDictionary.cs" />
     <Compile Include="Textures\PlaystationTexturePage.cs" />
     <Compile Include="Textures\SoulReaverPlaystationCRMTextureFile.cs" />
     <Compile Include="Textures\Gex3PlaystationVRMTextureFile.cs" />

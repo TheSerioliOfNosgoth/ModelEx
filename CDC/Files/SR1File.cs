@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using CDC.Objects.Models;
-using TPage = BenLincoln.TheLostWorlds.CDTextures.PlaystationTexturePage;
+using TPages = BenLincoln.TheLostWorlds.CDTextures.PlaystationTextureDictionary;
 
 namespace CDC.Objects
 {
@@ -16,8 +16,8 @@ namespace CDC.Objects
 		public const UInt32 BETA_19990512_VERSION = 0x3c204139;
 		public const UInt32 RETAIL_VERSION = 0x3C20413B;
 
-		protected List<TPage> _tPages = new List<TPage>();
-		public TPage[] TPages { get { return _tPages.ToArray(); } }
+		protected TPages _tPages = new TPages();
+		public TPages TPages { get { return _tPages; } }
 
 		public MonsterAttributes _monsterAttributes;
 

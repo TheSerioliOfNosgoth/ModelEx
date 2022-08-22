@@ -1,13 +1,13 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using TPage = BenLincoln.TheLostWorlds.CDTextures.PlaystationTexturePage;
+using TPages = BenLincoln.TheLostWorlds.CDTextures.PlaystationTextureDictionary;
 
 namespace CDC.Objects.Models
 {
 	public class SR1ObjectModel : SR1Model
 	{
-		public SR1ObjectModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, List<TPage> tPages)
+		public SR1ObjectModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, TPages tPages)
 			: base(reader, dataStart, modelData, strModelName, ePlatform, version, tPages)
 		{
 			_modelTypePrefix = "o_";
@@ -30,7 +30,7 @@ namespace CDC.Objects.Models
 			_trees = new Tree[_groupCount];
 		}
 
-		public static SR1ObjectModel Load(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 version, List<TPage> tPages, CDC.Objects.ExportOptions options)
+		public static SR1ObjectModel Load(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 version, TPages tPages, CDC.Objects.ExportOptions options)
 		{
 			long newPosition = modelData + (0x00000004 * usIndex);
 			if ((newPosition < 0) || (newPosition > reader.BaseStream.Length))

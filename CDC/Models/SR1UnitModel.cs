@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using TPage = BenLincoln.TheLostWorlds.CDTextures.PlaystationTexturePage;
+using TPages = BenLincoln.TheLostWorlds.CDTextures.PlaystationTextureDictionary;
 
 namespace CDC.Objects.Models
 {
@@ -12,7 +12,7 @@ namespace CDC.Objects.Models
 		protected UInt32 m_uSpectralVertexStart;
 		protected UInt32 m_uSpectralColourStart;
 
-		public SR1UnitModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, List<TPage> tPages)
+		public SR1UnitModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, TPages tPages)
 			: base(reader, dataStart, modelData, strModelName, ePlatform, version, tPages)
 		{
 			_modelTypePrefix = "a_";
@@ -117,7 +117,7 @@ namespace CDC.Objects.Models
 			_trees = new Tree[_groupCount];
 		}
 
-		public static SR1UnitModel Load(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, List<TPage> tPages, CDC.Objects.ExportOptions options)
+		public static SR1UnitModel Load(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, TPages tPages, CDC.Objects.ExportOptions options)
 		{
 			SR1UnitModel xModel = new SR1UnitModel(reader, dataStart, modelData, strModelName, ePlatform, version, tPages);
 			xModel.ReadData(reader, options);
