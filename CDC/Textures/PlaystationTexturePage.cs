@@ -13,6 +13,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 		protected List<PlaystationColorTable> colorTables = new List<PlaystationColorTable>();
 		protected Color[] greyPalette16 = new Color[16];
 		protected Color[] greyPalette256 = new Color[256];
+		protected PlaystationPixelList pixelList = new PlaystationPixelList();
 		public ushort[,] pixels;
 
 		public PlaystationTexturePage(ushort tPage)
@@ -117,6 +118,11 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 		public Color[] GetGreyscalePallete()
 		{
 			return tp == 0 ? greyPalette16 : greyPalette256;
+		}
+
+		public PlaystationPixelList GetPixelList()
+		{
+			return pixelList;
 		}
 	}
 }

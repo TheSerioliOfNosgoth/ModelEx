@@ -221,30 +221,22 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 				}
 			}
 
-			Dictionary<int, Dictionary<int, ulong>> handledPixels = new Dictionary<int, Dictionary<int, ulong>>();
-			//Dictionary<int, ulong> handledPixels = new Dictionary<int, ulong>();
-
 			// use the polygon data to colour in all possible parts of the textures
 			foreach (SoulReaverPlaystationTextureData poly in texData)
 			{
 				TPage texturePage = _TPages[poly.textureID];
+				Color[] palette = texturePage.GetPallete(poly.CLUT);
+				PlaystationPixelList polyPixelList = texturePage.GetPixelList();
 
 				bool dumpPreviousTextureVersion = false;
 				bool wrotePixels = false;
 				List<byte[]> textureHashes = new List<byte[]>();
 				Bitmap previousTexture = (Bitmap)_Textures[poly.textureID].Clone();
-				Dictionary<int, ulong> polyPixelList = new Dictionary<int, ulong>();
-				if (handledPixels.ContainsKey(poly.textureID))
-				{
-					polyPixelList = handledPixels[poly.textureID];
-				}
 
 				int uMin = 255;
 				int uMax = 0;
 				int vMin = 255;
 				int vMax = 0;
-
-				Color[] palette = _TPages[poly.textureID].GetPallete(poly.CLUT);
 
 				//bool exportAllPaletteVariations = false;
 				//if (exportAllPaletteVariations)
@@ -431,14 +423,6 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 						}
 					}
 				}
-				if (handledPixels.ContainsKey(poly.textureID))
-				{
-					handledPixels[poly.textureID] = polyPixelList;
-				}
-				else
-				{
-					handledPixels.Add(poly.textureID, polyPixelList);
-				}
 
 				if (wrotePixels)
 				{
@@ -508,8 +492,9 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 						for (int texNum = 0; texNum < _Textures.Length; texNum++)
 						{
 							TPage texturePage = _TPages[texNum];
+							Color[] palette = texturePage.GetPallete(clut);
+
 							Bitmap exportTemp = (Bitmap)_Textures[texNum].Clone();
-							Color[] palette = _TPages[texNum].GetPallete(clut);
 							bool exportThisTexture = false;
 							for (int y = 0; y < _ImageHeight; y++)
 							{
@@ -597,13 +582,13 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 							}
 						}
 					}
-					Color[] commonPalette = _TPages[texNum].GetPallete(mostCommonPaletteClut);
+					Color[] commonPalette = texturePage.GetPallete(mostCommonPaletteClut);
 
 					// use a greyscale palette instead of column 0, row 0, because column 0, row 0 is always garbage that makes 
 					// the texture impossible to view properly, and full of random transparent pixels
 					if (options.AlwaysUseGreyscaleForMissingPalettes || mostCommonPaletteClut == 0)
 					{
-						commonPalette =  _TPages[texNum].GetGreyscalePallete();
+						commonPalette =  texturePage.GetGreyscalePallete();
 					}
 
 					for (int y = 0; y < _ImageHeight; y++)
