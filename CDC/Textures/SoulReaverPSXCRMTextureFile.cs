@@ -156,6 +156,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 					//Console.WriteLine(string.Format("Debug: texture {0:X8}, CLUT {1:X4} already exists in the collection - will not recreate", textureID, clut));
 				}
 			}
+
 			if (createTexture)
 			{
 				Bitmap tex = GetTextureAsBitmap(textureID, palette);
@@ -188,6 +189,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			bool debugTextureCollisions = false;
 
 			// Initialize the textures
+			#region Initialize Textures
 			if (drawGreyScaleFirst)
 			{
 				for (int i = 0; i < _TextureCount; i++)
@@ -210,8 +212,10 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 					}
 				}
 			}
+			#endregion
 
 			// Use the polygon data to color in all possible parts of the textures
+			#region Sections used by Polygons
 			foreach (SoulReaverPlaystationTextureData poly in texData)
 			{
 				TPage texturePage = _TPages[poly.textureID];
@@ -227,55 +231,18 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 				int vMin = 255;
 				int vMax = 0;
 
-				//bool exportAllPaletteVariations = false;
-				//if (exportAllPaletteVariations)
-				//{
-				//    if (!Directory.Exists("Texture_Debugging"))
-				//    {
-				//        Directory.CreateDirectory("Texture_Debugging");
-				//    }
-				//    //string fileName = string.Format(@"Texture_Debugging\Texture-{0:X8}-row_{1:X4}-column_{2:X4}-CLUT_{3:X4}.png", poly.textureID, poly.paletteColumn, poly.paletteRow, poly.CLUT);
-				//    string fileName = string.Format(@"Texture_Debugging\Texture-{0:X8}-CLUT_{3:X4}-row_{1:X4}-column_{2:X4}.png", poly.textureID, poly.paletteColumn, poly.paletteRow, poly.CLUT);
-				//    if (!File.Exists(fileName))
-				//    {
-				//        Bitmap currentVariation = GetTextureAsBitmap(poly.textureID, palette);
-				//        currentVariation.Save(fileName, ImageFormat.Png);
-				//    }
-				//}
 				if (options.UseEachUniqueTextureCLUTVariation)
 				{
 					CreateARGBTextureFromCLUTIfNew(poly.textureID, poly.CLUT, palette);
 				}
 
-				// some basic sanity-checking for bad palette information obtained via incorrect parsing of data
-				//bool paletteIsValid = true;
-				//if ((poly.paletteColumn % 2) == 1)
-				//{
-				//    paletteIsValid = false;
-				//}
-				//int numTransparentColors = 0;
-				//foreach (Color c in palette)
-				//{
-				//    if (c.A == 0)
-				//    {
-				//        numTransparentColors++;
-				//    }
-				//}
-				//if (numTransparentColors > 1)
-				//{
-				//    paletteIsValid = false;
-				//}
-				//if (!paletteIsValid)
-				//{
-				//    palette = GetGreyscalePalette();
-				//    Console.WriteLine(string.Format("Invalid palette detected for texture ID {0}: row {1}, column {2}", poly.textureID, poly.paletteRow, poly.paletteColumn));
-				//}
-				// get the rectangle defined by the minimum and maximum U and V coords
+				// Get the rectangle defined by the minimum and maximum U and V coords
 				foreach (int u in poly.u)
 				{
 					uMin = Math.Min(uMin, u);
 					uMax = Math.Max(uMax, u);
 				}
+
 				foreach (int v in poly.v)
 				{
 					vMin = Math.Min(vMin, v);
@@ -302,39 +269,45 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 					}
 				}
 
-				// if specified, quantize the rectangle's boundaries to a multiple of 16
+				// If specified, quantize the rectangle's boundaries to a multiple of 16
 				if (quantizeBounds)
 				{
-					//int quantizeRes = 16;
 					int quantizeRes = 16;
 					while ((uMin % quantizeRes) > 0)
 					{
 						uMin--;
 					}
+
 					while ((uMax % quantizeRes) > 0)
 					{
 						uMax++;
 					}
+
 					while ((vMin % quantizeRes) > 0)
 					{
 						vMin--;
 					}
+
 					while ((vMax % quantizeRes) > 0)
 					{
 						vMax++;
 					}
+
 					if (uMin < 0)
 					{
 						uMin = 0;
 					}
+
 					if (uMax > 256)
 					{
 						uMax = 256;
 					}
+
 					if (vMin < 0)
 					{
 						vMin = 0;
 					}
+
 					if (vMax > 256)
 					{
 						vMax = 256;
@@ -355,6 +328,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 						//{
 						//    pixelColor = Color.FromArgb((byte)materialAlpha, palette[pixel].R, palette[pixel].G, palette[pixel].B);
 						//}
+
 						//ulong checkPixels = ((ulong)materialAlpha << 56) | ((ulong)palette[pixel].R << 48) | ((ulong)palette[pixel].G << 40)
 						//    | ((ulong)palette[pixel].B << 32) | ((ulong)materialAlpha << 24);
 						ulong checkPixels = ((ulong)palette[pixel].A << 56) | ((ulong)palette[pixel].R << 48) | ((ulong)palette[pixel].G << 40)
@@ -365,26 +339,31 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 							if (polyPixelList[dataOffset] != checkPixels)
 							{
 								bool drawPixels = true;
+
 								//if (materialAlpha == 0)
 								//{
 								//    //Console.WriteLine("Debug: Material has an alpha of 0 - ignoring");
 								//    drawPixels = false;
 								//}
+
 								//if (materialAlpha < 0x40)
 								//{
 								//    //Console.WriteLine("Debug: Material has an alpha of less than 0x40 - ignoring");
 								//    drawPixels = false;
 								//}
+
 								if (!poly.textureUsed)
 								{
 									//Console.WriteLine("Debug: polygon does not use a texture - ignoring");
 									drawPixels = false;
 								}
+
 								if (!poly.visible)
 								{
 									//Console.WriteLine("Debug: polygon is invisible - ignoring");
 									drawPixels = false;
 								}
+
 								if (drawPixels)
 								{
 									if ((uMin != 0) && (vMin != 0))
@@ -420,7 +399,8 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 						{
 							Directory.CreateDirectory("Texture_Debugging");
 						}
-						// dump each overwritten version of the texture for debugging
+
+						// Dump each overwritten version of the texture for debugging
 						byte[] previousHash = new MD5CryptoServiceProvider().ComputeHash(ImageToByteArray(previousTexture));
 						if (!ListContainsByteArray(textureHashes, previousHash))
 						{
@@ -434,18 +414,22 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 								{
 									gotFilename = true;
 								}
+
 								fileNum++;
 							}
+
 							if (fileName != "")
 							{
 								//_Textures[poly.textureID].Save(fileName, ImageFormat.Png);
 								previousTexture.Save(fileName, ImageFormat.Png);
 							}
+
 							textureHashes.Add(previousHash);
 						}
 					}
 				}
 			}
+			#endregion
 
 			// Fill in uncolored parts of each texture using the most common palette.
 			#region Unused Sections
@@ -466,6 +450,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 								hasAtLeastOneVisiblePixel = true;
 							}
 						}
+
 						bool pixChroma = (_Textures[texNum].GetPixel(x, y).A == 1);
 						if (pixChroma)
 						{
@@ -479,6 +464,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 						}
 					}
 				}
+
 				if ((!hasAtLeastOneVisiblePixel) && (options.UnhideCompletelyTransparentTextures))
 				{
 					for (int y = 0; y < _Textures[texNum].Width; y++)
@@ -496,7 +482,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			}
 			#endregion
 
-			// dump all textures as PNGs for debugging
+			// Dump all textures as PNGs for debugging
 			//texNum = 0;
 			//foreach (Bitmap tex in _Textures)
 			//{
@@ -568,11 +554,6 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 		public void ExportAllPaletteVariations(TPages tPages, bool alwaysUseGreyscaleForMissingPalettes)
 		{
-			if (tPages == null)
-			{
-				return;
-			}
-
 			tPages.Initialize(_TextureData, _ImageWidth, _ImageHeight, _TotalWidth, alwaysUseGreyscaleForMissingPalettes);
 
 			Bitmap[] textures = new Bitmap[tPages.Count];

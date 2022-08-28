@@ -274,6 +274,7 @@ namespace ModelEx
 						bool drawGreyscaleFirst = false;
 						bool quantizeBounds = true;
 						textureFile.BuildTexturesFromPolygonData(polygons, ((SR1File)File).TPages, drawGreyscaleFirst, quantizeBounds, ExportOptions);
+						//textureFile.ExportAllPaletteVariations(((SR1File)File).TPages, false);
 
 						// For all models
 						for (int t = 0; t < textureFile.TextureCount; t++)

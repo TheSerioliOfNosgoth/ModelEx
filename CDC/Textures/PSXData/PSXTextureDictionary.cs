@@ -5,6 +5,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 {
 	public class PSXTextureDictionary
 	{
+		bool isInitialized = false;
 		List<TPage> tPages = new List<TPage>();
 		protected List<PSXColorTable> colorTables = new List<PSXColorTable>();
 		protected Dictionary<ushort, int> clutRefs = new Dictionary<ushort, int>();
@@ -51,6 +52,13 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 		public void Initialize(ushort[,] textureData, int imageWidth, int imageHeight, int totalWidth, bool alwaysUseGreyscaleForMissingPalettes)
 		{
+			if (isInitialized)
+			{
+				return;
+			}
+
+			isInitialized = true;
+
 			foreach (PSXColorTable colorTable in colorTables)
 			{
 				colorTable.Initialize(textureData, totalWidth);
