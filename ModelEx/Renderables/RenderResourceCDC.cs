@@ -10,10 +10,10 @@ using SR2File = CDC.Objects.SR2File;
 using DefianceFile = CDC.Objects.DefianceFile;
 using TRLFile = CDC.Objects.TRLFile;
 using SRModel = CDC.Objects.Models.SRModel;
-using Gex3PSTextureFile = BenLincoln.TheLostWorlds.CDTextures.Gex3PlaystationVRMTextureFile;
+using Gex3PSTextureFile = BenLincoln.TheLostWorlds.CDTextures.Gex3PSXRMTextureFile;
 using SR1PCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPCTextureFile;
-using SR1PSTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPlaystationCRMTextureFile;
-using SR1DCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverDreamcastTextureFile;
+using SR1PSTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPSXCRMTextureFile;
+using SR1DCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverDCTextureFile;
 using SR2PCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaver2PCVRMTextureFile;
 using TRLPCTextureFile = BenLincoln.TheLostWorlds.CDTextures.TombRaiderPCDRMTextureFile;
 

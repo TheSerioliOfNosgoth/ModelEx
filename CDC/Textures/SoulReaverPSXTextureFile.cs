@@ -9,7 +9,7 @@ using System.Text;
 
 namespace BenLincoln.TheLostWorlds.CDTextures
 {
-	public class SoulReaverPlaystationTextureFile : BenLincoln.TheLostWorlds.CDTextures.TextureFile
+	public class SoulReaverPSXTextureFile : BenLincoln.TheLostWorlds.CDTextures.TextureFile
 	{
 		protected byte[][] _TextureData;
 		protected Bitmap[] _Textures;
@@ -87,7 +87,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			public bool visible;
 		}
 
-		public SoulReaverPlaystationTextureFile(string path)
+		public SoulReaverPSXTextureFile(string path)
 			: base(path)
 		{
 			_FileType = TextureFileType.SoulReaverPlaystation;

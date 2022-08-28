@@ -7,9 +7,9 @@ using System.Text;
 
 namespace BenLincoln.TheLostWorlds.CDTextures
 {
-	public class SoulReaverDreamcastTextureFile : BenLincoln.TheLostWorlds.CDTextures.SoulReaverMonolithicTextureFile
+	public class SoulReaverDCTextureFile : BenLincoln.TheLostWorlds.CDTextures.SoulReaverMonolithicTextureFile
 	{
-		public SoulReaverDreamcastTextureFile(string path)
+		public SoulReaverDCTextureFile(string path)
 			: base(path)
 		{
 			_FileType = TextureFileType.SoulReaverDreamcast;

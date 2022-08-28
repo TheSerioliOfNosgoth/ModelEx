@@ -3,27 +3,27 @@ using System.Drawing;
 
 namespace BenLincoln.TheLostWorlds.CDTextures
 {
-	public class PlaystationTexturePage
+	public class PSXTexturePage
 	{
 		public readonly ushort tPage;
 		protected int tp;
 		protected int abr;
 		protected int X;
 		protected int Y;
-		protected List<PlaystationColorTable> colorTables = new List<PlaystationColorTable>();
-		protected PlaystationColorTable greyscaleColorTable;
-		protected PlaystationColorTable commonColorTable;
+		protected List<PSXColorTable> colorTables = new List<PSXColorTable>();
+		protected PSXColorTable greyscaleColorTable;
+		protected PSXColorTable commonColorTable;
 		protected Dictionary<ushort, int> clutRefs = new Dictionary<ushort, int>();
-		protected PlaystationPixelList pixelList = new PlaystationPixelList();
+		protected PSXPixelList pixelList = new PSXPixelList();
 		public ushort[,] pixels;
 
-		public PlaystationTexturePage(ushort tPage)
+		public PSXTexturePage(ushort tPage)
 		{
 			this.tPage = tPage;
 			this.tp = 0; //(tPage >> 7) & 0x03,//(tPage >> 7) & 0x003;
 			this.abr = 0;
 
-			greyscaleColorTable = new PlaystationColorTable((tp == 0) ? 16 : 256);
+			greyscaleColorTable = new PSXColorTable((tp == 0) ? 16 : 256);
 		}
 
 		public void Initialize(ushort[,] textureData, int imageWidth, int imageHeight, int totalWidth, ushort mostCommonCLUT, bool alwaysUseGreyscaleForMissingPalettes)
@@ -78,7 +78,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 				}
 			}
 
-			foreach (PlaystationColorTable colorTable in colorTables)
+			foreach (PSXColorTable colorTable in colorTables)
 			{
 				colorTable.Initialize(textureData, totalWidth);
 			}
@@ -103,7 +103,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 					commonCLUT = mostCommonCLUT;
 				}
 
-				commonColorTable = new PlaystationColorTable(commonCLUT);
+				commonColorTable = new PSXColorTable(commonCLUT);
 				commonColorTable.Initialize(textureData, totalWidth);
 			}
 		}
@@ -113,7 +113,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			ushort clutID = (ushort)colorTables.FindIndex(x => x.clut == clut);
 			if (clutID == 0xFFFF)
 			{
-				PlaystationColorTable colorTable = new PlaystationColorTable(clut);
+				PSXColorTable colorTable = new PSXColorTable(clut);
 				colorTables.Add(colorTable);
 			}
 
@@ -127,14 +127,14 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			}
 		}
 
-		public IReadOnlyCollection<PlaystationColorTable> GetColorTables()
+		public IReadOnlyCollection<PSXColorTable> GetColorTables()
 		{
 			return colorTables;
 		}
 
 		public Color[] GetPallete(ushort clut)
 		{
-			PlaystationColorTable colorTable = colorTables.Find(x => x.clut == clut);
+			PSXColorTable colorTable = colorTables.Find(x => x.clut == clut);
 			if (colorTable != null)
 			{
 				return colorTable.colors;
@@ -154,7 +154,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			return commonColorTable?.colors;
 		}
 
-		public PlaystationPixelList GetPixelList()
+		public PSXPixelList GetPixelList()
 		{
 			return pixelList;
 		}

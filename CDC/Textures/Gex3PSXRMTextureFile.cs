@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 
 namespace BenLincoln.TheLostWorlds.CDTextures
 {
-	public class Gex3PlaystationVRMTextureFile : BenLincoln.TheLostWorlds.CDTextures.TextureFile
+	public class Gex3PSXRMTextureFile : BenLincoln.TheLostWorlds.CDTextures.TextureFile
 	{
 		protected class TexturePage
 		{
@@ -54,7 +54,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 		public Dictionary<int, Dictionary<ushort, Bitmap>> TexturesByCLUT { get { return _TexturesByCLUT; } }
 
-		public Gex3PlaystationVRMTextureFile(string path)
+		public Gex3PSXRMTextureFile(string path)
 			: base(path)
 		{
 			_FileType = TextureFileType.Gex3Playstation;

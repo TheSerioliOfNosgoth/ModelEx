@@ -2,19 +2,19 @@
 
 namespace BenLincoln.TheLostWorlds.CDTextures
 {
-	public class PlaystationColorTable
+	public class PSXColorTable
 	{
 		public readonly ushort clut;
 		protected int X;
 		protected int Y;
 		public Color[] colors;
 
-		public PlaystationColorTable(ushort clut)
+		public PSXColorTable(ushort clut)
 		{
 			this.clut = clut;
 		}
 
-		public PlaystationColorTable(int numColors)
+		public PSXColorTable(int numColors)
 		{
 			// 16 color tables will be padded to 256.
 			colors = new Color[256];

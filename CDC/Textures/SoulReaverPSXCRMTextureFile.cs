@@ -5,12 +5,12 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Security.Cryptography;
-using TPage = BenLincoln.TheLostWorlds.CDTextures.PlaystationTexturePage;
-using TPages = BenLincoln.TheLostWorlds.CDTextures.PlaystationTextureDictionary;
+using TPage = BenLincoln.TheLostWorlds.CDTextures.PSXTexturePage;
+using TPages = BenLincoln.TheLostWorlds.CDTextures.PSXTextureDictionary;
 
 namespace BenLincoln.TheLostWorlds.CDTextures
 {
-	public class SoulReaverPlaystationCRMTextureFile : BenLincoln.TheLostWorlds.CDTextures.TextureFile
+	public class SoulReaverPSXCRMTextureFile : BenLincoln.TheLostWorlds.CDTextures.TextureFile
 	{
 		public struct SoulReaverPlaystationTextureData
 		{
@@ -37,7 +37,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 		public Dictionary<int, Dictionary<ushort, Bitmap>> TexturesByCLUT { get { return _TexturesByCLUT; } }
 
-		public SoulReaverPlaystationCRMTextureFile(string path)
+		public SoulReaverPSXCRMTextureFile(string path)
 			: base(path)
 		{
 			_FileType = TextureFileType.Gex3Playstation;
@@ -216,7 +216,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			{
 				TPage texturePage = _TPages[poly.textureID];
 				Color[] palette = texturePage.GetPallete(poly.CLUT);
-				PlaystationPixelList polyPixelList = texturePage.GetPixelList();
+				PSXPixelList polyPixelList = texturePage.GetPixelList();
 
 				bool dumpPreviousTextureVersion = false;
 				List<byte[]> textureHashes = new List<byte[]>();
@@ -589,7 +589,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 				}
 			}
 
-			foreach (PlaystationColorTable colorTable in tPages.GetColorTables())
+			foreach (PSXColorTable colorTable in tPages.GetColorTables())
 			{
 				for (int texNum = 0; texNum < textures.Length; texNum++)
 				{

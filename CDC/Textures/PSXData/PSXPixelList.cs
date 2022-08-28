@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BenLincoln.TheLostWorlds.CDTextures
 {
-	public class PlaystationPixelList
+	public class PSXPixelList
 	{
 		Dictionary<int, ulong> dictionary = new Dictionary<int, ulong>();
 		
