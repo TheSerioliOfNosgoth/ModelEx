@@ -250,8 +250,8 @@ namespace ModelEx
 								polygons[polygonNum].paletteRow = polygon.paletteRow;
 								polygons[polygonNum].u = new int[3];
 								polygons[polygonNum].v = new int[3];
-								//polygons[polygonNum].materialColour = polygon.material.colour;
-								polygons[polygonNum].materialColour = polygon.colour;
+								//polygons[polygonNum].materialColor = polygon.material.colour;
+								polygons[polygonNum].materialColor = polygon.colour;
 
 								polygons[polygonNum].u[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].u * 255);
 								polygons[polygonNum].v[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].v * 255);

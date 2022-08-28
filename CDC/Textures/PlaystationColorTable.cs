@@ -7,25 +7,36 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 		public readonly ushort clut;
 		protected int X;
 		protected int Y;
-		public Color[] colours;
+		public Color[] colors;
 
 		public PlaystationColorTable(ushort clut)
 		{
 			this.clut = clut;
 		}
 
-		public void Initialize(ushort[,] textureData, int length, int totalWidth)
+		public PlaystationColorTable(int numColors)
+		{
+			// 16 color tables will be padded to 256.
+			colors = new Color[256];
+			for (int i = 0; i < numColors; i++)
+			{
+				int luma = ((i * 256) / numColors) & 0xFF;
+				colors[i] = Color.FromArgb(luma, luma, luma);
+			}
+		}
+
+		public void Initialize(ushort[,] textureData, int totalWidth)
 		{
 			// X = (((clut << 11) >> 11) << 4) % totalWidth; // % 1024;
 			X = ((clut & 0x1F) << 4) % totalWidth; // % 1024;
 			// Y = ((clut << 2) >> 8);
 			Y = ((clut & 0x3FFF) >> 6);
-			colours = new Color[length];
+			colors = new Color[256];
 
 			int width = textureData.GetUpperBound(1) + 1;
 			int height = textureData.GetUpperBound(0) + 1;
 
-			for (int x = 0; x < length; x++)
+			for (int x = 0; x < 256; x++)
 			{
 				ushort val = 0;
 				if (Y < height && (X + x) < width)
@@ -52,7 +63,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 					alpha = 0;
 				}
 
-				colours[x] = Color.FromArgb(alpha, red, green, blue);
+				colors[x] = Color.FromArgb(alpha, red, green, blue);
 			}
 		}
 	}

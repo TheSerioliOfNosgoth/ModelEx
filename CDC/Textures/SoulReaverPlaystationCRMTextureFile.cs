@@ -20,7 +20,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			public ushort CLUT;
 			public int paletteColumn;   // 0-32
 			public int paletteRow;      // 0-255
-			public uint materialColour;
+			public uint materialColor;
 			public bool textureUsed;
 			public bool visible;
 			public ushort tPage;
@@ -165,14 +165,11 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 		public void BuildTexturesFromGreyscalePallete(TPages tPages)
 		{
-			if (_TPages == null)
-			{
-				_TPages = tPages;
-				_TPages.Initialize(_TextureData, _ImageWidth, _ImageHeight, _TotalWidth);
+			_TPages = tPages;
+			_TPages.Initialize(_TextureData, _ImageWidth, _ImageHeight, _TotalWidth, true);
 
-				_TextureCount = _TPages.Count;
-				_Textures = new Bitmap[_TPages.Count];
-			}
+			_TextureCount = _TPages.Count;
+			_Textures = new Bitmap[_TPages.Count];
 
 			for (int i = 0; i < _TextureCount; i++)
 			{
@@ -182,21 +179,15 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 		public void BuildTexturesFromPolygonData(SoulReaverPlaystationTextureData[] texData, TPages tPages, bool drawGreyScaleFirst, bool quantizeBounds, CDC.Objects.ExportOptions options)
 		{
-			if (_TPages == null)
-			{
-				_TPages = tPages;
-				_TPages.Initialize(_TextureData, _ImageWidth, _ImageHeight, _TotalWidth);
+			_TPages = tPages;
+			_TPages.Initialize(_TextureData, _ImageWidth, _ImageHeight, _TotalWidth, options.AlwaysUseGreyscaleForMissingPalettes);
 
-				_TextureCount = _TPages.Count;
-				_Textures = new Bitmap[_TPages.Count];
-			}
-
-			// hashtable to store counts of palette usage
-			Hashtable palettes = new Hashtable();
+			_TextureCount = _TPages.Count;
+			_Textures = new Bitmap[_TPages.Count];
 
 			bool debugTextureCollisions = false;
 
-			// initialize textures
+			// Initialize the textures
 			if (drawGreyScaleFirst)
 			{
 				for (int i = 0; i < _TextureCount; i++)
@@ -207,7 +198,6 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			else
 			{
 				Color chromaKey = Color.FromArgb(1, 128, 128, 128);
-				//Color chromaKey = Color.FromArgb(255, 128, 128, 128);
 				for (int i = 0; i < _TextureCount; i++)
 				{
 					_Textures[i] = new Bitmap(_ImageWidth, _ImageHeight);
@@ -221,7 +211,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 				}
 			}
 
-			// use the polygon data to colour in all possible parts of the textures
+			// Use the polygon data to color in all possible parts of the textures
 			foreach (SoulReaverPlaystationTextureData poly in texData)
 			{
 				TPage texturePage = _TPages[poly.textureID];
@@ -229,7 +219,6 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 				PlaystationPixelList polyPixelList = texturePage.GetPixelList();
 
 				bool dumpPreviousTextureVersion = false;
-				bool wrotePixels = false;
 				List<byte[]> textureHashes = new List<byte[]>();
 				Bitmap previousTexture = (Bitmap)_Textures[poly.textureID].Clone();
 
@@ -264,15 +253,15 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 				//{
 				//    paletteIsValid = false;
 				//}
-				//int numTransparentColours = 0;
+				//int numTransparentColors = 0;
 				//foreach (Color c in palette)
 				//{
 				//    if (c.A == 0)
 				//    {
-				//        numTransparentColours++;
+				//        numTransparentColors++;
 				//    }
 				//}
-				//if (numTransparentColours > 1)
+				//if (numTransparentColors > 1)
 				//{
 				//    paletteIsValid = false;
 				//}
@@ -359,12 +348,12 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 						int dataOffset = (_ImageHeight * y) + x;
 						int pixel = texturePage.pixels[y, x];
 
-						Color pixelColour = palette[pixel];
-						uint materialAlpha = (poly.materialColour & 0xFF000000) >> 24;
+						Color pixelColor = palette[pixel];
+						uint materialAlpha = (poly.materialColor & 0xFF000000) >> 24;
 						//materialAlpha = 255;
 						//if (materialAlpha < 255)
 						//{
-						//    pixelColour = Color.FromArgb((byte)materialAlpha, palette[pixel].R, palette[pixel].G, palette[pixel].B);
+						//    pixelColor = Color.FromArgb((byte)materialAlpha, palette[pixel].R, palette[pixel].G, palette[pixel].B);
 						//}
 						//ulong checkPixels = ((ulong)materialAlpha << 56) | ((ulong)palette[pixel].R << 48) | ((ulong)palette[pixel].G << 40)
 						//    | ((ulong)palette[pixel].B << 32) | ((ulong)materialAlpha << 24);
@@ -418,26 +407,8 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 						if (writePixels)
 						{
-							_Textures[poly.textureID].SetPixel(x, y, pixelColour);
-							wrotePixels = true;
+							_Textures[poly.textureID].SetPixel(x, y, pixelColor);
 						}
-					}
-				}
-
-				if (wrotePixels)
-				{
-					// add or update palette list
-					string paletteIDString = poly.textureID.ToString() + "-" + poly.CLUT.ToString();
-					if (palettes.Contains(paletteIDString))
-					{
-						int palCount = (int)palettes[paletteIDString];
-						palCount++;
-						palettes[paletteIDString] = palCount;
-					}
-					else
-					{
-						int newPalCount = 1;
-						palettes.Add(paletteIDString, newPalCount);
 					}
 				}
 
@@ -476,161 +447,54 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 				}
 			}
 
-			if (!drawGreyScaleFirst)
+			// Fill in uncolored parts of each texture using the most common palette.
+			#region Unused Sections
+			for (int texNum = 0; texNum < _Textures.Length; texNum++)
 			{
-				bool exportAllPaletteVariations = false;
+				TPage texturePage = _TPages[texNum];
+				Color[] commonPalette = texturePage.GetCommonPalette();
+				bool hasAtLeastOneVisiblePixel = false;
 
-				if (exportAllPaletteVariations)
+				for (int y = 0; y < _ImageHeight; y++)
 				{
-					foreach (string pID in palettes.Keys)
+					for (int x = 0; x < _ImageWidth; x++)
 					{
-						int useCount = (int)palettes[pID];
-						string[] palDecode2 = pID.Split('-');
-						int tID = int.Parse(palDecode2[0]);
-						ushort clut = ushort.Parse(palDecode2[1]);
-
-						for (int texNum = 0; texNum < _Textures.Length; texNum++)
+						if (!hasAtLeastOneVisiblePixel)
 						{
-							TPage texturePage = _TPages[texNum];
-							Color[] palette = texturePage.GetPallete(clut);
-
-							Bitmap exportTemp = (Bitmap)_Textures[texNum].Clone();
-							bool exportThisTexture = false;
-							for (int y = 0; y < _ImageHeight; y++)
+							if (_Textures[texNum].GetPixel(x, y).A > 1)
 							{
-								for (int x = 0; x < _ImageWidth; x++)
-								{
-									bool pixChroma = (exportTemp.GetPixel(x, y).A == 1);
-									if (pixChroma)
-									{
-										exportThisTexture = true;
-										int pixel = texturePage.pixels[y, x];
-										Color pixelColour = palette[pixel];
-										if (pixChroma)
-										{
-											exportTemp.SetPixel(x, y, pixelColour);
-										}
-									}
-								}
-							}
-							if (exportThisTexture)
-							{
-								if (!Directory.Exists("Texture_Debugging"))
-								{
-									Directory.CreateDirectory("Texture_Debugging");
-								}
-								string fileName = string.Format(@"Texture_Debugging\Texture-{0:X8}-count_{1:X8}-palette_texture_ID_{2:X8}-clut_{3:X8}.png", texNum, useCount, tID, clut);
-								exportTemp.Save(fileName, ImageFormat.Png);
+								hasAtLeastOneVisiblePixel = true;
 							}
 						}
-					}
-				}
-
-				List<int> allTexturesWithPalettes = new List<int>();
-				foreach (string pID in palettes.Keys)
-				{
-					string[] pd = pID.Split('-');
-					int txID = int.Parse(pd[0]);
-					ushort clut = ushort.Parse(pd[1]);
-					if (!allTexturesWithPalettes.Contains(txID))
-					{
-						if (clut != 0)
+						bool pixChroma = (_Textures[texNum].GetPixel(x, y).A == 1);
+						if (pixChroma)
 						{
-							allTexturesWithPalettes.Add(txID);
-						}
-					}
-				}
-
-				for (int texNum = 0; texNum < _Textures.Length; texNum++)
-				{
-					TPage texturePage = _TPages[texNum];
-
-					// find the most frequently-used palette
-					string palID = "";
-					int palCount = 0;
-					ushort mostCommonPaletteClut = 0;
-					bool hasAtLeastOneVisiblePixel = false;
-					foreach (string pID in palettes.Keys)
-					{
-						string[] pd = pID.Split('-');
-						int txID = int.Parse(pd[0]);
-						bool considerPalette = true;
-						// don't use palettes from other textures unless there were no palettes found for this texture
-						if (allTexturesWithPalettes.Contains(texNum))
-						{
-							if (txID != texNum)
-							{
-								considerPalette = false;
-							}
-						}
-						if (considerPalette)
-						{
-							ushort clut = ushort.Parse(pd[1]);
-							int pCount = (int)palettes[pID];
-							if (pCount > palCount)
-							{
-								palID = pID;
-								if (clut != 0)
-								{
-									mostCommonPaletteClut = clut;
-								}
-								// don't use palettes with column/row zero or with odd column numbers unless there's no other choice
-								//if ((pc != 0) && (pr != 0) && (pc % 2 == 0))
-								//{
-								//    break;
-								//}
-							}
-						}
-					}
-					Color[] commonPalette = texturePage.GetPallete(mostCommonPaletteClut);
-
-					// use a greyscale palette instead of column 0, row 0, because column 0, row 0 is always garbage that makes 
-					// the texture impossible to view properly, and full of random transparent pixels
-					if (options.AlwaysUseGreyscaleForMissingPalettes || mostCommonPaletteClut == 0)
-					{
-						commonPalette =  texturePage.GetGreyscalePallete();
-					}
-
-					for (int y = 0; y < _ImageHeight; y++)
-					{
-						for (int x = 0; x < _ImageWidth; x++)
-						{
-							if (!hasAtLeastOneVisiblePixel)
-							{
-								if (_Textures[texNum].GetPixel(x, y).A > 1)
-								{
-									hasAtLeastOneVisiblePixel = true;
-								}
-							}
-							bool pixChroma = (_Textures[texNum].GetPixel(x, y).A == 1);
+							int dataOffset = (_ImageHeight * y) + x;
+							int pixel = texturePage.pixels[y, x];
+							Color pixelColor = commonPalette[pixel];
 							if (pixChroma)
 							{
-								int dataOffset = (_ImageHeight * y) + x;
-								int pixel = texturePage.pixels[y, x];
-								Color pixelColour = commonPalette[pixel];
-								if (pixChroma)
-								{
-									_Textures[texNum].SetPixel(x, y, pixelColour);
-								}
+								_Textures[texNum].SetPixel(x, y, pixelColor);
 							}
 						}
 					}
-					if ((!hasAtLeastOneVisiblePixel) && (options.UnhideCompletelyTransparentTextures))
+				}
+				if ((!hasAtLeastOneVisiblePixel) && (options.UnhideCompletelyTransparentTextures))
+				{
+					for (int y = 0; y < _Textures[texNum].Width; y++)
 					{
-						for (int y = 0; y < _Textures[texNum].Width; y++)
+						for (int x = 0; x < _Textures[texNum].Height; x++)
 						{
-							for (int x = 0; x < _Textures[texNum].Height; x++)
+							Color pix = _Textures[texNum].GetPixel(x, y);
+							if (pix.A < 2)
 							{
-								Color pix = _Textures[texNum].GetPixel(x, y);
-								if (pix.A < 2)
-								{
-									_Textures[texNum].SetPixel(x, y, Color.FromArgb(128, pix.R, pix.G, pix.B));
-								}
+								_Textures[texNum].SetPixel(x, y, Color.FromArgb(128, pix.R, pix.G, pix.B));
 							}
 						}
 					}
 				}
 			}
+			#endregion
 
 			// dump all textures as PNGs for debugging
 			//texNum = 0;
@@ -700,6 +564,70 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 		{
 			Bitmap tex = _Textures[index];
 			tex.Save(outPath, ImageFormat.Png);
+		}
+
+		public void ExportAllPaletteVariations(TPages tPages, bool alwaysUseGreyscaleForMissingPalettes)
+		{
+			if (tPages == null)
+			{
+				return;
+			}
+
+			tPages.Initialize(_TextureData, _ImageWidth, _ImageHeight, _TotalWidth, alwaysUseGreyscaleForMissingPalettes);
+
+			Bitmap[] textures = new Bitmap[tPages.Count];
+			Color chromaKey = Color.FromArgb(1, 128, 128, 128);
+			for (int i = 0; i < tPages.Count; i++)
+			{
+				textures[i] = new Bitmap(_ImageWidth, _ImageHeight);
+				for (int y = 0; y < _ImageHeight; y++)
+				{
+					for (int x = 0; x < _ImageWidth; x++)
+					{
+						textures[i].SetPixel(x, y, chromaKey);
+					}
+				}
+			}
+
+			foreach (PlaystationColorTable colorTable in tPages.GetColorTables())
+			{
+				for (int texNum = 0; texNum < textures.Length; texNum++)
+				{
+					TPage texturePage = tPages[texNum];
+					Color[] palette = colorTable.colors;
+
+					Bitmap exportTemp = (Bitmap)textures[texNum].Clone();
+					bool exportThisTexture = false;
+					for (int y = 0; y < _ImageHeight; y++)
+					{
+						for (int x = 0; x < _ImageWidth; x++)
+						{
+							bool pixChroma = (exportTemp.GetPixel(x, y).A == 1);
+							if (pixChroma)
+							{
+								exportThisTexture = true;
+								int pixel = texturePage.pixels[y, x];
+								Color pixelColor = palette[pixel];
+								if (pixChroma)
+								{
+									exportTemp.SetPixel(x, y, pixelColor);
+								}
+							}
+						}
+					}
+
+					if (exportThisTexture)
+					{
+						if (!Directory.Exists("Texture_Debugging"))
+						{
+							Directory.CreateDirectory("Texture_Debugging");
+						}
+
+						string fileName = string.Format(@"Texture_Debugging\Texture-{0:X8}-count_{1:X8}-clut_{2:X8}.png", texNum, tPages.GetClutRefCount(colorTable.clut), colorTable.clut);
+						exportTemp.Save(fileName, ImageFormat.Png);
+					}
+				}
+			}
 		}
 	}
 }
