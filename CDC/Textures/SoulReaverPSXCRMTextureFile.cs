@@ -26,6 +26,14 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			public ushort tPage;
 		}
 
+		protected struct BoundingRectangle
+		{
+			public int uMin;
+			public int uMax;
+			public int vMin;
+			public int vMax;
+		}
+
 		protected TPages _TPages;
 		protected ushort[,] _TextureData;
 		protected Bitmap[] _Textures;
@@ -226,97 +234,16 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 				List<byte[]> textureHashes = new List<byte[]>();
 				Bitmap previousTexture = (Bitmap)_Textures[poly.textureID].Clone();
 
-				int uMin = 255;
-				int uMax = 0;
-				int vMin = 255;
-				int vMax = 0;
-
 				if (options.UseEachUniqueTextureCLUTVariation)
 				{
 					CreateARGBTextureFromCLUTIfNew(poly.textureID, poly.CLUT, palette);
 				}
 
-				// Get the rectangle defined by the minimum and maximum U and V coords
-				foreach (int u in poly.u)
+				GetPolygonUVRectangle(in poly, out BoundingRectangle boundingRectangle, quantizeBounds);
+
+				for (int y = boundingRectangle.vMin; y < boundingRectangle.vMax; y++)
 				{
-					uMin = Math.Min(uMin, u);
-					uMax = Math.Max(uMax, u);
-				}
-
-				foreach (int v in poly.v)
-				{
-					vMin = Math.Min(vMin, v);
-					vMax = Math.Max(vMax, v);
-				}
-
-				int width = uMax - uMin;
-				for (int b = 0; b < 8; b++)
-				{
-					if ((1 << b) >= width)
-					{
-						width = 1 << b;
-						break;
-					}
-				}
-
-				int height = vMax - vMin;
-				for (int b = 0; b < 8; b++)
-				{
-					if ((1 << b) >= height)
-					{
-						height = 1 << b;
-						break;
-					}
-				}
-
-				// If specified, quantize the rectangle's boundaries to a multiple of 16
-				if (quantizeBounds)
-				{
-					int quantizeRes = 16;
-					while ((uMin % quantizeRes) > 0)
-					{
-						uMin--;
-					}
-
-					while ((uMax % quantizeRes) > 0)
-					{
-						uMax++;
-					}
-
-					while ((vMin % quantizeRes) > 0)
-					{
-						vMin--;
-					}
-
-					while ((vMax % quantizeRes) > 0)
-					{
-						vMax++;
-					}
-
-					if (uMin < 0)
-					{
-						uMin = 0;
-					}
-
-					if (uMax > 256)
-					{
-						uMax = 256;
-					}
-
-					if (vMin < 0)
-					{
-						vMin = 0;
-					}
-
-					if (vMax > 256)
-					{
-						vMax = 256;
-					}
-				}
-
-				for (int y = vMin; y < vMax; y++)
-				{
-					for (int x = uMin; x < uMax; x++)
+					for (int x = boundingRectangle.uMin; x < boundingRectangle.uMax; x++)
 					{
 						int dataOffset = (_ImageHeight * y) + x;
 						int pixel = texturePage.pixels[y, x];
@@ -366,7 +293,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 								if (drawPixels)
 								{
-									if ((uMin != 0) && (vMin != 0))
+									if ((boundingRectangle.uMin != 0) && (boundingRectangle.vMin != 0))
 									{
 										dumpPreviousTextureVersion = true;
 									}
@@ -607,6 +534,99 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 						string fileName = string.Format(@"Texture_Debugging\Texture-{0:X8}-count_{1:X8}-clut_{2:X8}.png", texNum, tPages.GetClutRefCount(colorTable.clut), colorTable.clut);
 						exportTemp.Save(fileName, ImageFormat.Png);
 					}
+				}
+			}
+		}
+
+		protected void GetPolygonUVRectangle(in SoulReaverPlaystationTextureData poly, out BoundingRectangle boundingRectangle, bool quantizeBounds)
+		{
+			boundingRectangle = new BoundingRectangle()
+			{
+				uMin = 255,
+				uMax = 0,
+				vMin = 255,
+				vMax = 0
+			};
+
+			// Get the rectangle defined by the minimum and maximum U and V coords
+			foreach (int u in poly.u)
+			{
+				boundingRectangle.uMin = Math.Min(boundingRectangle.uMin, u);
+				boundingRectangle.uMax = Math.Max(boundingRectangle.uMax, u);
+			}
+
+			foreach (int v in poly.v)
+			{
+				boundingRectangle.vMin = Math.Min(boundingRectangle.vMin, v);
+				boundingRectangle.vMax = Math.Max(boundingRectangle.vMax, v);
+			}
+
+			/*int width = boundingRectangle.uMax - boundingRectangle.uMin;
+			for (int b = 0; b < 8; b++)
+			{
+				if ((1 << b) >= width)
+				{
+					width = 1 << b;
+					break;
+				}
+			}*/
+
+			/*int height = boundingRectangle.vMax - boundingRectangle.vMin;
+			for (int b = 0; b < 8; b++)
+			{
+				if ((1 << b) >= height)
+				{
+					height = 1 << b;
+					break;
+				}
+			}*/
+
+			// If specified, quantize the rectangle's boundaries to a multiple of 16
+			if (quantizeBounds)
+			{
+				int quantizeRes = 16;
+				while ((boundingRectangle.uMin % quantizeRes) > 0)
+				{
+					boundingRectangle.uMin--;
+				}
+				
+				//while ((boundingRectangle.uMax % quantizeRes) < (quantizeRes - 1))
+				while ((boundingRectangle.uMax % quantizeRes) > 0)
+				{
+					boundingRectangle.uMax++;
+				}
+
+				while ((boundingRectangle.vMin % quantizeRes) > 0)
+				{
+					boundingRectangle.vMin--;
+				}
+				
+				//while ((boundingRectangle.vMax % quantizeRes) < (quantizeRes - 1))
+				while ((boundingRectangle.vMax % quantizeRes) > 0)
+				{
+					boundingRectangle.vMax++;
+				}
+
+				if (boundingRectangle.uMin < 0)
+				{
+					boundingRectangle.uMin = 0;
+				}
+
+				// 255?
+				if (boundingRectangle.uMax > 256)
+				{
+					boundingRectangle.uMax = 256;
+				}
+
+				if (boundingRectangle.vMin < 0)
+				{
+					boundingRectangle.vMin = 0;
+				}
+
+				// 255?
+				if (boundingRectangle.vMax > 256)
+				{
+					boundingRectangle.vMax = 256;
 				}
 			}
 		}
