@@ -261,6 +261,7 @@ namespace ModelEx
 								polygons[polygonNum].v[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].v * 255);
 
 								polygons[polygonNum].textureID = polygon.material.textureID;
+								polygons[polygonNum].tPage = polygon.material.texturePage;
 								polygons[polygonNum].CLUT = polygon.material.clutValue;
 
 								polygons[polygonNum].textureUsed = polygon.material.textureUsed;

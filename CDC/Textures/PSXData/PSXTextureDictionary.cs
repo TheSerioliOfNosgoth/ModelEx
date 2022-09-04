@@ -50,7 +50,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			return textureID;
 		}
 
-		public void Initialize(ushort[,] textureData, int imageWidth, int imageHeight, int totalWidth, bool alwaysUseGreyscaleForMissingPalettes)
+		public void Initialize(ushort[,] textureData, int imageWidth, int imageHeight, int xShift, bool alwaysUseGreyscaleForMissingPalettes)
 		{
 			if (isInitialized)
 			{
@@ -61,7 +61,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 			foreach (PSXColorTable colorTable in colorTables)
 			{
-				colorTable.Initialize(textureData, totalWidth);
+				colorTable.Initialize(textureData, xShift);
 			}
 
 			ushort commonCLUT = 0;
@@ -75,7 +75,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 			foreach (TPage tPage in tPages)
 			{
-				tPage.Initialize(textureData, imageWidth, imageHeight, totalWidth, commonCLUT, alwaysUseGreyscaleForMissingPalettes);
+				tPage.Initialize(textureData, imageWidth, imageHeight, xShift, commonCLUT, alwaysUseGreyscaleForMissingPalettes);
 			}
 		}
 

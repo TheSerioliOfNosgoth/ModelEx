@@ -8,24 +8,14 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 {
 	public class PSXPixelList
 	{
-		Dictionary<int, ulong> dictionary = new Dictionary<int, ulong>();
+		ulong[,] pixels = new ulong[256, 256];
 		
-		public ulong this[int i]
-		{
-			get
-			{
-				return dictionary[i];
-			}
-		}
+		public ulong this[int y, int x]
+		{ get { return pixels[y, x]; } set { pixels[y, x] = value; } }
 
-		public void Add(int key, ulong value)
+		public PSXPixelList()
 		{
-			dictionary.Add(key, value);
-		}
 
-		public bool ContainsKey(int key)
-		{
-			return dictionary.ContainsKey(key);
 		}
 	}
 }

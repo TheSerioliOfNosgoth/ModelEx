@@ -25,23 +25,26 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			}
 		}
 
-		public void Initialize(ushort[,] textureData, int totalWidth)
+		public void Initialize(ushort[,] textureData, int xShift)
 		{
-			// X = (((clut << 11) >> 11) << 4) % totalWidth; // % 1024;
-			X = ((clut & 0x1F) << 4) % totalWidth; // % 1024;
+			int width = textureData.GetUpperBound(1) + 1;
+			int height = textureData.GetUpperBound(0) + 1;
+
+			// X = (((clut << 11) >> 11) << 4) % width; // % 1024;
+			X = ((clut & 0x1F) << 4) % width; // % 1024;
 			// Y = ((clut << 2) >> 8);
 			Y = ((clut & 0x3FFF) >> 6);
 			colors = new Color[256];
 
-			int width = textureData.GetUpperBound(1) + 1;
-			int height = textureData.GetUpperBound(0) + 1;
+			X += width - xShift;
 
 			for (int x = 0; x < 256; x++)
 			{
 				ushort val = 0;
-				if (Y < height && (X + x) < width)
+				int wrappedWidth = (X + x) % width;
+				if (Y < height)
 				{
-					val = textureData[Y, X + x];
+					val = textureData[Y, wrappedWidth];
 				}
 
 				ushort alpha = (ushort)(val >> 15);

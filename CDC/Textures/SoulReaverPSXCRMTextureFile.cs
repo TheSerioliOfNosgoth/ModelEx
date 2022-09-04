@@ -39,6 +39,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 		protected Bitmap[] _Textures;
 		protected int _TotalWidth;
 		protected int _TotalHeight;
+		protected int _XShift;
 		protected Dictionary<int, Dictionary<ushort, Bitmap>> _TexturesByCLUT;
 		protected readonly int _ImageWidth = 256;
 		protected readonly int _ImageHeight = 256;
@@ -66,6 +67,8 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 				FileStream stream = new FileStream(_FilePath, FileMode.Open, FileAccess.Read);
 				BinaryReader reader = new BinaryReader(stream);
 
+				stream.Seek(20, SeekOrigin.Begin);
+				_XShift = reader.ReadInt32();
 				stream.Seek(28, SeekOrigin.Begin);
 				_TotalWidth = reader.ReadInt32();
 				_TotalHeight = reader.ReadInt32();
@@ -175,7 +178,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 		public void BuildTexturesFromGreyscalePallete(TPages tPages)
 		{
 			_TPages = tPages;
-			_TPages.Initialize(_TextureData, _ImageWidth, _ImageHeight, _TotalWidth, true);
+			_TPages.Initialize(_TextureData, _ImageWidth, _ImageHeight, _XShift, true);
 
 			_TextureCount = _TPages.Count;
 			_Textures = new Bitmap[_TPages.Count];
@@ -189,7 +192,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 		public void BuildTexturesFromPolygonData(SoulReaverPlaystationTextureData[] texData, TPages tPages, bool drawGreyScaleFirst, bool quantizeBounds, CDC.Objects.ExportOptions options)
 		{
 			_TPages = tPages;
-			_TPages.Initialize(_TextureData, _ImageWidth, _ImageHeight, _TotalWidth, options.AlwaysUseGreyscaleForMissingPalettes);
+			_TPages.Initialize(_TextureData, _ImageWidth, _ImageHeight, _XShift, options.AlwaysUseGreyscaleForMissingPalettes);
 
 			_TextureCount = _TPages.Count;
 			_Textures = new Bitmap[_TPages.Count];
@@ -231,8 +234,13 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 				PSXPixelList polyPixelList = texturePage.GetPixelList();
 
 				bool dumpPreviousTextureVersion = false;
-				List<byte[]> textureHashes = new List<byte[]>();
-				Bitmap previousTexture = (Bitmap)_Textures[poly.textureID].Clone();
+				List<byte[]> textureHashes = null;
+				Bitmap previousTexture = null;
+				if (debugTextureCollisions)
+				{
+					textureHashes = new List<byte[]>();
+					previousTexture = (Bitmap)_Textures[poly.textureID].Clone();
+				}
 
 				if (options.UseEachUniqueTextureCLUTVariation)
 				{
@@ -245,39 +253,16 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 				{
 					for (int x = boundingRectangle.uMin; x < boundingRectangle.uMax; x++)
 					{
-						int dataOffset = (_ImageHeight * y) + x;
 						int pixel = texturePage.pixels[y, x];
-
 						Color pixelColor = palette[pixel];
-						uint materialAlpha = (poly.materialColor & 0xFF000000) >> 24;
-						//materialAlpha = 255;
-						//if (materialAlpha < 255)
-						//{
-						//    pixelColor = Color.FromArgb((byte)materialAlpha, palette[pixel].R, palette[pixel].G, palette[pixel].B);
-						//}
-
-						//ulong checkPixels = ((ulong)materialAlpha << 56) | ((ulong)palette[pixel].R << 48) | ((ulong)palette[pixel].G << 40)
-						//    | ((ulong)palette[pixel].B << 32) | ((ulong)materialAlpha << 24);
-						ulong checkPixels = ((ulong)palette[pixel].A << 56) | ((ulong)palette[pixel].R << 48) | ((ulong)palette[pixel].G << 40)
-							| ((ulong)palette[pixel].B << 32);
+						ulong checkPixels = (ulong)unchecked(pixelColor.ToArgb()) << 32;
+						checkPixels |= 1;
 						bool writePixels = true;
-						if (polyPixelList.ContainsKey(dataOffset))
+						if (polyPixelList[y, x] != 0)
 						{
-							if (polyPixelList[dataOffset] != checkPixels)
+							if (polyPixelList[y, x] != checkPixels)
 							{
 								bool drawPixels = true;
-
-								//if (materialAlpha == 0)
-								//{
-								//    //Console.WriteLine("Debug: Material has an alpha of 0 - ignoring");
-								//    drawPixels = false;
-								//}
-
-								//if (materialAlpha < 0x40)
-								//{
-								//    //Console.WriteLine("Debug: Material has an alpha of less than 0x40 - ignoring");
-								//    drawPixels = false;
-								//}
 
 								if (!poly.textureUsed)
 								{
@@ -297,18 +282,18 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 									{
 										dumpPreviousTextureVersion = true;
 									}
-									//Console.WriteLine(string.Format("Warning: pixels with offset {0} in texture with ID {1} have already been written with a different value. Existing: 0x{2:X16}, New:  0x{3:X16}", dataOffset, poly.textureID, polyPixelList[dataOffset], checkPixels));
+									//Console.WriteLine(string.Format("Warning: pixels[{0},{1}] in texture with ID {2} have already been written with a different value. Existing: 0x{3:X16}, New:  0x{4:X16}", y, x, poly.textureID, polyPixelList[y, x], checkPixels));
 								}
 								else
 								{
-									//Console.WriteLine(string.Format("Warning: not updating pixels with offset {0} in texture with ID {1}, because the new values are for a polygon that is not drawn/invisible, or has no texture. Existing: 0x{2:X16}, Ignored:  0x{3:X16}", dataOffset, poly.textureID, polyPixelList[dataOffset], checkPixels));
+									//Console.WriteLine(string.Format("Warning: not updating pixels[{0},{1}] in texture with ID {2}, because the new values are for a polygon that is not drawn/invisible, or has no texture. Existing: 0x{3:X16}, Ignored:  0x{4:X16}", y, x, poly.textureID, polyPixelList[y, x], checkPixels));
 									writePixels = false;
 								}
 							}
 						}
 						else
 						{
-							polyPixelList.Add(dataOffset, checkPixels);
+							polyPixelList[y, x] = checkPixels;
 						}
 
 						if (writePixels)
@@ -381,7 +366,6 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 						bool pixChroma = (_Textures[texNum].GetPixel(x, y).A == 1);
 						if (pixChroma)
 						{
-							int dataOffset = (_ImageHeight * y) + x;
 							int pixel = texturePage.pixels[y, x];
 							Color pixelColor = commonPalette[pixel];
 							if (pixChroma)
@@ -481,7 +465,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 		public void ExportAllPaletteVariations(TPages tPages, bool alwaysUseGreyscaleForMissingPalettes)
 		{
-			tPages.Initialize(_TextureData, _ImageWidth, _ImageHeight, _TotalWidth, alwaysUseGreyscaleForMissingPalettes);
+			tPages.Initialize(_TextureData, _ImageWidth, _ImageHeight, _XShift, alwaysUseGreyscaleForMissingPalettes);
 
 			Bitmap[] textures = new Bitmap[tPages.Count];
 			Color chromaKey = Color.FromArgb(1, 128, 128, 128);
@@ -561,26 +545,6 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 				boundingRectangle.vMax = Math.Max(boundingRectangle.vMax, v);
 			}
 
-			/*int width = boundingRectangle.uMax - boundingRectangle.uMin;
-			for (int b = 0; b < 8; b++)
-			{
-				if ((1 << b) >= width)
-				{
-					width = 1 << b;
-					break;
-				}
-			}*/
-
-			/*int height = boundingRectangle.vMax - boundingRectangle.vMin;
-			for (int b = 0; b < 8; b++)
-			{
-				if ((1 << b) >= height)
-				{
-					height = 1 << b;
-					break;
-				}
-			}*/
-
 			// If specified, quantize the rectangle's boundaries to a multiple of 16
 			if (quantizeBounds)
 			{
@@ -589,7 +553,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 				{
 					boundingRectangle.uMin--;
 				}
-				
+
 				//while ((boundingRectangle.uMax % quantizeRes) < (quantizeRes - 1))
 				while ((boundingRectangle.uMax % quantizeRes) > 0)
 				{
@@ -600,7 +564,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 				{
 					boundingRectangle.vMin--;
 				}
-				
+
 				//while ((boundingRectangle.vMax % quantizeRes) < (quantizeRes - 1))
 				while ((boundingRectangle.vMax % quantizeRes) > 0)
 				{

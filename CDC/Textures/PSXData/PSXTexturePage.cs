@@ -26,16 +26,18 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			greyscaleColorTable = new PSXColorTable((tp == 0) ? 16 : 256);
 		}
 
-		public void Initialize(ushort[,] textureData, int imageWidth, int imageHeight, int totalWidth, ushort mostCommonCLUT, bool alwaysUseGreyscaleForMissingPalettes)
+		public void Initialize(ushort[,] textureData, int imageWidth, int imageHeight, int xShift, ushort mostCommonCLUT, bool alwaysUseGreyscaleForMissingPalettes)
 		{
+			int width = textureData.GetUpperBound(1) + 1;
+			int height = textureData.GetUpperBound(0) + 1;
+
 			// X = (((tPage & 0x07FF) - 8) % 8) / 2;
-			X = ((tPage << 6) & 0x1c0) % totalWidth; // % 1024;
+			X = ((tPage << 6) & 0x1c0) % width; // % 1024;
 			// Y = 0;
 			Y = (tPage << 4) & 0x100; // + ((tPage >> 2) & 0x200);
 			pixels = new ushort[imageHeight, imageWidth];
 
-			int width = textureData.GetUpperBound(1) + 1;
-			int height = textureData.GetUpperBound(0) + 1;
+			X += width - xShift;
 
 			for (int y = 0; y < imageHeight; y++)
 			{
@@ -44,9 +46,10 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 					if (tp == 0) // 4 bit
 					{
 						ushort val = 0;
-						if ((Y + y) < height && (X + (x / 4)) < width)
+						int wrappedWidth = (X + (x / 4)) % width;
+						if ((Y + y) < height)
 						{
-							val = textureData[Y + y, X + (x / 4)];
+							val = textureData[Y + y, wrappedWidth];
 						}
 
 						pixels[y, x++] = (ushort)(val & 0x000F);
@@ -57,9 +60,10 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 					else if (tp == 1) // 8 bit
 					{
 						ushort val = 0;
-						if ((Y + y) < height && (X + (x / 2)) < width)
+						int wrappedWidth = (X + (x / 2)) % width;
+						if ((Y + y) < height)
 						{
-							val = textureData[Y + y, X + (x / 2)];
+							val = textureData[Y + y, wrappedWidth];
 						}
 
 						pixels[y, x++] = (ushort)(val & 0x00FF);
@@ -68,9 +72,10 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 					else if (tp == 2) // 16 bit
 					{
 						ushort val = 0;
-						if ((Y + y) < height && (X + x) < width)
+						int wrappedWidth = (X + x) % width;
+						if ((Y + y) < height)
 						{
-							val = textureData[Y + y, X + x];
+							val = textureData[Y + y, wrappedWidth];
 						}
 
 						pixels[y, x++] = val;
@@ -80,7 +85,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 			foreach (PSXColorTable colorTable in colorTables)
 			{
-				colorTable.Initialize(textureData, totalWidth);
+				colorTable.Initialize(textureData, xShift);
 			}
 
 			if (alwaysUseGreyscaleForMissingPalettes)
@@ -104,7 +109,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 				}
 
 				commonColorTable = new PSXColorTable(commonCLUT);
-				commonColorTable.Initialize(textureData, totalWidth);
+				commonColorTable.Initialize(textureData, xShift);
 			}
 		}
 
