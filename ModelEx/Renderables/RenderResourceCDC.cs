@@ -10,9 +10,11 @@ using SR2File = CDC.Objects.SR2File;
 using DefianceFile = CDC.Objects.DefianceFile;
 using TRLFile = CDC.Objects.TRLFile;
 using SRModel = CDC.Objects.Models.SRModel;
-using Gex3PSTextureFile = BenLincoln.TheLostWorlds.CDTextures.Gex3PSXRMTextureFile;
+using TPages = BenLincoln.TheLostWorlds.CDTextures.PSXTextureDictionary;
+using TextureTile = BenLincoln.TheLostWorlds.CDTextures.PSXTextureTile;
+using Gex3PSXTextureFile = BenLincoln.TheLostWorlds.CDTextures.Gex3PSXVRMTextureFile;
 using SR1PCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPCTextureFile;
-using SR1PSTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPSXCRMTextureFile;
+using SR1PSXTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverPSXCRMTextureFile;
 using SR1DCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaverDCTextureFile;
 using SR2PCTextureFile = BenLincoln.TheLostWorlds.CDTextures.SoulReaver2PCVRMTextureFile;
 using TRLPCTextureFile = BenLincoln.TheLostWorlds.CDTextures.TombRaiderPCDRMTextureFile;
@@ -230,52 +232,39 @@ namespace ModelEx
 				{
 					try
 					{
-						SR1PSTextureFile textureFile = new SR1PSTextureFile(fileName);
+						TPages tPages = ((SR1File)File).TPages;
 
-						UInt32 polygonCountAllModels = 0;
-						foreach (SRModel srModel in File.Models)
-						{
-							polygonCountAllModels += srModel.PolygonCount;
-						}
-
-						SR1PSTextureFile.SoulReaverPlaystationTextureData[] polygons =
-							new SR1PSTextureFile.SoulReaverPlaystationTextureData[polygonCountAllModels];
-
-						int polygonNum = 0;
-						foreach (SRModel srModel in File.Models)
+						/*foreach (SRModel srModel in File.Models)
 						{
 							foreach (CDC.Polygon polygon in srModel.Polygons)
 							{
-								polygons[polygonNum].paletteColumn = polygon.paletteColumn;
-								polygons[polygonNum].paletteRow = polygon.paletteRow;
-								polygons[polygonNum].u = new int[3];
-								polygons[polygonNum].v = new int[3];
-								//polygons[polygonNum].materialColor = polygon.material.colour;
-								polygons[polygonNum].materialColor = polygon.colour;
+								TextureTile tile = new TextureTile()
+								{
+									textureID = polygon.material.textureID,
+									tPage = polygon.material.texturePage,
+									clut = polygon.material.clutValue,
+									textureUsed = polygon.material.textureUsed,
+									visible = polygon.material.visible,
+									u = new int[3],
+									v = new int[3],
+								};
 
-								polygons[polygonNum].u[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].u * 255);
-								polygons[polygonNum].v[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].v * 255);
-								polygons[polygonNum].u[1] = (int)(srModel.Geometry.UVs[polygon.v2.UVID].u * 255);
-								polygons[polygonNum].v[1] = (int)(srModel.Geometry.UVs[polygon.v2.UVID].v * 255);
-								polygons[polygonNum].u[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].u * 255);
-								polygons[polygonNum].v[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].v * 255);
+								tile.u[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].u * 255);
+								tile.v[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].v * 255);
+								tile.u[1] = (int)(srModel.Geometry.UVs[polygon.v2.UVID].u * 255);
+								tile.v[1] = (int)(srModel.Geometry.UVs[polygon.v2.UVID].v * 255);
+								tile.u[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].u * 255);
+								tile.v[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].v * 255);
 
-								polygons[polygonNum].textureID = polygon.material.textureID;
-								polygons[polygonNum].tPage = polygon.material.texturePage;
-								polygons[polygonNum].CLUT = polygon.material.clutValue;
-
-								polygons[polygonNum].textureUsed = polygon.material.textureUsed;
-								polygons[polygonNum].visible = polygon.material.visible;
-								//polygons[polygonNum].materialColour = polygon.material.colour;
-
-								polygonNum++;
+								tPages.AddTextureTile2(tile);
 							}
-						}
+						}*/
 
 						bool drawGreyscaleFirst = false;
 						bool quantizeBounds = true;
-						textureFile.BuildTexturesFromPolygonData(polygons, ((SR1File)File).TPages, drawGreyscaleFirst, quantizeBounds, ExportOptions);
-						//textureFile.ExportAllPaletteVariations(((SR1File)File).TPages, false);
+						SR1PSXTextureFile textureFile = new SR1PSXTextureFile(fileName);
+						textureFile.BuildTexturesFromPolygonData(tPages, drawGreyscaleFirst, quantizeBounds, ExportOptions);
+						//textureFile.ExportAllPaletteVariations(tPages, false);
 
 						// For all models
 						for (int t = 0; t < textureFile.TextureCount; t++)
@@ -353,50 +342,38 @@ namespace ModelEx
 			{
 				try
 				{
-					Gex3PSTextureFile textureFile = new Gex3PSTextureFile(fileName);
+					TPages tPages = ((GexFile)File).TPages;
 
-					UInt32 polygonCountAllModels = 0;
-					foreach (SRModel srModel in File.Models)
-					{
-						polygonCountAllModels += srModel.PolygonCount;
-					}
-
-					Gex3PSTextureFile.Gex3PlaystationPolygonTextureData[] polygons =
-						new Gex3PSTextureFile.Gex3PlaystationPolygonTextureData[polygonCountAllModels];
-
-					int polygonNum = 0;
-					foreach (SRModel srModel in File.Models)
+					/*foreach (SRModel srModel in File.Models)
 					{
 						foreach (CDC.Polygon polygon in srModel.Polygons)
 						{
-							polygons[polygonNum].paletteColumn = polygon.paletteColumn;
-							polygons[polygonNum].paletteRow = polygon.paletteRow;
-							polygons[polygonNum].u = new int[3];
-							polygons[polygonNum].v = new int[3];
-							//polygons[polygonNum].materialColour = polygon.material.colour;
-							polygons[polygonNum].materialColour = polygon.colour;
+							TextureTile tile = new TextureTile()
+							{
+								textureID = polygon.material.textureID,
+								tPage = polygon.material.texturePage,
+								clut = polygon.material.clutValue,
+								textureUsed = polygon.material.textureUsed,
+								visible = polygon.material.visible,
+								u = new int[3],
+								v = new int[3],
+							};
 
-							polygons[polygonNum].u[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].u * 255);
-							polygons[polygonNum].v[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].v * 255);
-							polygons[polygonNum].u[1] = (int)(srModel.Geometry.UVs[polygon.v2.UVID].u * 255);
-							polygons[polygonNum].v[1] = (int)(srModel.Geometry.UVs[polygon.v2.UVID].v * 255);
-							polygons[polygonNum].u[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].u * 255);
-							polygons[polygonNum].v[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].v * 255);
+							tile.u[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].u * 255);
+							tile.v[0] = (int)(srModel.Geometry.UVs[polygon.v1.UVID].v * 255);
+							tile.u[1] = (int)(srModel.Geometry.UVs[polygon.v2.UVID].u * 255);
+							tile.v[1] = (int)(srModel.Geometry.UVs[polygon.v2.UVID].v * 255);
+							tile.u[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].u * 255);
+							tile.v[2] = (int)(srModel.Geometry.UVs[polygon.v3.UVID].v * 255);
 
-							polygons[polygonNum].textureID = polygon.material.textureID;
-							polygons[polygonNum].CLUT = polygon.material.clutValue;
-
-							polygons[polygonNum].textureUsed = polygon.material.textureUsed;
-							polygons[polygonNum].visible = polygon.material.visible;
-							//polygons[polygonNum].materialColour = polygon.material.colour;
-
-							polygonNum++;
+							tPages.AddTextureTile2(tile);
 						}
-					}
+					}*/
 
 					bool drawGreyscaleFirst = false;
 					bool quantizeBounds = true;
-					textureFile.BuildTexturesFromPolygonData(polygons, ((GexFile)File).TPages, drawGreyscaleFirst, quantizeBounds, ExportOptions);
+					Gex3PSXTextureFile textureFile = new Gex3PSXTextureFile(fileName);
+					textureFile.BuildTexturesFromPolygonData(tPages, drawGreyscaleFirst, quantizeBounds, ExportOptions);
 
 					// For all models
 					for (int t = 0; t < textureFile.TextureCount; t++)

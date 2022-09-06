@@ -91,10 +91,12 @@
     <Compile Include="Models\TRLUnitModel.cs" />
     <Compile Include="Textures\PSXData\PSXColorTable.cs" />
     <Compile Include="Textures\PSXData\PSXPixelList.cs" />
+    <Compile Include="Textures\PSXData\PSXTextureTile.cs" />
     <Compile Include="Textures\PSXData\PSXTextureDictionary.cs" />
     <Compile Include="Textures\PSXData\PSXTexturePage.cs" />
+    <Compile Include="Textures\PSXTextureFile.cs" />
     <Compile Include="Textures\SoulReaverPSXCRMTextureFile.cs" />
-    <Compile Include="Textures\Gex3PSXRMTextureFile.cs" />
+    <Compile Include="Textures\Gex3PSXVRMTextureFile.cs" />
     <Compile Include="Textures\TombRaiderPCDRMTextureFile.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -104,7 +106,6 @@
     <Compile Include="Textures\SoulReaverDCTextureFile.cs" />
     <Compile Include="Textures\SoulReaverMonolithicTextureFile.cs" />
     <Compile Include="Textures\SoulReaverPCTextureFile.cs" />
-    <Compile Include="Textures\SoulReaverPSXTextureFile.cs" />
     <Compile Include="Textures\TextureFile.cs" />
     <Compile Include="Textures\TextureFileException.cs" />
     <Compile Include="Textures\VRMTextureFile.cs" />

@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+using TPages = BenLincoln.TheLostWorlds.CDTextures.PSXTextureDictionary;
+using TextureTile = BenLincoln.TheLostWorlds.CDTextures.PSXTextureTile;
 
 namespace CDC.Objects.Models
 {
@@ -256,9 +257,9 @@ namespace CDC.Objects.Models
 		};
 		#endregion
 
-		protected List<ushort> _tPages = null;
+		protected TPages _tPages;
 
-		protected GexModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, List<ushort> tPages) :
+		protected GexModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, TPages tPages) :
 			base(reader, dataStart, modelData, strModelName, ePlatform, version)
 		{
 			_tPages = tPages;
@@ -335,24 +336,12 @@ namespace CDC.Objects.Models
 			Byte v1U = reader.ReadByte();
 			Byte v1V = reader.ReadByte();
 
-			ushort paletteVal = (ushort)(reader.ReadUInt16() & 0x7FDF);
-			ushort rowVal = (ushort)((ushort)(paletteVal << 2) >> 8);
-			ushort colVal = (ushort)((ushort)(paletteVal << 11) >> 11);
-			_polygons[p].material.clutValue = paletteVal;
-			_polygons[p].paletteColumn = colVal;
-			_polygons[p].paletteRow = rowVal;
+			_polygons[p].material.clutValue = reader.ReadUInt16();
 
 			Byte v2U = reader.ReadByte();
 			Byte v2V = reader.ReadByte();
 
-			_polygons[p].material.texturePage = (ushort)(reader.ReadUInt16() & 0x0097);
-
-			_polygons[p].material.textureID = (ushort)_tPages.FindIndex(x => x == _polygons[p].material.texturePage);
-			if (_polygons[p].material.textureID == 0xFFFF)
-			{
-				_polygons[p].material.textureID = (ushort)_tPages.Count;
-				_tPages.Add(_polygons[p].material.texturePage);
-			}
+			_polygons[p].material.texturePage = reader.ReadUInt16();
 
 			Byte v3U = reader.ReadByte();
 			Byte v3V = reader.ReadByte();
@@ -365,6 +354,20 @@ namespace CDC.Objects.Models
 			_geometry.UVs[v3].v = ((float)v3V) / 255.0f;
 
 			_polygons[p].material.colour = 0xFFFFFFFF;
+
+			TextureTile tile = new TextureTile()
+			{
+				textureID = _polygons[p].material.textureID,
+				tPage = (ushort)(_polygons[p].material.texturePage & 0x0097),
+				clut = (ushort)(_polygons[p].material.clutValue & 0x7FDF),
+				textureUsed = _polygons[p].material.textureUsed,
+				visible = _polygons[p].material.visible,
+				u = new int[] { v1U, v2U, v3U },
+				v = new int[] { v1V, v2V, v3V },
+			};
+
+			_tPages.AddTextureTile2(tile);
+			_polygons[p].material.textureID = _tPages.AddTextureTile(tile);
 
 			return;
 		}

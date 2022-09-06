@@ -110,8 +110,6 @@ namespace CDC
 		public Material material;     // The material used
 		public Vertex v1, v2, v3;     // Vertices for the polygon
 		public ushort CLUT;
-		public int paletteRow;          // The row of the pallete to use (PS1)
-		public int paletteColumn;       // The column of the pallet to use (PS1)
 		public int normal;
 		//public byte sr1Flags;           // flags value from Soul Reaver specifically
 		//public UInt16 sr1TextureFT3Attributes;

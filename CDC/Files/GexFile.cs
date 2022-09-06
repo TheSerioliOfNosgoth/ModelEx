@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using CDC.Objects.Models;
+using TPages = BenLincoln.TheLostWorlds.CDTextures.PSXTextureDictionary;
 
 namespace CDC.Objects
 {
@@ -9,8 +10,8 @@ namespace CDC.Objects
 	{
 		public const UInt32 RETAIL_VERSION = 0x00000002;
 
-		protected List<ushort> _tPages = new List<ushort>();
-		public ushort[] TPages { get { return _tPages.ToArray(); } }
+		protected TPages _tPages = new TPages();
+		public TPages TPages { get { return _tPages; } }
 
 		protected SRFile[] _objects;
 		public SRFile[] Objects { get { return _objects; } }

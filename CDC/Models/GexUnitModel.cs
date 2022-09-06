@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using TPages = BenLincoln.TheLostWorlds.CDTextures.PSXTextureDictionary;
 
 namespace CDC.Objects.Models
 {
@@ -12,7 +13,7 @@ namespace CDC.Objects.Models
 		protected UInt32 _vertexColourStart;
 		protected UInt32 _polygonEnd;
 
-		public GexUnitModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, List<ushort> tPages)
+		public GexUnitModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, TPages tPages)
 			: base(reader, dataStart, modelData, strModelName, ePlatform, version, tPages)
 		{
 			reader.BaseStream.Position = _modelData;
@@ -37,7 +38,7 @@ namespace CDC.Objects.Models
 			_trees = new Tree[_groupCount];
 		}
 
-		public static GexUnitModel Load(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, List<ushort> tPages, CDC.Objects.ExportOptions options)
+		public static GexUnitModel Load(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, TPages tPages, CDC.Objects.ExportOptions options)
 		{
 			GexUnitModel xModel = new GexUnitModel(reader, dataStart, modelData, strModelName, ePlatform, version, tPages);
 			xModel.ReadData(reader, options);

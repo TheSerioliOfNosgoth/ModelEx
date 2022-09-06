@@ -15,6 +15,8 @@ namespace CDC.Objects.Models
 		public SR1UnitModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, TPages tPages)
 			: base(reader, dataStart, modelData, strModelName, ePlatform, version, tPages)
 		{
+			readTextureFT3Attributes = true;
+
 			_modelTypePrefix = "a_";
 			// struct _Terrain
 
@@ -117,14 +119,14 @@ namespace CDC.Objects.Models
 			_trees = new Tree[_groupCount];
 		}
 
-		public static SR1UnitModel Load(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, TPages tPages, CDC.Objects.ExportOptions options)
+		public static SR1UnitModel Load(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, TPages tPages, ExportOptions options)
 		{
 			SR1UnitModel xModel = new SR1UnitModel(reader, dataStart, modelData, strModelName, ePlatform, version, tPages);
 			xModel.ReadData(reader, options);
 			return xModel;
 		}
 
-		protected override void ReadVertex(BinaryReader reader, int v, CDC.Objects.ExportOptions options)
+		protected override void ReadVertex(BinaryReader reader, int v, ExportOptions options)
 		{
 			base.ReadVertex(reader, v, options);
 
@@ -152,14 +154,14 @@ namespace CDC.Objects.Models
 			_geometry.ColoursAlt[v] = _geometry.Colours[v];
 		}
 
-		protected override void ReadVertices(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected override void ReadVertices(BinaryReader reader, ExportOptions options)
 		{
 			base.ReadVertices(reader, options);
 
 			ReadSpectralData(reader, options);
 		}
 
-		protected virtual void ReadSpectralData(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected virtual void ReadSpectralData(BinaryReader reader, ExportOptions options)
 		{
 			if (m_uSpectralColourStart != 0)
 			{
@@ -215,23 +217,7 @@ namespace CDC.Objects.Models
 			}
 		}
 
-		protected override void HandleMaterialRead(BinaryReader reader, int p, CDC.Objects.ExportOptions options, byte flags, UInt32 colourOrMaterialPosition)
-		{
-			// WIP
-			UInt32 materialPosition = colourOrMaterialPosition + _materialStart;
-			if (_version == SR1File.RETAIL_VERSION &&
-				(((materialPosition - _materialStart) % 0x0C) != 0) &&
-				 ((materialPosition - _materialStart) % 0x14) == 0)
-			{
-				_platform = Platform.Dreamcast;
-			}
-
-			reader.BaseStream.Position = materialPosition;
-			ReadMaterial(reader, p, options, true);
-			//_polygons[p].material.textureAttributes = _polygons[p].sr1TextureFT3Attributes;
-		}
-
-		protected virtual void ReadPolygon(BinaryReader reader, int p, CDC.Objects.ExportOptions options)
+		protected virtual void ReadPolygon(BinaryReader reader, int p, ExportOptions options)
 		{
 			UInt32 uPolygonPosition = (UInt32)reader.BaseStream.Position;
 			// struct _TFace
@@ -253,6 +239,7 @@ namespace CDC.Objects.Models
 			long flagOffset = reader.BaseStream.Position + 2048;
 			// unsigned char attr;
 			byte flags = reader.ReadByte();
+
 			if (options.IgnorePolygonFlag2ForTerrain)
 			{
 				// ignore flag 0x02 for terrain (it means "this is the other half of a quad" or something similar)
@@ -298,10 +285,12 @@ namespace CDC.Objects.Models
 			bool isTranslucent = false;
 
 			_polygons[p].material.visible = true;
+
 			if (materialOffset == 0xFFFF || materialOffset == 0xFFFFFFFF)
 			{
 				_polygons[p].material.visible = false;
 			}
+
 			bool ignoreMaterial0 = false;
 			if (_version == SR1File.RETAIL_VERSION)
 			{
@@ -313,6 +302,7 @@ namespace CDC.Objects.Models
 			{
 				//ignoreMaterial0 = false;
 			}
+
 			if (ignoreMaterial0)
 			{
 				if (materialOffset == 0x00000000)
@@ -320,32 +310,39 @@ namespace CDC.Objects.Models
 					_polygons[p].material.visible = false;
 				}
 			}
+
 			if ((flags & 0x01) == 0x01)
 			{
 				//_polygons[p].material.visible = false;
 				//_polygons[p].material.textureUsed = false;
 			}
+
 			if (((flags & 0x02) == 0x02))
 			{
 			}
+
 			if ((flags & 0x04) == 0x04)
 			{
 				_polygons[p].material.visible = false;
 				//_polygons[p].material.textureUsed = false;
 			}
+
 			if (((flags & 0x08) == 0x08))
 			{
 				_polygons[p].material.emissivity = 1.0f;
 			}
+
 			if (((flags & 0x10) == 0x10))
 			{
 			}
+
 			// 20 is not used in any known version of the game
 			if ((flags & 0x20) == 0x20)
 			{
 				isTranslucent = true;
 				_polygons[p].material.opacity = CDC.Material.OPACITY_TRANSLUCENT;
 			}
+
 			if ((flags & 0x40) == 0x40)
 			{
 				//_polygons[p].material.visible = false;
@@ -362,6 +359,7 @@ namespace CDC.Objects.Models
 			{
 				_polygons[p].material.textureUsed = true;
 			}
+
 			//if (Platform == Platform.Dreamcast)
 			//{
 			//    _polygons[p].material.colour = 0xFFFFFFFF;
@@ -384,7 +382,7 @@ namespace CDC.Objects.Models
 			}
 		}
 
-		protected override void ReadPolygons(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected override void ReadPolygons(BinaryReader reader, ExportOptions options)
 		{
 			if (_polygonStart == 0 || _polygonCount == 0)
 			{
@@ -471,6 +469,22 @@ namespace CDC.Objects.Models
 				FinaliseMesh(treePolygons, currentPosition, xMeshes[m]);
 				currentPosition = xMeshPositions[m];
 			}
+		}
+
+		protected override void ReadMaterial(BinaryReader reader, int p, UInt32 colourOrMaterialPosition, ExportOptions options)
+		{
+			// WIP
+			UInt32 materialPosition = colourOrMaterialPosition + _materialStart;
+			if (_version == SR1File.RETAIL_VERSION &&
+				(((materialPosition - _materialStart) % 0x0C) != 0) &&
+				 ((materialPosition - _materialStart) % 0x14) == 0)
+			{
+				_platform = Platform.Dreamcast;
+			}
+
+			reader.BaseStream.Position = materialPosition;
+			base.ReadMaterial(reader, p, colourOrMaterialPosition, options);
+			//_polygons[p].material.textureAttributes = _polygons[p].sr1TextureFT3Attributes;
 		}
 
 		protected virtual Tree ReadBSPTree(uint rootTreeNum, string treeNodeID, BinaryReader reader, List<UInt32> treePolygons, UInt32 uDataPos, Tree xParentTree, List<Mesh> xMeshes,

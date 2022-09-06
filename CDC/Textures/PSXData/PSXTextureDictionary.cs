@@ -9,10 +9,23 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 		List<TPage> tPages = new List<TPage>();
 		protected List<PSXColorTable> colorTables = new List<PSXColorTable>();
 		protected Dictionary<ushort, int> clutRefs = new Dictionary<ushort, int>();
+		public List<PSXTextureTile> tiles = new List<PSXTextureTile>();
 
 		public TPage this[int i] { get { return tPages[i]; } }
 
 		public int Count { get { return tPages.Count; } }
+
+		public ushort AddTextureTile(PSXTextureTile tile)
+		{
+			tile.textureID = AddTexturePage(tile.tPage, tile.clut);
+			//tiles.Add(tile);
+			return (ushort)tile.textureID;
+		}
+
+		public void AddTextureTile2(PSXTextureTile tile)
+		{
+			tiles.Add(tile);
+		}
 
 		public ushort AddTexturePage(ushort texturePage, ushort clutValue)
 		{
