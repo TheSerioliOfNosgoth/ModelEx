@@ -20,8 +20,8 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 		public PSXTexturePage(ushort tPage)
 		{
 			this.tPage = tPage;
-			this.tp = 0; //(tPage >> 7) & 0x03,//(tPage >> 7) & 0x003;
-			this.abr = 0;
+			this.tp = (tPage >> 7) & 0x0003;
+			this.abr = (tPage >> 5) & 0x0003;
 
 			greyscaleColorTable = new PSXColorTable((tp == 0) ? 16 : 256);
 		}
@@ -31,13 +31,11 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			int width = textureData.GetUpperBound(1) + 1;
 			int height = textureData.GetUpperBound(0) + 1;
 
-			// X = (((tPage & 0x07FF) - 8) % 8) / 2;
-			X = ((tPage << 6) & 0x1c0) % width; // % 1024;
-			// Y = 0;
-			Y = (tPage << 4) & 0x100; // + ((tPage >> 2) & 0x200);
-			pixels = new ushort[imageHeight, imageWidth];
-
+			X = (tPage << 6) & 0x07c0; // 0x001F << 6 = 0x7C0
+			Y = (tPage << 4) & 0x0100 + ((tPage >> 2) & 0x0200); // 0x0010 << 4 == 0x0100, 0x0800 >> 2 = 0x0200
+			X %= width;
 			X += width - xShift;
+			pixels = new ushort[imageHeight, imageWidth];
 
 			for (int y = 0; y < imageHeight; y++)
 			{

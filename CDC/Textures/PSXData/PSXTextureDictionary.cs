@@ -5,7 +5,9 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 {
 	public class PSXTextureDictionary
 	{
-		bool isInitialized = false;
+		bool isInitialized;
+		ushort tPageMask;
+		ushort clutMask;
 		List<TPage> tPages = new List<TPage>();
 		protected List<PSXColorTable> colorTables = new List<PSXColorTable>();
 		protected Dictionary<ushort, int> clutRefs = new Dictionary<ushort, int>();
@@ -15,8 +17,16 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 		public int Count { get { return tPages.Count; } }
 
+		public PSXTextureDictionary(ushort tPageMask, ushort clutMask)
+		{
+			this.tPageMask = tPageMask;
+			this.clutMask = clutMask;
+		}
+
 		public ushort AddTextureTile(PSXTextureTile tile)
 		{
+			tile.tPage &= tPageMask;
+			tile.clut &= clutMask;
 			tile.textureID = AddTexturePage(tile.tPage, tile.clut);
 			//tiles.Add(tile);
 			return (ushort)tile.textureID;
@@ -24,11 +34,16 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 		public void AddTextureTile2(PSXTextureTile tile)
 		{
+			tile.tPage &= tPageMask;
+			tile.clut &= clutMask;
 			tiles.Add(tile);
 		}
 
-		public ushort AddTexturePage(ushort texturePage, ushort clutValue)
+		protected ushort AddTexturePage(ushort texturePage, ushort clutValue)
 		{
+			texturePage &= tPageMask;
+			clutValue &= clutMask;
+
 			TPage tPage;
 			ushort textureID = (ushort)tPages.FindIndex(x => x.tPage == texturePage);
 			if (textureID == 0xFFFF)
@@ -99,6 +114,8 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 		public int GetClutRefCount(ushort clut)
 		{
+			clut &= clutMask;
+
 			if (clutRefs.ContainsKey(clut))
 			{
 				return clutRefs[clut];

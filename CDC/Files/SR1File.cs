@@ -16,7 +16,9 @@ namespace CDC.Objects
 		public const UInt32 BETA_19990512_VERSION = 0x3c204139;
 		public const UInt32 RETAIL_VERSION = 0x3C20413B;
 
-		protected TPages _tPages = new TPages();
+		// ushort tPageMask = 0x001F (x, 0-31) | 0x0010 (y1, 0-1) | 0x0800 (y2, 0-2) | 0x0180 (tp, 0-3)| 0x0060 (abr, 0-3)
+		// ushort clutMask = 0x003F (x, 0-63) | 0xFFC0 (y, 0-1023)
+		protected TPages _tPages = new TPages(0x001F | 0x0010 | 0x0800, 0x003F | 0xFFC0);
 		public TPages TPages { get { return _tPages; } }
 
 		public MonsterAttributes _monsterAttributes;

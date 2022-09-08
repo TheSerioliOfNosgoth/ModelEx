@@ -358,8 +358,8 @@ namespace CDC.Objects.Models
 			TextureTile tile = new TextureTile()
 			{
 				textureID = _polygons[p].material.textureID,
-				tPage = (ushort)(_polygons[p].material.texturePage & 0x0097),
-				clut = (ushort)(_polygons[p].material.clutValue & 0x7FDF),
+				tPage = (ushort)(_polygons[p].material.texturePage),
+				clut = (ushort)(_polygons[p].material.clutValue),
 				textureUsed = _polygons[p].material.textureUsed,
 				visible = _polygons[p].material.visible,
 				u = new int[] { v1U, v2U, v3U },
