@@ -32,8 +32,9 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 			X = (clut & 0x3F) << 4; // 0x003F
 			Y = clut >> 6; // 0xFFC0 >> 6 = 0x03FF
-			X %= width;
+			X %= 512;
 			X += width - xShift;
+			X %= width;
 			colors = new Color[256];
 
 			for (int x = 0; x < 256; x++)

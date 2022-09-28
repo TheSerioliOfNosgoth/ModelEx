@@ -33,8 +33,9 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 			X = (tPage << 6) & 0x07c0; // 0x001F << 6 = 0x7C0
 			Y = (tPage << 4) & 0x0100 + ((tPage >> 2) & 0x0200); // 0x0010 << 4 == 0x0100, 0x0800 >> 2 = 0x0200
-			X %= width;
+			X %= 512;
 			X += width - xShift;
+			X %= width;
 			pixels = new ushort[imageHeight, imageWidth];
 
 			for (int y = 0; y < imageHeight; y++)
