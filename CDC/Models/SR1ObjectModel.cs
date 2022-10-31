@@ -283,7 +283,6 @@ namespace CDC.Objects.Models
 			_polygons[p].v2 = _geometry.Vertices[v2];
 			_polygons[p].v3 = _geometry.Vertices[v3];
 			_polygons[p].normal = normal;
-			_polygons[p].colour = material.colour;
 
 			if (textureUsed)
 			{

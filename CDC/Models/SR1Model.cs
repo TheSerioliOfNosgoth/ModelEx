@@ -370,7 +370,6 @@ namespace CDC.Objects.Models
 			{
 				//_polygons[p].material.colour |= 0x0000FF00;
 				_polygons[p].material.colour = Utility.FloatARGBToUInt32ARGB(new float[] { options.PolygonColourAlpha, options.PolygonColourRed, options.PolygonColourGreen, options.PolygonColourBlue });
-				_polygons[p].colour = _polygons[p].material.colour;
 			}
 
 			if (_polygons[p].material.visible)
@@ -406,7 +405,6 @@ namespace CDC.Objects.Models
 			//        isTranslucent = true;
 			//        _polygons[p].material.opacity = 0.0f;
 			//        _polygons[p].material.colour &= 0x00000000;
-			//        _polygons[p].colour &= 0x00000000;
 			//    }
 			//}
 			//if (!_polygons[p].material.visible)
@@ -475,7 +473,6 @@ namespace CDC.Objects.Models
 			//if ((_polygons[p].sr1TextureFT3Attributes & 0x2000) == 0x2000)
 			//{
 			//    isTranslucent = true;
-			//    //_polygons[p].colour = (_polygons[p].material.colour & 0x00FFFFFF) | BarelyVisibleMaterial;
 			//    _polygons[p].material.opacity = CDC.Material.OPACITY_BARELY_VISIBLE;
 			//    //_polygons[p].material.HasTranslucentElements = true;
 			//}
@@ -486,10 +483,6 @@ namespace CDC.Objects.Models
 				//_polygons[p].material.opacity = CDC.Material.OPACITY_TRANSLUCENT;
 				//_polygons[p].material = _polygons[p].material.Clone();
 				//_polygons[p].material.colour = (_polygons[p].material.colour & 0x00FFFFFF) | TranslucentMaterial;
-			}
-			else
-			{
-				//_polygons[p].colour = _polygons[p].material.colour | 0xFF000000;
 			}
 
 			Utility.FlipRedAndBlue(ref _polygons[p].material.colour);

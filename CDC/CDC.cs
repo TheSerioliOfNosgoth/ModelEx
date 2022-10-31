@@ -111,9 +111,8 @@ namespace CDC
 		public Vertex v1, v2, v3;     // Vertices for the polygon
 		public ushort CLUT;
 		public int normal;
-		//public byte sr1Flags;           // flags value from Soul Reaver specifically
+		//public byte sr1Flags;       // flags value from Soul Reaver specifically
 		//public UInt16 sr1TextureFT3Attributes;
-		public UInt32 colour;           // Diffuse colour
 		public uint RootBSPTreeNumber;
 		public string BSPNodeID;
 	}

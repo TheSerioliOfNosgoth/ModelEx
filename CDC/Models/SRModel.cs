@@ -266,13 +266,11 @@ namespace CDC.Objects.Models
 				{
 					//_polygons[p].material.colour |= 0x0000FF00;
 					_polygons[p].material.colour = Utility.FloatARGBToUInt32ARGB(new float[] { options.PolygonColourAlpha, options.PolygonColourRed, options.PolygonColourGreen, options.PolygonColourBlue });
-					_polygons[p].colour = _polygons[p].material.colour;
 					_polygons[p].material.opacity = options.PolygonColourAlpha;
 				}
 				else
 				{
 					_polygons[p].material.colour = 0xFF404040;
-					_polygons[p].colour = _polygons[p].material.colour;
 					_polygons[p].material.opacity = 0.75f;
 				}
 				//_polygons[p].v1.colourID = 0;
@@ -514,7 +512,6 @@ namespace CDC.Objects.Models
 					fVAverage[2] = 1.0f;
 					fVAverage[3] = (fV1[0] + fV2[0] + fV3[0]) / 3.0f;
 					_polygons[p].material.colour = Utility.FloatARGBToUInt32ARGB(fVAverage);
-					_polygons[p].colour = _polygons[p].material.colour;
 				}
 
 				if (options.RenderMode == RenderMode.PolygonAlpha)
@@ -526,7 +523,6 @@ namespace CDC.Objects.Models
 					fVAverage[2] = 1.0f;
 					fVAverage[3] = fPoly[0];
 					_polygons[p].material.colour = Utility.FloatARGBToUInt32ARGB(fVAverage);
-					_polygons[p].colour = _polygons[p].material.colour;
 					_polygons[p].material.opacity = 0.75f;
 				}
 
@@ -538,7 +534,6 @@ namespace CDC.Objects.Models
 					fVAverage[2] = 1.0f;
 					fVAverage[3] = _polygons[p].material.opacity;
 					_polygons[p].material.colour = Utility.FloatARGBToUInt32ARGB(fVAverage);
-					_polygons[p].colour = _polygons[p].material.colour;
 					_polygons[p].material.opacity = 0.75f;
 				}
 
@@ -554,7 +549,6 @@ namespace CDC.Objects.Models
 					{
 						_polygons[p].material.opacity = 1.0f;
 						_polygons[p].material.colour = boneIDColourV1;
-						_polygons[p].colour = boneIDColourV1;
 					}
 					else
 					{
@@ -571,13 +565,11 @@ namespace CDC.Objects.Models
 							fVAverage[2] = (fV1[2] + fV2[2] + fV3[2]) / 3.0f;
 							fVAverage[3] = (fV1[3] + fV2[3] + fV3[3]) / 3.0f;
 							_polygons[p].material.colour = Utility.FloatARGBToUInt32ARGB(fVAverage);
-							_polygons[p].colour = _polygons[p].material.colour;
 						}
 						else
 						{
 							_polygons[p].material.opacity = 0.5f;
 							_polygons[p].material.colour = 0xFFFFFFFF;
-							_polygons[p].colour = _polygons[p].material.colour;
 						}
 					}
 				}
@@ -733,7 +725,6 @@ namespace CDC.Objects.Models
 				{
 					_polygons[p].material.colour |= 0x80D0D0D0;
 				}
-				_polygons[p].colour = _polygons[p].material.colour;
 			}
 		}
 	}
