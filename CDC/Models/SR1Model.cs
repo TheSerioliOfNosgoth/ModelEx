@@ -329,13 +329,9 @@ namespace CDC.Objects.Models
 
 		protected abstract void ReadPolygons(BinaryReader reader, ExportOptions options);
 
-		protected virtual void HandlePolygonInfo(BinaryReader reader, int p, ExportOptions options, byte flags, UInt32 colourOrMaterialPosition, bool forceTranslucent)
+		protected virtual void HandlePolygonInfo(BinaryReader reader, int p, ExportOptions options, byte flags, UInt32 materialOffset, bool forceTranslucent)
 		{
-			bool isTranslucent = false;
-			if (forceTranslucent)
-			{
-				isTranslucent = true;
-			}
+			bool isTranslucent = forceTranslucent;
 
 			// unless the user has explicitly requested distinct materials for each flag, remove use of anything ignored at this level
 			if (!options.DistinctMaterialsForAllFlags)
@@ -381,7 +377,7 @@ namespace CDC.Objects.Models
 			{
 				if (options.UnhideCompletelyTransparentTextures)
 				{
-					if ((_polygons[p].material.colour & 0xFF000000) == 0x00)
+					if ((_polygons[p].material.colour & 0xFF000000) == 0)
 					{
 						_polygons[p].material.colour |= 0xFF000000;
 					}
@@ -425,7 +421,7 @@ namespace CDC.Objects.Models
 			//_polygons[p].sr1TextureFT3Attributes = 0;
 			if (_polygons[p].material.textureUsed)
 			{
-				ReadMaterial(reader, p, colourOrMaterialPosition, options);
+				ReadMaterial(reader, p, materialOffset, options);
 			}
 			else
 			{
@@ -496,8 +492,6 @@ namespace CDC.Objects.Models
 				//_polygons[p].colour = _polygons[p].material.colour | 0xFF000000;
 			}
 
-
-
 			Utility.FlipRedAndBlue(ref _polygons[p].material.colour);
 
 			if (_platform == Platform.PSX)
@@ -526,7 +520,7 @@ namespace CDC.Objects.Models
 			}
 		}
 
-		protected virtual void ReadMaterial(BinaryReader reader, int p, UInt32 colourOrMaterialPosition, ExportOptions options)
+		protected virtual void ReadMaterial(BinaryReader reader, int p, UInt32 materialOffset, ExportOptions options)
 		{
 			int v1 = (p * 3) + 0;
 			int v2 = (p * 3) + 1;

@@ -187,76 +187,112 @@ namespace CDC.Objects.Models
 
 		protected virtual void ReadPolygon(BinaryReader reader, int p, ExportOptions options)
 		{
-			UInt32 uPolygonPosition = (UInt32)reader.BaseStream.Position;
+			uint polygonPosition = (uint)reader.BaseStream.Position;
+
+			bool visible = true;
+			bool textureUsed = false;
+			bool isEmissive = false;
+			uint materialOffset = 0xFFFFFFFF;
+
 			// struct _MFace
+			#region Read _MFace
 
 			// struct _Face face
-			_polygons[p].v1 = _geometry.Vertices[reader.ReadUInt16()];
-			_polygons[p].v2 = _geometry.Vertices[reader.ReadUInt16()];
-			_polygons[p].v3 = _geometry.Vertices[reader.ReadUInt16()];
+			int v1 = reader.ReadUInt16();
+			int v2 = reader.ReadUInt16();
+			int v3 = reader.ReadUInt16();
 
-			_polygons[p].material = new Material();
-			_polygons[p].material.visible = true;
-
-			//// unsigned char normal
-			byte polygonNormal = reader.ReadByte();
-
-			//// unsigned char flags
-			long flagOffset = reader.BaseStream.Position + 2048;
+			// unsigned char normal
+			byte normal = reader.ReadByte();
+			// unsigned char flags
 			byte flags = reader.ReadByte();
-			//Console.WriteLine(string.Format("0x{0:X2} (@0x{1:X4}, D:{1}\t:::", flags, flagOffset));
+			// long color;
+			uint color = reader.ReadUInt32();
 
-			_polygons[p].material.polygonFlags = flags;
-			_polygons[p].material.textureUsed = false;
+			#endregion
 
-			if (((flags & 0x01) == 0x01))
+			#region Handle flags
+
+			if ((flags & 0x01) != 0)
 			{
 			}
 
-			if (((flags & 0x02) == 0x02))
+			if ((flags & 0x02) != 0)
 			{
-				_polygons[p].material.textureUsed = true;
+				textureUsed = true;
 			}
 
-			if (((flags & 0x04) == 0x04))
+			if ((flags & 0x04) != 0)
 			{
 			}
 
-			if (((flags & 0x08) == 0x08))
+			if ((flags & 0x08) != 0)
 			{
-				_polygons[p].material.emissivity = 1.0f;
+				isEmissive = true;
 			}
 
-			if (((flags & 0x10) == 0x10))
+			if ((flags & 0x10) != 0)
 			{
-				_polygons[p].material.visible = false;
+				visible = false;
 			}
 
 			// 20 is not used in any known version of the game
-			if (((flags & 0x40) == 0x40))
+			if ((flags & 0x20) != 0)
 			{
 			}
-			// 80 is not used in any known version of the game
 
-			// long color;
-			UInt32 colourOrMaterialPosition = reader.ReadUInt32();
-			if (_polygons[p].material.textureUsed)
+			if ((flags & 0x40) != 0x0)
+			{
+			}
+
+			// 80 is not used in any known version of the game
+			if ((flags & 0x80) != 0)
+			{
+			}
+
+			#endregion
+
+			if (!visible)
+			{
+				textureUsed = false;
+			}
+
+			Material material = new Material();
+			material.visible = visible;
+			material.textureUsed = textureUsed;
+			material.polygonFlags = flags;
+			material.UseAlphaMask = true;
+
+			if (textureUsed)
 			{
 				// this seems to be what the game does
-				_polygons[p].material.colour = colourOrMaterialPosition | 0xFF000000;
-				_polygons[p].colour = _polygons[p].material.colour;
+				material.colour = color | 0xFF000000;
 			}
 			else
 			{
-				_polygons[p].material.colour = colourOrMaterialPosition | 0xFF000000;
-				_polygons[p].colour = _polygons[p].material.colour;
+				material.colour = color | 0xFF000000;
 			}
 
-			_polygons[p].material.UseAlphaMask = true;
+			if (isEmissive)
+			{
+				material.emissivity = 1.0f;
+			}
 
-			HandlePolygonInfo(reader, p, options, flags, colourOrMaterialPosition, false);
+			_polygons[p].material = material;
+			_polygons[p].v1 = _geometry.Vertices[v1];
+			_polygons[p].v2 = _geometry.Vertices[v2];
+			_polygons[p].v3 = _geometry.Vertices[v3];
+			_polygons[p].normal = normal;
+			_polygons[p].colour = material.colour;
 
-			reader.BaseStream.Position = uPolygonPosition + 0x0C;
+			if (textureUsed)
+			{
+				materialOffset = color;
+			}
+
+			HandlePolygonInfo(reader, p, options, flags, materialOffset, false);
+
+			reader.BaseStream.Position = polygonPosition + 0x0C;
 		}
 
 		protected override void ReadPolygons(BinaryReader reader, ExportOptions options)
@@ -319,10 +355,10 @@ namespace CDC.Objects.Models
 			}
 		}
 
-		protected override void ReadMaterial(BinaryReader reader, int p, UInt32 colourOrMaterialPosition, ExportOptions options)
+		protected override void ReadMaterial(BinaryReader reader, int p, UInt32 materialOffset, ExportOptions options)
 		{
 			// WIP
-			UInt32 materialPosition = _dataStart + colourOrMaterialPosition;
+			UInt32 materialPosition = _dataStart + materialOffset;
 			if ((((materialPosition - _materialStart) % 0x10) != 0) &&
 				 ((materialPosition - _materialStart) % 0x18) == 0)
 			{
@@ -330,7 +366,7 @@ namespace CDC.Objects.Models
 			}
 
 			reader.BaseStream.Position = materialPosition;
-			base.ReadMaterial(reader, p, colourOrMaterialPosition, options);
+			base.ReadMaterial(reader, p, materialOffset, options);
 
 			if (_platform == Platform.Dreamcast)
 			{
