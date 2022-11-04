@@ -207,32 +207,7 @@ namespace CDC.Objects.Models
 
 			_trees[0] = ReadBSPTree(reader, treePolygons, m_uBspTreeStart, _trees[0], xMeshes, xMeshPositions, 0);
 
-			HandleDebugRendering(options);
-
-			MaterialList xMaterialsList = null;
-
-			for (UInt16 p = 0; p < _polygonCount; p++)
-			{
-				if (xMaterialsList == null)
-				{
-					xMaterialsList = new MaterialList(_polygons[p].material);
-					_materialsList.Add(_polygons[p].material);
-				}
-				else
-				{
-					Material newMaterial = xMaterialsList.AddToList(_polygons[p].material);
-					if (_polygons[p].material != newMaterial)
-					{
-						_polygons[p].material = newMaterial;
-					}
-					else
-					{
-						_materialsList.Add(_polygons[p].material);
-					}
-				}
-			}
-
-			_materialCount = (UInt32)_materialsList.Count;
+			ProcessPolygons(options);
 
 			int currentPosition = 0;
 			for (int m = 0; m < xMeshes.Count; m++)

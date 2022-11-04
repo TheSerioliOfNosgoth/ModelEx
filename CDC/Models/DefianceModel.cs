@@ -309,7 +309,10 @@ namespace CDC.Objects.Models
 			_polygons = new Polygon[_polygonCount];
 			ReadPolygons(reader, options);
 
-			HandleDebugRendering(options);
+			for (UInt16 p = 0; p < _polygonCount; p++)
+			{
+				HandleDebugRendering(p, options);
+			}
 
 			// Generate the output
 			GenerateOutput();

@@ -17,6 +17,10 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 
 		public int Count { get { return tPages.Count; } }
 
+		public ushort TPageMask { get { return tPageMask; } }
+
+		public ushort CLUTMask { get { return clutMask; } }
+
 		public PSXTextureDictionary(ushort tPageMask, ushort clutMask)
 		{
 			this.tPageMask = tPageMask;

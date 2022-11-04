@@ -820,7 +820,7 @@ namespace ModelEx
 			if (sender == oRAllPolygonColoursWithGreenToolStripMenuItem) options.SetAllPolygonColoursToValue = menuItem.Checked;
 			if (sender == includeTreeRootFlagsInORdParentFlagsToolStripMenuItem) options.BSPRenderingIncludeRootTreeFlagsWhenORing = menuItem.Checked;
 			if (sender == includeLeafFlagsInORdParentFlagsToolStripMenuItem) options.BSPRenderingIncludeLeafFlagsWhenORing = menuItem.Checked;
-			if (sender == ignorePolygonFlag2ForTerrainToolStripMenuItem) options.IgnorePolygonFlag2ForTerrain = menuItem.Checked;
+			if (sender == ignoreBackfacingFlagForTerrainToolStripMenuItem) options.IgnoreBackfacingFlagForTerrain = menuItem.Checked;
 			if (sender == createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem) options.DistinctMaterialsForAllFlags = menuItem.Checked;
 			if (sender == adjustUVCoordinatesForBilinearFilteringToolStripMenuItem) options.AdjustUVs = menuItem.Checked;
 			if (sender == ignoreVertexColoursToolStripMenuItem) options.IgnoreVertexColours = menuItem.Checked;

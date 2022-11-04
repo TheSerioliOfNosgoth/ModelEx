@@ -110,7 +110,7 @@ namespace CDC.Objects
 		public bool InterpolatePolygonColoursWhenColouringBasedOnVertices;
 		public bool UseEachUniqueTextureCLUTVariation;
 		public bool AlsoInferAlphaMaskingFromTexturePixels;
-		public bool IgnorePolygonFlag2ForTerrain;
+		public bool IgnoreBackfacingFlagForTerrain;
 		public bool DistinctMaterialsForAllFlags;
 		public bool AdjustUVs;
 		public bool IgnoreVertexColours;
@@ -138,7 +138,7 @@ namespace CDC.Objects
 			InterpolatePolygonColoursWhenColouringBasedOnVertices = false;
 			UseEachUniqueTextureCLUTVariation = false;
 			AlsoInferAlphaMaskingFromTexturePixels = false;
-			IgnorePolygonFlag2ForTerrain = false;
+			IgnoreBackfacingFlagForTerrain = false;
 			DistinctMaterialsForAllFlags = true;
 			AdjustUVs = false;
 			IgnoreVertexColours = false;
@@ -629,7 +629,6 @@ namespace CDC.Objects
 				model.Materials[materialIndex].textureAttributesEffective,
 				model.Materials[materialIndex].BSPTreeParentNodeFlagsEffective, model.Materials[materialIndex].BSPTreeLeafFlagsEffective,
 				model.Materials[materialIndex].textureAttributesAEffective, model.Materials[materialIndex].sortPushEffective);
-			//if ((opacity < 1.0) || (model.Materials[materialIndex].HasTranslucentElements))
 			// putting the properties in the name is a hack, but I haven't figured out a better way yet
 			if (material.Opacity < 1.0f)
 			{

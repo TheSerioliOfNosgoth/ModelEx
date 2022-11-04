@@ -163,32 +163,7 @@ namespace CDC.Objects.Models
 				ReadPolygon(reader, p, options);
 			}
 
-			HandleDebugRendering(options);
-
-			MaterialList xMaterialsList = null;
-
-			for (UInt16 p = 0; p < _polygonCount; p++)
-			{
-				if (xMaterialsList == null)
-				{
-					xMaterialsList = new MaterialList(_polygons[p].material);
-					_materialsList.Add(_polygons[p].material);
-				}
-				else
-				{
-					Material newMaterial = xMaterialsList.AddToList(_polygons[p].material);
-					if (_polygons[p].material != newMaterial)
-					{
-						_polygons[p].material = newMaterial;
-					}
-					else
-					{
-						_materialsList.Add(_polygons[p].material);
-					}
-				}
-			}
-
-			_materialCount = (UInt32)_materialsList.Count;
+			ProcessPolygons(options);
 
 			for (UInt32 t = 0; t < _groupCount; t++)
 			{

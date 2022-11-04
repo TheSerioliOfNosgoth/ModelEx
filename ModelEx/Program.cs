@@ -467,9 +467,9 @@ namespace ModelEx
 							options.DistinctMaterialsForAllFlags = true;
 							handled = true;
 						}
-						if (arg == "--ignore-pflag2-for-terrain")
+						if (arg == "--ignore-backfacing-flag-for-terrain")
 						{
-							options.IgnorePolygonFlag2ForTerrain = true;
+							options.IgnoreBackfacingFlagForTerrain = true;
 							handled = true;
 						}
 						if (arg == "--infer-alphamask")

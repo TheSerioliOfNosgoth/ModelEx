@@ -6,6 +6,21 @@ namespace CDC.Objects.Models
 {
 	public class SR1ObjectModel : SR1Model
 	{
+		enum PolygonFlags : byte
+		{
+			TextureUsed = 0x02,
+			Emissive = 0x08,
+			Hidden0 = 0x10,
+		}
+
+		enum TextureAttributes : ushort
+		{
+			AlphaMaskedTerrain = 0x0010,
+			TranslucentTerrain = 0x0040,
+			Translucent0 = 0x2000,
+			Emmisive = 0x8000,
+		}
+
 		public SR1ObjectModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, TPages tPages)
 			: base(reader, dataStart, modelData, strModelName, ePlatform, version, tPages)
 		{
@@ -189,11 +204,6 @@ namespace CDC.Objects.Models
 		{
 			uint polygonPosition = (uint)reader.BaseStream.Position;
 
-			bool visible = true;
-			bool textureUsed = false;
-			bool isEmissive = false;
-			uint materialOffset = 0xFFFFFFFF;
-
 			// struct _MFace
 			#region Read _MFace
 
@@ -211,87 +221,91 @@ namespace CDC.Objects.Models
 
 			#endregion
 
-			#region Handle flags
-
-			if ((flags & 0x01) != 0)
-			{
-			}
-
-			if ((flags & 0x02) != 0)
-			{
-				textureUsed = true;
-			}
-
-			if ((flags & 0x04) != 0)
-			{
-			}
-
-			if ((flags & 0x08) != 0)
-			{
-				isEmissive = true;
-			}
-
-			if ((flags & 0x10) != 0)
-			{
-				visible = false;
-			}
-
-			// 20 is not used in any known version of the game
-			if ((flags & 0x20) != 0)
-			{
-			}
-
-			if ((flags & 0x40) != 0x0)
-			{
-			}
-
-			// 80 is not used in any known version of the game
-			if ((flags & 0x80) != 0)
-			{
-			}
-
-			#endregion
-
-			if (!visible)
-			{
-				textureUsed = false;
-			}
-
 			Material material = new Material();
-			material.visible = visible;
-			material.textureUsed = textureUsed;
-			material.polygonFlags = flags;
+			material.visible = true;
+			material.textureUsed = false;
+			material.isTranslucent = false;
+			material.isEmissive = false;
 			material.UseAlphaMask = true;
-
-			if (textureUsed)
-			{
-				// this seems to be what the game does
-				material.colour = color | 0xFF000000;
-			}
-			else
-			{
-				material.colour = color | 0xFF000000;
-			}
-
-			if (isEmissive)
-			{
-				material.emissivity = 1.0f;
-			}
+			material.polygonFlags = flags;
+			material.sortPush = 0;
+			material.colour = color | 0xFF000000;
 
 			_polygons[p].material = material;
+			_polygons[p].materialOffset = (material.textureUsed) ? color : 0xFFFFFFFF;
 			_polygons[p].v1 = _geometry.Vertices[v1];
 			_polygons[p].v2 = _geometry.Vertices[v2];
 			_polygons[p].v3 = _geometry.Vertices[v3];
 			_polygons[p].normal = normal;
 
-			if (textureUsed)
+			// Unless the user has explicitly requested distinct materials for each flag, remove use of anything ignored at this level
+			if (!options.DistinctMaterialsForAllFlags)
 			{
-				materialOffset = color;
+				material.polygonFlagsUsedMask &= (byte)(PolygonFlags.TextureUsed | PolygonFlags.Emissive | PolygonFlags.Hidden0);
 			}
 
-			HandlePolygonInfo(reader, p, options, flags, materialOffset, false);
-
 			reader.BaseStream.Position = polygonPosition + 0x0C;
+		}
+
+		protected override void HandlePolygonInfo(int p, ExportOptions options)
+		{
+			ref Polygon polygon = ref _polygons[p];
+			ref Material material = ref polygon.material;
+
+			if ((material.polygonFlags & (byte)PolygonFlags.TextureUsed) != 0)
+			{
+				material.textureUsed = true;
+			}
+
+			if ((material.polygonFlags & (byte)PolygonFlags.Emissive) != 0)
+			{
+				material.isEmissive = true;
+			}
+
+			if ((material.polygonFlags & (byte)PolygonFlags.Hidden0) != 0)
+			{
+				material.visible = false;
+			}
+
+			// alphamasked terrain
+			if ((material.textureAttributes & (ushort)TextureAttributes.AlphaMaskedTerrain) != 0)
+			{
+				material.UseAlphaMask = true;
+			}
+
+			// translucent terrain, e.g. water, glass
+			if ((material.textureAttributes & (ushort)TextureAttributes.TranslucentTerrain) != 0)
+			{
+				material.isTranslucent = true;
+			}
+
+			if ((material.textureAttributes & (ushort)TextureAttributes.Translucent0) != 0)
+			{
+				material.isTranslucent = true;
+			}
+
+			// lighting effects? i.e. invisible, animated polygon that only affects vertex colours?
+			if ((material.textureAttributes & (ushort)TextureAttributes.Emmisive) != 0)
+			{
+				material.isEmissive = true;
+			}
+
+			if (material.isTranslucent)
+			{
+				material.opacity = CDC.Material.OPACITY_TRANSLUCENT;
+			}
+
+			if (material.isEmissive)
+			{
+				material.emissivity = 1.0f;
+			}
+
+			if (!material.visible)
+			{
+				material.textureUsed = false;
+			}
+
+			Utility.FlipRedAndBlue(ref material.colour);
 		}
 
 		protected override void ReadPolygons(BinaryReader reader, ExportOptions options)
@@ -308,32 +322,7 @@ namespace CDC.Objects.Models
 				ReadPolygon(reader, p, options);
 			}
 
-			HandleDebugRendering(options);
-
-			MaterialList xMaterialsList = null;
-
-			for (UInt16 p = 0; p < _polygonCount; p++)
-			{
-				if (xMaterialsList == null)
-				{
-					xMaterialsList = new MaterialList(_polygons[p].material);
-					_materialsList.Add(_polygons[p].material);
-				}
-				else
-				{
-					Material newMaterial = xMaterialsList.AddToList(_polygons[p].material);
-					if (_polygons[p].material != newMaterial)
-					{
-						_polygons[p].material = newMaterial;
-					}
-					else
-					{
-						_materialsList.Add(_polygons[p].material);
-					}
-				}
-			}
-
-			_materialCount = (UInt32)_materialsList.Count;
+			ProcessPolygons(reader, options);
 
 			for (UInt32 t = 0; t < _groupCount; t++)
 			{
@@ -354,10 +343,11 @@ namespace CDC.Objects.Models
 			}
 		}
 
-		protected override void ReadMaterial(BinaryReader reader, int p, UInt32 materialOffset, ExportOptions options)
+		protected override void ReadMaterial(BinaryReader reader, int p, ExportOptions options)
 		{
-			// WIP
-			UInt32 materialPosition = _dataStart + materialOffset;
+			ref Polygon polygon = ref _polygons[p];
+
+			UInt32 materialPosition = _dataStart + polygon.materialOffset;
 			if ((((materialPosition - _materialStart) % 0x10) != 0) &&
 				 ((materialPosition - _materialStart) % 0x18) == 0)
 			{
@@ -365,7 +355,7 @@ namespace CDC.Objects.Models
 			}
 
 			reader.BaseStream.Position = materialPosition;
-			base.ReadMaterial(reader, p, materialOffset, options);
+			base.ReadMaterial(reader, p, options);
 
 			if (_platform == Platform.Dreamcast)
 			{

@@ -396,5 +396,35 @@ namespace CDC.Objects.Models
 
 			return;
 		}
+
+		protected void ProcessPolygons(CDC.Objects.ExportOptions options)
+		{
+			MaterialList materialList = null;
+
+			for (UInt16 p = 0; p < _polygonCount; p++)
+			{
+				HandleDebugRendering(p, options);
+
+				if (materialList == null)
+				{
+					materialList = new MaterialList(_polygons[p].material);
+					_materialsList.Add(_polygons[p].material);
+				}
+				else
+				{
+					Material newMaterial = materialList.AddToList(_polygons[p].material);
+					if (_polygons[p].material != newMaterial)
+					{
+						_polygons[p].material = newMaterial;
+					}
+					else
+					{
+						_materialsList.Add(_polygons[p].material);
+					}
+				}
+			}
+
+			_materialCount = (UInt32)_materialsList.Count;
+		}
 	}
 }

@@ -147,7 +147,7 @@
             this.resetCameraPositionWhenModelIsLoadedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportSpectralVersionOfAreaFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flagHandlingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ignorePolygonFlag2ForTerrainToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ignoreBackfacingFlagForTerrainToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.indexedTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useEachUniqueTextureCLUTVariationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -1160,7 +1160,7 @@
             // flagHandlingToolStripMenuItem
             // 
             this.flagHandlingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ignorePolygonFlag2ForTerrainToolStripMenuItem,
+            this.ignoreBackfacingFlagForTerrainToolStripMenuItem,
             this.createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem});
             this.flagHandlingToolStripMenuItem.Name = "flagHandlingToolStripMenuItem";
             this.flagHandlingToolStripMenuItem.Size = new System.Drawing.Size(369, 22);
@@ -1168,10 +1168,10 @@
             // 
             // ignorePolygonFlag2ForTerrainToolStripMenuItem
             // 
-            this.ignorePolygonFlag2ForTerrainToolStripMenuItem.Name = "ignorePolygonFlag2ForTerrainToolStripMenuItem";
-            this.ignorePolygonFlag2ForTerrainToolStripMenuItem.Size = new System.Drawing.Size(358, 22);
-            this.ignorePolygonFlag2ForTerrainToolStripMenuItem.Text = "Ignore Polygon Flag 2 For Terrain";
-            this.ignorePolygonFlag2ForTerrainToolStripMenuItem.Click += new System.EventHandler(this.debugToggleToolStripMenuItem_Click);
+            this.ignoreBackfacingFlagForTerrainToolStripMenuItem.Name = "ignoreBackfacingFlagForTerrainToolStripMenuItem";
+            this.ignoreBackfacingFlagForTerrainToolStripMenuItem.Size = new System.Drawing.Size(358, 22);
+            this.ignoreBackfacingFlagForTerrainToolStripMenuItem.Text = "Ignore Backfacing Flag For Terrain";
+            this.ignoreBackfacingFlagForTerrainToolStripMenuItem.Click += new System.EventHandler(this.debugToggleToolStripMenuItem_Click);
             // 
             // createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem
             // 
@@ -1680,7 +1680,7 @@
 		private System.Windows.Forms.ToolStripMenuItem useEachUniqueTextureCLUTVariationToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem augmentAlphaMaskingFlagsBasedOnImageContentToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem flagHandlingToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem ignorePolygonFlag2ForTerrainToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem ignoreBackfacingFlagForTerrainToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem createDistinctMaterialsForAllFlagsEvenIfUnusedToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem adjustUVCoordinatesForBilinearFilteringToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem ignoreVertexColoursToolStripMenuItem;

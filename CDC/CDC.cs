@@ -107,12 +107,10 @@ namespace CDC
 
 	public struct Polygon
 	{
-		public Material material;     // The material used
-		public Vertex v1, v2, v3;     // Vertices for the polygon
-		public ushort CLUT;
+		public Material material;      // The material used
+		public uint materialOffset;
+		public Vertex v1, v2, v3;      // Vertices for the polygon
 		public int normal;
-		//public byte sr1Flags;       // flags value from Soul Reaver specifically
-		//public UInt16 sr1TextureFT3Attributes;
 		public uint RootBSPTreeNumber;
 		public string BSPNodeID;
 	}
@@ -167,6 +165,8 @@ namespace CDC
 		public UInt16 textureID;        // ID of the texture file
 		public UInt16 texturePage;      // raw "tpage" value from the DRM
 		public UInt32 colour;           // Diffuse colour
+		public Boolean isTranslucent;
+		public Boolean isEmissive;
 		public float opacity;
 		public float emissivity;
 		public bool UseAlphaMask;
@@ -195,93 +195,27 @@ namespace CDC
 		public UInt16 BSPTreeLeafFlagsUsedMask;
 
 		// values for matching whether or not a material is the same or not
-		public byte polygonFlagsEffective
-		{
-			get
-			{
-				return (byte)(polygonFlagsUsedMask & polygonFlags);
-			}
-		}
+		public byte polygonFlagsEffective { get { return (byte)(polygonFlagsUsedMask & polygonFlags); } }
 
-		public byte sortPushEffective
-		{
-			get
-			{
-				return (byte)(sortPushUsedMask & sortPush);
-			}
-		}
+		public byte sortPushEffective { get { return (byte)(sortPushUsedMask & sortPush); } }
 
-		public UInt16 texturePageEffective
-		{
-			get
-			{
-				return (UInt16)(texturePageUsedMask & texturePage);
-			}
-		}
+		public UInt16 texturePageEffective { get { return (UInt16)(texturePageUsedMask & texturePage); } }
 
-		public UInt32 colourEffective
-		{
-			get
-			{
-				return (UInt32)(colourUsedMask & colour);
-			}
-		}
+		public UInt32 colourEffective { get { return (UInt32)(colourUsedMask & colour); } }
 
-		public UInt16 textureAttributesEffective
-		{
-			get
-			{
-				return (UInt16)(textureAttributesUsedMask & textureAttributes);
-			}
-		}
+		public UInt16 textureAttributesEffective { get { return (UInt16)(textureAttributesUsedMask & textureAttributes); } }
 
-		public UInt16 textureAttributesAEffective
-		{
-			get
-			{
-				return (UInt16)(textureAttributesAUsedMask & textureAttributesA);
-			}
-		}
+		public UInt16 textureAttributesAEffective { get { return (UInt16)(textureAttributesAUsedMask & textureAttributesA); } }
 
-		public UInt16 clutValueEffective
-		{
-			get
-			{
-				return (UInt16)(clutValueUsedMask & clutValue);
-			}
-		}
+		public UInt16 clutValueEffective { get { return (UInt16)(clutValueUsedMask & clutValue); } }
 
-		public UInt16 BSPTreeRootFlagsEffective
-		{
-			get
-			{
-				return (UInt16)(BSPTreeRootFlagsUsedMask & BSPTreeRootFlags);
-			}
-		}
+		public UInt16 BSPTreeRootFlagsEffective { get { return (UInt16)(BSPTreeRootFlagsUsedMask & BSPTreeRootFlags); } }
 
-		public UInt16 BSPTreeParentNodeFlagsEffective
-		{
-			get
-			{
-				return (UInt16)(BSPTreeParentNodeFlagsUsedMask & BSPTreeParentNodeFlags);
-			}
-		}
+		public UInt16 BSPTreeParentNodeFlagsEffective { get { return (UInt16)(BSPTreeParentNodeFlagsUsedMask & BSPTreeParentNodeFlags); } }
 
-		public UInt16 BSPTreeAllParentNodeFlagsORdEffective
-		{
-			get
-			{
-				return (UInt16)(BSPTreeAllParentNodeFlagsORdUsedMask & BSPTreeAllParentNodeFlagsORd);
-			}
-		}
+		public UInt16 BSPTreeAllParentNodeFlagsORdEffective { get { return (UInt16)(BSPTreeAllParentNodeFlagsORdUsedMask & BSPTreeAllParentNodeFlagsORd); } }
 
-		public UInt16 BSPTreeLeafFlagsEffective
-		{
-			get
-			{
-				return (UInt16)(BSPTreeLeafFlagsUsedMask & BSPTreeLeafFlags);
-			}
-		}
+		public UInt16 BSPTreeLeafFlagsEffective { get { return (UInt16)(BSPTreeLeafFlagsUsedMask & BSPTreeLeafFlags); } }
 
 		public Material()
 		{
