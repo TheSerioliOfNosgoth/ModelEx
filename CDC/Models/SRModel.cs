@@ -9,20 +9,20 @@ namespace CDC.Objects.Models
 	{
 		protected String _name;
 		protected string _modelTypePrefix;
-		protected UInt32 _version;
+		protected uint _version;
 		protected Platform _platform;
-		protected UInt32 _dataStart;
-		protected UInt32 _modelData;
-		protected UInt32 _vertexCount;
-		protected UInt32 _vertexStart;
-		protected UInt32 _polygonCount;
-		protected UInt32 _polygonStart;
-		protected UInt32 _boneCount;
-		protected UInt32 _boneStart;
-		protected UInt32 _groupCount;
-		protected UInt32 _materialCount;
-		protected UInt32 _materialStart;
-		protected UInt32 _indexCount { get { return 3 * _polygonCount; } }
+		protected uint _dataStart;
+		protected uint _modelData;
+		protected uint _vertexCount;
+		protected uint _vertexStart;
+		protected uint _polygonCount;
+		protected uint _polygonStart;
+		protected uint _boneCount;
+		protected uint _boneStart;
+		protected uint _groupCount;
+		protected uint _materialCount;
+		protected uint _materialStart;
+		protected uint _indexCount { get { return 3 * _polygonCount; } }
 		// Vertices are scaled before any bones are applied.
 		// Scaling afterwards will break the characters.
 		protected Vector _vertexScale;
@@ -36,19 +36,19 @@ namespace CDC.Objects.Models
 
 		public String Name { get { return _name; } }
 		public string ModelTypePrefix { get { return _modelTypePrefix; } }
-		public UInt32 PolygonCount { get { return _polygonCount; } }
+		public uint PolygonCount { get { return _polygonCount; } }
 		public Polygon[] Polygons { get { return _polygons; } }
-		public UInt32 IndexCount { get { return _indexCount; } }
+		public uint IndexCount { get { return _indexCount; } }
 		public Geometry Geometry { get { return _geometry; } }
 		public Geometry ExtraGeometry { get { return _extraGeometry; } }
 		public Bone[] Bones { get { return _bones; } }
-		public UInt32 GroupCount { get { return _groupCount; } }
+		public uint GroupCount { get { return _groupCount; } }
 		public Tree[] Groups { get { return _trees; } }
-		public UInt32 MaterialCount { get { return _materialCount; } }
+		public uint MaterialCount { get { return _materialCount; } }
 		public Material[] Materials { get { return _materials; } }
 		public Platform Platform { get { return _platform; } }
 
-		protected SRModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
+		protected SRModel(BinaryReader reader, uint dataStart, uint modelData, String strModelName, Platform ePlatform, uint version)
 		{
 			_name = strModelName;
 			_modelTypePrefix = "";
@@ -189,9 +189,9 @@ namespace CDC.Objects.Models
 			}
 		}
 
-		protected UInt32 GetColourFromHash(byte[] hash)
+		protected uint GetColourFromHash(byte[] hash)
 		{
-			UInt32 result = 0xFF000000;
+			uint result = 0xFF000000;
 			result |= ((uint)hash[0] << 16);
 			result |= ((uint)hash[1] << 8);
 			result |= ((uint)hash[2]);
@@ -390,8 +390,8 @@ namespace CDC.Objects.Models
 
 			#region CLUT
 
-			UInt16 clutNonRowColumnBits = (UInt16)((_polygons[p].material.clutValue & 0xC000) >> 11);
-			clutNonRowColumnBits |= (UInt16)((_polygons[p].material.clutValue & 0x00E0) >> 5);
+			ushort clutNonRowColumnBits = (ushort)((_polygons[p].material.clutValue & 0xC000) >> 11);
+			clutNonRowColumnBits |= (ushort)((_polygons[p].material.clutValue & 0x00E0) >> 5);
 
 			if (options.RenderMode == RenderMode.DebugCLUTNonRowColBitsHash)
 			{
@@ -537,9 +537,9 @@ namespace CDC.Objects.Models
 
 			if (options.RenderMode == RenderMode.DebugBoneIDHash)
 			{
-				UInt32 boneIDColourV1 = GetColourFromHash(GetHashOfUInt((uint)_polygons[p].v1.boneID));
-				UInt32 boneIDColourV2 = GetColourFromHash(GetHashOfUInt((uint)_polygons[p].v2.boneID));
-				UInt32 boneIDColourV3 = GetColourFromHash(GetHashOfUInt((uint)_polygons[p].v3.boneID));
+				uint boneIDColourV1 = GetColourFromHash(GetHashOfUInt((uint)_polygons[p].v1.boneID));
+				uint boneIDColourV2 = GetColourFromHash(GetHashOfUInt((uint)_polygons[p].v2.boneID));
+				uint boneIDColourV3 = GetColourFromHash(GetHashOfUInt((uint)_polygons[p].v3.boneID));
 				_geometry.Colours[_polygons[p].v1.colourID] = boneIDColourV1;
 				_geometry.Colours[_polygons[p].v2.colourID] = boneIDColourV2;
 				_geometry.Colours[_polygons[p].v3.colourID] = boneIDColourV3;
@@ -575,7 +575,7 @@ namespace CDC.Objects.Models
 			#region BSP tree
 			if (options.RenderMode == RenderMode.DebugBSPRootTreeNumber)
 			{
-				ColourPolygonFromUInt(p, _polygons[p].RootBSPTreeNumber);
+				ColourPolygonFromUInt(p, unchecked((uint)_polygons[p].rootBSPTreeID));
 			}
 
 			if (options.RenderMode == RenderMode.DebugBSPTreeNodeID)
@@ -646,7 +646,7 @@ namespace CDC.Objects.Models
 			#endregion
 
 			#region BSP tree parent flags ORd
-			UInt16 allParentFlagsORd = _polygons[p].material.BSPTreeAllParentNodeFlagsORd;
+			ushort allParentFlagsORd = _polygons[p].material.BSPTreeAllParentNodeFlagsORd;
 			if (options.BSPRenderingIncludeLeafFlagsWhenORing)
 			{
 				allParentFlagsORd |= _polygons[p].material.BSPTreeLeafFlags;

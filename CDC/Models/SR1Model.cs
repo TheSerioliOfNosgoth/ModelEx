@@ -325,7 +325,9 @@ namespace CDC.Objects.Models
 
 		protected abstract void ReadPolygons(BinaryReader reader, ExportOptions options);
 
-		protected abstract void HandlePolygonInfo(int p, ExportOptions options);
+		protected abstract void ReadPolygon(BinaryReader reader, int p, ExportOptions options);
+
+		protected abstract void ProcessPolygon(int p, ExportOptions options);
 
 		protected virtual void ReadMaterial(BinaryReader reader, int p, ExportOptions options)
 		{
@@ -584,16 +586,8 @@ namespace CDC.Objects.Models
 
 			for (UInt16 p = 0; p < _polygonCount; p++)
 			{
-				// Handle the flags and figure out whether this polygon uses a TextureFT3 or TextureMT3.
-				HandlePolygonInfo(p, options);
-
-				// Read the material if this polygon uses a TextureFT3 or TextureMT3 regardless of selected options.
-				if (_polygons[p].material.textureUsed)
-				{
-					ReadMaterial(reader, p, options);
-				}
-
-				// Apply any overrides *only* after all the data has been read.
+				ProcessPolygon(p, options);
+				ReadMaterial(reader, p, options);
 				HandleDebugRendering(p, options);
 
 				if (materialList == null)
