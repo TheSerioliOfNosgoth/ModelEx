@@ -399,26 +399,6 @@ namespace CDC.Objects.Models
 					}
 				}
 
-				// experimental
-				//if ((polygon.sr1TextureFT3Attributes & 0x10) == 0x10)
-				//{
-				//if ((polygon.sr1TextureFT3Attributes & 0x40) == 0x40)
-				//{
-				//    material.colour = (material.colour & 0x00FFFFFF) | TranslucentMaterial;
-				//}
-				//else  //2019-12-22
-				//{
-				//    //if ((material.colour & TranslucentMaterial) != TranslucentMaterial)
-				//    //{
-				//    //    material.colour |= 0xFF000000;
-				//    //}
-				//}
-				//else
-				//{
-				//    material.visible = false;
-				//}
-				//}
-
 				_geometry.UVs[v1].u = ((float)v1U) / 255.0f;
 				_geometry.UVs[v1].v = ((float)v1V) / 255.0f;
 				_geometry.UVs[v2].u = ((float)v2U) / 255.0f;

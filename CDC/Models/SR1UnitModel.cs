@@ -297,13 +297,8 @@ namespace CDC.Objects.Models
 			material.polygonFlags = attr;
 			material.sortPush = sortPush;
 
-			//if (Platform == Platform.Dreamcast)
-			//{
-			//    material.colour = 0xFFFFFFFF;
-			//}
-
 			_polygons[p].material = material;
-			_polygons[p].materialOffset = (material.textureUsed) ? textoff : 0xFFFFFFFF;
+			_polygons[p].materialOffset = textoff;
 			_polygons[p].v1 = _geometry.Vertices[v1];
 			_polygons[p].v2 = _geometry.Vertices[v2];
 			_polygons[p].v3 = _geometry.Vertices[v3];
@@ -335,6 +330,7 @@ namespace CDC.Objects.Models
 				material.visible = false;
 				material.textureUsed = false;
 				material.colour = 0x00000000;
+				Utility.FlipRedAndBlue(ref material.colour);
 				return;
 			}
 
@@ -386,12 +382,18 @@ namespace CDC.Objects.Models
 				material.emissivity = 1.0f;
 			}
 
+			if (!material.textureUsed)
+			{
+				polygon.materialOffset = 0xFFFFFFFF;
+			}
+
 			if (!material.visible)
 			{
 				material.textureUsed = false;
 			}
 
 			Utility.FlipRedAndBlue(ref material.colour);
+			material.colour |= 0xFF000000;
 		}
 
 		protected override void ReadPolygons(BinaryReader reader, ExportOptions options)
@@ -472,6 +474,9 @@ namespace CDC.Objects.Models
 
 			reader.BaseStream.Position = materialPosition;
 			base.ReadMaterial(reader, p, options);
+
+			Utility.FlipRedAndBlue(ref material.colour);
+			material.colour |= 0xFF000000;
 		}
 
 		protected virtual Tree ReadBSPTree(short rootBSPTreeID, string treeNodeID, BinaryReader reader, List<UInt32> treePolygons, UInt32 dataPos, Tree parentTree, List<Mesh> meshes,

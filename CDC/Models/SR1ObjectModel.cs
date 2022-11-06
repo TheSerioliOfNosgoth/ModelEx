@@ -169,10 +169,10 @@ namespace CDC.Objects.Models
 			material.UseAlphaMask = true;
 			material.polygonFlags = flags;
 			material.sortPush = 0;
-			material.colour = color | 0xFF000000;
+			material.colour = color;
 
 			_polygons[p].material = material;
-			_polygons[p].materialOffset = (material.textureUsed) ? color : 0xFFFFFFFF;
+			_polygons[p].materialOffset = color;
 			_polygons[p].v1 = _geometry.Vertices[v1];
 			_polygons[p].v2 = _geometry.Vertices[v2];
 			_polygons[p].v3 = _geometry.Vertices[v3];
@@ -240,12 +240,18 @@ namespace CDC.Objects.Models
 				material.emissivity = 1.0f;
 			}
 
+			if (!material.textureUsed)
+			{
+				polygon.materialOffset = 0xFFFFFFFF;
+			}
+
 			if (!material.visible)
 			{
 				material.textureUsed = false;
 			}
 
 			Utility.FlipRedAndBlue(ref material.colour);
+			material.colour |= 0xFF000000;
 		}
 
 		protected override void ReadPolygons(BinaryReader reader, ExportOptions options)
@@ -312,7 +318,9 @@ namespace CDC.Objects.Models
 				reader.BaseStream.Position += 0x02;
 			}
 
-			_polygons[p].material.colour = reader.ReadUInt32();
+			material.colour = reader.ReadUInt32();
+			Utility.FlipRedAndBlue(ref material.colour);
+			material.colour |= 0xFF000000;
 		}
 	}
 }
