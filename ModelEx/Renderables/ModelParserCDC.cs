@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using CDCFile = CDC.Objects.CDCFile;
-using CDCModel = CDC.Objects.Models.CDCModel;
+using CDCModel = CDC.Objects.Models.Model;
 using Tree = CDC.Tree;
 
 namespace ModelEx
@@ -45,7 +45,7 @@ namespace ModelEx
 				// Maybe use a hack for warpgates WARPGATE_DrawWarpGateRim indicates tree 3 should have lower priority.
 				Color colorDiffuse = Color.FromArgb((int)unchecked(_cdcModel.Materials[materialIndex].colour));
 				material.Diffuse = colorDiffuse;
-				material.TextureFileName = CDC.Objects.Models.CDCModel.GetTextureName(_cdcModel, materialIndex, options);
+				material.TextureFileName = CDC.Objects.Models.Model.GetTextureName((CDC.Objects.Models.Model)_cdcModel, materialIndex, options);
 				Materials.Add(material);
 			}
 

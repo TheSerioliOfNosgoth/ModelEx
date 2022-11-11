@@ -4,7 +4,7 @@ using System.IO;
 
 namespace CDC.Objects.Models
 {
-	public abstract class TRLModel : CDCModel
+	public abstract class TRLModel : Model
 	{
 		protected class TRLTriangleList
 		{

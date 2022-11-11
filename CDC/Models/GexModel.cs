@@ -5,7 +5,7 @@ using TextureTile = BenLincoln.TheLostWorlds.CDTextures.PSXTextureTile;
 
 namespace CDC.Objects.Models
 {
-	public abstract class GexModel : CDCModel
+	public abstract class GexModel : Model
 	{
 		#region Normals
 		protected static Int32[,] s_aiNormals =

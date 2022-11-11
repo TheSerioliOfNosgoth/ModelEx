@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using CDCFile = CDC.Objects.CDCFile;
-using CDCModel = CDC.Objects.Models.CDCModel;
+using CDCModel = CDC.Objects.Models.Model;
 using Tree = CDC.Tree;
 
 namespace ModelEx

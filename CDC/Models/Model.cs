@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 
 namespace CDC.Objects.Models
 {
-	public abstract class CDCModel
+	public abstract class Model
 	{
 		protected String _name;
 		protected string _modelTypePrefix;
@@ -48,7 +48,7 @@ namespace CDC.Objects.Models
 		public Material[] Materials { get { return _materials; } }
 		public Platform Platform { get { return _platform; } }
 
-		protected CDCModel(BinaryReader reader, uint dataStart, uint modelData, String strModelName, Platform ePlatform, uint version)
+		protected Model(BinaryReader reader, uint dataStart, uint modelData, String strModelName, Platform ePlatform, uint version)
 		{
 			_name = strModelName;
 			_modelTypePrefix = "";
@@ -95,7 +95,7 @@ namespace CDC.Objects.Models
 			return GetTextureNameDefault(objectName, textureID);
 		}
 
-		public static String GetTextureName(CDCModel srModel, int materialIndex, CDC.Objects.ExportOptions options)
+		public static String GetTextureName(Model srModel, int materialIndex, CDC.Objects.ExportOptions options)
 		{
 			CDC.Material material = srModel.Materials[materialIndex];
 			String textureName = "";
