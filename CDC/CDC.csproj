@@ -71,7 +71,7 @@
     <Compile Include="Files\GexFile.cs" />
     <Compile Include="Files\SR1File.cs" />
     <Compile Include="Files\SR2File.cs" />
-    <Compile Include="Files\CDCFile.cs" />
+    <Compile Include="Files\DataFile.cs" />
     <Compile Include="Files\TRLFile.cs" />
     <Compile Include="Models\GexModel.cs" />
     <Compile Include="Models\GexObjectModel.cs" />

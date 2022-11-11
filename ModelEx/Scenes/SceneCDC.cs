@@ -5,7 +5,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using GexFile = CDC.Objects.GexFile;
-using CDCFile = CDC.Objects.CDCFile;
+using CDCDataFile = CDC.Objects.DataFile;
 using SR1File = CDC.Objects.SR1File;
 using SR2File = CDC.Objects.SR2File;
 using DefianceFile = CDC.Objects.DefianceFile;
@@ -35,26 +35,26 @@ namespace ModelEx
 			}
 		}
 
-		public SceneCDC(CDCFile cdcFile, bool includeObjects)
+		public SceneCDC(CDCDataFile dataFile, bool includeObjects)
 			: base(includeObjects)
 		{
-			Name = cdcFile.Name;
+			Name = dataFile.Name;
 
-			for (int m = 0; m < cdcFile.ModelCount; m++)
+			for (int m = 0; m < dataFile.ModelCount; m++)
 			{
-				RenderInstance instance = new RenderInstance(cdcFile.Name, m, new SlimDX.Vector3(), new SlimDX.Quaternion(), new SlimDX.Vector3(1.0f, 1.0f, 1.0f));
-				instance.Name = cdcFile.Models[m].Name + "-" + m.ToString();
+				RenderInstance instance = new RenderInstance(dataFile.Name, m, new SlimDX.Vector3(), new SlimDX.Quaternion(), new SlimDX.Vector3(1.0f, 1.0f, 1.0f));
+				instance.Name = dataFile.Models[m].Name + "-" + m.ToString();
 				lock (_renderInstances)
 				{
 					_renderInstances.Add(instance);
 				}
 			}
 
-			if (includeObjects && cdcFile.Asset == CDC.Asset.Unit && cdcFile.IntroCount > 0)
+			if (includeObjects && dataFile.Asset == CDC.Asset.Unit && dataFile.IntroCount > 0)
 			{
 				bool foundUprightSword = false;
 				SlimDX.Vector3 saveSwdPos = new SlimDX.Vector3();
-				foreach (CDC.Intro intro in cdcFile.Intros)
+				foreach (CDC.Intro intro in dataFile.Intros)
 				{
 					if (intro.fileName == "saveswd" && Math.Abs(intro.rotation.x) < 3.0f)
 					{
@@ -69,7 +69,7 @@ namespace ModelEx
 					}
 				}
 
-				foreach (CDC.Intro intro in cdcFile.Intros)
+				foreach (CDC.Intro intro in dataFile.Intros)
 				{
 					SlimDX.Vector3 position = new SlimDX.Vector3(
 						0.01f * intro.position.x,
@@ -80,7 +80,7 @@ namespace ModelEx
 					SlimDX.Vector3 scale = new SlimDX.Vector3(1.0f, 1.0f, 1.0f);
 
 					SlimDX.Quaternion rotation;
-					if (cdcFile.Game == CDC.Game.Gex || cdcFile.Game == CDC.Game.SR1)
+					if (dataFile.Game == CDC.Game.Gex || dataFile.Game == CDC.Game.SR1)
 					{
 						rotation = SlimDX.Quaternion.RotationYawPitchRoll(
 							-intro.rotation.z, // Yaw - Easy to spot from direction of raziel, enemies, flagall.
@@ -125,15 +125,15 @@ namespace ModelEx
 			}
 		}
 
-		public SceneCDC(CDCFile cdcFile, RenderResource resource)
+		public SceneCDC(CDCDataFile dataFile, RenderResource resource)
 			: base(false)
 		{
-			Name = cdcFile.Name;
+			Name = dataFile.Name;
 
-			for (int m = 0; m < cdcFile.ModelCount; m++)
+			for (int m = 0; m < dataFile.ModelCount; m++)
 			{
-				RenderInstance instance = new RenderInstance(cdcFile.Name, m, new SlimDX.Vector3(), new SlimDX.Quaternion(), new SlimDX.Vector3(1.0f, 1.0f, 1.0f), resource);
-				instance.Name = cdcFile.Models[m].Name + "-" + m.ToString();
+				RenderInstance instance = new RenderInstance(dataFile.Name, m, new SlimDX.Vector3(), new SlimDX.Quaternion(), new SlimDX.Vector3(1.0f, 1.0f, 1.0f), resource);
+				instance.Name = dataFile.Models[m].Name + "-" + m.ToString();
 				lock (_renderInstances)
 				{
 					_renderInstances.Add(instance);

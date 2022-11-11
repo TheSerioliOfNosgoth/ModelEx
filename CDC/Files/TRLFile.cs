@@ -5,7 +5,7 @@ using CDC.Objects.Models;
 
 namespace CDC.Objects
 {
-	public class TRLFile : CDCFile
+	public class TRLFile : DataFile
 	{
 		enum SectionType
 		{
@@ -36,13 +36,13 @@ namespace CDC.Objects
 		Int16[] _objectIDs;
 		SortedList<int, string> _objectNamesList = new SortedList<int, string>();
 
-		public TRLFile(String dataFile, Platform platform, ExportOptions options)
-			: base(dataFile, Game.TRL, platform, options)
+		public TRLFile(String dataFileName, Platform platform, ExportOptions options)
+			: base(dataFileName, Game.TRL, platform, options)
 		{
 		}
 
-		public TRLFile(String dataFile, String objectListFile, Platform platform, ExportOptions options)
-			: base(dataFile, Game.Defiance, platform, options)
+		public TRLFile(String dataFileName, String objectListFile, Platform platform, ExportOptions options)
+			: base(dataFileName, Game.Defiance, platform, options)
 		{
 			LoadObjectList(objectListFile);
 		}

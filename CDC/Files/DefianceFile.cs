@@ -5,18 +5,18 @@ using CDC.Objects.Models;
 
 namespace CDC.Objects
 {
-	public class DefianceFile : CDCFile
+	public class DefianceFile : DataFile
 	{
 		Int16[] _objectIDs;
 		SortedList<int, string> _objectNamesList = new SortedList<int, string>();
 
-		public DefianceFile(String dataFile, Platform platform, ExportOptions options)
-			: base(dataFile, Game.Defiance, platform, options)
+		public DefianceFile(String dataFileName, Platform platform, ExportOptions options)
+			: base(dataFileName, Game.Defiance, platform, options)
 		{
 		}
 
-		public DefianceFile(String dataFile, String objectListFile, Platform platform, ExportOptions options)
-			: base(dataFile, Game.Defiance, platform, options)
+		public DefianceFile(String dataFileName, String objectListFile, Platform platform, ExportOptions options)
+			: base(dataFileName, Game.Defiance, platform, options)
 		{
 			LoadObjectList(objectListFile);
 		}

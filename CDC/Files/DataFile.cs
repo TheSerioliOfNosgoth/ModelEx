@@ -158,7 +158,7 @@ namespace CDC.Objects
 		}
 	}
 
-	public abstract class CDCFile
+	public abstract class DataFile
 	{
 		public const string TextureExtension = ".png";
 		public const float ExportSizeMultiplier = 0.001f;
@@ -199,21 +199,21 @@ namespace CDC.Objects
 
 		public static StreamWriter LogFile;
 
-		protected CDCFile()
+		protected DataFile()
 		{
 
 		}
 
-		protected CDCFile(String dataFile, Game game, Platform platform, ExportOptions options)
+		protected DataFile(String dataFileName, Game game, Platform platform, ExportOptions options)
 		{
-			_name = Path.GetFileNameWithoutExtension(dataFile);
+			_name = Path.GetFileNameWithoutExtension(dataFileName);
 			_game = game;
 			_platform = platform;
 
 			//String strDebugFileName = Path.GetDirectoryName(strFileName) + "\\" + Path.GetFileNameWithoutExtension(strFileName) + "-Debug.txt";
 			//LogFile = File.CreateText(strDebugFileName);
 
-			FileStream file = new FileStream(dataFile, FileMode.Open, FileAccess.Read);
+			FileStream file = new FileStream(dataFileName, FileMode.Open, FileAccess.Read);
 			BinaryReader reader = new BinaryReader(file, System.Text.Encoding.ASCII);
 			MemoryStream stream = new MemoryStream((int)file.Length);
 			BinaryWriter writer = new BinaryWriter(stream, System.Text.Encoding.ASCII);
@@ -246,51 +246,51 @@ namespace CDC.Objects
 
 		protected abstract void ResolvePointers(BinaryReader reader, BinaryWriter writer);
 
-		public static CDCFile Create(string dataFile, string objectListFile, Game game, Platform platform, ExportOptions options, int childIndex = -1)
+		public static DataFile Create(string dataFileName, string objectListFile, Game game, Platform platform, ExportOptions options, int childIndex = -1)
 		{
-			CDCFile cdcFile;
+			DataFile dataFile;
 
 			try
 			{
 				if (game == Game.Gex)
 				{
-					GexFile gexFile = new GexFile(dataFile, platform, options);
+					GexFile gexFile = new GexFile(dataFileName, platform, options);
 					if (gexFile.Asset == Asset.Unit && childIndex >= 0)
 					{
-						cdcFile = gexFile.Objects[childIndex];
+						dataFile = gexFile.Objects[childIndex];
 					}
 					else
 					{
-						cdcFile = gexFile;
+						dataFile = gexFile;
 					}
 				}
 				else if (game == Game.SR1)
 				{
-					cdcFile = new SR1File(dataFile, platform, options);
+					dataFile = new SR1File(dataFileName, platform, options);
 				}
 				else if (game == Game.SR2)
 				{
-					cdcFile = new SR2File(dataFile, platform, options);
+					dataFile = new SR2File(dataFileName, platform, options);
 				}
 				else if (game == Game.Defiance)
 				{
-					cdcFile = new DefianceFile(dataFile, objectListFile, platform, options);
+					dataFile = new DefianceFile(dataFileName, objectListFile, platform, options);
 				}
 				else if (game == Game.TRL)
 				{
-					cdcFile = new TRLFile(dataFile, objectListFile, platform, options);
+					dataFile = new TRLFile(dataFileName, objectListFile, platform, options);
 				}
 				else
 				{
-					cdcFile = null;
+					dataFile = null;
 				}
 			}
 			catch (Exception)
 			{
-				cdcFile = null;
+				dataFile = null;
 			}
 
-			return cdcFile;
+			return dataFile;
 		}
 
 		public bool ExportToFile(String fileName, ExportOptions options)

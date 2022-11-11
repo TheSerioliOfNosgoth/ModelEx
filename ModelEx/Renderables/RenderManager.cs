@@ -8,7 +8,7 @@ using SlimDX.DXGI;
 using Game = CDC.Game;
 using Platform = CDC.Platform;
 using ExportOptions = CDC.Objects.ExportOptions;
-using CDCFile = CDC.Objects.CDCFile;
+using CDCDataFile = CDC.Objects.DataFile;
 
 namespace ModelEx
 {
@@ -155,9 +155,9 @@ namespace ModelEx
 			SceneCDC.progressLevels = 1;
 			SceneCDC.ProgressStage = "Reading Data";
 
-			CDCFile cdcFile = CDCFile.Create(loadRequest.DataFile, loadRequest.ObjectListFile, loadRequest.GameType, loadRequest.Platform, loadRequest.ExportOptions, loadRequest.ChildIndex);
+			CDCDataFile dataFile = CDCDataFile.Create(loadRequest.DataFile, loadRequest.ObjectListFile, loadRequest.GameType, loadRequest.Platform, loadRequest.ExportOptions, loadRequest.ChildIndex);
 
-			if (cdcFile == null)
+			if (dataFile == null)
 			{
 				SceneCDC.progressLevel = 1;
 				SceneCDC.ProgressStage = "Done";
@@ -171,16 +171,16 @@ namespace ModelEx
 				DebugResource?.Dispose();
 				DebugResource = null;
 			}
-			else if (Resources.ContainsKey(cdcFile.Name))
+			else if (Resources.ContainsKey(dataFile.Name))
 			{
-				renderResource = (RenderResourceCDC)Resources[cdcFile.Name];
-				Resources.Remove(cdcFile.Name);
+				renderResource = (RenderResourceCDC)Resources[dataFile.Name];
+				Resources.Remove(dataFile.Name);
 				CurrentObject?.UpdateModels();
 				CurrentScene?.UpdateModels();
 				renderResource.Dispose();
 			}
 
-			renderResource = new RenderResourceCDC(cdcFile, loadRequest);
+			renderResource = new RenderResourceCDC(dataFile, loadRequest);
 			renderResource.LoadModels();
 
 			SceneCDC.progressLevel = 1;
@@ -202,11 +202,11 @@ namespace ModelEx
 			SceneCDC.progressLevel = SceneCDC.progressLevels;
 			SceneCDC.ProgressStage = "Done";
 
-			loadRequest.ResourceName = cdcFile.Name;
+			loadRequest.ResourceName = dataFile.Name;
 
-			if (loadDependancies && cdcFile.ObjectNames != null && cdcFile.ObjectNames.Length > 0)
+			if (loadDependancies && dataFile.ObjectNames != null && dataFile.ObjectNames.Length > 0)
 			{
-				foreach (string objectName in cdcFile.ObjectNames)
+				foreach (string objectName in dataFile.ObjectNames)
 				{
 					LoadRequestCDC objectLoadRequest = new LoadRequestCDC();
 

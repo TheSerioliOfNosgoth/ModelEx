@@ -6,7 +6,7 @@ using TPages = BenLincoln.TheLostWorlds.CDTextures.PSXTextureDictionary;
 
 namespace CDC.Objects
 {
-	public class SR1File : CDCFile
+	public class SR1File : DataFile
 	{
 		public const UInt32 PROTO_19981025_VERSION = 0x00000000;
 		public const UInt32 ALPHA_19990123_VERSION_1_X = 0x3c204127;
@@ -23,8 +23,8 @@ namespace CDC.Objects
 
 		public MonsterAttributes _monsterAttributes;
 
-		public SR1File(String dataFile, Platform platform, ExportOptions options)
-			: base(dataFile, Game.SR1, platform, options)
+		public SR1File(String dataFileName, Platform platform, ExportOptions options)
+			: base(dataFileName, Game.SR1, platform, options)
 		{
 		}
 

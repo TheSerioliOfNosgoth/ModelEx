@@ -5,10 +5,10 @@ using CDC.Objects.Models;
 
 namespace CDC.Objects
 {
-	public class SR2File : CDCFile
+	public class SR2File : DataFile
 	{
-		public SR2File(String dataFile, Platform platform, ExportOptions options)
-			: base(dataFile, Game.SR2, platform, options)
+		public SR2File(String dataFileName, Platform platform, ExportOptions options)
+			: base(dataFileName, Game.SR2, platform, options)
 		{
 		}
 

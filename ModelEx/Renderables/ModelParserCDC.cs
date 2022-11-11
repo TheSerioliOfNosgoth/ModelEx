@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using CDCFile = CDC.Objects.CDCFile;
+using CDCDataFile = CDC.Objects.DataFile;
 using CDCModel = CDC.Objects.Models.Model;
 using Tree = CDC.Tree;
 
@@ -11,7 +11,7 @@ namespace ModelEx
 		IModelParser
 	{
 		string _objectName;
-		CDCFile _cdcFile;
+		CDCDataFile _dataFile;
 		CDCModel _cdcModel;
 		public Model Model;
 		public string ModelName { get; private set; }
@@ -20,15 +20,15 @@ namespace ModelEx
 		public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
 		public List<ModelNode> Groups { get; } = new List<ModelNode>();
 
-		public SRModelParser(string objectName, CDCFile cdcFile)
+		public SRModelParser(string objectName, CDCDataFile dataFile)
 		{
 			_objectName = objectName;
-			_cdcFile = cdcFile;
+			_dataFile = dataFile;
 		}
 
 		public void BuildModel(RenderResource resource, int modelIndex, CDC.Objects.ExportOptions options)
 		{
-			_cdcModel = _cdcFile.Models[modelIndex];
+			_cdcModel = _dataFile.Models[modelIndex];
 			String modelName = _objectName + "-" + modelIndex.ToString();
 
 			#region Materials
@@ -60,7 +60,7 @@ namespace ModelEx
 					srGroup.mesh.indexCount > 0 && srGroup.mesh.polygonCount > 0)
 				{
 					ModelNode group = new ModelNode();
-					SRMeshParser meshParser = new SRMeshParser(_objectName, _cdcFile);
+					SRMeshParser meshParser = new SRMeshParser(_objectName, _dataFile);
 					meshParser.BuildMesh(resource, modelIndex, groupIndex, 0);
 					foreach (SubMesh subMesh in meshParser.SubMeshes)
 					{

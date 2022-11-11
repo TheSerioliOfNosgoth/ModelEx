@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using CDCFile = CDC.Objects.CDCFile;
+using CDCDataFile = CDC.Objects.DataFile;
 using GexFile = CDC.Objects.GexFile;
 using SR1File = CDC.Objects.SR1File;
 using SR2File = CDC.Objects.SR2File;
@@ -23,16 +23,16 @@ namespace ModelEx
 {
 	public class RenderResourceCDC : RenderResource
 	{
-		public CDCFile File { get; private set; }
+		public CDCDataFile File { get; private set; }
 		public LoadRequestCDC LoadRequest { get; private set; }
 
 		public const string TextureExtension = ".png";
 		private CDC.Objects.ExportOptions ExportOptions;
 
-		public RenderResourceCDC(CDCFile cdcFile, LoadRequestCDC loadRequest)
-			: base(cdcFile.Name)
+		public RenderResourceCDC(CDCDataFile dataFile, LoadRequestCDC loadRequest)
+			: base(dataFile.Name)
 		{
-			File = cdcFile;
+			File = dataFile;
 			LoadRequest = (LoadRequestCDC)loadRequest.Clone();
 			ExportOptions = LoadRequest.ExportOptions;
 		}
