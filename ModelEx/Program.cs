@@ -529,13 +529,13 @@ namespace ModelEx
 
 						if (loadRequest.GameType == CDC.Game.SR1)
 						{
-							CDC.Objects.SR1File srFile = new CDC.Objects.SR1File(inputFilePath, platform, options);
+							CDC.Objects.SR1File sr1File = new CDC.Objects.SR1File(inputFilePath, platform, options);
 
-							if (srFile.Platform == CDC.Platform.PC)
+							if (sr1File.Platform == CDC.Platform.PC)
 							{
 								loadRequest.TextureFile = CDC.Utility.GetTextureFileLocation(options, "textures.big", inputFilePath);
 							}
-							else if (srFile.Platform == CDC.Platform.Dreamcast)
+							else if (sr1File.Platform == CDC.Platform.Dreamcast)
 							{
 								loadRequest.TextureFile = CDC.Utility.GetTextureFileLocation(options, "textures.vq", inputFilePath);
 							}

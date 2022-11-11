@@ -158,7 +158,7 @@ namespace CDC.Objects
 		}
 	}
 
-	public abstract class SRFile
+	public abstract class CDCFile
 	{
 		public const string TextureExtension = ".png";
 		public const float ExportSizeMultiplier = 0.001f;
@@ -199,12 +199,12 @@ namespace CDC.Objects
 
 		public static StreamWriter LogFile;
 
-		protected SRFile()
+		protected CDCFile()
 		{
 
 		}
 
-		protected SRFile(String dataFile, Game game, Platform platform, ExportOptions options)
+		protected CDCFile(String dataFile, Game game, Platform platform, ExportOptions options)
 		{
 			_name = Path.GetFileNameWithoutExtension(dataFile);
 			_game = game;
@@ -246,9 +246,9 @@ namespace CDC.Objects
 
 		protected abstract void ResolvePointers(BinaryReader reader, BinaryWriter writer);
 
-		public static SRFile Create(string dataFile, string objectListFile, Game game, Platform platform, ExportOptions options, int childIndex = -1)
+		public static CDCFile Create(string dataFile, string objectListFile, Game game, Platform platform, ExportOptions options, int childIndex = -1)
 		{
-			SRFile srFile;
+			CDCFile cdcFile;
 
 			try
 			{
@@ -257,40 +257,40 @@ namespace CDC.Objects
 					GexFile gexFile = new GexFile(dataFile, platform, options);
 					if (gexFile.Asset == Asset.Unit && childIndex >= 0)
 					{
-						srFile = gexFile.Objects[childIndex];
+						cdcFile = gexFile.Objects[childIndex];
 					}
 					else
 					{
-						srFile = gexFile;
+						cdcFile = gexFile;
 					}
 				}
 				else if (game == Game.SR1)
 				{
-					srFile = new SR1File(dataFile, platform, options);
+					cdcFile = new SR1File(dataFile, platform, options);
 				}
 				else if (game == Game.SR2)
 				{
-					srFile = new SR2File(dataFile, platform, options);
+					cdcFile = new SR2File(dataFile, platform, options);
 				}
 				else if (game == Game.Defiance)
 				{
-					srFile = new DefianceFile(dataFile, objectListFile, platform, options);
+					cdcFile = new DefianceFile(dataFile, objectListFile, platform, options);
 				}
 				else if (game == Game.TRL)
 				{
-					srFile = new TRLFile(dataFile, objectListFile, platform, options);
+					cdcFile = new TRLFile(dataFile, objectListFile, platform, options);
 				}
 				else
 				{
-					srFile = null;
+					cdcFile = null;
 				}
 			}
 			catch (Exception)
 			{
-				srFile = null;
+				cdcFile = null;
 			}
 
-			return srFile;
+			return cdcFile;
 		}
 
 		public bool ExportToFile(String fileName, ExportOptions options)

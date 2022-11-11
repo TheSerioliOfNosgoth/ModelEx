@@ -6,7 +6,7 @@ using TPages = BenLincoln.TheLostWorlds.CDTextures.PSXTextureDictionary;
 
 namespace CDC.Objects
 {
-	public class GexFile : SRFile
+	public class GexFile : CDCFile
 	{
 		public const UInt32 RETAIL_VERSION = 0x00000002;
 
@@ -15,8 +15,8 @@ namespace CDC.Objects
 		protected TPages _tPages = new TPages(0x001F | 0x0010 | 0x0800 | 0x0080, 0x003F | 0xFFC0);
 		public TPages TPages { get { return _tPages; } }
 
-		protected SRFile[] _objects;
-		public SRFile[] Objects { get { return _objects; } }
+		protected CDCFile[] _objects;
+		public CDCFile[] Objects { get { return _objects; } }
 
 		protected GexFile(String name, ExportOptions options, BinaryReader reader)
 		{
@@ -86,7 +86,7 @@ namespace CDC.Objects
 			_objectNameStart = reader.ReadUInt32();
 			reader.BaseStream.Position = _objectNameStart;
 			List<string> objectNames = new List<string>();
-			List<SRFile> objectList = new List<SRFile>();
+			List<CDCFile> objectList = new List<CDCFile>();
 			while (true)
 			{
 				UInt32 objectAddress = reader.ReadUInt32();

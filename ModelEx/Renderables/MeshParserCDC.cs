@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using SRFile = CDC.Objects.SRFile;
+using CDCFile = CDC.Objects.CDCFile;
 using SRModel = CDC.Objects.Models.SRModel;
 using Tree = CDC.Tree;
 
@@ -12,7 +12,7 @@ namespace ModelEx
 		IMeshParser<Position2Color2TexturedVertex, short>
 	{
 		string _objectName;
-		SRFile _srFile;
+		CDCFile _cdcFile;
 		SRModel _srModel;
 		Tree _srGroup;
 		List<int> _vertexList = new List<int>();
@@ -20,15 +20,15 @@ namespace ModelEx
 		public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
 		public Mesh Mesh;
 
-		public SRMeshParser(string objectName, SRFile srFile)
+		public SRMeshParser(string objectName, CDCFile cdcFile)
 		{
 			_objectName = objectName;
-			_srFile = srFile;
+			_cdcFile = cdcFile;
 		}
 
 		public void BuildMesh(RenderResource resource, int modelIndex, int groupIndex, int meshIndex)
 		{
-			_srModel = _srFile.Models[modelIndex];
+			_srModel = _cdcFile.Models[modelIndex];
 			_srGroup = _srModel.Groups[groupIndex];
 			String modelName = String.Format("{0}-{1}", _objectName, modelIndex);
 			String groupName = String.Format("{0}-{1}-group-{2}", _objectName, modelIndex, groupIndex);
@@ -70,7 +70,7 @@ namespace ModelEx
 			{
 				MeshName = meshName;
 				Technique = "DefaultRender";
-				if (_srFile.Asset == CDC.Asset.Unit)
+				if (_cdcFile.Asset == CDC.Asset.Unit)
 				{
 					//Mesh = new MeshPCT(this);
 					Mesh = new MeshMorphingUnit(resource, this);

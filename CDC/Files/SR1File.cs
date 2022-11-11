@@ -6,7 +6,7 @@ using TPages = BenLincoln.TheLostWorlds.CDTextures.PSXTextureDictionary;
 
 namespace CDC.Objects
 {
-	public class SR1File : SRFile
+	public class SR1File : CDCFile
 	{
 		public const UInt32 PROTO_19981025_VERSION = 0x00000000;
 		public const UInt32 ALPHA_19990123_VERSION_1_X = 0x3c204127;

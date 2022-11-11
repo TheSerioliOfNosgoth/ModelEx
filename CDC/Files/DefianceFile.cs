@@ -5,7 +5,7 @@ using CDC.Objects.Models;
 
 namespace CDC.Objects
 {
-	public class DefianceFile : SRFile
+	public class DefianceFile : CDCFile
 	{
 		Int16[] _objectIDs;
 		SortedList<int, string> _objectNamesList = new SortedList<int, string>();

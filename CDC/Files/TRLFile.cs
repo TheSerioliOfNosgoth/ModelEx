@@ -5,7 +5,7 @@ using CDC.Objects.Models;
 
 namespace CDC.Objects
 {
-	public class TRLFile : SRFile
+	public class TRLFile : CDCFile
 	{
 		enum SectionType
 		{
