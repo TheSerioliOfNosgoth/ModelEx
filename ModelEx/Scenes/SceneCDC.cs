@@ -44,7 +44,10 @@ namespace ModelEx
 			{
 				RenderInstance instance = new RenderInstance(srFile.Name, m, new SlimDX.Vector3(), new SlimDX.Quaternion(), new SlimDX.Vector3(1.0f, 1.0f, 1.0f));
 				instance.Name = srFile.Models[m].Name + "-" + m.ToString();
-				_renderInstances.Add(instance);
+				lock (_renderInstances)
+				{
+					_renderInstances.Add(instance);
+				}
 			}
 
 			if (includeObjects && srFile.Asset == CDC.Asset.Unit && srFile.IntroCount > 0)
@@ -114,7 +117,10 @@ namespace ModelEx
 					RenderInstance instance = new RenderInstance(intro.fileName, intro.modelIndex, position, rotation, scale);
 					instance.Name = intro.name;
 
-					_renderInstances.Add(instance);
+					lock (_renderInstances)
+					{
+						_renderInstances.Add(instance);
+					}
 				}
 			}
 		}
@@ -128,7 +134,10 @@ namespace ModelEx
 			{
 				RenderInstance instance = new RenderInstance(srFile.Name, m, new SlimDX.Vector3(), new SlimDX.Quaternion(), new SlimDX.Vector3(1.0f, 1.0f, 1.0f), resource);
 				instance.Name = srFile.Models[m].Name + "-" + m.ToString();
-				_renderInstances.Add(instance);
+				lock (_renderInstances)
+				{
+					_renderInstances.Add(instance);
+				}
 			}
 		}
 
@@ -156,32 +165,35 @@ namespace ModelEx
 			DeviceManager.Instance.context.PixelShader.SetShaderResources(oldShaderResources, 0, 10);
 			DeviceManager.Instance.context.GeometryShader.Set(oldGeometryShader);
 
-			foreach (RenderInstance instance in _renderInstances)
+			lock (_renderInstances)
 			{
-				if (instance.Name == null)
+				foreach (RenderInstance instance in _renderInstances)
 				{
-					continue;
-				}
+					if (instance.Name == null)
+					{
+						continue;
+					}
 
-				SlimDX.Matrix world = instance.Transform;
-				SlimDX.Matrix view = CameraManager.Instance.frameCamera.View;
-				SlimDX.Matrix projection = CameraManager.Instance.frameCamera.Perspective;
+					SlimDX.Matrix world = instance.Transform;
+					SlimDX.Matrix view = CameraManager.Instance.frameCamera.View;
+					SlimDX.Matrix projection = CameraManager.Instance.frameCamera.Perspective;
 
-				//SlimDX.Matrix viewProj = view * projection;
-				SlimDX.Matrix worldViewProjection = world * view * projection;
-				SlimDX.Direct3D11.Viewport vp = DeviceManager.Instance.context.Rasterizer.GetViewports()[0];
-				SlimDX.Vector3 position3D = SlimDX.Vector3.Project(SlimDX.Vector3.Zero, vp.X, vp.Y, vp.Width, vp.Height, vp.MinZ, vp.MaxZ, worldViewProjection);
-				SlimDX.Vector2 position2D = new SlimDX.Vector2(position3D.X, position3D.Y);
+					//SlimDX.Matrix viewProj = view * projection;
+					SlimDX.Matrix worldViewProjection = world * view * projection;
+					SlimDX.Direct3D11.Viewport vp = DeviceManager.Instance.context.Rasterizer.GetViewports()[0];
+					SlimDX.Vector3 position3D = SlimDX.Vector3.Project(SlimDX.Vector3.Zero, vp.X, vp.Y, vp.Width, vp.Height, vp.MinZ, vp.MaxZ, worldViewProjection);
+					SlimDX.Vector2 position2D = new SlimDX.Vector2(position3D.X, position3D.Y);
 
-				if (position3D.Z < vp.MaxZ)
-				{
-					SlimDX.Vector3 objPos = SlimDX.Vector3.Zero;
-					objPos = SlimDX.Vector3.TransformCoordinate(objPos, instance.Transform);
-					SlimDX.Vector3 camPos = CameraManager.Instance.frameCamera.eye;
-					SlimDX.Vector3 objOffset = objPos - camPos;
-					float scale = Math.Min(2.0f, 5.0f / (float)Math.Sqrt(Math.Max(1.0f, objOffset.Length())));
+					if (position3D.Z < vp.MaxZ)
+					{
+						SlimDX.Vector3 objPos = SlimDX.Vector3.Zero;
+						objPos = SlimDX.Vector3.TransformCoordinate(objPos, instance.Transform);
+						SlimDX.Vector3 camPos = CameraManager.Instance.frameCamera.eye;
+						SlimDX.Vector3 objOffset = objPos - camPos;
+						float scale = Math.Min(2.0f, 5.0f / (float)Math.Sqrt(Math.Max(1.0f, objOffset.Length())));
 
-					RenderManager.Instance.DrawString(instance.Name, position2D, 16 * scale, new SlimDX.Color4(1.0f, 1.0f, 1.0f));
+						RenderManager.Instance.DrawString(instance.Name, position2D, 16 * scale, new SlimDX.Color4(1.0f, 1.0f, 1.0f));
+					}
 				}
 			}
 

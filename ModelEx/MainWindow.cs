@@ -377,7 +377,8 @@ namespace ModelEx
 				loadResourceDialog.Text = "Load Resource...";
 			}
 
-			if (loadResourceDialog.ShowDialog() != DialogResult.OK)
+			DialogResult dialogResult = loadResourceDialog.ShowDialog();
+			if (dialogResult != DialogResult.OK)
 			{
 				Properties.Settings.Default.RecentFolder = loadResourceDialog.SelectedFolder;
 				Properties.Settings.Default.RecentGame = (int)loadResourceDialog.SelectedGameType;

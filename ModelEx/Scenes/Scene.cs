@@ -23,48 +23,34 @@ namespace ModelEx
 
 		public override void Dispose()
 		{
-			_renderInstances.Clear();
+			lock (_renderInstances)
+			{
+				_renderInstances.Clear();
+			}
 		}
 
 		public void UpdateModels()
 		{
-			foreach (Renderable renderable in _renderInstances)
+			lock (_renderInstances)
 			{
-				if (renderable is RenderInstance)
+				foreach (Renderable renderable in _renderInstances)
 				{
-					RenderInstance renderInstance = (RenderInstance)renderable;
-					renderInstance.UpdateModel();
+					if (renderable is RenderInstance)
+					{
+						RenderInstance renderInstance = (RenderInstance)renderable;
+						renderInstance.UpdateModel();
+					}
 				}
 			}
 		}
 
 		public override void Render()
 		{
-			// handle attempts to render where the renderInstances collection is modified by another threads
-			int retryCount = 0;
-			int maxTries = 5;
-			int retryDelay = 1000;
-
-			while (retryCount < maxTries)
+			lock (_renderInstances)
 			{
-				try
+				foreach (Renderable renderable in _renderInstances)
 				{
-					foreach (Renderable renderable in _renderInstances)
-					{
-						renderable.Render();
-					}
-					retryCount = maxTries + 1;
-				}
-				catch (Exception ex)
-				{
-					retryCount++;
-					string message = string.Format("retrying in {0} milliseconds", retryDelay);
-					if (retryCount >= maxTries)
-					{
-						message = string.Format("giving up after {0} attempts", maxTries);
-					}
-					Console.WriteLine(string.Format("Exception thrown while rendering objects: {0}, {1}", ex.Message, message));
-					Thread.Sleep(retryDelay);
+					renderable.Render();
 				}
 			}
 		}
