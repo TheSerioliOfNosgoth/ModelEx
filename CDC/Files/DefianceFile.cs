@@ -48,7 +48,6 @@ namespace CDC.Objects
 			}
 			//}
 
-			// Model data
 			reader.BaseStream.Position = _dataStart + 0x00000028;
 			_modelCount = reader.ReadUInt16();
 			_modelCount = 1; // There are multiple models, but Defiance might have too many. Override for now.
@@ -60,7 +59,13 @@ namespace CDC.Objects
 			_models = new DefianceModel[_modelCount];
 			for (UInt16 m = 0; m < _modelCount; m++)
 			{
-				_models[m] = DefianceObjectModel.Load(reader, _dataStart, _modelStart, _name, _platform, m, _version, options);
+				reader.BaseStream.Position = _modelStart + (m * 4);
+				uint modelData = _dataStart + reader.ReadUInt32();
+				reader.BaseStream.Position = modelData;
+
+				DefianceObjectModel model = new DefianceObjectModel(reader, _dataStart, modelData, _name, _platform, _version);
+				model.ReadData(reader, options);
+				_models[m] = model;
 			}
 		}
 
@@ -143,17 +148,16 @@ namespace CDC.Objects
 			}
 			//}
 
-			// Model data
 			reader.BaseStream.Position = _dataStart + 0x10;
 			_modelCount = 1;
 			_modelStart = _dataStart + 0x10;
 			_models = new DefianceModel[_modelCount];
 			reader.BaseStream.Position = _modelStart;
-			UInt32 m_uModelData = _dataStart + reader.ReadUInt32();
+			uint modelData = _dataStart + reader.ReadUInt32();
 
-			// Material data
-			Console.WriteLine("Debug: reading area model 0");
-			_models[0] = DefianceUnitModel.Load(reader, _dataStart, m_uModelData, _name, _platform, _version, options);
+			DefianceUnitModel model = new DefianceUnitModel(reader, _dataStart, modelData, _name, _platform, _version);
+			model.ReadData(reader, options);
+			_models[0] = model;
 
 			//if (m_axModels[0].Platform == Platform.Dreamcast ||
 			//    m_axModels[1].Platform == Platform.Dreamcast)

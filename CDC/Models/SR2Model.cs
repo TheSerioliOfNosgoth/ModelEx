@@ -278,7 +278,7 @@ namespace CDC.Objects.Models
 		{
 		}
 
-		protected virtual void ReadData(BinaryReader reader, CDC.Objects.ExportOptions options)
+		public virtual void ReadData(BinaryReader reader, CDC.Objects.ExportOptions options)
 		{
 			// Get the vertices
 			_geometry.Vertices = new Vertex[_vertexCount];

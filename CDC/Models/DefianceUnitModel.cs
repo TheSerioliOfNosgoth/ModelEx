@@ -11,7 +11,7 @@ namespace CDC.Objects.Models
 		protected UInt32 m_uSpectralVertexStart;
 		protected UInt32 m_uSpectralColourStart;
 
-		protected DefianceUnitModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
+		public DefianceUnitModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
 			: base(reader, dataStart, modelData, strModelName, ePlatform, version)
 		{
 			reader.BaseStream.Position = _modelData + 0x0C;
@@ -44,13 +44,6 @@ namespace CDC.Objects.Models
 			}
 
 			_trees = new Tree[_groupCount];
-		}
-
-		public static DefianceUnitModel Load(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, CDC.Objects.ExportOptions options)
-		{
-			DefianceUnitModel xModel = new DefianceUnitModel(reader, dataStart, modelData, strModelName, ePlatform, version);
-			xModel.ReadData(reader, options);
-			return xModel;
 		}
 
 		protected override void ReadTypeAVertex(BinaryReader reader, int v, CDC.Objects.ExportOptions options)

@@ -46,7 +46,13 @@ namespace CDC.Objects
 			_models = new SR2Model[_modelCount];
 			for (UInt16 m = 0; m < _modelCount; m++)
 			{
-				_models[m] = SR2ObjectModel.Load(reader, _dataStart, _modelStart, _name, _platform, m, _version, options);
+				reader.BaseStream.Position = _modelStart + (m * 4);
+				uint modelData = _dataStart + reader.ReadUInt32();
+				reader.BaseStream.Position = modelData;
+
+				SR2ObjectModel model = new SR2ObjectModel(reader, _dataStart, modelData, _name, _platform, _version);
+				model.ReadData(reader, options);
+				_models[m] = model;
 			}
 		}
 
@@ -140,17 +146,16 @@ namespace CDC.Objects
 			}
 			//}
 
-			// Model data
 			reader.BaseStream.Position = _dataStart;
 			_modelCount = 1;
 			_modelStart = _dataStart;
 			_models = new SR2Model[_modelCount];
 			reader.BaseStream.Position = _modelStart;
-			UInt32 m_uModelData = _dataStart + reader.ReadUInt32();
+			uint modelData = _dataStart + reader.ReadUInt32();
 
-			// Material data
-			Console.WriteLine("Debug: reading area model 0");
-			_models[0] = SR2UnitModel.Load(reader, _dataStart, m_uModelData, _name, _platform, _version, options);
+			SR2UnitModel model = new SR2UnitModel(reader, _dataStart, modelData, _name, _platform, _version);
+			model.ReadData(reader, options);
+			_models[0] = model;
 
 			//if (m_axModels[0].Platform == Platform.Dreamcast ||
 			//    m_axModels[1].Platform == Platform.Dreamcast)

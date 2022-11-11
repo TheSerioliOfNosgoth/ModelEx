@@ -57,8 +57,6 @@ namespace CDC.Objects
 			_models = new GexModel[_modelCount];
 			for (UInt16 m = 0; m < _modelCount; m++)
 			{
-				Console.WriteLine(string.Format("Debug: reading object model {0} / {1}", m, (_modelCount - 1)));
-
 				reader.BaseStream.Position = _modelStart + (m * 4);
 				uint modelData = reader.ReadUInt32();
 				reader.BaseStream.Position = modelData;
@@ -164,7 +162,6 @@ namespace CDC.Objects
 			reader.BaseStream.Position = _modelStart;
 			uint modelData = reader.ReadUInt32();
 
-			Console.WriteLine("Debug: reading area model 0");
 			GexUnitModel model = new GexUnitModel(reader, _dataStart, modelData, _name, _platform, _version, _tPages);
 			model.ReadData(reader, options);
 			_models[0] = model;

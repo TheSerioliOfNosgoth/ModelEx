@@ -75,8 +75,6 @@ namespace CDC.Objects
 
 			for (UInt16 m = 0; m < _modelCount; m++)
 			{
-				Console.WriteLine(string.Format("Debug: reading object model {0} / {1}", m, (_modelCount - 1)));
-
 				long modelPointer = _modelStart + (m * 4);
 				if (modelPointer < 0 || modelPointer > reader.BaseStream.Length)
 				{
@@ -431,8 +429,6 @@ namespace CDC.Objects
 			_models = new SR1Model[_modelCount];
 			reader.BaseStream.Position = _modelStart;
 			uint modelData = _dataStart + reader.ReadUInt32();
-
-			Console.WriteLine("Debug: reading area model 0");
 
 			SR1UnitModel model = new SR1UnitModel(reader, _dataStart, modelData, _name, _platform, _version, _tPages);
 			model.ReadData(reader, options);

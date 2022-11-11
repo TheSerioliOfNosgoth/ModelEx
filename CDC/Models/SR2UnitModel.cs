@@ -11,7 +11,7 @@ namespace CDC.Objects.Models
 		protected UInt32 m_uSpectralVertexStart;
 		protected UInt32 m_uSpectralColourStart;
 
-		protected SR2UnitModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
+		public SR2UnitModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
 			: base(reader, dataStart, modelData, strModelName, ePlatform, version)
 		{
 			reader.BaseStream.Position = _modelData + 0x0C;
@@ -31,13 +31,6 @@ namespace CDC.Objects.Models
 			_groupCount = m_uOctTreeCount;
 
 			_trees = new Tree[_groupCount];
-		}
-
-		public static SR2UnitModel Load(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, CDC.Objects.ExportOptions options)
-		{
-			SR2UnitModel xModel = new SR2UnitModel(reader, dataStart, modelData, strModelName, ePlatform, version);
-			xModel.ReadData(reader, options);
-			return xModel;
 		}
 
 		protected override void ReadVertex(BinaryReader reader, int v, CDC.Objects.ExportOptions options)
