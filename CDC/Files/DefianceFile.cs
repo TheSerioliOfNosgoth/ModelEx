@@ -79,11 +79,13 @@ namespace CDC.Objects
 			reader.BaseStream.Position = m_uConnectionData + 0x24;
 			portalCount = reader.ReadUInt32();
 			reader.BaseStream.Position = _dataStart + reader.ReadUInt32();
-			_portalNames = new String[portalCount];
+			_portals = new Portal[portalCount];
 			for (int i = 0; i < portalCount; i++)
 			{
-				String strUnitName = new String(reader.ReadChars(16));
-				_portalNames[i] = Utility.CleanName(strUnitName);
+				Portal portal = new Portal();
+				portal.toLevelName = new String(reader.ReadChars(16));
+				portal.toLevelName = Utility.CleanName(portal.toLevelName);
+				_portals[i] = portal;
 				reader.BaseStream.Position += 0x90;
 			}
 

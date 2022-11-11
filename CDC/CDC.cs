@@ -141,6 +141,14 @@ namespace CDC
         }
     }
 
+	public struct Portal
+	{
+		public string fromLevelName;
+		public string toLevelName;
+		public Vector minPos;
+		public Vector maxPos;
+	}
+
 	public struct MonsterAttributes
 	{
 		public int numSubAttributes;

@@ -177,8 +177,8 @@ namespace CDC.Objects
 		protected UInt32 _objectNameStart;
 		protected String[] _objectNames;
 		protected UInt32 portalCount;
-		protected UInt32 _connectedUnitStart;
-		protected String[] _portalNames;
+		protected UInt32 _portalStart;
+		protected Portal[] _portals;
 		protected Game _game;
 		protected Asset _asset;
 		protected Platform _platform;
@@ -191,8 +191,8 @@ namespace CDC.Objects
 		public UInt32 IntroCount { get { return _introCount; } }
 		public Intro[] Intros { get { return _intros; } }
 		public String[] ObjectNames { get { return _objectNames; } }
-		public UInt32 ConectedUnitCount { get { return portalCount; } }
-		public String[] ConnectedUnit { get { return _portalNames; } }
+		public UInt32 PortalCount { get { return portalCount; } }
+		public Portal[] Portals { get { return _portals; } }
 		public Game Game { get { return _game; } }
 		public Asset Asset { get { return _asset; } }
 		public Platform Platform { get { return _platform; } }

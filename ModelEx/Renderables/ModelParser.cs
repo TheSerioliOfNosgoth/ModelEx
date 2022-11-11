@@ -19,7 +19,7 @@ namespace ModelEx
 			ModelName = modelName;
 		}
 
-		public void BuildModel(RenderResource resource)
+		public void BuildModel(RenderResource resource, RenderResourceShapes.Shape shape)
 		{
 			Material materialA = new Material();
 			materialA.Visible = true;
@@ -33,12 +33,28 @@ namespace ModelEx
 			materialB.Diffuse = colorDiffuseB;
 			materialB.TextureFileName = "";
 			Materials.Add(materialB);
+			Material materialC = new Material();
+			materialC.Visible = true;
+			Color colorDiffuseC = Color.FromArgb(unchecked((int)0xFFFF0000));
+			materialC.Diffuse = colorDiffuseC;
+			materialC.TextureFileName = "";
+			Materials.Add(materialC);
 
 			ModelNode group = new ModelNode();
 			group.Name = "group";
 
 			MeshParser meshParser = new MeshParser(ModelName);
-			meshParser.BuildMesh(resource);
+
+			switch (shape)
+			{
+				case RenderResourceShapes.Shape.Cube:
+					meshParser.BuildCube(resource);
+					break;
+				case RenderResourceShapes.Shape.Octahedron:
+					meshParser.BuildOctahedron(resource);
+					break;
+			}
+
 			foreach (SubMesh subMesh in meshParser.SubMeshes)
 			{
 				// If the mesh parser knew the total submeshes for the model,

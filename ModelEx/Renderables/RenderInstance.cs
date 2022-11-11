@@ -77,7 +77,7 @@ namespace ModelEx
 				foundResource = false;
 			}
 
-			UpdateModel(resource, foundResource ? _modelIndex : 0);
+			UpdateModel(resource, foundResource ? _modelIndex : (int)RenderResourceShapes.Shape.Octahedron);
 		}
 
 		public void UpdateModel(RenderResource resource, int modelIndex)

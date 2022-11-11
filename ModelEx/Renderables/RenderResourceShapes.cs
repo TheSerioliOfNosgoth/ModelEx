@@ -8,6 +8,12 @@ namespace ModelEx
 {
 	public class RenderResourceShapes : RenderResource
 	{
+		public enum Shape
+		{
+			Cube,
+			Octahedron
+		}
+
 		public RenderResourceShapes()
 			: base("")
 		{
@@ -20,9 +26,12 @@ namespace ModelEx
 				return;
 			}
 
-			ModelParser octaParser = new ModelParser("octahedron");
-			octaParser.BuildModel(this);
+			ModelParser cubeParser = new ModelParser("cube");
+			cubeParser.BuildModel(this, RenderResourceShapes.Shape.Cube);
+			Models.Add(cubeParser.Model);
 
+			ModelParser octaParser = new ModelParser("octahedron");
+			octaParser.BuildModel(this, RenderResourceShapes.Shape.Octahedron);
 			Models.Add(octaParser.Model);
 		}
 	}
