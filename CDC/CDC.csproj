@@ -85,7 +85,7 @@
     <Compile Include="Models\SR2ObjectModel.cs" />
     <Compile Include="Models\SR2Model.cs" />
     <Compile Include="Models\SR1Model.cs" />
-    <Compile Include="Models\SRModel.cs" />
+    <Compile Include="Models\CDCModel.cs" />
     <Compile Include="Models\TRLModel.cs" />
     <Compile Include="Models\TRLObjectModel.cs" />
     <Compile Include="Models\TRLUnitModel.cs" />

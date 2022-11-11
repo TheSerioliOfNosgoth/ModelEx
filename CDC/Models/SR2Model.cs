@@ -4,7 +4,7 @@ using System.IO;
 
 namespace CDC.Objects.Models
 {
-	public abstract class SR2Model : SRModel
+	public abstract class SR2Model : CDCModel
 	{
 		#region Normals
 		protected static Int32[,] s_aiNormals =

@@ -4,7 +4,7 @@ using System.IO;
 
 namespace CDC.Objects.Models
 {
-	public abstract class DefianceModel : SRModel
+	public abstract class DefianceModel : CDCModel
 	{
 		#region Normals
 		protected static float[,] s_aiNormals =

@@ -169,7 +169,7 @@ namespace CDC.Objects
 		protected UInt16 _modelCount;
 		protected UInt16 _animCount;
 		protected UInt32 _modelStart;
-		protected SRModel[] _models;
+		protected CDCModel[] _models;
 		protected UInt32 _animStart;
 		protected UInt32 _introCount;
 		protected UInt32 _introStart;
@@ -187,7 +187,7 @@ namespace CDC.Objects
 		public UInt32 Version { get { return _version; } }
 		public UInt16 ModelCount { get { return _modelCount; } }
 		public UInt16 AnimCount { get { return _animCount; } }
-		public SRModel[] Models { get { return _models; } }
+		public CDCModel[] Models { get { return _models; } }
 		public UInt32 IntroCount { get { return _introCount; } }
 		public Intro[] Intros { get { return _intros; } }
 		public String[] ObjectNames { get { return _objectNames; } }
@@ -308,7 +308,7 @@ namespace CDC.Objects
 				List<Assimp.Material> materials = new List<Assimp.Material>();
 				List<Assimp.Mesh> meshes = new List<Assimp.Mesh>();
 
-				SRModel model = Models[modelIndex];
+				CDCModel model = Models[modelIndex];
 
 				string modelName = name + "-" + modelIndex;
 				Console.WriteLine(string.Format("Debug: exporting model {0} / {1} ('{2}')", modelIndex, (ModelCount - 1), modelName));
@@ -602,7 +602,7 @@ namespace CDC.Objects
 			return uv3D;
 		}
 
-		protected Assimp.Material GetAssimpMaterial(String name, SRModel model, int materialIndex, ExportOptions options)
+		protected Assimp.Material GetAssimpMaterial(String name, CDCModel model, int materialIndex, ExportOptions options)
 		{
 			Assimp.Material material = new Assimp.Material();
 

@@ -9,7 +9,7 @@ using SR1File = CDC.Objects.SR1File;
 using SR2File = CDC.Objects.SR2File;
 using DefianceFile = CDC.Objects.DefianceFile;
 using TRLFile = CDC.Objects.TRLFile;
-using SRModel = CDC.Objects.Models.SRModel;
+using CDCModel = CDC.Objects.Models.CDCModel;
 using TPages = BenLincoln.TheLostWorlds.CDTextures.PSXTextureDictionary;
 using TextureTile = BenLincoln.TheLostWorlds.CDTextures.PSXTextureTile;
 using Gex3PSXTextureFile = BenLincoln.TheLostWorlds.CDTextures.Gex3PSXVRMTextureFile;
@@ -76,7 +76,7 @@ namespace ModelEx
 
 					for (int t = 0; t < textureFile.TextureCount; t++)
 					{
-						String textureName = SRModel.GetPS2TextureName(File.Name, (int)textureFile.TextureDefinitions[t].ID) + TextureExtension;
+						String textureName = CDCModel.GetPS2TextureName(File.Name, (int)textureFile.TextureDefinitions[t].ID) + TextureExtension;
 
 						System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
 						//textureFile.ExportFile(t, "C:\\Users\\A\\Desktop\\Lara\\" + textureName);
@@ -119,7 +119,7 @@ namespace ModelEx
 
 					for (int t = 0; t < textureFile.TextureCount; t++)
 					{
-						String textureName = SRModel.GetPS2TextureName(File.Name, textureFile.TextureDefinitions[t].Flags1) + TextureExtension;
+						String textureName = CDCModel.GetPS2TextureName(File.Name, textureFile.TextureDefinitions[t].Flags1) + TextureExtension;
 
 						System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
 						//textureFile.ExportFile(t, "C:\\Users\\A\\Desktop\\" + textureName);
@@ -153,16 +153,16 @@ namespace ModelEx
 						SceneCDC.progressLevels = File.GetNumMaterials();
 						SceneCDC.ProgressStage = "Loading Textures";
 
-						foreach (SRModel srModel in File.Models)
+						foreach (CDCModel cdcModel in File.Models)
 						{
-							foreach (CDC.Material material in srModel.Materials)
+							foreach (CDC.Material material in cdcModel.Materials)
 							{
 								if (material.textureUsed)
 								{
 									System.IO.MemoryStream stream = textureFile.GetDataAsStream(material.textureID);
 									if (stream != null)
 									{
-										String textureName = SRModel.GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID) + TextureExtension;
+										String textureName = CDCModel.GetSoulReaverPCOrDreamcastTextureName(cdcModel.Name, material.textureID) + TextureExtension;
 										AddTexture(stream, textureName);
 										if (!_TexturesAsPNGs.ContainsKey(textureName))
 										{
@@ -194,9 +194,9 @@ namespace ModelEx
 						SceneCDC.progressLevels = File.GetNumMaterials();
 						SceneCDC.ProgressStage = "Loading Textures";
 
-						foreach (SRModel srModel in File.Models)
+						foreach (CDCModel cdcModel in File.Models)
 						{
-							foreach (CDC.Material material in srModel.Materials)
+							foreach (CDC.Material material in cdcModel.Materials)
 							{
 								if (material.textureUsed)
 								{
@@ -204,7 +204,7 @@ namespace ModelEx
 									System.IO.MemoryStream stream = textureFile.GetDataAsStream(textureID);
 									if (stream != null)
 									{
-										String textureName = SRModel.GetSoulReaverPCOrDreamcastTextureName(srModel.Name, material.textureID) + TextureExtension;
+										String textureName = CDCModel.GetSoulReaverPCOrDreamcastTextureName(cdcModel.Name, material.textureID) + TextureExtension;
 
 										AddTexture(stream, textureName);
 
@@ -269,7 +269,7 @@ namespace ModelEx
 						// For all models
 						for (int t = 0; t < textureFile.TextureCount; t++)
 						{
-							String textureName = SRModel.GetPlayStationTextureNameDefault(File.Name, t) + TextureExtension;
+							String textureName = CDCModel.GetPlayStationTextureNameDefault(File.Name, t) + TextureExtension;
 
 							System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
 							if (stream != null)
@@ -316,7 +316,7 @@ namespace ModelEx
 								Dictionary<ushort, Bitmap> textureCLUTCollection = textureFile.TexturesByCLUT[textureID];
 								foreach (ushort clut in textureCLUTCollection.Keys)
 								{
-									String textureName = SRModel.GetPlayStationTextureNameWithCLUT(File.Name, textureID, clut) + TextureExtension;
+									String textureName = CDCModel.GetPlayStationTextureNameWithCLUT(File.Name, textureID, clut) + TextureExtension;
 									System.IO.MemoryStream stream = textureFile.GetTextureWithCLUTAsStream(textureID, clut);
 									if (stream != null)
 									{
@@ -378,7 +378,7 @@ namespace ModelEx
 					// For all models
 					for (int t = 0; t < textureFile.TextureCount; t++)
 					{
-						String textureName = SRModel.GetPlayStationTextureNameDefault(File.Name, t) + TextureExtension;
+						String textureName = CDCModel.GetPlayStationTextureNameDefault(File.Name, t) + TextureExtension;
 
 						System.IO.MemoryStream stream = textureFile.GetDataAsStream(t);
 						if (stream != null)
@@ -425,7 +425,7 @@ namespace ModelEx
 							Dictionary<ushort, Bitmap> textureCLUTCollection = textureFile.TexturesByCLUT[textureID];
 							foreach (ushort clut in textureCLUTCollection.Keys)
 							{
-								String textureName = SRModel.GetPlayStationTextureNameWithCLUT(File.Name, textureID, clut) + TextureExtension;
+								String textureName = CDCModel.GetPlayStationTextureNameWithCLUT(File.Name, textureID, clut) + TextureExtension;
 								System.IO.MemoryStream stream = textureFile.GetTextureWithCLUTAsStream(textureID, clut);
 								if (stream != null)
 								{

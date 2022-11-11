@@ -10,7 +10,7 @@ using SR1File = CDC.Objects.SR1File;
 using SR2File = CDC.Objects.SR2File;
 using DefianceFile = CDC.Objects.DefianceFile;
 using TRLFile = CDC.Objects.TRLFile;
-using SRModel = CDC.Objects.Models.SRModel;
+using CDCModel = CDC.Objects.Models.CDCModel;
 
 namespace ModelEx
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using CDCFile = CDC.Objects.CDCFile;
-using SRModel = CDC.Objects.Models.SRModel;
+using CDCModel = CDC.Objects.Models.CDCModel;
 using Tree = CDC.Tree;
 
 namespace ModelEx
@@ -13,8 +13,8 @@ namespace ModelEx
 	{
 		string _objectName;
 		CDCFile _cdcFile;
-		SRModel _srModel;
-		Tree _srGroup;
+		CDCModel _cdcModel;
+		Tree _cdcGroup;
 		List<int> _vertexList = new List<int>();
 		List<int> _indexList = new List<int>();
 		public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
@@ -28,20 +28,20 @@ namespace ModelEx
 
 		public void BuildMesh(RenderResource resource, int modelIndex, int groupIndex, int meshIndex)
 		{
-			_srModel = _cdcFile.Models[modelIndex];
-			_srGroup = _srModel.Groups[groupIndex];
+			_cdcModel = _cdcFile.Models[modelIndex];
+			_cdcGroup = _cdcModel.Groups[groupIndex];
 			String modelName = String.Format("{0}-{1}", _objectName, modelIndex);
 			String groupName = String.Format("{0}-{1}-group-{2}", _objectName, modelIndex, groupIndex);
 			String meshName = String.Format("{0}-{1}-group-{2}-mesh-{3}", _objectName, modelIndex, groupIndex, meshIndex);
 
 			int startIndexLocation = 0;
-			for (int materialIndex = 0; materialIndex < _srModel.MaterialCount; materialIndex++)
+			for (int materialIndex = 0; materialIndex < _cdcModel.MaterialCount; materialIndex++)
 			{
 				int indexCount = 0;
-				int totalIndexCount = (int)_srGroup.mesh.indexCount;
+				int totalIndexCount = (int)_cdcGroup.mesh.indexCount;
 				for (int v = 0; v < totalIndexCount; v++)
 				{
-					if (_srGroup.mesh.polygons[v / 3].material.ID == materialIndex)
+					if (_cdcGroup.mesh.polygons[v / 3].material.ID == materialIndex)
 					{
 						_vertexList.Add(v);
 						_indexList.Add(_indexList.Count - startIndexLocation);
@@ -98,8 +98,8 @@ namespace ModelEx
 
 		public void FillVertex(int v, out PositionNormalTexturedVertex vertex)
 		{
-			ref CDC.Vertex exVertex = ref _srGroup.mesh.vertices[_vertexList[v]];
-			CDC.Geometry exGeometry = exVertex.isExtraGeometry ? _srModel.ExtraGeometry : _srModel.Geometry;
+			ref CDC.Vertex exVertex = ref _cdcGroup.mesh.vertices[_vertexList[v]];
+			CDC.Geometry exGeometry = exVertex.isExtraGeometry ? _cdcModel.ExtraGeometry : _cdcModel.Geometry;
 
 			vertex.Position = new SlimDX.Vector3()
 			{
@@ -125,8 +125,8 @@ namespace ModelEx
 
 		public void FillVertex(int v, out PositionColorTexturedVertex vertex)
 		{
-			ref CDC.Vertex exVertex = ref _srGroup.mesh.vertices[_vertexList[v]];
-			CDC.Geometry exGeometry = exVertex.isExtraGeometry ? _srModel.ExtraGeometry : _srModel.Geometry;
+			ref CDC.Vertex exVertex = ref _cdcGroup.mesh.vertices[_vertexList[v]];
+			CDC.Geometry exGeometry = exVertex.isExtraGeometry ? _cdcModel.ExtraGeometry : _cdcModel.Geometry;
 
 			vertex.Position = new SlimDX.Vector3()
 			{
@@ -152,8 +152,8 @@ namespace ModelEx
 
 		public void FillVertex(int v, out Position2Color2TexturedVertex vertex)
 		{
-			ref CDC.Vertex exVertex = ref _srGroup.mesh.vertices[_vertexList[v]];
-			CDC.Geometry exGeometry = exVertex.isExtraGeometry ? _srModel.ExtraGeometry : _srModel.Geometry;
+			ref CDC.Vertex exVertex = ref _cdcGroup.mesh.vertices[_vertexList[v]];
+			CDC.Geometry exGeometry = exVertex.isExtraGeometry ? _cdcModel.ExtraGeometry : _cdcModel.Geometry;
 
 			vertex.Position0 = new SlimDX.Vector3()
 			{
