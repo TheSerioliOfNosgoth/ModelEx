@@ -72,15 +72,32 @@ namespace CDC.Objects
 
 			_models = new SR1Model[_modelCount];
 			Platform ePlatform = _platform;
+
 			for (UInt16 m = 0; m < _modelCount; m++)
 			{
 				Console.WriteLine(string.Format("Debug: reading object model {0} / {1}", m, (_modelCount - 1)));
-				_models[m] = SR1ObjectModel.Load(reader, _dataStart, _modelStart, _name, _platform, m, _version, _tPages, options);
+
+				long modelPointer = _modelStart + (m * 4);
+				if (modelPointer < 0 || modelPointer > reader.BaseStream.Length)
+				{
+					Console.WriteLine(string.Format("Error: attempt to read a model with index {0} from a stream with length {1}", m, reader.BaseStream.Length));
+					continue;
+				}
+
+				reader.BaseStream.Position = modelPointer;
+				uint modelData = _dataStart + reader.ReadUInt32();
+				reader.BaseStream.Position = _modelStart;
+
+				SR1ObjectModel model = new SR1ObjectModel(reader, _dataStart, modelData, _name, _platform, _version, _tPages);
+				model.ReadData(reader, options);
+				_models[m] = model;
+
 				if ((_platform == Platform.None) && (_models[m].Platform == Platform.Dreamcast))
 				{
 					ePlatform = _models[m].Platform;
 				}
 			}
+
 			if (_platform == Platform.None)
 			{
 				_platform = ePlatform;
@@ -408,17 +425,18 @@ namespace CDC.Objects
 			//String strUnitName2 = new String(reader.ReadChars(16));
 			//strUnitName2 = strUnitName2.Substring(0, strUnitName2.IndexOf(','));
 
-			// Model data
 			reader.BaseStream.Position = _dataStart;
 			_modelCount = 1;
 			_modelStart = _dataStart;
 			_models = new SR1Model[_modelCount];
 			reader.BaseStream.Position = _modelStart;
-			UInt32 m_uModelData = _dataStart + reader.ReadUInt32();
+			uint modelData = _dataStart + reader.ReadUInt32();
 
-			// Material data
 			Console.WriteLine("Debug: reading area model 0");
-			_models[0] = SR1UnitModel.Load(reader, _dataStart, m_uModelData, _name, _platform, _version, _tPages, options);
+
+			SR1UnitModel model = new SR1UnitModel(reader, _dataStart, modelData, _name, _platform, _version, _tPages);
+			model.ReadData(reader, options);
+			_models[0] = model;
 
 			//if (m_axModels[0].Platform == Platform.Dreamcast ||
 			//    m_axModels[1].Platform == Platform.Dreamcast)

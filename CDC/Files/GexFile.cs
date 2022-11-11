@@ -58,7 +58,14 @@ namespace CDC.Objects
 			for (UInt16 m = 0; m < _modelCount; m++)
 			{
 				Console.WriteLine(string.Format("Debug: reading object model {0} / {1}", m, (_modelCount - 1)));
-				_models[m] = GexObjectModel.Load(reader, _dataStart, _modelStart, _name, _platform, m, _version, _tPages, options);
+
+				reader.BaseStream.Position = _modelStart + (m * 4);
+				uint modelData = reader.ReadUInt32();
+				reader.BaseStream.Position = modelData;
+
+				GexObjectModel model = new GexObjectModel(reader, _dataStart, modelData, _name, _platform, _version, _tPages);
+				model.ReadData(reader, options);
+				_models[m] = model;
 			}
 		}
 
@@ -150,17 +157,17 @@ namespace CDC.Objects
 				_platform = Platform.PSX;
 			}
 
-			// Model data
 			reader.BaseStream.Position = _dataStart;
 			_modelCount = 1;
 			_modelStart = _dataStart;
 			_models = new GexModel[_modelCount];
 			reader.BaseStream.Position = _modelStart;
-			UInt32 m_uModelData = reader.ReadUInt32();
+			uint modelData = reader.ReadUInt32();
 
-			// Material data
 			Console.WriteLine("Debug: reading area model 0");
-			_models[0] = GexUnitModel.Load(reader, _dataStart, m_uModelData, _name, _platform, _version, _tPages, options);
+			GexUnitModel model = new GexUnitModel(reader, _dataStart, modelData, _name, _platform, _version, _tPages);
+			model.ReadData(reader, options);
+			_models[0] = model;
 		}
 
 		protected override void ResolvePointers(BinaryReader reader, BinaryWriter writer)

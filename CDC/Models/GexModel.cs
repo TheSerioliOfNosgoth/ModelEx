@@ -265,7 +265,7 @@ namespace CDC.Objects.Models
 			_tPages = tPages;
 		}
 
-		protected virtual void ReadData(BinaryReader reader, CDC.Objects.ExportOptions options)
+		public virtual void ReadData(BinaryReader reader, CDC.Objects.ExportOptions options)
 		{
 			// Get the normals
 			_geometry.Normals = new Vector[s_aiNormals.Length / 3];

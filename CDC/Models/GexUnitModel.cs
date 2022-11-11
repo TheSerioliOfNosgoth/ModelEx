@@ -38,14 +38,7 @@ namespace CDC.Objects.Models
 			_trees = new Tree[_groupCount];
 		}
 
-		public static GexUnitModel Load(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, TPages tPages, CDC.Objects.ExportOptions options)
-		{
-			GexUnitModel xModel = new GexUnitModel(reader, dataStart, modelData, strModelName, ePlatform, version, tPages);
-			xModel.ReadData(reader, options);
-			return xModel;
-		}
-
-		protected override void ReadData(BinaryReader reader, CDC.Objects.ExportOptions options)
+		public override void ReadData(BinaryReader reader, CDC.Objects.ExportOptions options)
 		{
 			// Get the normals
 			_geometry.Normals = new Vector[s_aiNormals.Length / 3];
