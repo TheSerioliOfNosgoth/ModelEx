@@ -8,7 +8,7 @@ namespace CDC.Objects.Models
 	{
 		protected UInt32 m_uColourStart;
 
-		protected TRLObjectModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
+		public TRLObjectModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
 			: base(reader, dataStart, modelData, strModelName, ePlatform, version)
 		{
 			reader.BaseStream.Position = _modelData + 0x04;
@@ -34,16 +34,6 @@ namespace CDC.Objects.Models
 			_groupCount = 1;
 
 			_trees = new Tree[_groupCount];
-		}
-
-		public static TRLObjectModel Load(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt16 usIndex, UInt32 version, CDC.Objects.ExportOptions options)
-		{
-			reader.BaseStream.Position = modelData + (0x00000004 * usIndex);
-			modelData = dataStart + reader.ReadUInt32();
-			reader.BaseStream.Position = modelData;
-			TRLObjectModel xModel = new TRLObjectModel(reader, dataStart, modelData, strModelName, ePlatform, version);
-			xModel.ReadData(reader, options);
-			return xModel;
 		}
 
 		protected override void ReadVertex(BinaryReader reader, int v, CDC.Objects.ExportOptions options)

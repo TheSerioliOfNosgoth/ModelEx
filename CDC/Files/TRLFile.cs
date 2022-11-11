@@ -86,7 +86,13 @@ namespace CDC.Objects
 			_models = new TRLModel[_modelCount];
 			for (UInt16 m = 0; m < _modelCount; m++)
 			{
-				_models[m] = TRLObjectModel.Load(reader, _dataStart, _modelStart, _name, _platform, m, _version, options);
+				reader.BaseStream.Position = _modelStart + (m * 4);
+				uint modelData = _dataStart + reader.ReadUInt32();
+				reader.BaseStream.Position = modelData;
+
+				TRLObjectModel model = new TRLObjectModel(reader, _dataStart, modelData, _name, _platform, _version);
+				model.ReadData(reader, options);
+				_models[m] = model;
 			}
 		}
 
