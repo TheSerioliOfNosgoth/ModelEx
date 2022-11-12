@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using CDC.Objects.Models;
 
-namespace CDC.Objects
+namespace CDC
 {
 	public enum RenderMode
 	{

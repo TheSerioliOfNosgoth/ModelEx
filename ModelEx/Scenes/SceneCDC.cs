@@ -4,13 +4,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
-using GexFile = CDC.Objects.GexFile;
-using CDCDataFile = CDC.Objects.DataFile;
-using SR1File = CDC.Objects.SR1File;
-using SR2File = CDC.Objects.SR2File;
-using DefianceFile = CDC.Objects.DefianceFile;
-using TRLFile = CDC.Objects.TRLFile;
-using CDCModel = CDC.Objects.Models.Model;
 
 namespace ModelEx
 {
@@ -35,7 +28,7 @@ namespace ModelEx
 			}
 		}
 
-		public SceneCDC(CDCDataFile dataFile, bool includeObjects)
+		public SceneCDC(CDC.DataFile dataFile, bool includeObjects)
 			: base(includeObjects)
 		{
 			Name = dataFile.Name;
@@ -125,7 +118,7 @@ namespace ModelEx
 			}
 		}
 
-		public SceneCDC(CDCDataFile dataFile, RenderResource resource)
+		public SceneCDC(CDC.DataFile dataFile, RenderResource resource)
 			: base(false)
 		{
 			Name = dataFile.Name;

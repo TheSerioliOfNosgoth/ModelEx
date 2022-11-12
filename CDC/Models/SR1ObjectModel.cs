@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using TPages = BenLincoln.TheLostWorlds.CDTextures.PSXTextureDictionary;
 
-namespace CDC.Objects.Models
+namespace CDC
 {
 	public class SR1ObjectModel : SR1Model
 	{

@@ -3,7 +3,7 @@ using System.IO;
 using TPages = BenLincoln.TheLostWorlds.CDTextures.PSXTextureDictionary;
 using TextureTile = BenLincoln.TheLostWorlds.CDTextures.PSXTextureTile;
 
-namespace CDC.Objects.Models
+namespace CDC
 {
 	public abstract class SR1Model : Model
 	{
@@ -470,7 +470,7 @@ namespace CDC.Objects.Models
 			}
 		}
 
-		protected virtual void GenerateOutput(CDC.Objects.ExportOptions options)
+		protected virtual void GenerateOutput(ExportOptions options)
 		{
 			// Make the vertices unique
 			_geometry.Vertices = new Vertex[_indexCount];
@@ -493,7 +493,7 @@ namespace CDC.Objects.Models
 			}
 		}
 
-		protected override void HandleDebugRendering(int p, CDC.Objects.ExportOptions options)
+		protected override void HandleDebugRendering(int p, ExportOptions options)
 		{
 			if (options.RenderMode == RenderMode.Standard ||
 				options.RenderMode == RenderMode.Wireframe)
@@ -560,7 +560,7 @@ namespace CDC.Objects.Models
 			base.HandleDebugRendering(p, options);
 		}
 
-		protected void ProcessPolygons(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected void ProcessPolygons(BinaryReader reader, ExportOptions options)
 		{
 			MaterialList materialList = null;
 
@@ -590,6 +590,35 @@ namespace CDC.Objects.Models
 			}
 
 			_materialCount = (UInt32)_materialsList.Count;
+		}
+
+		public override string GetTextureName(int materialIndex, ExportOptions options)
+		{
+			string textureName = "";
+			if (materialIndex >= 0 && materialIndex < MaterialCount)
+			{
+				Material material = _materials[materialIndex];
+				if (material.textureUsed)
+				{
+					if (Platform == CDC.Platform.PSX)
+					{
+						if (options.UseEachUniqueTextureCLUTVariation)
+						{
+							textureName = Utility.GetPlayStationTextureNameWithCLUT(Name, material.textureID, material.clutValue);
+						}
+						else
+						{
+							textureName = Utility.GetPlayStationTextureNameDefault(Name, material.textureID);
+						}
+					}
+					else
+					{
+						textureName = Utility.GetSoulReaverPCOrDreamcastTextureName(Name, material.textureID);
+					}
+				}
+			}
+
+			return textureName;
 		}
 	}
 }

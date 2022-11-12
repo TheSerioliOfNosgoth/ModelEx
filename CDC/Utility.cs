@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Security.Cryptography;
 
 namespace CDC
 {
 	public class Utility
 	{
-		public static String CleanName(String name)
+		public static string CleanName(string name)
 		{
 			if (name == null)
 			{
@@ -31,9 +32,9 @@ namespace CDC
 			return trimmedName.TrimEnd(new char[] { '_' });
 		}
 
-		public static void FlipRedAndBlue(ref UInt32 colour)
+		public static void FlipRedAndBlue(ref uint colour)
 		{
-			UInt32 tempColour = colour;
+			uint tempColour = colour;
 			colour =
 				(tempColour & 0xFF000000) |
 				((tempColour << 16) & 0x00FF0000) |
@@ -42,18 +43,18 @@ namespace CDC
 			return;
 		}
 
-		public static float BizarreFloatToNormalFloat(UInt16 usBizarreFloat)
+		public static float BizarreFloatToNormalFloat(ushort usBizarreFloat)
 		{
-			//UInt32 usSign = (UInt32)usBizarreFloat & 0x00008000;
+			//uint usSign = (uint)usBizarreFloat & 0x00008000;
 			//usSign >>= 15;
-			//UInt32 usExponent = (UInt32)usBizarreFloat & 0x00007C00;
+			//uint usExponent = (uint)usBizarreFloat & 0x00007C00;
 			//usExponent >>= 10;
 			//usExponent -= 15;
-			//UInt32 usSignificand = (UInt32)usBizarreFloat & 0x000003FF;
+			//uint usSignificand = (uint)usBizarreFloat & 0x000003FF;
 			//float fFraction = 1f;
 			//for (int i = 0; i < 10; i++)
 			//{
-			//    UInt32 usCurrent = usSignificand;
+			//    uint usCurrent = usSignificand;
 			//    usCurrent = (byte)(usCurrent << (i + 1));
 			//    usCurrent = (byte)(usCurrent >> 10);
 			//    fFraction += (float)((float)usCurrent * Math.Pow(2, 0 - (1 + i)));
@@ -96,16 +97,16 @@ namespace CDC
 			return fCalcValue;
 		}
 
-		public static float BizarreFloatToNormalFloat2(UInt16 usBizarreFloat)
+		public static float BizarreFloatToNormalFloat2(ushort usBizarreFloat)
 		{
-			UInt32 floatAsInt = ((UInt32)usBizarreFloat) << 16;
+			uint floatAsInt = ((uint)usBizarreFloat) << 16;
 			byte[] bytes = BitConverter.GetBytes(floatAsInt);
 			float result = BitConverter.ToSingle(bytes, 0);
 
 			return result;
 		}
 
-		public static float[] UInt32ARGBToFloatARGB(UInt32 argb)
+		public static float[] UInt32ARGBToFloatARGB(uint argb)
 		{
 			float[] result = new float[4];
 
@@ -117,9 +118,9 @@ namespace CDC
 			return result;
 		}
 
-		public static UInt32 FloatARGBToUInt32ARGB(float[] argb)
+		public static uint FloatARGBToUInt32ARGB(float[] argb)
 		{
-			UInt32 result;
+			uint result;
 
 			result = ((uint)(Math.Round(argb[0] * 255.0f))) << 24;
 			result |= ((uint)(Math.Round(argb[1] * 255.0f))) << 16;
@@ -184,7 +185,7 @@ namespace CDC
 			//xUV.v = WraparoundUVValues(xUV.v + fOffsetAdjust, 0.0f, 255.0f);
 		}
 
-		public static string GetTextureFileLocation(CDC.Objects.ExportOptions options, string defaultTextureFileName, string modelFileName)
+		public static string GetTextureFileLocation(ExportOptions options, string defaultTextureFileName, string modelFileName)
 		{
 			string result = "";
 			List<string> possibleLocations = new List<string>();
@@ -227,6 +228,97 @@ namespace CDC
 				}
 			}
 			return result;
+		}
+
+		public static string GetTextureNameDefault(string objectName, int textureID)
+		{
+			string textureName = string.Format("{0}_{1:X4}", objectName.TrimEnd(new char[] { '_' }).ToLower(), textureID);
+			return textureName;
+		}
+
+		public static string GetPlayStationTextureNameDefault(string objectName, int textureID)
+		{
+			return GetTextureNameDefault(objectName, textureID);
+		}
+
+		public static string GetPlayStationTextureNameWithCLUT(string objectName, int textureID, ushort clut)
+		{
+			string textureName = string.Format("{0}_{1:X4}_{2:X4}", objectName.TrimEnd(new char[] { '_' }).ToLower(), textureID, clut);
+			return textureName;
+		}
+
+		public static string GetSoulReaverPCOrDreamcastTextureName(string objectName, int textureID)
+		{
+			return GetTextureNameDefault(objectName, textureID);
+		}
+
+		public static string GetPS2TextureName(string objectName, int textureID)
+		{
+			return GetTextureNameDefault(objectName, textureID);
+		}
+
+		public static void ColourPolygonFromFlags(ref Polygon polygon, uint flags, uint redBit, uint greenBit, uint blueBit)
+		{
+			if ((flags & redBit) == redBit)
+			{
+				polygon.material.colour |= 0x00FF0000;
+			}
+			if ((flags & greenBit) == greenBit)
+			{
+				polygon.material.colour |= 0x0000FF00;
+			}
+			if ((flags & blueBit) == blueBit)
+			{
+				polygon.material.colour |= 0x000000FF;
+			}
+		}
+
+		public static uint GetColourFromHash(byte[] hash)
+		{
+			uint result = 0xFF000000;
+			result |= ((uint)hash[0] << 16);
+			result |= ((uint)hash[1] << 8);
+			result |= ((uint)hash[2]);
+			return result;
+		}
+
+		public static void ColourPolygonFromHash(ref Polygon polygon, byte[] hash)
+		{
+			//polygon.material.colour &= 0xFF00FFFF;
+			//polygon.material.colour |= ((uint)hash[0] << 16);
+			//polygon.material.colour &= 0xFFFF00FF;
+			//polygon.material.colour |= ((uint)hash[1] << 8);
+			//polygon.material.colour &= 0xFFFFFF00;
+			//polygon.material.colour |= ((uint)hash[2]);
+			polygon.material.colour = GetColourFromHash(hash);
+		}
+
+		public static byte[] GetHashOfUInt(uint value)
+		{
+			byte[] valueBytes = new byte[4];
+			valueBytes[0] = (byte)((value & 0xFF000000) >> 24);
+			valueBytes[1] = (byte)((value & 0x00FF0000) >> 16);
+			valueBytes[2] = (byte)((value & 0x0000FF00) >> 8);
+			valueBytes[3] = (byte)((value & 0x000000FF));
+			byte[] hash = new MD5CryptoServiceProvider().ComputeHash(valueBytes);
+			return hash;
+		}
+
+		public static void ColourPolygonFromUInt(ref Polygon polygon, uint value)
+		{
+			ColourPolygonFromHash(ref polygon, GetHashOfUInt(value));
+		}
+
+		public static void ColourPolygonFromString(ref Polygon polygon, string value)
+		{
+			string hashInput = "default";
+			if (value != null)
+			{
+				hashInput = value;
+			}
+			byte[] valueBytes = System.Text.Encoding.Unicode.GetBytes(hashInput);
+			byte[] hash = new MD5CryptoServiceProvider().ComputeHash(valueBytes);
+			ColourPolygonFromHash(ref polygon, hash);
 		}
 	}
 }

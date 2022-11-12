@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using CDCDataFile = CDC.Objects.DataFile;
-using CDCModel = CDC.Objects.Models.Model;
 using Tree = CDC.Tree;
 
 namespace ModelEx
@@ -11,8 +9,8 @@ namespace ModelEx
 		IModelParser
 	{
 		string _objectName;
-		CDCDataFile _dataFile;
-		CDCModel _cdcModel;
+		CDC.DataFile _dataFile;
+		CDC.Model _cdcModel;
 		public Model Model;
 		public string ModelName { get; private set; }
 		public List<Material> Materials { get; } = new List<Material>();
@@ -20,13 +18,13 @@ namespace ModelEx
 		public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
 		public List<ModelNode> Groups { get; } = new List<ModelNode>();
 
-		public SRModelParser(string objectName, CDCDataFile dataFile)
+		public SRModelParser(string objectName, CDC.DataFile dataFile)
 		{
 			_objectName = objectName;
 			_dataFile = dataFile;
 		}
 
-		public void BuildModel(RenderResource resource, int modelIndex, CDC.Objects.ExportOptions options)
+		public void BuildModel(RenderResource resource, int modelIndex, CDC.ExportOptions options)
 		{
 			_cdcModel = _dataFile.Models[modelIndex];
 			String modelName = _objectName + "-" + modelIndex.ToString();
@@ -45,7 +43,7 @@ namespace ModelEx
 				// Maybe use a hack for warpgates WARPGATE_DrawWarpGateRim indicates tree 3 should have lower priority.
 				Color colorDiffuse = Color.FromArgb((int)unchecked(_cdcModel.Materials[materialIndex].colour));
 				material.Diffuse = colorDiffuse;
-				material.TextureFileName = CDC.Objects.Models.Model.GetTextureName((CDC.Objects.Models.Model)_cdcModel, materialIndex, options);
+				material.TextureFileName = _cdcModel.GetTextureName(materialIndex, options);
 				Materials.Add(material);
 			}
 

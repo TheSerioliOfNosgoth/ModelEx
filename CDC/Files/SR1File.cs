@@ -1,10 +1,9 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using CDC.Objects.Models;
 using TPages = BenLincoln.TheLostWorlds.CDTextures.PSXTextureDictionary;
 
-namespace CDC.Objects
+namespace CDC
 {
 	public class SR1File : DataFile
 	{

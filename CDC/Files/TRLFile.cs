@@ -1,9 +1,8 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using CDC.Objects.Models;
 
-namespace CDC.Objects
+namespace CDC
 {
 	public class TRLFile : DataFile
 	{

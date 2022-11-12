@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using CDCDataFile = CDC.Objects.DataFile;
-using CDCModel = CDC.Objects.Models.Model;
-using Tree = CDC.Tree;
 
 namespace ModelEx
 {
@@ -12,15 +9,15 @@ namespace ModelEx
 		IMeshParser<Position2Color2TexturedVertex, short>
 	{
 		string _objectName;
-		CDCDataFile _dataFile;
-		CDCModel _cdcModel;
-		Tree _cdcGroup;
+		CDC.DataFile _dataFile;
+		CDC.Model _cdcModel;
+		CDC.Tree _cdcGroup;
 		List<int> _vertexList = new List<int>();
 		List<int> _indexList = new List<int>();
 		public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
 		public Mesh Mesh;
 
-		public SRMeshParser(string objectName, CDCDataFile dataFile)
+		public SRMeshParser(string objectName, CDC.DataFile dataFile)
 		{
 			_objectName = objectName;
 			_dataFile = dataFile;

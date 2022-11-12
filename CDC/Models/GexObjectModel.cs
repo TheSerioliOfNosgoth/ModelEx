@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using TPages = BenLincoln.TheLostWorlds.CDTextures.PSXTextureDictionary;
 
-namespace CDC.Objects.Models
+namespace CDC
 {
 	public class GexObjectModel : GexModel
 	{
@@ -29,7 +29,7 @@ namespace CDC.Objects.Models
 			_trees = new Tree[_groupCount];
 		}
 
-		protected override void ReadVertex(BinaryReader reader, int v, CDC.Objects.ExportOptions options)
+		protected override void ReadVertex(BinaryReader reader, int v, ExportOptions options)
 		{
 			base.ReadVertex(reader, v, options);
 
@@ -39,7 +39,7 @@ namespace CDC.Objects.Models
 			_geometry.Vertices[v].normalID = reader.ReadUInt16();
 		}
 
-		protected override void ReadVertices(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected override void ReadVertices(BinaryReader reader, ExportOptions options)
 		{
 			base.ReadVertices(reader, options);
 
@@ -99,7 +99,7 @@ namespace CDC.Objects.Models
 			return;
 		}
 
-		protected virtual void ReadPolygon(BinaryReader reader, int p, CDC.Objects.ExportOptions options)
+		protected virtual void ReadPolygon(BinaryReader reader, int p, ExportOptions options)
 		{
 			UInt32 uPolygonPosition = (UInt32)reader.BaseStream.Position;
 
@@ -139,7 +139,7 @@ namespace CDC.Objects.Models
 			reader.BaseStream.Position = uPolygonPosition + 0x0C;
 		}
 
-		protected override void ReadPolygons(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected override void ReadPolygons(BinaryReader reader, ExportOptions options)
 		{
 			if (_polygonStart == 0 || _polygonCount == 0)
 			{

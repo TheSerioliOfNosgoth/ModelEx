@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using TPages = BenLincoln.TheLostWorlds.CDTextures.PSXTextureDictionary;
 
-namespace CDC.Objects.Models
+namespace CDC
 {
 	public class GexUnitModel : GexModel
 	{
@@ -38,7 +38,7 @@ namespace CDC.Objects.Models
 			_trees = new Tree[_groupCount];
 		}
 
-		public override void ReadData(BinaryReader reader, CDC.Objects.ExportOptions options)
+		public override void ReadData(BinaryReader reader, ExportOptions options)
 		{
 			// Get the normals
 			_geometry.Normals = new Vector[s_aiNormals.Length / 3];
@@ -68,7 +68,7 @@ namespace CDC.Objects.Models
 			GenerateOutput();
 		}
 
-		protected override void ReadVertex(BinaryReader reader, int v, CDC.Objects.ExportOptions options)
+		protected override void ReadVertex(BinaryReader reader, int v, ExportOptions options)
 		{
 			base.ReadVertex(reader, v, options);
 
@@ -78,12 +78,12 @@ namespace CDC.Objects.Models
 			_geometry.Vertices[v].colourID = reader.ReadUInt16();
 		}
 
-		protected override void ReadVertices(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected override void ReadVertices(BinaryReader reader, ExportOptions options)
 		{
 			base.ReadVertices(reader, options);
 		}
 
-		protected void ReadVertexColours(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected void ReadVertexColours(BinaryReader reader, ExportOptions options)
 		{
 			if (_vertexColourStart == 0 || _vertexColourCount == 0)
 			{
@@ -112,7 +112,7 @@ namespace CDC.Objects.Models
 			return;
 		}
 
-		protected virtual void ReadPolygon(BinaryReader reader, int p, CDC.Objects.ExportOptions options)
+		protected virtual void ReadPolygon(BinaryReader reader, int p, ExportOptions options)
 		{
 			UInt32 uPolygonPosition = (UInt32)reader.BaseStream.Position;
 
@@ -180,7 +180,7 @@ namespace CDC.Objects.Models
 			}
 		}
 
-		protected override void ReadPolygons(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected override void ReadPolygons(BinaryReader reader, ExportOptions options)
 		{
 			if (_polygonStart == 0 || _polygonCount == 0)
 			{

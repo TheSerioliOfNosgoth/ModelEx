@@ -139,7 +139,7 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			}
 		}
 
-		public void BuildTexturesFromPolygonData(TPages tPages, bool drawGreyScaleFirst, bool quantizeBounds, CDC.Objects.ExportOptions options)
+		public void BuildTexturesFromPolygonData(TPages tPages, bool drawGreyScaleFirst, bool quantizeBounds, CDC.ExportOptions options)
 		{
 			_TPages = tPages;
 			_TPages.Initialize(_TextureData, _ImageWidth, _ImageHeight, _XShift, options.AlwaysUseGreyscaleForMissingPalettes);

@@ -35,7 +35,7 @@ namespace ModelEx
 				{
 					string outputFilePath = "";
 					string mode = "sr1";
-					CDC.Objects.ExportOptions options = new CDC.Objects.ExportOptions();
+					CDC.ExportOptions options = new CDC.ExportOptions();
 					CDC.Platform platform = CDC.Platform.None;
 
 					ArrayList arguments = new ArrayList();
@@ -132,241 +132,241 @@ namespace ModelEx
 								switch (nextArg)
 								{
 									case "standard":
-										options.RenderMode = CDC.Objects.RenderMode.Standard;
+										options.RenderMode = CDC.RenderMode.Standard;
 										break;
 									case "wireframe":
-										options.RenderMode = CDC.Objects.RenderMode.Wireframe;
+										options.RenderMode = CDC.RenderMode.Wireframe;
 										break;
 									case "notextures":
-										options.RenderMode = CDC.Objects.RenderMode.NoTextures;
+										options.RenderMode = CDC.RenderMode.NoTextures;
 										break;
 									case "polyflags1":
-										options.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlags1;
+										options.RenderMode = CDC.RenderMode.DebugPolygonFlags1;
 										break;
 									case "polyflags2":
-										options.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlags2;
+										options.RenderMode = CDC.RenderMode.DebugPolygonFlags2;
 										break;
 									case "polyflags3":
-										options.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlags3;
+										options.RenderMode = CDC.RenderMode.DebugPolygonFlags3;
 										break;
 									case "polyflagssra":
-										options.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlagsSoulReaverA;
+										options.RenderMode = CDC.RenderMode.DebugPolygonFlagsSoulReaverA;
 										break;
 									case "polyflagshash":
-										options.RenderMode = CDC.Objects.RenderMode.DebugPolygonFlagsHash;
+										options.RenderMode = CDC.RenderMode.DebugPolygonFlagsHash;
 										break;
 									case "textureattr1":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes1;
+										options.RenderMode = CDC.RenderMode.DebugTextureAttributes1;
 										break;
 									case "textureattr2":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes2;
+										options.RenderMode = CDC.RenderMode.DebugTextureAttributes2;
 										break;
 									case "textureattr3":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes3;
+										options.RenderMode = CDC.RenderMode.DebugTextureAttributes3;
 										break;
 									case "textureattr4":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes4;
+										options.RenderMode = CDC.RenderMode.DebugTextureAttributes4;
 										break;
 									case "textureattr5":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes5;
+										options.RenderMode = CDC.RenderMode.DebugTextureAttributes5;
 										break;
 									case "textureattr6":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributes6;
+										options.RenderMode = CDC.RenderMode.DebugTextureAttributes6;
 										break;
 									case "textureattrhash":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesHash;
+										options.RenderMode = CDC.RenderMode.DebugTextureAttributesHash;
 										break;
 									case "textureattra1":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA1;
+										options.RenderMode = CDC.RenderMode.DebugTextureAttributesA1;
 										break;
 									case "textureattra2":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA2;
+										options.RenderMode = CDC.RenderMode.DebugTextureAttributesA2;
 										break;
 									case "textureattra3":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA3;
+										options.RenderMode = CDC.RenderMode.DebugTextureAttributesA3;
 										break;
 									case "textureattra4":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA4;
+										options.RenderMode = CDC.RenderMode.DebugTextureAttributesA4;
 										break;
 									case "textureattra5":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA5;
+										options.RenderMode = CDC.RenderMode.DebugTextureAttributesA5;
 										break;
 									case "textureattra6":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesA6;
+										options.RenderMode = CDC.RenderMode.DebugTextureAttributesA6;
 										break;
 									case "textureattrahash":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTextureAttributesAHash;
+										options.RenderMode = CDC.RenderMode.DebugTextureAttributesAHash;
 										break;
 									case "clut1":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTexturePage1;
+										options.RenderMode = CDC.RenderMode.DebugTexturePage1;
 										break;
 									case "clut2":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTexturePage2;
+										options.RenderMode = CDC.RenderMode.DebugTexturePage2;
 										break;
 									case "clut3":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTexturePage3;
+										options.RenderMode = CDC.RenderMode.DebugTexturePage3;
 										break;
 									case "clut4":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTexturePage4;
+										options.RenderMode = CDC.RenderMode.DebugTexturePage4;
 										break;
 									case "clut5":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTexturePage5;
+										options.RenderMode = CDC.RenderMode.DebugTexturePage5;
 										break;
 									case "clut6":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTexturePage6;
+										options.RenderMode = CDC.RenderMode.DebugTexturePage6;
 										break;
 									case "cluthash":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTexturePageHash;
+										options.RenderMode = CDC.RenderMode.DebugTexturePageHash;
 										break;
 									case "clutnrcb1":
-										options.RenderMode = CDC.Objects.RenderMode.DebugCLUTNonRowColBits1;
+										options.RenderMode = CDC.RenderMode.DebugCLUTNonRowColBits1;
 										break;
 									case "clutnrcb2":
-										options.RenderMode = CDC.Objects.RenderMode.DebugCLUTNonRowColBits2;
+										options.RenderMode = CDC.RenderMode.DebugCLUTNonRowColBits2;
 										break;
 									case "clutnrcbhash":
-										options.RenderMode = CDC.Objects.RenderMode.DebugCLUTNonRowColBitsHash;
+										options.RenderMode = CDC.RenderMode.DebugCLUTNonRowColBitsHash;
 										break;
 									case "texturepage1":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTexturePage1;
+										options.RenderMode = CDC.RenderMode.DebugTexturePage1;
 										break;
 									case "texturepage2":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTexturePage2;
+										options.RenderMode = CDC.RenderMode.DebugTexturePage2;
 										break;
 									case "texturepage3":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTexturePage3;
+										options.RenderMode = CDC.RenderMode.DebugTexturePage3;
 										break;
 									case "texturepage4":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTexturePage4;
+										options.RenderMode = CDC.RenderMode.DebugTexturePage4;
 										break;
 									case "texturepage5":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTexturePage5;
+										options.RenderMode = CDC.RenderMode.DebugTexturePage5;
 										break;
 									case "texturepage6":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTexturePage6;
+										options.RenderMode = CDC.RenderMode.DebugTexturePage6;
 										break;
 									case "texturepagehash":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTexturePageHash;
+										options.RenderMode = CDC.RenderMode.DebugTexturePageHash;
 										break;
 									case "texturepageu28hash":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTexturePageUpper28BitsHash;
+										options.RenderMode = CDC.RenderMode.DebugTexturePageUpper28BitsHash;
 										break;
 									case "texturepageu5hash":
-										options.RenderMode = CDC.Objects.RenderMode.DebugTexturePageUpper5BitsHash;
+										options.RenderMode = CDC.RenderMode.DebugTexturePageUpper5BitsHash;
 										break;
 									case "bsptreenum":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeNumber;
+										options.RenderMode = CDC.RenderMode.DebugBSPRootTreeNumber;
 										break;
 									case "bsptreenodeid":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeNodeID;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeNodeID;
 										break;
 									case "bsproot1":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags1;
+										options.RenderMode = CDC.RenderMode.DebugBSPRootTreeFlags1;
 										break;
 									case "bsproot2":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags2;
+										options.RenderMode = CDC.RenderMode.DebugBSPRootTreeFlags2;
 										break;
 									case "bsproot3":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags3;
+										options.RenderMode = CDC.RenderMode.DebugBSPRootTreeFlags3;
 										break;
 									case "bsproot4":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags4;
+										options.RenderMode = CDC.RenderMode.DebugBSPRootTreeFlags4;
 										break;
 									case "bsproot5":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags5;
+										options.RenderMode = CDC.RenderMode.DebugBSPRootTreeFlags5;
 										break;
 									case "bsproot6":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlags6;
+										options.RenderMode = CDC.RenderMode.DebugBSPRootTreeFlags6;
 										break;
 									case "bsproothash":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPRootTreeFlagsHash;
+										options.RenderMode = CDC.RenderMode.DebugBSPRootTreeFlagsHash;
 										break;
 									case "bspnode1":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags1;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeImmediateParentFlags1;
 										break;
 									case "bspnode2":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags2;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeImmediateParentFlags2;
 										break;
 									case "bspnode3":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags3;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeImmediateParentFlags3;
 										break;
 									case "bspnode4":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags4;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeImmediateParentFlags4;
 										break;
 									case "bspnode5":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags5;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeImmediateParentFlags5;
 										break;
 									case "bspnode6":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlags6;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeImmediateParentFlags6;
 										break;
 									case "bspnodehash":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeImmediateParentFlagsHash;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeImmediateParentFlagsHash;
 										break;
 									case "bspor1":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd1;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeAllParentFlagsORd1;
 										break;
 									case "bspor2":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd2;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeAllParentFlagsORd2;
 										break;
 									case "bspor3":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd3;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeAllParentFlagsORd3;
 										break;
 									case "bspor4":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd4;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeAllParentFlagsORd4;
 										break;
 									case "bspor5":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd5;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeAllParentFlagsORd5;
 										break;
 									case "bspor6":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORd6;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeAllParentFlagsORd6;
 										break;
 									case "bsporhash":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeAllParentFlagsORdHash;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeAllParentFlagsORdHash;
 										break;
 									case "bspleaf1":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags1;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeLeafFlags1;
 										break;
 									case "bspleaf2":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags2;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeLeafFlags2;
 										break;
 									case "bspleaf3":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags3;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeLeafFlags3;
 										break;
 									case "bspleaf4":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags4;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeLeafFlags4;
 										break;
 									case "bspleaf5":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags5;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeLeafFlags5;
 										break;
 									case "bspleaf6":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlags6;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeLeafFlags6;
 										break;
 									case "bspleafhash":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBSPTreeLeafFlagsHash;
+										options.RenderMode = CDC.RenderMode.DebugBSPTreeLeafFlagsHash;
 										break;
 									case "boneidhash":
-										options.RenderMode = CDC.Objects.RenderMode.DebugBoneIDHash;
+										options.RenderMode = CDC.RenderMode.DebugBoneIDHash;
 										break;
 									case "sortpushhash":
-										options.RenderMode = CDC.Objects.RenderMode.DebugSortPushHash;
+										options.RenderMode = CDC.RenderMode.DebugSortPushHash;
 										break;
 									case "sortpushflags1":
-										options.RenderMode = CDC.Objects.RenderMode.DebugSortPushFlags1;
+										options.RenderMode = CDC.RenderMode.DebugSortPushFlags1;
 										break;
 									case "sortpushflags2":
-										options.RenderMode = CDC.Objects.RenderMode.DebugSortPushFlags2;
+										options.RenderMode = CDC.RenderMode.DebugSortPushFlags2;
 										break;
 									case "sortpushflags3":
-										options.RenderMode = CDC.Objects.RenderMode.DebugSortPushFlags3;
+										options.RenderMode = CDC.RenderMode.DebugSortPushFlags3;
 										break;
 									case "polyalpha":
-										options.RenderMode = CDC.Objects.RenderMode.PolygonAlpha;
+										options.RenderMode = CDC.RenderMode.PolygonAlpha;
 										break;
 									case "polyopacity":
-										options.RenderMode = CDC.Objects.RenderMode.PolygonOpacity;
+										options.RenderMode = CDC.RenderMode.PolygonOpacity;
 										break;
 									case "vertexalpha":
-										options.RenderMode = CDC.Objects.RenderMode.AverageVertexAlpha;
+										options.RenderMode = CDC.RenderMode.AverageVertexAlpha;
 										break;
 								}
 								i++;
@@ -529,7 +529,7 @@ namespace ModelEx
 
 						if (loadRequest.GameType == CDC.Game.SR1)
 						{
-							CDC.Objects.SR1File sr1File = new CDC.Objects.SR1File(inputFilePath, platform, options);
+							CDC.SR1File sr1File = new CDC.SR1File(inputFilePath, platform, options);
 
 							if (sr1File.Platform == CDC.Platform.PC)
 							{

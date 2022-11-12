@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace CDC.Objects.Models
+namespace CDC
 {
 	public abstract class SR2Model : Model
 	{
@@ -278,7 +278,7 @@ namespace CDC.Objects.Models
 		{
 		}
 
-		public virtual void ReadData(BinaryReader reader, CDC.Objects.ExportOptions options)
+		public virtual void ReadData(BinaryReader reader, ExportOptions options)
 		{
 			// Get the vertices
 			_geometry.Vertices = new Vertex[_vertexCount];
@@ -304,7 +304,7 @@ namespace CDC.Objects.Models
 			GenerateOutput();
 		}
 
-		protected virtual void ReadVertex(BinaryReader reader, int v, CDC.Objects.ExportOptions options)
+		protected virtual void ReadVertex(BinaryReader reader, int v, ExportOptions options)
 		{
 			_geometry.Vertices[v].positionID = v;
 
@@ -315,7 +315,7 @@ namespace CDC.Objects.Models
 			reader.BaseStream.Position += 0x02;
 		}
 
-		protected virtual void ReadVertices(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected virtual void ReadVertices(BinaryReader reader, ExportOptions options)
 		{
 			if (_vertexStart == 0 || _vertexCount == 0)
 			{
@@ -344,7 +344,7 @@ namespace CDC.Objects.Models
 			return;
 		}
 
-		protected abstract void ReadPolygons(BinaryReader reader, CDC.Objects.ExportOptions options);
+		protected abstract void ReadPolygons(BinaryReader reader, ExportOptions options);
 
 		protected virtual void GenerateOutput()
 		{
@@ -369,6 +369,21 @@ namespace CDC.Objects.Models
 			}
 
 			return;
+		}
+
+		public override string GetTextureName(int materialIndex, ExportOptions options)
+		{
+			string textureName = "";
+			if (materialIndex >= 0 && materialIndex < MaterialCount)
+			{
+				Material material = _materials[materialIndex];
+				if (material.textureUsed)
+				{
+					textureName = Utility.GetPS2TextureName(Name, material.textureID);
+				}
+			}
+
+			return textureName;
 		}
 	}
 }

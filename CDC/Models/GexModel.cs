@@ -3,7 +3,7 @@ using System.IO;
 using TPages = BenLincoln.TheLostWorlds.CDTextures.PSXTextureDictionary;
 using TextureTile = BenLincoln.TheLostWorlds.CDTextures.PSXTextureTile;
 
-namespace CDC.Objects.Models
+namespace CDC
 {
 	public abstract class GexModel : Model
 	{
@@ -265,7 +265,7 @@ namespace CDC.Objects.Models
 			_tPages = tPages;
 		}
 
-		public virtual void ReadData(BinaryReader reader, CDC.Objects.ExportOptions options)
+		public virtual void ReadData(BinaryReader reader, ExportOptions options)
 		{
 			// Get the normals
 			_geometry.Normals = new Vector[s_aiNormals.Length / 3];
@@ -294,7 +294,7 @@ namespace CDC.Objects.Models
 			GenerateOutput();
 		}
 
-		protected virtual void ReadVertex(BinaryReader reader, int v, CDC.Objects.ExportOptions options)
+		protected virtual void ReadVertex(BinaryReader reader, int v, ExportOptions options)
 		{
 			_geometry.Vertices[v].positionID = v;
 
@@ -304,7 +304,7 @@ namespace CDC.Objects.Models
 			_geometry.PositionsRaw[v].z = (float)reader.ReadInt16();
 		}
 
-		protected virtual void ReadVertices(BinaryReader reader, CDC.Objects.ExportOptions options)
+		protected virtual void ReadVertices(BinaryReader reader, ExportOptions options)
 		{
 			if (_vertexStart == 0 || _vertexCount == 0)
 			{
@@ -321,9 +321,9 @@ namespace CDC.Objects.Models
 			return;
 		}
 
-		protected abstract void ReadPolygons(BinaryReader reader, CDC.Objects.ExportOptions options);
+		protected abstract void ReadPolygons(BinaryReader reader, ExportOptions options);
 
-		protected virtual void ReadMaterial(BinaryReader reader, int p, CDC.Objects.ExportOptions options)
+		protected virtual void ReadMaterial(BinaryReader reader, int p, ExportOptions options)
 		{
 			int v1 = (p * 3) + 0;
 			int v2 = (p * 3) + 1;
@@ -397,7 +397,7 @@ namespace CDC.Objects.Models
 			return;
 		}
 
-		protected void ProcessPolygons(CDC.Objects.ExportOptions options)
+		protected void ProcessPolygons(ExportOptions options)
 		{
 			MaterialList materialList = null;
 
@@ -425,6 +425,28 @@ namespace CDC.Objects.Models
 			}
 
 			_materialCount = (UInt32)_materialsList.Count;
+		}
+
+		public override string GetTextureName(int materialIndex, ExportOptions options)
+		{
+			string textureName = "";
+			if (materialIndex >= 0 && materialIndex < MaterialCount)
+			{
+				Material material = _materials[materialIndex];
+				if (material.textureUsed)
+				{
+					if (options.UseEachUniqueTextureCLUTVariation)
+					{
+						textureName = Utility.GetPlayStationTextureNameWithCLUT(Name, material.textureID, material.clutValue);
+					}
+					else
+					{
+						textureName = Utility.GetPlayStationTextureNameDefault(Name, material.textureID);
+					}
+				}
+			}
+
+			return textureName;
 		}
 	}
 }

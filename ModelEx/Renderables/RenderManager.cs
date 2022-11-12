@@ -7,8 +7,7 @@ using SlimDX.Direct3D11;
 using SlimDX.DXGI;
 using Game = CDC.Game;
 using Platform = CDC.Platform;
-using ExportOptions = CDC.Objects.ExportOptions;
-using CDCDataFile = CDC.Objects.DataFile;
+using ExportOptions = CDC.ExportOptions;
 
 namespace ModelEx
 {
@@ -155,7 +154,7 @@ namespace ModelEx
 			SceneCDC.progressLevels = 1;
 			SceneCDC.ProgressStage = "Reading Data";
 
-			CDCDataFile dataFile = CDCDataFile.Create(loadRequest.DataFile, loadRequest.ObjectListFile, loadRequest.GameType, loadRequest.Platform, loadRequest.ExportOptions, loadRequest.ChildIndex);
+			CDC.DataFile dataFile = CDC.DataFile.Create(loadRequest.DataFile, loadRequest.ObjectListFile, loadRequest.GameType, loadRequest.Platform, loadRequest.ExportOptions, loadRequest.ChildIndex);
 
 			if (dataFile == null)
 			{
