@@ -168,7 +168,7 @@ namespace CDC
 		protected UInt16 _modelCount;
 		protected UInt16 _animCount;
 		protected UInt32 _modelStart;
-		protected Model[] _models;
+		protected IModel[] _models;
 		protected UInt32 _animStart;
 		protected UInt32 _introCount;
 		protected UInt32 _introStart;
@@ -186,7 +186,7 @@ namespace CDC
 		public UInt32 Version { get { return _version; } }
 		public UInt16 ModelCount { get { return _modelCount; } }
 		public UInt16 AnimCount { get { return _animCount; } }
-		public Model[] Models { get { return _models; } }
+		public IModel[] Models { get { return _models; } }
 		public UInt32 IntroCount { get { return _introCount; } }
 		public Intro[] Intros { get { return _intros; } }
 		public String[] ObjectNames { get { return _objectNames; } }
@@ -307,7 +307,7 @@ namespace CDC
 				List<Assimp.Material> materials = new List<Assimp.Material>();
 				List<Assimp.Mesh> meshes = new List<Assimp.Mesh>();
 
-				Model model = Models[modelIndex];
+				IModel model = Models[modelIndex];
 
 				string modelName = name + "-" + modelIndex;
 				Console.WriteLine(string.Format("Debug: exporting model {0} / {1} ('{2}')", modelIndex, (ModelCount - 1), modelName));
@@ -325,7 +325,7 @@ namespace CDC
 
 				Assimp.Node modelNode = new Assimp.Node(modelName);
 
-				for (int groupIndex = 0; groupIndex < model.GroupCount; groupIndex++)
+				for (int groupIndex = 0; groupIndex < model.Groups.Length; groupIndex++)
 				{
 					Tree group = model.Groups[groupIndex];
 					if (group == null)
@@ -339,7 +339,7 @@ namespace CDC
 
 					string groupName = name + "-" + modelIndex + "-" + groupIndex;
 
-					Console.WriteLine(string.Format("\tDebug: exporting group {0} / {1} ('{2}'), mesh flags {3}", groupIndex, (model.GroupCount - 1), groupName, Convert.ToString(group.mesh.sr1BSPTreeFlags, 2).PadLeft(8, '0')));
+					Console.WriteLine(string.Format("\tDebug: exporting group {0} / {1} ('{2}'), mesh flags {3}", groupIndex, (model.Groups.Length - 1), groupName, Convert.ToString(group.mesh.sr1BSPTreeFlags, 2).PadLeft(8, '0')));
 					if (group.mesh.sr1BSPNodeFlags.Count > 0)
 					{
 						//Console.WriteLine(string.Format("\t\t\tDebug: BSP node flags for this mesh:"));
@@ -367,9 +367,9 @@ namespace CDC
 
 					Assimp.Node groupNode = new Assimp.Node(groupName);
 
-					for (int materialIndex = 0; materialIndex < model.MaterialCount; materialIndex++)
+					for (int materialIndex = 0; materialIndex < model.Materials.Length; materialIndex++)
 					{
-						Console.WriteLine(string.Format("\t\tDebug: exporting material {0} / {1}", materialIndex, (model.MaterialCount - 1)));
+						Console.WriteLine(string.Format("\t\tDebug: exporting material {0} / {1}", materialIndex, (model.Materials.Length - 1)));
 						int totalPolygonCount = (int)group.mesh.polygonCount;
 						List<int> polygonList = new List<int>();
 
@@ -541,13 +541,13 @@ namespace CDC
 			return true;
 		}
 
-		public UInt32 GetNumMaterials()
+		public int GetNumMaterials()
 		{
-			UInt32 numMaterials = 0;
+			int numMaterials = 0;
 
 			for (int modelIndex = 0; modelIndex < _models.Length; modelIndex++)
 			{
-				numMaterials += _models[modelIndex].MaterialCount;
+				numMaterials += _models[modelIndex].Materials.Length;
 			}
 
 			return numMaterials;
@@ -601,7 +601,7 @@ namespace CDC
 			return uv3D;
 		}
 
-		protected Assimp.Material GetAssimpMaterial(String name, Model model, int materialIndex, ExportOptions options)
+		protected Assimp.Material GetAssimpMaterial(String name, IModel model, int materialIndex, ExportOptions options)
 		{
 			Assimp.Material material = new Assimp.Material();
 

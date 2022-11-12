@@ -151,7 +151,7 @@ namespace ModelEx
 						SceneCDC.progressLevels = File.GetNumMaterials();
 						SceneCDC.ProgressStage = "Loading Textures";
 
-						foreach (CDC.Model cdcModel in File.Models)
+						foreach (CDC.IModel cdcModel in File.Models)
 						{
 							foreach (CDC.Material material in cdcModel.Materials)
 							{
@@ -192,7 +192,7 @@ namespace ModelEx
 						SceneCDC.progressLevels = File.GetNumMaterials();
 						SceneCDC.ProgressStage = "Loading Textures";
 
-						foreach (CDC.Model cdcModel in File.Models)
+						foreach (CDC.IModel cdcModel in File.Models)
 						{
 							foreach (CDC.Material material in cdcModel.Materials)
 							{

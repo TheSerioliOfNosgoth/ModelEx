@@ -10,7 +10,7 @@ namespace ModelEx
 	{
 		string _objectName;
 		CDC.DataFile _dataFile;
-		CDC.Model _cdcModel;
+		CDC.IModel _cdcModel;
 		public Model Model;
 		public string ModelName { get; private set; }
 		public List<Material> Materials { get; } = new List<Material>();
@@ -31,7 +31,7 @@ namespace ModelEx
 
 			#region Materials
 
-			for (int materialIndex = 0; materialIndex < _cdcModel.MaterialCount; materialIndex++)
+			for (int materialIndex = 0; materialIndex < _cdcModel.Materials.Length; materialIndex++)
 			{
 				Material material = new Material();
 				material.Visible = _cdcModel.Materials[materialIndex].visible;

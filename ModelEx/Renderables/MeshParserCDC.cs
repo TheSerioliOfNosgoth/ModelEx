@@ -10,7 +10,7 @@ namespace ModelEx
 	{
 		string _objectName;
 		CDC.DataFile _dataFile;
-		CDC.Model _cdcModel;
+		CDC.IModel _cdcModel;
 		CDC.Tree _cdcGroup;
 		List<int> _vertexList = new List<int>();
 		List<int> _indexList = new List<int>();
@@ -32,7 +32,7 @@ namespace ModelEx
 			String meshName = String.Format("{0}-{1}-group-{2}-mesh-{3}", _objectName, modelIndex, groupIndex, meshIndex);
 
 			int startIndexLocation = 0;
-			for (int materialIndex = 0; materialIndex < _cdcModel.MaterialCount; materialIndex++)
+			for (int materialIndex = 0; materialIndex < _cdcModel.Materials.Length; materialIndex++)
 			{
 				int indexCount = 0;
 				int totalIndexCount = (int)_cdcGroup.mesh.indexCount;

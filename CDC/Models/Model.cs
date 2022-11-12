@@ -4,68 +4,17 @@ using System.IO;
 
 namespace CDC
 {
-	public abstract class Model
+	public abstract class Model : IModel
 	{
-		protected String _name;
-		protected string _modelTypePrefix;
-		protected uint _version;
-		protected Platform _platform;
-		protected uint _dataStart;
-		protected uint _modelData;
-		protected uint _vertexCount;
-		protected uint _vertexStart;
-		protected uint _polygonCount;
-		protected uint _polygonStart;
-		protected uint _boneCount;
-		protected uint _boneStart;
-		protected uint _groupCount;
-		protected uint _materialCount;
-		protected uint _materialStart;
-		protected uint _indexCount { get { return 3 * _polygonCount; } }
-		// Vertices are scaled before any bones are applied.
-		// Scaling afterwards will break the characters.
-		protected Vector _vertexScale;
-		protected Geometry _geometry;
-		protected Geometry _extraGeometry;
-		protected Polygon[] _polygons;
-		protected Bone[] _bones;
-		protected Tree[] _trees;
-		protected Material[] _materials;
-		protected List<Material> _materialsList;
-
-		public String Name { get { return _name; } }
-		public string ModelTypePrefix { get { return _modelTypePrefix; } }
-		public uint PolygonCount { get { return _polygonCount; } }
-		public Polygon[] Polygons { get { return _polygons; } }
-		public uint IndexCount { get { return _indexCount; } }
-		public Geometry Geometry { get { return _geometry; } }
-		public Geometry ExtraGeometry { get { return _extraGeometry; } }
-		public Bone[] Bones { get { return _bones; } }
-		public uint GroupCount { get { return _groupCount; } }
-		public Tree[] Groups { get { return _trees; } }
-		public uint MaterialCount { get { return _materialCount; } }
-		public Material[] Materials { get { return _materials; } }
-		public Platform Platform { get { return _platform; } }
-
-		protected Model(BinaryReader reader, uint dataStart, uint modelData, String strModelName, Platform ePlatform, uint version)
-		{
-			_name = strModelName;
-			_modelTypePrefix = "";
-			_platform = ePlatform;
-			_version = version;
-			_dataStart = dataStart;
-			_modelData = modelData;
-			_vertexCount = 0;
-			_vertexStart = 0;
-			_polygonCount = 0;
-			_polygonStart = 0;
-			_vertexScale.x = 1.0f;
-			_vertexScale.y = 1.0f;
-			_vertexScale.z = 1.0f;
-			_geometry = new Geometry();
-			_extraGeometry = new Geometry();
-			_materialsList = new List<Material>();
-		}
+		public abstract string Name { get; }
+		public abstract string ModelTypePrefix { get; }
+		public abstract Polygon[] Polygons { get; }
+		public abstract Geometry Geometry { get; }
+		public abstract Geometry ExtraGeometry { get; }
+		public abstract Bone[] Bones { get; }
+		public abstract Tree[] Groups { get; }
+		public abstract Material[] Materials { get; }
+		public abstract Platform Platform { get; }
 
 		public abstract string GetTextureName(int materialIndex, ExportOptions options);
 
@@ -77,7 +26,7 @@ namespace CDC
 				return;
 			}
 
-			ref Polygon polygon = ref _polygons[p];
+			ref Polygon polygon = ref Polygons[p];
 			ref Material material = ref polygon.material;
 
 			material.textureUsed = false;
@@ -336,9 +285,9 @@ namespace CDC
 			if (options.RenderMode == RenderMode.AverageVertexAlpha)
 			{
 				material.opacity = 0.75f;
-				float[] fV1 = Utility.UInt32ARGBToFloatARGB(_geometry.Colours[polygon.v1.colourID]);
-				float[] fV2 = Utility.UInt32ARGBToFloatARGB(_geometry.Colours[polygon.v2.colourID]);
-				float[] fV3 = Utility.UInt32ARGBToFloatARGB(_geometry.Colours[polygon.v3.colourID]);
+				float[] fV1 = Utility.UInt32ARGBToFloatARGB(Geometry.Colours[polygon.v1.colourID]);
+				float[] fV2 = Utility.UInt32ARGBToFloatARGB(Geometry.Colours[polygon.v2.colourID]);
+				float[] fV3 = Utility.UInt32ARGBToFloatARGB(Geometry.Colours[polygon.v3.colourID]);
 				float[] fVAverage = new float[4];
 				fVAverage[0] = 1.0f;
 				fVAverage[1] = (fV1[0] + fV2[0] + fV3[0]) / 3.0f;
@@ -375,9 +324,9 @@ namespace CDC
 				uint boneIDColourV1 = Utility.GetColourFromHash(Utility.GetHashOfUInt((uint)polygon.v1.boneID));
 				uint boneIDColourV2 = Utility.GetColourFromHash(Utility.GetHashOfUInt((uint)polygon.v2.boneID));
 				uint boneIDColourV3 = Utility.GetColourFromHash(Utility.GetHashOfUInt((uint)polygon.v3.boneID));
-				_geometry.Colours[polygon.v1.colourID] = boneIDColourV1;
-				_geometry.Colours[polygon.v2.colourID] = boneIDColourV2;
-				_geometry.Colours[polygon.v3.colourID] = boneIDColourV3;
+				Geometry.Colours[polygon.v1.colourID] = boneIDColourV1;
+				Geometry.Colours[polygon.v2.colourID] = boneIDColourV2;
+				Geometry.Colours[polygon.v3.colourID] = boneIDColourV3;
 				if ((boneIDColourV1 == boneIDColourV2) && (boneIDColourV2 == boneIDColourV3))
 				{
 					material.opacity = 1.0f;
