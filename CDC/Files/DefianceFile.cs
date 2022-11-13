@@ -77,10 +77,10 @@ namespace CDC
 			reader.BaseStream.Position = _dataStart + 0x10;
 			UInt32 m_uConnectionData = _dataStart + reader.ReadUInt32(); // Same as m_uModelData?
 			reader.BaseStream.Position = m_uConnectionData + 0x24;
-			portalCount = reader.ReadUInt32();
+			_portalCount = reader.ReadUInt32();
 			reader.BaseStream.Position = _dataStart + reader.ReadUInt32();
-			_portals = new Portal[portalCount];
-			for (int i = 0; i < portalCount; i++)
+			_portals = new Portal[_portalCount];
+			for (int i = 0; i < _portalCount; i++)
 			{
 				Portal portal = new Portal();
 				portal.toLevelName = new String(reader.ReadChars(16));

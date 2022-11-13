@@ -143,10 +143,10 @@ namespace CDC
 
 	public struct Portal
 	{
-		public string fromLevelName;
 		public string toLevelName;
-		public Vector minPos;
-		public Vector maxPos;
+		public int mSigmalID;
+		public Vector min;
+		public Vector max;
 	}
 
 	public struct MonsterAttributes

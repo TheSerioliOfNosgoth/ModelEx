@@ -8,7 +8,7 @@ namespace CDC
 	{
 		Standard,
 		NoTextures,
-		Wireframe,  // not implemented
+		Wireframe,
 		PointCloud, // not implemented
 		DebugPolygonFlags1,
 		DebugPolygonFlags2,
@@ -175,7 +175,7 @@ namespace CDC
 		protected Intro[] _intros;
 		protected UInt32 _objectNameStart;
 		protected String[] _objectNames;
-		protected UInt32 portalCount;
+		protected UInt32 _portalCount;
 		protected UInt32 _portalStart;
 		protected Portal[] _portals;
 		protected Game _game;
@@ -190,7 +190,7 @@ namespace CDC
 		public UInt32 IntroCount { get { return _introCount; } }
 		public Intro[] Intros { get { return _intros; } }
 		public String[] ObjectNames { get { return _objectNames; } }
-		public UInt32 PortalCount { get { return portalCount; } }
+		public UInt32 PortalCount { get { return _portalCount; } }
 		public Portal[] Portals { get { return _portals; } }
 		public Game Game { get { return _game; } }
 		public Asset Asset { get { return _asset; } }
@@ -284,7 +284,7 @@ namespace CDC
 					dataFile = null;
 				}
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				dataFile = null;
 			}

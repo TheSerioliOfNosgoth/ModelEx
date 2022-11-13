@@ -36,11 +36,16 @@ namespace ModelEx
 				Material material = new Material();
 				material.Visible = _cdcModel.Materials[materialIndex].visible;
 				// Breaks early SR1 builds.
-				//material.BlendMode = _srModel.Materials[materialIndex].blendMode;
-				//int sortPush = unchecked((sbyte)_srModel.Materials[materialIndex].sortPush);
+				//material.BlendMode = _cdcModel.Materials[materialIndex].blendMode;
+				//int sortPush = unchecked((sbyte)_cdcModel.Materials[materialIndex].sortPush);
 				//sortPush = 128 - sortPush;
 				//material.DepthBias = (1.0f / 100000.0f) * sortPush;
 				// Maybe use a hack for warpgates WARPGATE_DrawWarpGateRim indicates tree 3 should have lower priority.
+				if (_dataFile.Asset == CDC.Asset.Unit && modelIndex > 0)
+				{
+					material.BlendMode = 1;
+				}
+
 				Color colorDiffuse = Color.FromArgb((int)unchecked(_cdcModel.Materials[materialIndex].colour));
 				material.Diffuse = colorDiffuse;
 				material.TextureFileName = _cdcModel.GetTextureName(materialIndex, options);

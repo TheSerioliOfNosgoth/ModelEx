@@ -209,23 +209,32 @@ namespace CDC
 			}
 
 			reader.BaseStream.Position = _dataStart + reader.ReadUInt32();
-			portalCount = reader.ReadUInt32();
-			_portals = new Portal[portalCount];
-			for (int i = 0; i < portalCount; i++)
+			_portalCount = reader.ReadUInt32();
+			if (_version == PROTO_19981025_VERSION)
+			{
+				_portalCount = 0;
+			}
+			_portals = new Portal[_portalCount];
+			for (int i = 0; i < _portalCount; i++)
 			{
 				Portal portal = new Portal();
+
 				portal.toLevelName = new String(reader.ReadChars(16));
 				portal.toLevelName = Utility.CleanName(portal.toLevelName);
+				portal.mSigmalID = reader.ReadInt32();
+				reader.BaseStream.Position += 0x04;
+				portal.min.x = reader.ReadInt16();
+				portal.min.y = reader.ReadInt16();
+				portal.min.z = reader.ReadInt16();
+				reader.BaseStream.Position += 0x02;
+				portal.max.x = reader.ReadInt16();
+				portal.max.y = reader.ReadInt16();
+				portal.max.z = reader.ReadInt16();
+				reader.BaseStream.Position += 0x02;
+
 				_portals[i] = portal;
 
-				if (_version == PROTO_19981025_VERSION)
-				{
-					reader.BaseStream.Position += 0x4C;
-				}
-				else
-				{
-					reader.BaseStream.Position += 0x50;
-				}
+				reader.BaseStream.Position += 0x34;
 			}
 
 			// Intros
@@ -338,6 +347,7 @@ namespace CDC
 			{
 				reader.BaseStream.Position = _dataStart + 0x8C;
 			}
+
 			_objectNameStart = _dataStart + reader.ReadUInt32();
 			reader.BaseStream.Position = _objectNameStart;
 			List<String> objectNames = new List<String>();
@@ -375,6 +385,7 @@ namespace CDC
 			{
 				reader.BaseStream.Position = _dataStart + 0x98;
 			}
+
 			reader.BaseStream.Position = _dataStart + reader.ReadUInt32();
 			String strModelName = new String(reader.ReadChars(8));
 			_name = Utility.CleanName(strModelName);
@@ -411,22 +422,8 @@ namespace CDC
 				}
 			}
 
-			// Connected unit list. (unreferenced?)
-			//reader.BaseStream.Position = _dataStart + 0xC0;
-			//m_uConnectedUnitsStart = _dataStart + reader.ReadUInt32() + 0x08;
-			//reader.BaseStream.Position = m_uConnectedUnitsStart;
-			//reader.BaseStream.Position += 0x18;
-			//String strUnitName0 = new String(reader.ReadChars(16));
-			//strUnitName0 = strUnitName0.Substring(0, strUnitName0.IndexOf(','));
-			//reader.BaseStream.Position += 0x18;
-			//String strUnitName1 = new String(reader.ReadChars(16));
-			//strUnitName1 = strUnitName1.Substring(0, strUnitName1.IndexOf(','));
-			//reader.BaseStream.Position += 0x18;
-			//String strUnitName2 = new String(reader.ReadChars(16));
-			//strUnitName2 = strUnitName2.Substring(0, strUnitName2.IndexOf(','));
-
 			reader.BaseStream.Position = _dataStart;
-			_modelCount = 1;
+			_modelCount = (ushort)(1 + _portalCount);
 			_modelStart = _dataStart;
 			_models = new IModel[_modelCount];
 			reader.BaseStream.Position = _modelStart;
@@ -436,8 +433,12 @@ namespace CDC
 			terrain.ReadData(reader, options);
 			_models[0] = terrain;
 
-			//BoundingBox portalBB = new BoundingBox("portal", _platform, new Vector(), new Vector());
-			//_models[1] = portalBB;
+			int modelIndex = 1;
+			foreach (Portal portal in _portals)
+			{
+				BoundingBox portalBB = new BoundingBox(this, "portal-" + _name + "," + portal.mSigmalID + "-" + portal.toLevelName, _platform, portal.min, portal.max);
+				_models[modelIndex++] = portalBB;
+			}
 
 			//if (m_axModels[0].Platform == Platform.Dreamcast ||
 			//    m_axModels[1].Platform == Platform.Dreamcast)

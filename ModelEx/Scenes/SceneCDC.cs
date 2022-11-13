@@ -47,11 +47,19 @@ namespace ModelEx
 			}
 			else
 			{
-				RenderInstance terrainInstance = new RenderInstance(dataFile.Name, 0, new SlimDX.Vector3(), new SlimDX.Quaternion(), new SlimDX.Vector3(1.0f, 1.0f, 1.0f));
-				terrainInstance.Name = dataFile.Models[0].Name;
-				lock (_renderInstances)
+				for (int m = 0; m < dataFile.ModelCount; m++)
 				{
-					_renderInstances.Add(terrainInstance);
+					RenderInstance modelInstance = new RenderInstance(dataFile.Name, m, new SlimDX.Vector3(), new SlimDX.Quaternion(), new SlimDX.Vector3(1.0f, 1.0f, 1.0f));
+					modelInstance.Name = dataFile.Models[m].Name;
+					lock (_renderInstances)
+					{
+						_renderInstances.Add(modelInstance);
+					}
+
+					if (!includeObjects)
+					{
+						break;
+					}
 				}
 
 				if (includeObjects && dataFile.IntroCount > 0)
@@ -142,6 +150,11 @@ namespace ModelEx
 				lock (_renderInstances)
 				{
 					_renderInstances.Add(instance);
+				}
+
+				if (dataFile.Asset == CDC.Asset.Unit)
+				{
+					break;
 				}
 			}
 		}
