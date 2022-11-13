@@ -73,6 +73,7 @@
     <Compile Include="Files\SR2File.cs" />
     <Compile Include="Files\DataFile.cs" />
     <Compile Include="Files\TRLFile.cs" />
+    <Compile Include="Models\BoundingBox.cs" />
     <Compile Include="Models\GexModel.cs" />
     <Compile Include="Models\GexObjectModel.cs" />
     <Compile Include="Models\GexUnitModel.cs" />

@@ -427,13 +427,16 @@ namespace CDC
 			reader.BaseStream.Position = _dataStart;
 			_modelCount = 1;
 			_modelStart = _dataStart;
-			_models = new SR1Model[_modelCount];
+			_models = new IModel[_modelCount];
 			reader.BaseStream.Position = _modelStart;
 			uint modelData = _dataStart + reader.ReadUInt32();
 
-			SR1UnitModel model = new SR1UnitModel(reader, _dataStart, modelData, _name, _platform, _version, _tPages);
-			model.ReadData(reader, options);
-			_models[0] = model;
+			SR1UnitModel terrain = new SR1UnitModel(reader, _dataStart, modelData, _name, _platform, _version, _tPages);
+			terrain.ReadData(reader, options);
+			_models[0] = terrain;
+
+			//BoundingBox portalBB = new BoundingBox("portal", _platform, new Vector(), new Vector());
+			//_models[1] = portalBB;
 
 			//if (m_axModels[0].Platform == Platform.Dreamcast ||
 			//    m_axModels[1].Platform == Platform.Dreamcast)
