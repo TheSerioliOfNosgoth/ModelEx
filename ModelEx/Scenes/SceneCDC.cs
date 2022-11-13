@@ -33,86 +33,98 @@ namespace ModelEx
 		{
 			Name = dataFile.Name;
 
-			for (int m = 0; m < dataFile.ModelCount; m++)
+			if (dataFile.Asset == CDC.Asset.Object)
 			{
-				RenderInstance instance = new RenderInstance(dataFile.Name, m, new SlimDX.Vector3(), new SlimDX.Quaternion(), new SlimDX.Vector3(1.0f, 1.0f, 1.0f));
-				instance.Name = dataFile.Models[m].Name + "-" + m.ToString();
-				lock (_renderInstances)
+				for (int m = 0; m < dataFile.ModelCount; m++)
 				{
-					_renderInstances.Add(instance);
+					RenderInstance modelInstance = new RenderInstance(dataFile.Name, m, new SlimDX.Vector3(), new SlimDX.Quaternion(), new SlimDX.Vector3(1.0f, 1.0f, 1.0f));
+					modelInstance.Name = dataFile.Models[m].Name;
+					lock (_renderInstances)
+					{
+						_renderInstances.Add(modelInstance);
+					}
 				}
 			}
-
-			if (includeObjects && dataFile.Asset == CDC.Asset.Unit && dataFile.IntroCount > 0)
+			else
 			{
-				bool foundUprightSword = false;
-				SlimDX.Vector3 saveSwdPos = new SlimDX.Vector3();
-				foreach (CDC.Intro intro in dataFile.Intros)
+				RenderInstance terrainInstance = new RenderInstance(dataFile.Name, 0, new SlimDX.Vector3(), new SlimDX.Quaternion(), new SlimDX.Vector3(1.0f, 1.0f, 1.0f));
+				terrainInstance.Name = dataFile.Models[0].Name;
+				lock (_renderInstances)
 				{
-					if (intro.fileName == "saveswd" && Math.Abs(intro.rotation.x) < 3.0f)
+					_renderInstances.Add(terrainInstance);
+				}
+
+				if (includeObjects && dataFile.IntroCount > 0)
+				{
+					bool foundUprightSword = false;
+					SlimDX.Vector3 saveSwdPos = new SlimDX.Vector3();
+					foreach (CDC.Intro intro in dataFile.Intros)
 					{
-						saveSwdPos = new SlimDX.Vector3(
+						if (intro.fileName == "saveswd" && Math.Abs(intro.rotation.x) < 3.0f)
+						{
+							saveSwdPos = new SlimDX.Vector3(
+								0.01f * intro.position.x,
+								0.01f * intro.position.z,
+								0.01f * intro.position.y
+							);
+
+							foundUprightSword = true;
+							break;
+						}
+					}
+
+					foreach (CDC.Intro intro in dataFile.Intros)
+					{
+						SlimDX.Vector3 position = new SlimDX.Vector3(
 							0.01f * intro.position.x,
 							0.01f * intro.position.z,
 							0.01f * intro.position.y
 						);
 
-						foundUprightSword = true;
-						break;
-					}
-				}
+						SlimDX.Vector3 scale = new SlimDX.Vector3(1.0f, 1.0f, 1.0f);
 
-				foreach (CDC.Intro intro in dataFile.Intros)
-				{
-					SlimDX.Vector3 position = new SlimDX.Vector3(
-						0.01f * intro.position.x,
-						0.01f * intro.position.z,
-						0.01f * intro.position.y
-					);
-
-					SlimDX.Vector3 scale = new SlimDX.Vector3(1.0f, 1.0f, 1.0f);
-
-					SlimDX.Quaternion rotation;
-					if (dataFile.Game == CDC.Game.Gex || dataFile.Game == CDC.Game.SR1)
-					{
-						rotation = SlimDX.Quaternion.RotationYawPitchRoll(
-							-intro.rotation.z, // Yaw - Easy to spot from direction of raziel, enemies, flagall.
-							-intro.rotation.y, // Pitch - Can be seen from the angle of hndtrch in huba6.
-							-intro.rotation.x // Roll - Can be seen from the angle of stdorac in oracle3.
-						);
-					}
-					else
-					{
-						SlimDX.Matrix.RotationX(-intro.rotation.x, out SlimDX.Matrix rotationMatrixX);
-						SlimDX.Matrix.RotationY(-intro.rotation.z, out SlimDX.Matrix rotationMatrixY);
-						SlimDX.Matrix.RotationZ(-intro.rotation.y, out SlimDX.Matrix rotationMatrixZ);
-						SlimDX.Matrix rotationMatrix = rotationMatrixZ * rotationMatrixY * rotationMatrixX;
-						SlimDX.Quaternion.RotationMatrix(ref rotationMatrix, out rotation);
-
-						/*rotation = SlimDX.Quaternion.RotationYawPitchRoll(
-							-intro.rotation.z,
-							-intro.rotation.y,
-							-intro.rotation.x
-						);*/
-					}
-
-					if (intro.fileName == "saveswd" && Math.Abs(intro.rotation.x) >= 3.0f)
-					{
-						if (foundUprightSword)
+						SlimDX.Quaternion rotation;
+						if (dataFile.Game == CDC.Game.Gex || dataFile.Game == CDC.Game.SR1)
 						{
-							position.X = saveSwdPos.X;
-							position.Z = saveSwdPos.Z;
+							rotation = SlimDX.Quaternion.RotationYawPitchRoll(
+								-intro.rotation.z, // Yaw - Easy to spot from direction of raziel, enemies, flagall.
+								-intro.rotation.y, // Pitch - Can be seen from the angle of hndtrch in huba6.
+								-intro.rotation.x // Roll - Can be seen from the angle of stdorac in oracle3.
+							);
+						}
+						else
+						{
+							SlimDX.Matrix.RotationX(-intro.rotation.x, out SlimDX.Matrix rotationMatrixX);
+							SlimDX.Matrix.RotationY(-intro.rotation.z, out SlimDX.Matrix rotationMatrixY);
+							SlimDX.Matrix.RotationZ(-intro.rotation.y, out SlimDX.Matrix rotationMatrixZ);
+							SlimDX.Matrix rotationMatrix = rotationMatrixZ * rotationMatrixY * rotationMatrixX;
+							SlimDX.Quaternion.RotationMatrix(ref rotationMatrix, out rotation);
+
+							/*rotation = SlimDX.Quaternion.RotationYawPitchRoll(
+								-intro.rotation.z,
+								-intro.rotation.y,
+								-intro.rotation.x
+							);*/
 						}
 
-						scale.Z = -1.0f;
-					}
+						if (intro.fileName == "saveswd" && Math.Abs(intro.rotation.x) >= 3.0f)
+						{
+							if (foundUprightSword)
+							{
+								position.X = saveSwdPos.X;
+								position.Z = saveSwdPos.Z;
+							}
 
-					RenderInstance instance = new RenderInstance(intro.fileName, intro.modelIndex, position, rotation, scale);
-					instance.Name = intro.name;
+							scale.Z = -1.0f;
+						}
 
-					lock (_renderInstances)
-					{
-						_renderInstances.Add(instance);
+						RenderInstance introInstance = new RenderInstance(intro.fileName, intro.modelIndex, position, rotation, scale);
+						introInstance.Name = intro.name;
+
+						lock (_renderInstances)
+						{
+							_renderInstances.Add(introInstance);
+						}
 					}
 				}
 			}

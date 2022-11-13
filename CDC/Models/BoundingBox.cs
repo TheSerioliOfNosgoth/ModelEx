@@ -8,7 +8,8 @@ namespace CDC
 {
 	class BoundingBox : IModel
 	{
-		protected String _name;
+		protected DataFile _dataFile;
+		protected string _name;
 		protected string _modelTypePrefix;
 		protected Platform _platform;
 		protected Geometry _geometry;
@@ -28,9 +29,10 @@ namespace CDC
 		public Material[] Materials { get { return _materials; } }
 		public Platform Platform { get { return _platform; } }
 
-		public BoundingBox(string strModelName, Platform platform, Vector min, Vector max)
+		public BoundingBox(DataFile dataFile, string modelName, Platform platform, Vector min, Vector max)
 		{
-			_name = strModelName;
+			_dataFile = dataFile;
+			_name = modelName;
 			_modelTypePrefix = "bb_";
 			_platform  = platform;
 			_geometry = new Geometry();
@@ -116,6 +118,7 @@ namespace CDC
 				tree.mesh.vertices[(3 * poly) + 2] = _polygons[poly].v3;
 			}
 
+			_bones = new Bone[0];
 			_materials = new Material[1] { material };
 			_trees = new Tree[1] { tree };
 		}

@@ -27,7 +27,7 @@ namespace ModelEx
 		public void BuildModel(RenderResource resource, int modelIndex, CDC.ExportOptions options)
 		{
 			_cdcModel = _dataFile.Models[modelIndex];
-			String modelName = _objectName + "-" + modelIndex.ToString();
+			string modelName = _cdcModel.Name;
 
 			#region Materials
 
@@ -53,7 +53,7 @@ namespace ModelEx
 			for (int groupIndex = 0; groupIndex < _cdcModel.Groups.Length; groupIndex++)
 			{
 				Tree srGroup = _cdcModel.Groups[groupIndex];
-				String groupName = String.Format("{0}-{1}-group-{2}", _objectName, modelIndex, groupIndex);
+				string groupName = modelName + "-group-" + groupIndex.ToString();
 				if (srGroup != null && srGroup.mesh != null &&
 					srGroup.mesh.indexCount > 0 && srGroup.mesh.polygonCount > 0)
 				{

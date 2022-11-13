@@ -264,7 +264,8 @@ namespace CDC
 		};
 		#endregion
 
-		protected String _name;
+		protected DataFile _dataFile;
+		protected string _name;
 		protected string _modelTypePrefix;
 		protected uint _version;
 		protected Platform _platform;
@@ -310,9 +311,10 @@ namespace CDC
 			public UInt32 next;
 		}
 
-		protected SR2Model(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
+		protected SR2Model(BinaryReader reader, DataFile dataFile, UInt32 dataStart, UInt32 modelData, String modelName, Platform ePlatform, UInt32 version)
 		{
-			_name = strModelName;
+			_dataFile = dataFile;
+			_name = modelName;
 			_modelTypePrefix = "";
 			_platform = ePlatform;
 			_version = version;
@@ -431,7 +433,7 @@ namespace CDC
 				Material material = _materials[materialIndex];
 				if (material.textureUsed)
 				{
-					textureName = Utility.GetPS2TextureName(Name, material.textureID);
+					textureName = Utility.GetPS2TextureName(_dataFile.Name, material.textureID);
 				}
 			}
 

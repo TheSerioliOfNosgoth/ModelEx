@@ -82,14 +82,15 @@ namespace CDC
 			_modelStart = _dataStart + reader.ReadUInt32();
 			_animStart = 0; //_dataStart + reader.ReadUInt32();
 
-			_models = new TRLModel[_modelCount];
+			_models = new IModel[_modelCount];
 			for (UInt16 m = 0; m < _modelCount; m++)
 			{
 				reader.BaseStream.Position = _modelStart + (m * 4);
 				uint modelData = _dataStart + reader.ReadUInt32();
 				reader.BaseStream.Position = modelData;
 
-				TRLObjectModel model = new TRLObjectModel(reader, _dataStart, modelData, _name, _platform, _version);
+				string modelName = _name + "-" + m.ToString();
+				TRLObjectModel model = new TRLObjectModel(reader, this, _dataStart, modelData, modelName, _platform, _version);
 				model.ReadData(reader, options);
 				_models[m] = model;
 			}
@@ -173,15 +174,14 @@ namespace CDC
 			}
 			//}
 
-			// Model data
 			_modelCount = 1;
-			_models = new TRLModel[_modelCount];
+			_models = new IModel[_modelCount];
 			reader.BaseStream.Position = _dataStart;
-			UInt32 m_uModelData = _dataStart + reader.ReadUInt32();
+			uint modelData = _dataStart + reader.ReadUInt32();
 
-			// Material data
-			Console.WriteLine("Debug: reading area model 0");
-			_models[0] = TRLUnitModel.Load(reader, _dataStart, m_uModelData, _name, _platform, _version, options);
+			TRLUnitModel model = new TRLUnitModel(reader, this, _dataStart, modelData, _name, _platform, _version);
+			model.ReadData(reader, options);
+			_models[0] = model;
 
 			//if (m_axModels[0].Platform == Platform.Dreamcast ||
 			//    m_axModels[1].Platform == Platform.Dreamcast)

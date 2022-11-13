@@ -13,8 +13,8 @@ namespace CDC
 		protected UInt32 _vertexColourStart;
 		protected UInt32 _polygonEnd;
 
-		public GexUnitModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, TPages tPages)
-			: base(reader, dataStart, modelData, strModelName, ePlatform, version, tPages)
+		public GexUnitModel(BinaryReader reader, DataFile dataFile, UInt32 dataStart, UInt32 modelData, String modelName, Platform ePlatform, UInt32 version, TPages tPages)
+			: base(reader, dataFile, dataStart, modelData, modelName, ePlatform, version, tPages)
 		{
 			reader.BaseStream.Position = _modelData;
 

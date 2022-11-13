@@ -69,7 +69,7 @@ namespace CDC
 			_modelStart = _dataStart + reader.ReadUInt32();
 			_animStart = _dataStart + reader.ReadUInt32();
 
-			_models = new SR1Model[_modelCount];
+			_models = new IModel[_modelCount];
 			Platform ePlatform = _platform;
 
 			for (UInt16 m = 0; m < _modelCount; m++)
@@ -85,7 +85,8 @@ namespace CDC
 				uint modelData = _dataStart + reader.ReadUInt32();
 				reader.BaseStream.Position = _modelStart;
 
-				SR1ObjectModel model = new SR1ObjectModel(reader, _dataStart, modelData, _name, _platform, _version, _tPages);
+				string modelName = _name + "-" + m.ToString();
+				SR1ObjectModel model = new SR1ObjectModel(reader, this, _dataStart, modelData, modelName, _platform, _version, _tPages);
 				model.ReadData(reader, options);
 				_models[m] = model;
 
@@ -431,7 +432,7 @@ namespace CDC
 			reader.BaseStream.Position = _modelStart;
 			uint modelData = _dataStart + reader.ReadUInt32();
 
-			SR1UnitModel terrain = new SR1UnitModel(reader, _dataStart, modelData, _name, _platform, _version, _tPages);
+			SR1UnitModel terrain = new SR1UnitModel(reader, this, _dataStart, modelData, _name, _platform, _version, _tPages);
 			terrain.ReadData(reader, options);
 			_models[0] = terrain;
 

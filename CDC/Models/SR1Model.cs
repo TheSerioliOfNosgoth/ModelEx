@@ -258,7 +258,8 @@ namespace CDC
 		};
 		#endregion
 
-		protected String _name;
+		protected DataFile _dataFile;
+		protected string _name;
 		protected string _modelTypePrefix;
 		protected uint _version;
 		protected Platform _platform;
@@ -297,9 +298,10 @@ namespace CDC
 		public override Material[] Materials { get { return _materials; } }
 		public override Platform Platform { get { return _platform; } }
 
-		protected SR1Model(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version, TPages tPages)
+		protected SR1Model(BinaryReader reader, DataFile dataFile, UInt32 dataStart, UInt32 modelData, String modelName, Platform ePlatform, UInt32 version, TPages tPages)
 		{
-			_name = strModelName;
+			_dataFile = dataFile;
+			_name = modelName;
 			_modelTypePrefix = "";
 			_platform = ePlatform;
 			_version = version;
@@ -656,16 +658,16 @@ namespace CDC
 					{
 						if (options.UseEachUniqueTextureCLUTVariation)
 						{
-							textureName = Utility.GetPlayStationTextureNameWithCLUT(Name, material.textureID, material.clutValue);
+							textureName = Utility.GetPlayStationTextureNameWithCLUT(_dataFile.Name, material.textureID, material.clutValue);
 						}
 						else
 						{
-							textureName = Utility.GetPlayStationTextureNameDefault(Name, material.textureID);
+							textureName = Utility.GetPlayStationTextureNameDefault(_dataFile.Name, material.textureID);
 						}
 					}
 					else
 					{
-						textureName = Utility.GetSoulReaverPCOrDreamcastTextureName(Name, material.textureID);
+						textureName = Utility.GetSoulReaverPCOrDreamcastTextureName(_dataFile.Name, material.textureID);
 					}
 				}
 			}

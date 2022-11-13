@@ -8,8 +8,8 @@ namespace CDC
 	{
 		protected UInt32 m_uColourStart;
 
-		public SR2ObjectModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
-			: base(reader, dataStart, modelData, strModelName, ePlatform, version)
+		public SR2ObjectModel(BinaryReader reader, DataFile dataFile, UInt32 dataStart, UInt32 modelData, String modelName, Platform ePlatform, UInt32 version)
+			: base(reader, dataFile, dataStart, modelData, modelName, ePlatform, version)
 		{
 			reader.BaseStream.Position = _modelData + 0x04;
 			UInt32 uBoneCount1 = reader.ReadUInt32();

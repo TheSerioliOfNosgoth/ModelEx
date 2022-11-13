@@ -55,14 +55,15 @@ namespace CDC
 			_modelStart = _dataStart + reader.ReadUInt32();
 			_animStart = 0; //_dataStart + reader.ReadUInt32();
 
-			_models = new DefianceModel[_modelCount];
+			_models = new IModel[_modelCount];
 			for (UInt16 m = 0; m < _modelCount; m++)
 			{
 				reader.BaseStream.Position = _modelStart + (m * 4);
 				uint modelData = _dataStart + reader.ReadUInt32();
 				reader.BaseStream.Position = modelData;
 
-				DefianceObjectModel model = new DefianceObjectModel(reader, _dataStart, modelData, _name, _platform, _version);
+				string modelName = _name + "-" + m.ToString();
+				DefianceObjectModel model = new DefianceObjectModel(reader, this, _dataStart, modelData, modelName, _platform, _version);
 				model.ReadData(reader, options);
 				_models[m] = model;
 			}
@@ -152,11 +153,11 @@ namespace CDC
 			reader.BaseStream.Position = _dataStart + 0x10;
 			_modelCount = 1;
 			_modelStart = _dataStart + 0x10;
-			_models = new DefianceModel[_modelCount];
+			_models = new IModel[_modelCount];
 			reader.BaseStream.Position = _modelStart;
 			uint modelData = _dataStart + reader.ReadUInt32();
 
-			DefianceUnitModel model = new DefianceUnitModel(reader, _dataStart, modelData, _name, _platform, _version);
+			DefianceUnitModel model = new DefianceUnitModel(reader, this, _dataStart, modelData, _name, _platform, _version);
 			model.ReadData(reader, options);
 			_models[0] = model;
 

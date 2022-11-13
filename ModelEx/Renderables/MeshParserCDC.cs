@@ -27,9 +27,9 @@ namespace ModelEx
 		{
 			_cdcModel = _dataFile.Models[modelIndex];
 			_cdcGroup = _cdcModel.Groups[groupIndex];
-			String modelName = String.Format("{0}-{1}", _objectName, modelIndex);
-			String groupName = String.Format("{0}-{1}-group-{2}", _objectName, modelIndex, groupIndex);
-			String meshName = String.Format("{0}-{1}-group-{2}-mesh-{3}", _objectName, modelIndex, groupIndex, meshIndex);
+			string modelName = _cdcModel.Name;
+			string groupName = modelName + "-group-" + groupIndex.ToString();
+			string meshName = groupName + "-mesh-" + meshIndex.ToString();
 
 			int startIndexLocation = 0;
 			for (int materialIndex = 0; materialIndex < _cdcModel.Materials.Length; materialIndex++)
@@ -48,7 +48,7 @@ namespace ModelEx
 
 				if (indexCount > 0)
 				{
-					String subMeshName = String.Format("{0}-{1}-group-{2}-submesh-{3}", _objectName, modelIndex, groupIndex, materialIndex);
+					string subMeshName = meshName + "-subMesh-" + materialIndex.ToString();
 					SubMesh subMesh = new SubMesh
 					{
 						Name = subMeshName,

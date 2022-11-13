@@ -6,13 +6,13 @@ namespace CDC
 {
 	public class SR2UnitModel : SR2Model
 	{
-		protected UInt32 m_uOctTreeCount;
-		protected UInt32 m_uOctTreeStart;
+		protected UInt32 _octTreeCount;
+		protected UInt32 _octTreeStart;
 		protected UInt32 m_uSpectralVertexStart;
 		protected UInt32 m_uSpectralColourStart;
 
-		public SR2UnitModel(BinaryReader reader, UInt32 dataStart, UInt32 modelData, String strModelName, Platform ePlatform, UInt32 version)
-			: base(reader, dataStart, modelData, strModelName, ePlatform, version)
+		public SR2UnitModel(BinaryReader reader, DataFile dataFile, UInt32 dataStart, UInt32 modelData, String modelName, Platform ePlatform, UInt32 version)
+			: base(reader, dataFile, dataStart, modelData, modelName, ePlatform, version)
 		{
 			reader.BaseStream.Position = _modelData + 0x0C;
 			_vertexCount = reader.ReadUInt32();
@@ -26,9 +26,9 @@ namespace CDC
 			m_uSpectralColourStart = _dataStart + reader.ReadUInt32();
 			_materialStart = 0;
 			_materialCount = 0;
-			m_uOctTreeCount = reader.ReadUInt32();
-			m_uOctTreeStart = _dataStart + reader.ReadUInt32();
-			_groupCount = m_uOctTreeCount;
+			_octTreeCount = reader.ReadUInt32();
+			_octTreeStart = _dataStart + reader.ReadUInt32();
+			_groupCount = _octTreeCount;
 
 			_trees = new Tree[_groupCount];
 		}
@@ -132,9 +132,9 @@ namespace CDC
 			List<int> xMeshPositions = new List<int>();
 			List<TreePolygon> treePolygons = new List<TreePolygon>((Int32)_vertexCount * 3);
 
-			for (UInt32 t = 0; t < m_uOctTreeCount; t++)
+			for (UInt32 t = 0; t < _octTreeCount; t++)
 			{
-				reader.BaseStream.Position = m_uOctTreeStart + (t * 0x60);
+				reader.BaseStream.Position = _octTreeStart + (t * 0x60);
 
 				reader.BaseStream.Position += 0x2C;
 				bool drawTester = ((reader.ReadUInt32() & 1) != 1);
