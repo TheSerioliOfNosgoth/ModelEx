@@ -349,9 +349,9 @@ namespace CDC
 			_polygons = new Polygon[_polygonCount];
 			ReadPolygons(reader, options);
 
-			for (UInt16 p = 0; p < _polygonCount; p++)
+			for (uint p = 0; p < _polygonCount; p++)
 			{
-				HandleDebugRendering(p, options);
+				HandleDebugRendering((int)p, options);
 			}
 
 			// Generate the output
@@ -404,7 +404,7 @@ namespace CDC
 		{
 			// Make the vertices unique
 			_geometry.Vertices = new Vertex[_indexCount];
-			for (UInt32 p = 0; p < _polygonCount; p++)
+			for (uint p = 0; p < _polygonCount; p++)
 			{
 				_geometry.Vertices[(3 * p) + 0] = _polygons[p].v1;
 				_geometry.Vertices[(3 * p) + 1] = _polygons[p].v2;

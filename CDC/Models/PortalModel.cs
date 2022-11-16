@@ -171,7 +171,7 @@ namespace CDC
 				quad[0],
 				quad[1],
 				quad[2],
-				quad[1],
+				quad[0],
 				quad[2],
 				quad[3],
 			};
