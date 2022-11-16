@@ -210,10 +210,6 @@ namespace CDC
 
 			reader.BaseStream.Position = _dataStart + reader.ReadUInt32();
 			_portalCount = reader.ReadUInt32();
-			if (_version == PROTO_19981025_VERSION)
-			{
-				_portalCount = 0;
-			}
 			_portals = new Portal[_portalCount];
 			for (int i = 0; i < _portalCount; i++)
 			{
@@ -222,19 +218,88 @@ namespace CDC
 				portal.toLevelName = new String(reader.ReadChars(16));
 				portal.toLevelName = Utility.CleanName(portal.toLevelName);
 				portal.mSigmalID = reader.ReadInt32();
-				reader.BaseStream.Position += 0x04;
+
+				if (_version != PROTO_19981025_VERSION)
+				{
+					reader.BaseStream.Position += 0x04; // streamID
+				}
+
 				portal.min.x = reader.ReadInt16();
 				portal.min.y = reader.ReadInt16();
 				portal.min.z = reader.ReadInt16();
-				reader.BaseStream.Position += 0x02;
+				reader.BaseStream.Position += 0x02; // flags
 				portal.max.x = reader.ReadInt16();
 				portal.max.y = reader.ReadInt16();
 				portal.max.z = reader.ReadInt16();
+				reader.BaseStream.Position += 0x02; // pad2
+				reader.BaseStream.Position += 0x04; // toStreamUnit
+
+				#region t1
+
+				Vector t10 = new Vector
+				{
+					x = reader.ReadInt16(),
+					y = reader.ReadInt16(),
+					z = reader.ReadInt16(),
+				};
+
 				reader.BaseStream.Position += 0x02;
 
-				_portals[i] = portal;
+				Vector t11 = new Vector
+				{
+					x = reader.ReadInt16(),
+					y = reader.ReadInt16(),
+					z = reader.ReadInt16(),
+				};
 
-				reader.BaseStream.Position += 0x34;
+				reader.BaseStream.Position += 0x02;
+
+				Vector t12 = new Vector
+				{
+					x = reader.ReadInt16(),
+					y = reader.ReadInt16(),
+					z = reader.ReadInt16(),
+				};
+
+				reader.BaseStream.Position += 0x02;
+
+				#endregion
+
+				#region t2
+
+				Vector t20 = new Vector
+				{
+					x = reader.ReadInt16(),
+					y = reader.ReadInt16(),
+					z = reader.ReadInt16(),
+				};
+
+				reader.BaseStream.Position += 0x02;
+
+				Vector t21 = new Vector
+				{
+					x = reader.ReadInt16(),
+					y = reader.ReadInt16(),
+					z = reader.ReadInt16(),
+				};
+
+				reader.BaseStream.Position += 0x02;
+
+				Vector t22 = new Vector
+				{
+					x = reader.ReadInt16(),
+					y = reader.ReadInt16(),
+					z = reader.ReadInt16(),
+				};
+
+				reader.BaseStream.Position += 0x02;
+
+				#endregion
+
+				portal.t1 = new Vector[3] { t10, t11, t12 };
+				portal.t2 = new Vector[3] { t20, t21, t22 };
+
+				_portals[i] = portal;
 			}
 
 			// Intros
@@ -436,8 +501,16 @@ namespace CDC
 			int modelIndex = 1;
 			foreach (Portal portal in _portals)
 			{
-				BoundingBox portalBB = new BoundingBox(this, "portal-" + _name + "," + portal.mSigmalID + "-" + portal.toLevelName, _platform, portal.min, portal.max);
-				_models[modelIndex++] = portalBB;
+				PortalModel portalModel = new PortalModel(
+					this,
+					"portal-" + _name + "," + portal.mSigmalID + "-" + portal.toLevelName,
+					_platform,
+					portal.min,
+					portal.max,
+					portal.t1,
+					portal.t2
+				);
+				_models[modelIndex++] = portalModel;
 			}
 
 			//if (m_axModels[0].Platform == Platform.Dreamcast ||

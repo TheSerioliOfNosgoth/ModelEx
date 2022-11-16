@@ -147,6 +147,9 @@ namespace CDC
 		public int mSigmalID;
 		public Vector min;
 		public Vector max;
+		public Vector[] t1;
+		public Vector[] t2;
+		public Vector[] quad;
 	}
 
 	public struct MonsterAttributes

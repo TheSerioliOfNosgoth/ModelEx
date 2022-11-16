@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CDC
 {
-	class BoundingBox : IModel
+	class BoundingBoxModel : IModel
 	{
 		protected DataFile _dataFile;
 		protected string _name;
@@ -29,7 +29,7 @@ namespace CDC
 		public Material[] Materials { get { return _materials; } }
 		public Platform Platform { get { return _platform; } }
 
-		public BoundingBox(DataFile dataFile, string modelName, Platform platform, Vector min, Vector max)
+		public BoundingBoxModel(DataFile dataFile, string modelName, Platform platform, Vector min, Vector max)
 		{
 			_dataFile = dataFile;
 			_name = modelName;
