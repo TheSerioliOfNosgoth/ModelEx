@@ -215,7 +215,7 @@ namespace CDC
 
 				portal.toLevelName = new String(reader.ReadChars(16));
 				portal.toLevelName = Utility.CleanName(portal.toLevelName);
-				portal.mSigmalID = reader.ReadInt32();
+				portal.mSignalID = reader.ReadInt32();
 
 				if (_version != PROTO_19981025_VERSION)
 				{
@@ -501,7 +501,7 @@ namespace CDC
 			{
 				PortalModel portalModel = new PortalModel(
 					this,
-					"portal-" + _name + "," + portal.mSigmalID + "-" + portal.toLevelName,
+					"portal-" + _name + "," + portal.mSignalID + "-" + portal.toLevelName,
 					_platform,
 					portal.min,
 					portal.max,

@@ -144,7 +144,7 @@ namespace CDC
 	public struct Portal
 	{
 		public string toLevelName;
-		public int mSigmalID;
+		public int mSignalID;
 		public Vector min;
 		public Vector max;
 		public Vector[] t1;

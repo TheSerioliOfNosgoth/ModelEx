@@ -101,9 +101,9 @@ namespace CDC
 			// Portals
 			reader.BaseStream.Position = _dataStart;
 			UInt32 m_uConnectionData = _dataStart + reader.ReadUInt32(); // Same as _modelData?
-			reader.BaseStream.Position = m_uConnectionData + 0x10;
+			reader.BaseStream.Position = m_uConnectionData + 0x0C;
 			_portalCount = reader.ReadUInt32();
-			_portalCount = 0; // Remove to re-enable.
+			//_portalCount = 0; // Remove to re-enable.
 			reader.BaseStream.Position = _dataStart + reader.ReadUInt32();
 			_portals = new Portal[_portalCount];
 			for (int i = 0; i < _portalCount; i++)
@@ -111,9 +111,10 @@ namespace CDC
 				Portal portal = new Portal();
 				portal.toLevelName = new String(reader.ReadChars(30));
 				portal.toLevelName = Utility.CleanName(portal.toLevelName);
-				reader.BaseStream.Position += 0x04; // toSignalID
-				portal.mSigmalID = reader.ReadInt32();
-				reader.BaseStream.Position += 0x04; // streamID
+				short toSignalID = reader.ReadInt16();
+				portal.toLevelName += "," + toSignalID;
+				portal.mSignalID = reader.ReadInt16();
+				reader.BaseStream.Position += 0x02; // streamID
 				reader.BaseStream.Position += 0x04; // closeVertList
 				reader.BaseStream.Position += 0x04; // activeDist
 				reader.BaseStream.Position += 0x04; // toStreamUnit
@@ -166,7 +167,7 @@ namespace CDC
 
 				reader.BaseStream.Position += 0x10; // normal
 
-				// reader.BaseStream.Position += 0x90;
+				_portals[i] = portal;
 			}
 
 			// Intros
@@ -246,7 +247,7 @@ namespace CDC
 			{
 				PortalModel portalModel = new PortalModel(
 					this,
-					"portal-" + _name + "," + portal.mSigmalID + "-" + portal.toLevelName,
+					"portal-" + _name + "," + portal.mSignalID + "-" + portal.toLevelName,
 					_platform,
 					portal.min,
 					portal.max,
