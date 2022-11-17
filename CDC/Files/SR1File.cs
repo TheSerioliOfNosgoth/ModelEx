@@ -485,9 +485,8 @@ namespace CDC
 				}
 			}
 
-			reader.BaseStream.Position = _dataStart;
-			_modelCount = (ushort)(1 + _portalCount);
 			_modelStart = _dataStart;
+			_modelCount = (ushort)(1 + _portalCount);
 			_models = new IModel[_modelCount];
 			reader.BaseStream.Position = _modelStart;
 			uint modelData = _dataStart + reader.ReadUInt32();

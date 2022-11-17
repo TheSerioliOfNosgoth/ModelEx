@@ -71,8 +71,6 @@ namespace CDC
 
 		protected override void ReadUnitData(BinaryReader reader, ExportOptions options)
 		{
-			// Adjacent units are seperate from portals.
-			// There can be multiple portals to the same unit.
 			// Portals
 			reader.BaseStream.Position = _dataStart + 0x10;
 			UInt32 m_uConnectionData = _dataStart + reader.ReadUInt32(); // Same as m_uModelData?

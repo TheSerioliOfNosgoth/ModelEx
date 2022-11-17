@@ -103,7 +103,6 @@ namespace CDC
 			UInt32 m_uConnectionData = _dataStart + reader.ReadUInt32(); // Same as _modelData?
 			reader.BaseStream.Position = m_uConnectionData + 0x0C;
 			_portalCount = reader.ReadUInt32();
-			//_portalCount = 0; // Remove to re-enable.
 			reader.BaseStream.Position = _dataStart + reader.ReadUInt32();
 			_portals = new Portal[_portalCount];
 			for (int i = 0; i < _portalCount; i++)
@@ -231,9 +230,8 @@ namespace CDC
 			}
 			//}
 
-			reader.BaseStream.Position = _dataStart;
-			_modelCount = (ushort)(1 + _portalCount);
 			_modelStart = _dataStart;
+			_modelCount = (ushort)(1 + _portalCount);
 			_models = new IModel[_modelCount];
 			reader.BaseStream.Position = _modelStart;
 			uint modelData = _dataStart + reader.ReadUInt32();
@@ -255,12 +253,6 @@ namespace CDC
 				);
 				_models[modelIndex++] = portalModel;
 			}
-
-			//if (m_axModels[0].Platform == Platform.Dreamcast ||
-			//    m_axModels[1].Platform == Platform.Dreamcast)
-			//{
-			//    _platform = Platform.Dreamcast;
-			//}
 		}
 
 		protected override void ResolvePointers(BinaryReader reader, BinaryWriter writer)
