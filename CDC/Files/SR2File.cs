@@ -58,11 +58,9 @@ namespace CDC
 
 		protected override void ReadUnitData(BinaryReader reader, ExportOptions options)
 		{
-			// Adjacent units are seperate from portals.
-			// There can be multiple portals to the same unit.
 			// Portals
 			reader.BaseStream.Position = _dataStart;
-			UInt32 m_uConnectionData = _dataStart + reader.ReadUInt32(); // Same as m_uModelData?
+			UInt32 m_uConnectionData = _dataStart + reader.ReadUInt32(); // Same as _modelData?
 			reader.BaseStream.Position = m_uConnectionData + 0x24;
 			_portalCount = reader.ReadUInt32();
 			reader.BaseStream.Position = _dataStart + reader.ReadUInt32();
@@ -207,9 +205,9 @@ namespace CDC
 			reader.BaseStream.Position = _modelStart;
 			uint modelData = _dataStart + reader.ReadUInt32();
 
-			SR2UnitModel terrain = new SR2UnitModel(reader, this, _dataStart, modelData, _name, _platform, _version);
-			terrain.ReadData(reader, options);
-			_models[0] = terrain;
+			SR2UnitModel terrainModel = new SR2UnitModel(reader, this, _dataStart, modelData, _name, _platform, _version);
+			terrainModel.ReadData(reader, options);
+			_models[0] = terrainModel;
 
 			int modelIndex = 1;
 			foreach (Portal portal in _portals)

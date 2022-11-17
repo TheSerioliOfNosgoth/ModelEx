@@ -193,11 +193,9 @@ namespace CDC
 				throw new Exception("Wrong version number for level x");
 			}
 
-			// Adjacent units are seperate from portals.
-			// There can be multiple portals to the same unit.
 			// Portals
 			reader.BaseStream.Position = _dataStart;
-			UInt32 m_uConnectionData = _dataStart + reader.ReadUInt32(); // Same as m_uModelData?
+			UInt32 m_uConnectionData = _dataStart + reader.ReadUInt32(); // Same as _modelData?
 
 			if (_version == PROTO_19981025_VERSION)
 			{
@@ -494,9 +492,9 @@ namespace CDC
 			reader.BaseStream.Position = _modelStart;
 			uint modelData = _dataStart + reader.ReadUInt32();
 
-			SR1UnitModel terrain = new SR1UnitModel(reader, this, _dataStart, modelData, _name, _platform, _version, _tPages);
-			terrain.ReadData(reader, options);
-			_models[0] = terrain;
+			SR1UnitModel terrainModel = new SR1UnitModel(reader, this, _dataStart, modelData, _name, _platform, _version, _tPages);
+			terrainModel.ReadData(reader, options);
+			_models[0] = terrainModel;
 
 			int modelIndex = 1;
 			foreach (Portal portal in _portals)
