@@ -65,6 +65,19 @@ namespace CDC
 		}
 	}
 
+	public struct Matrix
+	{
+		public Vector v0, v1, v2, v3;
+
+		public Matrix(Vector v0, Vector v1, Vector v2, Vector v3)
+		{
+			this.v0 = v0;
+			this.v1 = v1;
+			this.v2 = v2;
+			this.v3 = v3;
+		}
+	}
+
 	public struct Bone
 	{
 		public ushort vFirst, vLast; // The ID of first and last effected vertex 
@@ -140,6 +153,13 @@ namespace CDC
 			return name;
         }
     }
+
+	public struct BGInstance
+	{
+		public ushort ID;
+		public int model;
+		public Matrix matrix;
+	}
 
 	public struct Portal
 	{
