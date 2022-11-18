@@ -89,10 +89,14 @@ namespace ModelEx
 				Model = newModel;
 
 				Root.Name = Model.Root.Name;
+				Root.Visible = Model.Root.Visible;
+				Root.Transform = Model.Root.Transform;
 				foreach (ModelNode modelNode in Model.Root.Nodes)
 				{
 					VisibilityNode visibilityNode = new VisibilityNode();
 					visibilityNode.Name = modelNode.Name;
+					visibilityNode.Visible = modelNode.Visible;
+					visibilityNode.Transform = modelNode.Transform;
 					Root.Nodes.Add(visibilityNode);
 				}
 

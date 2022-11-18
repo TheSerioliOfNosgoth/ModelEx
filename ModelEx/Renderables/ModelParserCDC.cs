@@ -74,7 +74,19 @@ namespace ModelEx
 						SubMeshes.Add(subMesh);
 					}
 					Meshes.Add(meshParser.Mesh);
+
 					group.Name = groupName;
+
+					SlimDX.Vector3 offset = new SlimDX.Vector3()
+					{
+						X = 0.01f * srGroup.globalOffset.x,
+						Y = 0.01f * srGroup.globalOffset.z,
+						Z = 0.01f * srGroup.globalOffset.y,
+					};
+
+					SlimDX.Matrix.Translation(ref offset, out SlimDX.Matrix transform);
+					group.Transform = transform;
+
 					Groups.Add(group);
 				}
 			}

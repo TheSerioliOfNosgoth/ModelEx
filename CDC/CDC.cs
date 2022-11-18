@@ -472,6 +472,7 @@ namespace CDC
 		public Boolean isLeaf;
 		public Mesh mesh;
 		public ushort sr1Flags;
+		public Vector globalOffset = new Vector();
 	}
 
 	public class Mesh

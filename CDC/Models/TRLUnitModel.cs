@@ -85,7 +85,12 @@ namespace CDC
 			{
 				reader.BaseStream.Position = _octTreeStart + (t * 0xB0);
 
-				reader.BaseStream.Position += 0x24;
+				Vector globalOffset = new Vector();
+				globalOffset.x = reader.ReadSingle();
+				globalOffset.y = reader.ReadSingle();
+				globalOffset.z = reader.ReadSingle();
+
+				reader.BaseStream.Position += 0x18;
 				UInt32 uOctID = reader.ReadUInt32();
 				reader.BaseStream.Position += 0x1C;
 				UInt32 uDataPos = reader.ReadUInt32();
@@ -104,6 +109,11 @@ namespace CDC
 				}
 
 				_trees[t] = ReadOctTree(reader, treePolygons, uDataPos, _trees[t], xMeshes, xMeshPositions, 0, materials);
+
+				if (_trees[t] != null)
+				{
+					_trees[t].globalOffset = globalOffset;
+				}
 			}
 
 			_polygonCount = (UInt32)treePolygons.Count;

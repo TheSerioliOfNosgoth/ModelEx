@@ -46,7 +46,7 @@ namespace ModelEx
 				return;
 			}
 
-			SlimDX.Matrix localTransform = transform * node.Transform;
+			SlimDX.Matrix localTransform = transform * visibilityNode.Transform;
 
 			foreach (int subMeshIndex in node.SubMeshIndices)
 			{
