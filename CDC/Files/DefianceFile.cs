@@ -81,10 +81,63 @@ namespace CDC
 			for (int i = 0; i < _portalCount; i++)
 			{
 				Portal portal = new Portal();
-				portal.toLevelName = new String(reader.ReadChars(16));
+				portal.toLevelName = new String(reader.ReadChars(32));
 				portal.toLevelName = Utility.CleanName(portal.toLevelName);
+				portal.mSignalID = reader.ReadInt16();
+				reader.BaseStream.Position += 0x02; // streamID/closeVertList?
+				reader.BaseStream.Position += 0x04; // streamID/closeVertList?
+				reader.BaseStream.Position += 0x04; // activeDistance
+				reader.BaseStream.Position += 0x04; // toStreamUnit
+				portal.min.x = reader.ReadSingle();
+				portal.min.y = reader.ReadSingle();
+				portal.min.z = reader.ReadSingle();
+				reader.BaseStream.Position += 0x04;
+				portal.max.x = reader.ReadSingle();
+				portal.max.y = reader.ReadSingle();
+				portal.max.z = reader.ReadSingle();
+				reader.BaseStream.Position += 0x04;
+
+				Vector q0 = new Vector
+				{
+					x = reader.ReadSingle(),
+					y = reader.ReadSingle(),
+					z = reader.ReadSingle(),
+				};
+
+				reader.BaseStream.Position += 0x04;
+
+				Vector q1 = new Vector
+				{
+					x = reader.ReadSingle(),
+					y = reader.ReadSingle(),
+					z = reader.ReadSingle(),
+				};
+
+				reader.BaseStream.Position += 0x04;
+
+				Vector q2 = new Vector
+				{
+					x = reader.ReadSingle(),
+					y = reader.ReadSingle(),
+					z = reader.ReadSingle(),
+				};
+
+				reader.BaseStream.Position += 0x04;
+
+				Vector q3 = new Vector
+				{
+					x = reader.ReadSingle(),
+					y = reader.ReadSingle(),
+					z = reader.ReadSingle(),
+				};
+
+				reader.BaseStream.Position += 0x04;
+
+				portal.quad = new Vector[4] { q0, q1, q2, q3 };
+
+				reader.BaseStream.Position += 0x10; // normal
+
 				_portals[i] = portal;
-				reader.BaseStream.Position += 0x90;
 			}
 
             // Intros
@@ -148,22 +201,29 @@ namespace CDC
 			}
 			//}
 
-			reader.BaseStream.Position = _dataStart + 0x10;
-			_modelCount = 1;
 			_modelStart = _dataStart + 0x10;
+			_modelCount = (ushort)(1 + _portalCount);
 			_models = new IModel[_modelCount];
 			reader.BaseStream.Position = _modelStart;
 			uint modelData = _dataStart + reader.ReadUInt32();
 
-			DefianceUnitModel model = new DefianceUnitModel(reader, this, _dataStart, modelData, _name, _platform, _version);
-			model.ReadData(reader, options);
-			_models[0] = model;
+			DefianceUnitModel terrainModel = new DefianceUnitModel(reader, this, _dataStart, modelData, _name, _platform, _version);
+			terrainModel.ReadData(reader, options);
+			_models[0] = terrainModel;
 
-			//if (m_axModels[0].Platform == Platform.Dreamcast ||
-			//    m_axModels[1].Platform == Platform.Dreamcast)
-			//{
-			//    _platform = Platform.Dreamcast;
-			//}
+			int modelIndex = 1;
+			foreach (Portal portal in _portals)
+			{
+				PortalModel portalModel = new PortalModel(
+					this,
+					"portal-" + _name + "," + portal.mSignalID + "-" + portal.toLevelName,
+					_platform,
+					portal.min,
+					portal.max,
+					portal.quad
+				);
+				_models[modelIndex++] = portalModel;
+			}
 		}
 
 		protected override void ResolvePointers(BinaryReader reader, BinaryWriter writer)
