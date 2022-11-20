@@ -66,7 +66,7 @@ namespace ModelEx
 		{
 			bool foundResource;
 			RenderResource resource;
-			if (RenderManager.Instance.Resources.ContainsKey(_resourceName))
+			if (_resourceName != "" && RenderManager.Instance.Resources.ContainsKey(_resourceName))
 			{
 				resource = RenderManager.Instance.Resources[_resourceName];
 				foundResource = true;
