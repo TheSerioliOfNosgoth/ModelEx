@@ -421,12 +421,17 @@ namespace CDC
 					UInt32 uDataPos = _dataStart + reader.ReadUInt32();
 					// struct _BSPLeaf *startLeaves;
 					// struct _BSPLeaf *endLeaves; 
+					reader.BaseStream.Position += 0x08;
+
 					// struct _Position globalOffset;
-					reader.BaseStream.Position += 0x0E;
+					Vector globalOffset = new Vector();
+					globalOffset.x = (float)reader.ReadInt16();
+					globalOffset.y = (float)reader.ReadInt16();
+					globalOffset.z = (float)reader.ReadInt16();
+
 					//short flags;
 					ushort rootTreeFlags = reader.ReadUInt16();
 					//Console.WriteLine(string.Format("\t\t\t\t\tDebug: read BSP tree flags {0}", Convert.ToString(flags, 2).PadLeft(8, '0')));
-					bool drawTester = ((rootTreeFlags & 1) != 1);
 					// struct _Position localOffset;
 					reader.BaseStream.Position += 0x06;
 					// short ID;
@@ -434,6 +439,11 @@ namespace CDC
 					// long splineID;
 					// struct _Instance *instanceSpline;
 					_trees[t] = ReadBSPTree(BspID, t.ToString(), reader, treePolygons, uDataPos, _trees[t], meshes, meshPositions, 0, rootTreeFlags, 0, 0);
+
+					if (_trees[t] != null)
+					{
+						_trees[t].globalOffset = globalOffset;
+					}
 				}
 			}
 
