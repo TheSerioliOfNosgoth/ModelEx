@@ -131,35 +131,35 @@ namespace ModelEx
 			debugTexturePageUpper28BitsHashToolStripMenuItem.Checked = false;
 			debugTexturePageUpper5BitsHashToolStripMenuItem.Checked = false;
 			rootBSPTreeNumberToolStripMenuItem.Checked = false;
-			bSPTreeRootFlagsHashToolStripMenuItem.Checked = false;
-			bSPTreeNodeIDToolStripMenuItem.Checked = false;
-			bSPTreeRootFlags1ToolStripMenuItem.Checked = false;
-			bSPTreeRootFlags2ToolStripMenuItem.Checked = false;
-			bSPTreeRootFlags3ToolStripMenuItem.Checked = false;
-			bSPTreeRootFlags4ToolStripMenuItem.Checked = false;
-			bSPTreeRootFlags5ToolStripMenuItem.Checked = false;
-			bSPTreeRootFlags6ToolStripMenuItem.Checked = false;
-			bSPTreeNodeFlags1ToolStripMenuItem.Checked = false;
-			bSPTreeNodeFlags2ToolStripMenuItem.Checked = false;
-			bSPTreeNodeFlags3ToolStripMenuItem.Checked = false;
-			bSPTreeNodeFlags4ToolStripMenuItem.Checked = false;
-			bSPTreeNodeFlags5ToolStripMenuItem.Checked = false;
-			bSPTreeNodeFlags6ToolStripMenuItem.Checked = false;
-			bSPTreeParentNodeFlagsORd1ToolStripMenuItem.Checked = false;
-			bSPTreeParentNodeFlagsORd2ToolStripMenuItem.Checked = false;
-			bSPTreeParentNodeFlagsORd3ToolStripMenuItem.Checked = false;
-			bSPTreeParentNodeFlagsORd4ToolStripMenuItem.Checked = false;
-			bSPTreeParentNodeFlagsORd5ToolStripMenuItem.Checked = false;
-			bSPTreeParentNodeFlagsORd6ToolStripMenuItem.Checked = false;
-			bSPTreeParentNodeFlagsORdHashToolStripMenuItem.Checked = false;
-			bSPTreeLeafFlags1ToolStripMenuItem.Checked = false;
-			bSPTreeLeafFlags2ToolStripMenuItem.Checked = false;
-			bSPTreeLeafFlags3ToolStripMenuItem.Checked = false;
-			bSPTreeLeafFlags4ToolStripMenuItem.Checked = false;
-			bSPTreeLeafFlags5ToolStripMenuItem.Checked = false;
-			bSPTreeLeafFlags6ToolStripMenuItem.Checked = false;
-			bSPTreeNodeFlagsHashToolStripMenuItem.Checked = false;
-			bSPTreeLeafFlagsHashToolStripMenuItem.Checked = false;
+			bspTreeRootFlagsHashToolStripMenuItem.Checked = false;
+			bspTreeNodeIDToolStripMenuItem.Checked = false;
+			bspTreeRootFlags1ToolStripMenuItem.Checked = false;
+			bspTreeRootFlags2ToolStripMenuItem.Checked = false;
+			bspTreeRootFlags3ToolStripMenuItem.Checked = false;
+			bspTreeRootFlags4ToolStripMenuItem.Checked = false;
+			bspTreeRootFlags5ToolStripMenuItem.Checked = false;
+			bspTreeRootFlags6ToolStripMenuItem.Checked = false;
+			bspTreeNodeFlags1ToolStripMenuItem.Checked = false;
+			bspTreeNodeFlags2ToolStripMenuItem.Checked = false;
+			bspTreeNodeFlags3ToolStripMenuItem.Checked = false;
+			bspTreeNodeFlags4ToolStripMenuItem.Checked = false;
+			bspTreeNodeFlags5ToolStripMenuItem.Checked = false;
+			bspTreeNodeFlags6ToolStripMenuItem.Checked = false;
+			bspTreeParentNodeFlagsORd1ToolStripMenuItem.Checked = false;
+			bspTreeParentNodeFlagsORd2ToolStripMenuItem.Checked = false;
+			bspTreeParentNodeFlagsORd3ToolStripMenuItem.Checked = false;
+			bspTreeParentNodeFlagsORd4ToolStripMenuItem.Checked = false;
+			bspTreeParentNodeFlagsORd5ToolStripMenuItem.Checked = false;
+			bspTreeParentNodeFlagsORd6ToolStripMenuItem.Checked = false;
+			bspTreeParentNodeFlagsORdHashToolStripMenuItem.Checked = false;
+			bspTreeLeafFlags1ToolStripMenuItem.Checked = false;
+			bspTreeLeafFlags2ToolStripMenuItem.Checked = false;
+			bspTreeLeafFlags3ToolStripMenuItem.Checked = false;
+			bspTreeLeafFlags4ToolStripMenuItem.Checked = false;
+			bspTreeLeafFlags5ToolStripMenuItem.Checked = false;
+			bspTreeLeafFlags6ToolStripMenuItem.Checked = false;
+			bspTreeNodeFlagsHashToolStripMenuItem.Checked = false;
+			bspTreeLeafFlagsHashToolStripMenuItem.Checked = false;
 			cLUT1ToolStripMenuItem.Checked = false;
 			cLUT2ToolStripMenuItem.Checked = false;
 			cLUT3ToolStripMenuItem.Checked = false;
@@ -762,35 +762,35 @@ namespace ModelEx
 				(sender == debugTexturePageUpper28BitsHashToolStripMenuItem) ? CDC.RenderMode.DebugTexturePageUpper28BitsHash :
 				(sender == debugTexturePageUpper5BitsHashToolStripMenuItem) ? CDC.RenderMode.DebugTexturePageUpper5BitsHash :
 				(sender == rootBSPTreeNumberToolStripMenuItem) ? CDC.RenderMode.DebugBSPRootTreeNumber :
-				(sender == bSPTreeNodeIDToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeNodeID :
-				(sender == bSPTreeRootFlags1ToolStripMenuItem) ? CDC.RenderMode.DebugBSPRootTreeFlags1 :
-				(sender == bSPTreeRootFlags2ToolStripMenuItem) ? CDC.RenderMode.DebugBSPRootTreeFlags2 :
-				(sender == bSPTreeRootFlags3ToolStripMenuItem) ? CDC.RenderMode.DebugBSPRootTreeFlags3 :
-				(sender == bSPTreeRootFlags4ToolStripMenuItem) ? CDC.RenderMode.DebugBSPRootTreeFlags4 :
-				(sender == bSPTreeRootFlags5ToolStripMenuItem) ? CDC.RenderMode.DebugBSPRootTreeFlags5 :
-				(sender == bSPTreeRootFlags6ToolStripMenuItem) ? CDC.RenderMode.DebugBSPRootTreeFlags6 :
-				(sender == bSPTreeRootFlagsHashToolStripMenuItem) ? CDC.RenderMode.DebugBSPRootTreeFlagsHash :
-				(sender == bSPTreeNodeFlags1ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeImmediateParentFlags1 :
-				(sender == bSPTreeNodeFlags2ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeImmediateParentFlags2 :
-				(sender == bSPTreeNodeFlags3ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeImmediateParentFlags3 :
-				(sender == bSPTreeNodeFlags4ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeImmediateParentFlags4 :
-				(sender == bSPTreeNodeFlags5ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeImmediateParentFlags5 :
-				(sender == bSPTreeNodeFlags6ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeImmediateParentFlags6 :
-				(sender == bSPTreeNodeFlagsHashToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeImmediateParentFlagsHash :
-				(sender == bSPTreeParentNodeFlagsORd1ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeAllParentFlagsORd1 :
-				(sender == bSPTreeParentNodeFlagsORd2ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeAllParentFlagsORd2 :
-				(sender == bSPTreeParentNodeFlagsORd3ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeAllParentFlagsORd3 :
-				(sender == bSPTreeParentNodeFlagsORd4ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeAllParentFlagsORd4 :
-				(sender == bSPTreeParentNodeFlagsORd5ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeAllParentFlagsORd5 :
-				(sender == bSPTreeParentNodeFlagsORd6ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeAllParentFlagsORd6 :
-				(sender == bSPTreeParentNodeFlagsORdHashToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeAllParentFlagsORdHash :
-				(sender == bSPTreeLeafFlags1ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeLeafFlags1 :
-				(sender == bSPTreeLeafFlags2ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeLeafFlags2 :
-				(sender == bSPTreeLeafFlags3ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeLeafFlags3 :
-				(sender == bSPTreeLeafFlags4ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeLeafFlags4 :
-				(sender == bSPTreeLeafFlags5ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeLeafFlags5 :
-				(sender == bSPTreeLeafFlags6ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeLeafFlags6 :
-				(sender == bSPTreeLeafFlagsHashToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeLeafFlagsHash :
+				(sender == bspTreeNodeIDToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeNodeID :
+				(sender == bspTreeRootFlags1ToolStripMenuItem) ? CDC.RenderMode.DebugBSPRootTreeFlags1 :
+				(sender == bspTreeRootFlags2ToolStripMenuItem) ? CDC.RenderMode.DebugBSPRootTreeFlags2 :
+				(sender == bspTreeRootFlags3ToolStripMenuItem) ? CDC.RenderMode.DebugBSPRootTreeFlags3 :
+				(sender == bspTreeRootFlags4ToolStripMenuItem) ? CDC.RenderMode.DebugBSPRootTreeFlags4 :
+				(sender == bspTreeRootFlags5ToolStripMenuItem) ? CDC.RenderMode.DebugBSPRootTreeFlags5 :
+				(sender == bspTreeRootFlags6ToolStripMenuItem) ? CDC.RenderMode.DebugBSPRootTreeFlags6 :
+				(sender == bspTreeRootFlagsHashToolStripMenuItem) ? CDC.RenderMode.DebugBSPRootTreeFlagsHash :
+				(sender == bspTreeNodeFlags1ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeImmediateParentFlags1 :
+				(sender == bspTreeNodeFlags2ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeImmediateParentFlags2 :
+				(sender == bspTreeNodeFlags3ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeImmediateParentFlags3 :
+				(sender == bspTreeNodeFlags4ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeImmediateParentFlags4 :
+				(sender == bspTreeNodeFlags5ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeImmediateParentFlags5 :
+				(sender == bspTreeNodeFlags6ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeImmediateParentFlags6 :
+				(sender == bspTreeNodeFlagsHashToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeImmediateParentFlagsHash :
+				(sender == bspTreeParentNodeFlagsORd1ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeAllParentFlagsORd1 :
+				(sender == bspTreeParentNodeFlagsORd2ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeAllParentFlagsORd2 :
+				(sender == bspTreeParentNodeFlagsORd3ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeAllParentFlagsORd3 :
+				(sender == bspTreeParentNodeFlagsORd4ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeAllParentFlagsORd4 :
+				(sender == bspTreeParentNodeFlagsORd5ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeAllParentFlagsORd5 :
+				(sender == bspTreeParentNodeFlagsORd6ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeAllParentFlagsORd6 :
+				(sender == bspTreeParentNodeFlagsORdHashToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeAllParentFlagsORdHash :
+				(sender == bspTreeLeafFlags1ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeLeafFlags1 :
+				(sender == bspTreeLeafFlags2ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeLeafFlags2 :
+				(sender == bspTreeLeafFlags3ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeLeafFlags3 :
+				(sender == bspTreeLeafFlags4ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeLeafFlags4 :
+				(sender == bspTreeLeafFlags5ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeLeafFlags5 :
+				(sender == bspTreeLeafFlags6ToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeLeafFlags6 :
+				(sender == bspTreeLeafFlagsHashToolStripMenuItem) ? CDC.RenderMode.DebugBSPTreeLeafFlagsHash :
 				(sender == boneIDHashToolStripMenuItem) ? CDC.RenderMode.DebugBoneIDHash :
 				(sender == debugSortPushHashToolStripMenuItem) ? CDC.RenderMode.DebugSortPushHash :
 				(sender == debugSortPushFlags1ToolStripMenuItem) ? CDC.RenderMode.DebugSortPushFlags1 :

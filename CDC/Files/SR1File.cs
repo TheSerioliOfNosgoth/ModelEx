@@ -510,8 +510,7 @@ namespace CDC
 				_models[modelIndex++] = portalModel;
 			}
 
-			//if (m_axModels[0].Platform == Platform.Dreamcast ||
-			//    m_axModels[1].Platform == Platform.Dreamcast)
+			//if (_models[0].Platform == Platform.Dreamcast)
 			//{
 			//    _platform = Platform.Dreamcast;
 			//}

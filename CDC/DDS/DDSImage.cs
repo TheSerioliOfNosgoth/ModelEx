@@ -11,8 +11,8 @@ namespace Soeminnminn.DirectDrawSurface
 	public class DDSImage : IDisposable
 	{
 		#region Variables
-		private bool m_isValid = false;
-		private System.Drawing.Bitmap m_bitmap = null;
+		private bool _isValid = false;
+		private System.Drawing.Bitmap _bitmap = null;
 		#endregion
 
 		#region Constructor/Destructor
@@ -46,7 +46,7 @@ namespace Soeminnminn.DirectDrawSurface
 
 		private DDSImage(System.Drawing.Bitmap bitmap)
 		{
-			this.m_bitmap = bitmap;
+			this._bitmap = bitmap;
 		}
 		#endregion
 
@@ -62,7 +62,7 @@ namespace Soeminnminn.DirectDrawSurface
 
 			if (this.ReadHeader(reader, ref header))
 			{
-				this.m_isValid = true;
+				this._isValid = true;
 				// patches for stuff
 				if (header.depth == 0) header.depth = 1;
 
@@ -77,7 +77,7 @@ namespace Soeminnminn.DirectDrawSurface
 				if (data != null)
 				{
 					byte[] rawData = this.DecompressData(header, data, pixelFormat);
-					this.m_bitmap = this.CreateBitmap((int)header.width, (int)header.height, rawData);
+					this._bitmap = this.CreateBitmap((int)header.width, (int)header.height, rawData);
 				}
 			}
 		}
@@ -1753,10 +1753,10 @@ namespace Soeminnminn.DirectDrawSurface
 		#region Public Methods
 		public void Dispose()
 		{
-			if (this.m_bitmap != null)
+			if (this._bitmap != null)
 			{
-				this.m_bitmap.Dispose();
-				this.m_bitmap = null;
+				this._bitmap.Dispose();
+				this._bitmap = null;
 			}
 		}
 		#endregion
@@ -1767,7 +1767,7 @@ namespace Soeminnminn.DirectDrawSurface
 		/// </summary>
 		public System.Drawing.Bitmap BitmapImage
 		{
-			get { return this.m_bitmap; }
+			get { return this._bitmap; }
 		}
 
 		/// <summary>
@@ -1775,7 +1775,7 @@ namespace Soeminnminn.DirectDrawSurface
 		/// </summary>
 		public bool IsValid
 		{
-			get { return this.m_isValid; }
+			get { return this._isValid; }
 		}
 		#endregion
 

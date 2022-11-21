@@ -97,41 +97,41 @@
             this.debugTexturePage4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugTexturePage5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugTexturePage6ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rootBSPTreeNumberToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeNodeIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeRootFlagsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeRootFlagsHashToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeRootFlags1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeRootFlags2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeRootFlags3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeRootFlags4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeRootFlags5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeRootFlags6ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeNodeFlagsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeNodeFlagsHashToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeNodeFlags1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeNodeFlags2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeNodeFlags3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeNodeFlags4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeNodeFlags5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeNodeFlags6ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeParentNodeFlagsORdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeParentNodeFlagsORdHashToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeParentNodeFlagsORd1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeParentNodeFlagsORd2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeParentNodeFlagsORd3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeParentNodeFlagsORd4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeParentNodeFlagsORd5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeParentNodeFlagsORd6ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeLeafFlagsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeLeafFlagsHashToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeLeafFlags1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeLeafFlags2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeLeafFlags3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeLeafFlags4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeLeafFlags5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bSPTreeLeafFlags6ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeNodeIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeRootFlagsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeRootFlagsHashToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeRootFlags1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeRootFlags2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeRootFlags3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeRootFlags4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeRootFlags5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeRootFlags6ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeNodeFlagsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeNodeFlagsHashToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeNodeFlags1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeNodeFlags2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeNodeFlags3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeNodeFlags4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeNodeFlags5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeNodeFlags6ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeParentNodeFlagsORdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeParentNodeFlagsORdHashToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeParentNodeFlagsORd1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeParentNodeFlagsORd2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeParentNodeFlagsORd3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeParentNodeFlagsORd4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeParentNodeFlagsORd5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeParentNodeFlagsORd6ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeLeafFlagsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeLeafFlagsHashToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeLeafFlags1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeLeafFlags2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeLeafFlags3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeLeafFlags4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeLeafFlags5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bspTreeLeafFlags6ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sortPushToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugSortPushHashToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugSortPushFlags1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -386,7 +386,7 @@
             this.textureAttributesToolStripMenuItem,
             this.textureAttributesAToolStripMenuItem,
             this.texturePageToolStripMenuItem,
-            this.bSPTreeInfoToolStripMenuItem,
+            this.bspTreeInfoToolStripMenuItem,
             this.sortPushToolStripMenuItem,
             this.alphaValuesToolStripMenuItem,
             this.boneIDHashToolStripMenuItem});
@@ -756,18 +756,18 @@
             this.debugTexturePage6ToolStripMenuItem.Text = "DebugTexturePage6";
             this.debugTexturePage6ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeInfoToolStripMenuItem
+            // bspTreeInfoToolStripMenuItem
             // 
-            this.bSPTreeInfoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.bspTreeInfoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.rootBSPTreeNumberToolStripMenuItem,
-            this.bSPTreeNodeIDToolStripMenuItem,
-            this.bSPTreeRootFlagsToolStripMenuItem,
-            this.bSPTreeNodeFlagsToolStripMenuItem,
-            this.bSPTreeParentNodeFlagsORdToolStripMenuItem,
-            this.bSPTreeLeafFlagsToolStripMenuItem});
-            this.bSPTreeInfoToolStripMenuItem.Name = "bSPTreeInfoToolStripMenuItem";
-            this.bSPTreeInfoToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
-            this.bSPTreeInfoToolStripMenuItem.Text = "BSP Tree Info";
+            this.bspTreeNodeIDToolStripMenuItem,
+            this.bspTreeRootFlagsToolStripMenuItem,
+            this.bspTreeNodeFlagsToolStripMenuItem,
+            this.bspTreeParentNodeFlagsORdToolStripMenuItem,
+            this.bspTreeLeafFlagsToolStripMenuItem});
+            this.bspTreeInfoToolStripMenuItem.Name = "bspTreeInfoToolStripMenuItem";
+            this.bspTreeInfoToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
+            this.bspTreeInfoToolStripMenuItem.Text = "BSP Tree Info";
             // 
             // rootBSPTreeNumberToolStripMenuItem
             // 
@@ -776,264 +776,264 @@
             this.rootBSPTreeNumberToolStripMenuItem.Text = "Root BSP Tree Number Hash";
             this.rootBSPTreeNumberToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeNodeIDToolStripMenuItem
-            // 
-            this.bSPTreeNodeIDToolStripMenuItem.Name = "bSPTreeNodeIDToolStripMenuItem";
-            this.bSPTreeNodeIDToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
-            this.bSPTreeNodeIDToolStripMenuItem.Text = "BSP Tree Node ID Hash";
-            this.bSPTreeNodeIDToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
-            // 
-            // bSPTreeRootFlagsToolStripMenuItem
+            // bspTreeNodeIDToolStripMenuItem
+            // 
+            this.bspTreeNodeIDToolStripMenuItem.Name = "bspTreeNodeIDToolStripMenuItem";
+            this.bspTreeNodeIDToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
+            this.bspTreeNodeIDToolStripMenuItem.Text = "BSP Tree Node ID Hash";
+            this.bspTreeNodeIDToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            // 
+            // bspTreeRootFlagsToolStripMenuItem
             // 
-            this.bSPTreeRootFlagsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.bSPTreeRootFlagsHashToolStripMenuItem,
-            this.bSPTreeRootFlags1ToolStripMenuItem,
-            this.bSPTreeRootFlags2ToolStripMenuItem,
-            this.bSPTreeRootFlags3ToolStripMenuItem,
-            this.bSPTreeRootFlags4ToolStripMenuItem,
-            this.bSPTreeRootFlags5ToolStripMenuItem,
-            this.bSPTreeRootFlags6ToolStripMenuItem});
-            this.bSPTreeRootFlagsToolStripMenuItem.Name = "bSPTreeRootFlagsToolStripMenuItem";
-            this.bSPTreeRootFlagsToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
-            this.bSPTreeRootFlagsToolStripMenuItem.Text = "BSP Tree Root Flags";
+            this.bspTreeRootFlagsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.bspTreeRootFlagsHashToolStripMenuItem,
+            this.bspTreeRootFlags1ToolStripMenuItem,
+            this.bspTreeRootFlags2ToolStripMenuItem,
+            this.bspTreeRootFlags3ToolStripMenuItem,
+            this.bspTreeRootFlags4ToolStripMenuItem,
+            this.bspTreeRootFlags5ToolStripMenuItem,
+            this.bspTreeRootFlags6ToolStripMenuItem});
+            this.bspTreeRootFlagsToolStripMenuItem.Name = "bspTreeRootFlagsToolStripMenuItem";
+            this.bspTreeRootFlagsToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
+            this.bspTreeRootFlagsToolStripMenuItem.Text = "BSP Tree Root Flags";
             // 
-            // bSPTreeRootFlagsHashToolStripMenuItem
+            // bspTreeRootFlagsHashToolStripMenuItem
             // 
-            this.bSPTreeRootFlagsHashToolStripMenuItem.Name = "bSPTreeRootFlagsHashToolStripMenuItem";
-            this.bSPTreeRootFlagsHashToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
-            this.bSPTreeRootFlagsHashToolStripMenuItem.Text = "BSPTreeRootFlagsHash";
-            this.bSPTreeRootFlagsHashToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeRootFlagsHashToolStripMenuItem.Name = "bspTreeRootFlagsHashToolStripMenuItem";
+            this.bspTreeRootFlagsHashToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.bspTreeRootFlagsHashToolStripMenuItem.Text = "BSPTreeRootFlagsHash";
+            this.bspTreeRootFlagsHashToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeRootFlags1ToolStripMenuItem
+            // bspTreeRootFlags1ToolStripMenuItem
             // 
-            this.bSPTreeRootFlags1ToolStripMenuItem.Name = "bSPTreeRootFlags1ToolStripMenuItem";
-            this.bSPTreeRootFlags1ToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
-            this.bSPTreeRootFlags1ToolStripMenuItem.Text = "BSPTreeRootFlags1";
-            this.bSPTreeRootFlags1ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeRootFlags1ToolStripMenuItem.Name = "bspTreeRootFlags1ToolStripMenuItem";
+            this.bspTreeRootFlags1ToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.bspTreeRootFlags1ToolStripMenuItem.Text = "BSPTreeRootFlags1";
+            this.bspTreeRootFlags1ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeRootFlags2ToolStripMenuItem
+            // bspTreeRootFlags2ToolStripMenuItem
             // 
-            this.bSPTreeRootFlags2ToolStripMenuItem.Name = "bSPTreeRootFlags2ToolStripMenuItem";
-            this.bSPTreeRootFlags2ToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
-            this.bSPTreeRootFlags2ToolStripMenuItem.Text = "BSPTreeRootFlags2";
-            this.bSPTreeRootFlags2ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
-            // 
-            // bSPTreeRootFlags3ToolStripMenuItem
-            // 
-            this.bSPTreeRootFlags3ToolStripMenuItem.Name = "bSPTreeRootFlags3ToolStripMenuItem";
-            this.bSPTreeRootFlags3ToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
-            this.bSPTreeRootFlags3ToolStripMenuItem.Text = "BSPTreeRootFlags3";
-            this.bSPTreeRootFlags3ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
-            // 
-            // bSPTreeRootFlags4ToolStripMenuItem
-            // 
-            this.bSPTreeRootFlags4ToolStripMenuItem.Name = "bSPTreeRootFlags4ToolStripMenuItem";
-            this.bSPTreeRootFlags4ToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
-            this.bSPTreeRootFlags4ToolStripMenuItem.Text = "BSPTreeRootFlags4";
-            this.bSPTreeRootFlags4ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
-            // 
-            // bSPTreeRootFlags5ToolStripMenuItem
-            // 
-            this.bSPTreeRootFlags5ToolStripMenuItem.Name = "bSPTreeRootFlags5ToolStripMenuItem";
-            this.bSPTreeRootFlags5ToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
-            this.bSPTreeRootFlags5ToolStripMenuItem.Text = "BSPTreeRootFlags5";
-            this.bSPTreeRootFlags5ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
-            // 
-            // bSPTreeRootFlags6ToolStripMenuItem
+            this.bspTreeRootFlags2ToolStripMenuItem.Name = "bspTreeRootFlags2ToolStripMenuItem";
+            this.bspTreeRootFlags2ToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.bspTreeRootFlags2ToolStripMenuItem.Text = "BSPTreeRootFlags2";
+            this.bspTreeRootFlags2ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            // 
+            // bspTreeRootFlags3ToolStripMenuItem
+            // 
+            this.bspTreeRootFlags3ToolStripMenuItem.Name = "bspTreeRootFlags3ToolStripMenuItem";
+            this.bspTreeRootFlags3ToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.bspTreeRootFlags3ToolStripMenuItem.Text = "BSPTreeRootFlags3";
+            this.bspTreeRootFlags3ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            // 
+            // bspTreeRootFlags4ToolStripMenuItem
+            // 
+            this.bspTreeRootFlags4ToolStripMenuItem.Name = "bspTreeRootFlags4ToolStripMenuItem";
+            this.bspTreeRootFlags4ToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.bspTreeRootFlags4ToolStripMenuItem.Text = "BSPTreeRootFlags4";
+            this.bspTreeRootFlags4ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            // 
+            // bspTreeRootFlags5ToolStripMenuItem
+            // 
+            this.bspTreeRootFlags5ToolStripMenuItem.Name = "bspTreeRootFlags5ToolStripMenuItem";
+            this.bspTreeRootFlags5ToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.bspTreeRootFlags5ToolStripMenuItem.Text = "BSPTreeRootFlags5";
+            this.bspTreeRootFlags5ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            // 
+            // bspTreeRootFlags6ToolStripMenuItem
             // 
-            this.bSPTreeRootFlags6ToolStripMenuItem.Name = "bSPTreeRootFlags6ToolStripMenuItem";
-            this.bSPTreeRootFlags6ToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
-            this.bSPTreeRootFlags6ToolStripMenuItem.Text = "BSPTreeRootFlags6";
-            this.bSPTreeRootFlags6ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
-            // 
-            // bSPTreeNodeFlagsToolStripMenuItem
+            this.bspTreeRootFlags6ToolStripMenuItem.Name = "bspTreeRootFlags6ToolStripMenuItem";
+            this.bspTreeRootFlags6ToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.bspTreeRootFlags6ToolStripMenuItem.Text = "BSPTreeRootFlags6";
+            this.bspTreeRootFlags6ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            // 
+            // bspTreeNodeFlagsToolStripMenuItem
             // 
-            this.bSPTreeNodeFlagsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.bSPTreeNodeFlagsHashToolStripMenuItem,
-            this.bSPTreeNodeFlags1ToolStripMenuItem,
-            this.bSPTreeNodeFlags2ToolStripMenuItem,
-            this.bSPTreeNodeFlags3ToolStripMenuItem,
-            this.bSPTreeNodeFlags4ToolStripMenuItem,
-            this.bSPTreeNodeFlags5ToolStripMenuItem,
-            this.bSPTreeNodeFlags6ToolStripMenuItem});
-            this.bSPTreeNodeFlagsToolStripMenuItem.Name = "bSPTreeNodeFlagsToolStripMenuItem";
-            this.bSPTreeNodeFlagsToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
-            this.bSPTreeNodeFlagsToolStripMenuItem.Text = "BSP Tree Node Flags";
+            this.bspTreeNodeFlagsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.bspTreeNodeFlagsHashToolStripMenuItem,
+            this.bspTreeNodeFlags1ToolStripMenuItem,
+            this.bspTreeNodeFlags2ToolStripMenuItem,
+            this.bspTreeNodeFlags3ToolStripMenuItem,
+            this.bspTreeNodeFlags4ToolStripMenuItem,
+            this.bspTreeNodeFlags5ToolStripMenuItem,
+            this.bspTreeNodeFlags6ToolStripMenuItem});
+            this.bspTreeNodeFlagsToolStripMenuItem.Name = "bspTreeNodeFlagsToolStripMenuItem";
+            this.bspTreeNodeFlagsToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
+            this.bspTreeNodeFlagsToolStripMenuItem.Text = "BSP Tree Node Flags";
             // 
-            // bSPTreeNodeFlagsHashToolStripMenuItem
+            // bspTreeNodeFlagsHashToolStripMenuItem
             // 
-            this.bSPTreeNodeFlagsHashToolStripMenuItem.Name = "bSPTreeNodeFlagsHashToolStripMenuItem";
-            this.bSPTreeNodeFlagsHashToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-            this.bSPTreeNodeFlagsHashToolStripMenuItem.Text = "BSPTreeNodeFlagsHash";
-            this.bSPTreeNodeFlagsHashToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeNodeFlagsHashToolStripMenuItem.Name = "bspTreeNodeFlagsHashToolStripMenuItem";
+            this.bspTreeNodeFlagsHashToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.bspTreeNodeFlagsHashToolStripMenuItem.Text = "BSPTreeNodeFlagsHash";
+            this.bspTreeNodeFlagsHashToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeNodeFlags1ToolStripMenuItem
+            // bspTreeNodeFlags1ToolStripMenuItem
             // 
-            this.bSPTreeNodeFlags1ToolStripMenuItem.Name = "bSPTreeNodeFlags1ToolStripMenuItem";
-            this.bSPTreeNodeFlags1ToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-            this.bSPTreeNodeFlags1ToolStripMenuItem.Text = "BSPTreeNodeFlags1";
-            this.bSPTreeNodeFlags1ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeNodeFlags1ToolStripMenuItem.Name = "bspTreeNodeFlags1ToolStripMenuItem";
+            this.bspTreeNodeFlags1ToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.bspTreeNodeFlags1ToolStripMenuItem.Text = "BSPTreeNodeFlags1";
+            this.bspTreeNodeFlags1ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeNodeFlags2ToolStripMenuItem
+            // bspTreeNodeFlags2ToolStripMenuItem
             // 
-            this.bSPTreeNodeFlags2ToolStripMenuItem.Name = "bSPTreeNodeFlags2ToolStripMenuItem";
-            this.bSPTreeNodeFlags2ToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-            this.bSPTreeNodeFlags2ToolStripMenuItem.Text = "BSPTreeNodeFlags2";
-            this.bSPTreeNodeFlags2ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeNodeFlags2ToolStripMenuItem.Name = "bspTreeNodeFlags2ToolStripMenuItem";
+            this.bspTreeNodeFlags2ToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.bspTreeNodeFlags2ToolStripMenuItem.Text = "BSPTreeNodeFlags2";
+            this.bspTreeNodeFlags2ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeNodeFlags3ToolStripMenuItem
-            // 
-            this.bSPTreeNodeFlags3ToolStripMenuItem.Name = "bSPTreeNodeFlags3ToolStripMenuItem";
-            this.bSPTreeNodeFlags3ToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-            this.bSPTreeNodeFlags3ToolStripMenuItem.Text = "BSPTreeNodeFlags3";
-            this.bSPTreeNodeFlags3ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
-            // 
-            // bSPTreeNodeFlags4ToolStripMenuItem
-            // 
-            this.bSPTreeNodeFlags4ToolStripMenuItem.Name = "bSPTreeNodeFlags4ToolStripMenuItem";
-            this.bSPTreeNodeFlags4ToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-            this.bSPTreeNodeFlags4ToolStripMenuItem.Text = "BSPTreeNodeFlags4";
-            this.bSPTreeNodeFlags4ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
-            // 
-            // bSPTreeNodeFlags5ToolStripMenuItem
+            // bspTreeNodeFlags3ToolStripMenuItem
+            // 
+            this.bspTreeNodeFlags3ToolStripMenuItem.Name = "bspTreeNodeFlags3ToolStripMenuItem";
+            this.bspTreeNodeFlags3ToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.bspTreeNodeFlags3ToolStripMenuItem.Text = "BSPTreeNodeFlags3";
+            this.bspTreeNodeFlags3ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            // 
+            // bspTreeNodeFlags4ToolStripMenuItem
+            // 
+            this.bspTreeNodeFlags4ToolStripMenuItem.Name = "bspTreeNodeFlags4ToolStripMenuItem";
+            this.bspTreeNodeFlags4ToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.bspTreeNodeFlags4ToolStripMenuItem.Text = "BSPTreeNodeFlags4";
+            this.bspTreeNodeFlags4ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            // 
+            // bspTreeNodeFlags5ToolStripMenuItem
             // 
-            this.bSPTreeNodeFlags5ToolStripMenuItem.Name = "bSPTreeNodeFlags5ToolStripMenuItem";
-            this.bSPTreeNodeFlags5ToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-            this.bSPTreeNodeFlags5ToolStripMenuItem.Text = "BSPTreeNodeFlags5";
-            this.bSPTreeNodeFlags5ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
-            // 
-            // bSPTreeNodeFlags6ToolStripMenuItem
+            this.bspTreeNodeFlags5ToolStripMenuItem.Name = "bspTreeNodeFlags5ToolStripMenuItem";
+            this.bspTreeNodeFlags5ToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.bspTreeNodeFlags5ToolStripMenuItem.Text = "BSPTreeNodeFlags5";
+            this.bspTreeNodeFlags5ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            // 
+            // bspTreeNodeFlags6ToolStripMenuItem
             // 
-            this.bSPTreeNodeFlags6ToolStripMenuItem.Name = "bSPTreeNodeFlags6ToolStripMenuItem";
-            this.bSPTreeNodeFlags6ToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-            this.bSPTreeNodeFlags6ToolStripMenuItem.Text = "BSPTreeNodeFlags6";
-            this.bSPTreeNodeFlags6ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeNodeFlags6ToolStripMenuItem.Name = "bspTreeNodeFlags6ToolStripMenuItem";
+            this.bspTreeNodeFlags6ToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.bspTreeNodeFlags6ToolStripMenuItem.Text = "BSPTreeNodeFlags6";
+            this.bspTreeNodeFlags6ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeParentNodeFlagsORdToolStripMenuItem
+            // bspTreeParentNodeFlagsORdToolStripMenuItem
             // 
-            this.bSPTreeParentNodeFlagsORdToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.bSPTreeParentNodeFlagsORdHashToolStripMenuItem,
-            this.bSPTreeParentNodeFlagsORd1ToolStripMenuItem,
-            this.bSPTreeParentNodeFlagsORd2ToolStripMenuItem,
-            this.bSPTreeParentNodeFlagsORd3ToolStripMenuItem,
-            this.bSPTreeParentNodeFlagsORd4ToolStripMenuItem,
-            this.bSPTreeParentNodeFlagsORd5ToolStripMenuItem,
-            this.bSPTreeParentNodeFlagsORd6ToolStripMenuItem});
-            this.bSPTreeParentNodeFlagsORdToolStripMenuItem.Name = "bSPTreeParentNodeFlagsORdToolStripMenuItem";
-            this.bSPTreeParentNodeFlagsORdToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
-            this.bSPTreeParentNodeFlagsORdToolStripMenuItem.Text = "BSP Tree Parent Node Flags OR\'d";
+            this.bspTreeParentNodeFlagsORdToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.bspTreeParentNodeFlagsORdHashToolStripMenuItem,
+            this.bspTreeParentNodeFlagsORd1ToolStripMenuItem,
+            this.bspTreeParentNodeFlagsORd2ToolStripMenuItem,
+            this.bspTreeParentNodeFlagsORd3ToolStripMenuItem,
+            this.bspTreeParentNodeFlagsORd4ToolStripMenuItem,
+            this.bspTreeParentNodeFlagsORd5ToolStripMenuItem,
+            this.bspTreeParentNodeFlagsORd6ToolStripMenuItem});
+            this.bspTreeParentNodeFlagsORdToolStripMenuItem.Name = "bspTreeParentNodeFlagsORdToolStripMenuItem";
+            this.bspTreeParentNodeFlagsORdToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
+            this.bspTreeParentNodeFlagsORdToolStripMenuItem.Text = "BSP Tree Parent Node Flags OR\'d";
             // 
-            // bSPTreeParentNodeFlagsORdHashToolStripMenuItem
+            // bspTreeParentNodeFlagsORdHashToolStripMenuItem
             // 
-            this.bSPTreeParentNodeFlagsORdHashToolStripMenuItem.Name = "bSPTreeParentNodeFlagsORdHashToolStripMenuItem";
-            this.bSPTreeParentNodeFlagsORdHashToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
-            this.bSPTreeParentNodeFlagsORdHashToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORdHash";
-            this.bSPTreeParentNodeFlagsORdHashToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeParentNodeFlagsORdHashToolStripMenuItem.Name = "bspTreeParentNodeFlagsORdHashToolStripMenuItem";
+            this.bspTreeParentNodeFlagsORdHashToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+            this.bspTreeParentNodeFlagsORdHashToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORdHash";
+            this.bspTreeParentNodeFlagsORdHashToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeParentNodeFlagsORd1ToolStripMenuItem
+            // bspTreeParentNodeFlagsORd1ToolStripMenuItem
             // 
-            this.bSPTreeParentNodeFlagsORd1ToolStripMenuItem.Name = "bSPTreeParentNodeFlagsORd1ToolStripMenuItem";
-            this.bSPTreeParentNodeFlagsORd1ToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
-            this.bSPTreeParentNodeFlagsORd1ToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORd1";
-            this.bSPTreeParentNodeFlagsORd1ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeParentNodeFlagsORd1ToolStripMenuItem.Name = "bspTreeParentNodeFlagsORd1ToolStripMenuItem";
+            this.bspTreeParentNodeFlagsORd1ToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+            this.bspTreeParentNodeFlagsORd1ToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORd1";
+            this.bspTreeParentNodeFlagsORd1ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeParentNodeFlagsORd2ToolStripMenuItem
+            // bspTreeParentNodeFlagsORd2ToolStripMenuItem
             // 
-            this.bSPTreeParentNodeFlagsORd2ToolStripMenuItem.Name = "bSPTreeParentNodeFlagsORd2ToolStripMenuItem";
-            this.bSPTreeParentNodeFlagsORd2ToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
-            this.bSPTreeParentNodeFlagsORd2ToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORd2";
-            this.bSPTreeParentNodeFlagsORd2ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeParentNodeFlagsORd2ToolStripMenuItem.Name = "bspTreeParentNodeFlagsORd2ToolStripMenuItem";
+            this.bspTreeParentNodeFlagsORd2ToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+            this.bspTreeParentNodeFlagsORd2ToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORd2";
+            this.bspTreeParentNodeFlagsORd2ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeParentNodeFlagsORd3ToolStripMenuItem
+            // bspTreeParentNodeFlagsORd3ToolStripMenuItem
             // 
-            this.bSPTreeParentNodeFlagsORd3ToolStripMenuItem.Name = "bSPTreeParentNodeFlagsORd3ToolStripMenuItem";
-            this.bSPTreeParentNodeFlagsORd3ToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
-            this.bSPTreeParentNodeFlagsORd3ToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORd3";
-            this.bSPTreeParentNodeFlagsORd3ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeParentNodeFlagsORd3ToolStripMenuItem.Name = "bspTreeParentNodeFlagsORd3ToolStripMenuItem";
+            this.bspTreeParentNodeFlagsORd3ToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+            this.bspTreeParentNodeFlagsORd3ToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORd3";
+            this.bspTreeParentNodeFlagsORd3ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeParentNodeFlagsORd4ToolStripMenuItem
+            // bspTreeParentNodeFlagsORd4ToolStripMenuItem
             // 
-            this.bSPTreeParentNodeFlagsORd4ToolStripMenuItem.Name = "bSPTreeParentNodeFlagsORd4ToolStripMenuItem";
-            this.bSPTreeParentNodeFlagsORd4ToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
-            this.bSPTreeParentNodeFlagsORd4ToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORd4";
-            this.bSPTreeParentNodeFlagsORd4ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeParentNodeFlagsORd4ToolStripMenuItem.Name = "bspTreeParentNodeFlagsORd4ToolStripMenuItem";
+            this.bspTreeParentNodeFlagsORd4ToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+            this.bspTreeParentNodeFlagsORd4ToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORd4";
+            this.bspTreeParentNodeFlagsORd4ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeParentNodeFlagsORd5ToolStripMenuItem
+            // bspTreeParentNodeFlagsORd5ToolStripMenuItem
             // 
-            this.bSPTreeParentNodeFlagsORd5ToolStripMenuItem.Name = "bSPTreeParentNodeFlagsORd5ToolStripMenuItem";
-            this.bSPTreeParentNodeFlagsORd5ToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
-            this.bSPTreeParentNodeFlagsORd5ToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORd5";
-            this.bSPTreeParentNodeFlagsORd5ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeParentNodeFlagsORd5ToolStripMenuItem.Name = "bspTreeParentNodeFlagsORd5ToolStripMenuItem";
+            this.bspTreeParentNodeFlagsORd5ToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+            this.bspTreeParentNodeFlagsORd5ToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORd5";
+            this.bspTreeParentNodeFlagsORd5ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeParentNodeFlagsORd6ToolStripMenuItem
+            // bspTreeParentNodeFlagsORd6ToolStripMenuItem
             // 
-            this.bSPTreeParentNodeFlagsORd6ToolStripMenuItem.Name = "bSPTreeParentNodeFlagsORd6ToolStripMenuItem";
-            this.bSPTreeParentNodeFlagsORd6ToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
-            this.bSPTreeParentNodeFlagsORd6ToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORd6";
-            this.bSPTreeParentNodeFlagsORd6ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeParentNodeFlagsORd6ToolStripMenuItem.Name = "bspTreeParentNodeFlagsORd6ToolStripMenuItem";
+            this.bspTreeParentNodeFlagsORd6ToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+            this.bspTreeParentNodeFlagsORd6ToolStripMenuItem.Text = "BSPTreeParentNodeFlagsORd6";
+            this.bspTreeParentNodeFlagsORd6ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeLeafFlagsToolStripMenuItem
+            // bspTreeLeafFlagsToolStripMenuItem
             // 
-            this.bSPTreeLeafFlagsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.bSPTreeLeafFlagsHashToolStripMenuItem,
-            this.bSPTreeLeafFlags1ToolStripMenuItem,
-            this.bSPTreeLeafFlags2ToolStripMenuItem,
-            this.bSPTreeLeafFlags3ToolStripMenuItem,
-            this.bSPTreeLeafFlags4ToolStripMenuItem,
-            this.bSPTreeLeafFlags5ToolStripMenuItem,
-            this.bSPTreeLeafFlags6ToolStripMenuItem});
-            this.bSPTreeLeafFlagsToolStripMenuItem.Name = "bSPTreeLeafFlagsToolStripMenuItem";
-            this.bSPTreeLeafFlagsToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
-            this.bSPTreeLeafFlagsToolStripMenuItem.Text = "BSP Tree Leaf Flags";
+            this.bspTreeLeafFlagsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.bspTreeLeafFlagsHashToolStripMenuItem,
+            this.bspTreeLeafFlags1ToolStripMenuItem,
+            this.bspTreeLeafFlags2ToolStripMenuItem,
+            this.bspTreeLeafFlags3ToolStripMenuItem,
+            this.bspTreeLeafFlags4ToolStripMenuItem,
+            this.bspTreeLeafFlags5ToolStripMenuItem,
+            this.bspTreeLeafFlags6ToolStripMenuItem});
+            this.bspTreeLeafFlagsToolStripMenuItem.Name = "bspTreeLeafFlagsToolStripMenuItem";
+            this.bspTreeLeafFlagsToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
+            this.bspTreeLeafFlagsToolStripMenuItem.Text = "BSP Tree Leaf Flags";
             // 
-            // bSPTreeLeafFlagsHashToolStripMenuItem
+            // bspTreeLeafFlagsHashToolStripMenuItem
             // 
-            this.bSPTreeLeafFlagsHashToolStripMenuItem.Name = "bSPTreeLeafFlagsHashToolStripMenuItem";
-            this.bSPTreeLeafFlagsHashToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            this.bSPTreeLeafFlagsHashToolStripMenuItem.Text = "BSPTreeLeafFlagsHash";
-            this.bSPTreeLeafFlagsHashToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeLeafFlagsHashToolStripMenuItem.Name = "bspTreeLeafFlagsHashToolStripMenuItem";
+            this.bspTreeLeafFlagsHashToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.bspTreeLeafFlagsHashToolStripMenuItem.Text = "BSPTreeLeafFlagsHash";
+            this.bspTreeLeafFlagsHashToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeLeafFlags1ToolStripMenuItem
+            // bspTreeLeafFlags1ToolStripMenuItem
             // 
-            this.bSPTreeLeafFlags1ToolStripMenuItem.Name = "bSPTreeLeafFlags1ToolStripMenuItem";
-            this.bSPTreeLeafFlags1ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            this.bSPTreeLeafFlags1ToolStripMenuItem.Text = "BSPTreeLeafFlags1";
-            this.bSPTreeLeafFlags1ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeLeafFlags1ToolStripMenuItem.Name = "bspTreeLeafFlags1ToolStripMenuItem";
+            this.bspTreeLeafFlags1ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.bspTreeLeafFlags1ToolStripMenuItem.Text = "BSPTreeLeafFlags1";
+            this.bspTreeLeafFlags1ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeLeafFlags2ToolStripMenuItem
+            // bspTreeLeafFlags2ToolStripMenuItem
             // 
-            this.bSPTreeLeafFlags2ToolStripMenuItem.Name = "bSPTreeLeafFlags2ToolStripMenuItem";
-            this.bSPTreeLeafFlags2ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            this.bSPTreeLeafFlags2ToolStripMenuItem.Text = "BSPTreeLeafFlags2";
-            this.bSPTreeLeafFlags2ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeLeafFlags2ToolStripMenuItem.Name = "bspTreeLeafFlags2ToolStripMenuItem";
+            this.bspTreeLeafFlags2ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.bspTreeLeafFlags2ToolStripMenuItem.Text = "BSPTreeLeafFlags2";
+            this.bspTreeLeafFlags2ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeLeafFlags3ToolStripMenuItem
+            // bspTreeLeafFlags3ToolStripMenuItem
             // 
-            this.bSPTreeLeafFlags3ToolStripMenuItem.Name = "bSPTreeLeafFlags3ToolStripMenuItem";
-            this.bSPTreeLeafFlags3ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            this.bSPTreeLeafFlags3ToolStripMenuItem.Text = "BSPTreeLeafFlags3";
-            this.bSPTreeLeafFlags3ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeLeafFlags3ToolStripMenuItem.Name = "bspTreeLeafFlags3ToolStripMenuItem";
+            this.bspTreeLeafFlags3ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.bspTreeLeafFlags3ToolStripMenuItem.Text = "BSPTreeLeafFlags3";
+            this.bspTreeLeafFlags3ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeLeafFlags4ToolStripMenuItem
+            // bspTreeLeafFlags4ToolStripMenuItem
             // 
-            this.bSPTreeLeafFlags4ToolStripMenuItem.Name = "bSPTreeLeafFlags4ToolStripMenuItem";
-            this.bSPTreeLeafFlags4ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            this.bSPTreeLeafFlags4ToolStripMenuItem.Text = "BSPTreeLeafFlags4";
-            this.bSPTreeLeafFlags4ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeLeafFlags4ToolStripMenuItem.Name = "bspTreeLeafFlags4ToolStripMenuItem";
+            this.bspTreeLeafFlags4ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.bspTreeLeafFlags4ToolStripMenuItem.Text = "BSPTreeLeafFlags4";
+            this.bspTreeLeafFlags4ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeLeafFlags5ToolStripMenuItem
+            // bspTreeLeafFlags5ToolStripMenuItem
             // 
-            this.bSPTreeLeafFlags5ToolStripMenuItem.Name = "bSPTreeLeafFlags5ToolStripMenuItem";
-            this.bSPTreeLeafFlags5ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            this.bSPTreeLeafFlags5ToolStripMenuItem.Text = "BSPTreeLeafFlags5";
-            this.bSPTreeLeafFlags5ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeLeafFlags5ToolStripMenuItem.Name = "bspTreeLeafFlags5ToolStripMenuItem";
+            this.bspTreeLeafFlags5ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.bspTreeLeafFlags5ToolStripMenuItem.Text = "BSPTreeLeafFlags5";
+            this.bspTreeLeafFlags5ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
-            // bSPTreeLeafFlags6ToolStripMenuItem
+            // bspTreeLeafFlags6ToolStripMenuItem
             // 
-            this.bSPTreeLeafFlags6ToolStripMenuItem.Name = "bSPTreeLeafFlags6ToolStripMenuItem";
-            this.bSPTreeLeafFlags6ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            this.bSPTreeLeafFlags6ToolStripMenuItem.Text = "BSPTreeLeafFlags6";
-            this.bSPTreeLeafFlags6ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+            this.bspTreeLeafFlags6ToolStripMenuItem.Name = "bspTreeLeafFlags6ToolStripMenuItem";
+            this.bspTreeLeafFlags6ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.bspTreeLeafFlags6ToolStripMenuItem.Text = "BSPTreeLeafFlags6";
+            this.bspTreeLeafFlags6ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
             // 
             // sortPushToolStripMenuItem
             // 
@@ -1580,9 +1580,9 @@
 		private System.Windows.Forms.ToolStripMenuItem makeAllPolygonsVisibleToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem makeAllPolygonsOpaqueToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem oRAllPolygonColoursWithGreenToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeInfoToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeInfoToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem rootBSPTreeNumberToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeNodeIDToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeNodeIDToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem polygonFlagsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem debugPolygonFlags1ToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem debugPolygonFlags2ToolStripMenuItem;
@@ -1602,44 +1602,44 @@
 		private System.Windows.Forms.ToolStripMenuItem debugTexturePage4ToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem debugTexturePage5ToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem debugTexturePage6ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeRootFlagsToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeRootFlags1ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeRootFlags2ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeRootFlags3ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeRootFlags4ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeRootFlags5ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeRootFlags6ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeNodeFlagsToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeNodeFlags1ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeNodeFlags2ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeNodeFlags3ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeNodeFlags4ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeNodeFlags5ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeNodeFlags6ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeParentNodeFlagsORdToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeParentNodeFlagsORd1ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeParentNodeFlagsORd2ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeParentNodeFlagsORd3ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeParentNodeFlagsORd4ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeParentNodeFlagsORd5ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeParentNodeFlagsORd6ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeLeafFlagsToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeLeafFlags1ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeLeafFlags2ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeLeafFlags3ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeLeafFlags4ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeLeafFlags5ToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeLeafFlags6ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeRootFlagsToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeRootFlags1ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeRootFlags2ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeRootFlags3ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeRootFlags4ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeRootFlags5ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeRootFlags6ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeNodeFlagsToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeNodeFlags1ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeNodeFlags2ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeNodeFlags3ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeNodeFlags4ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeNodeFlags5ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeNodeFlags6ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeParentNodeFlagsORdToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeParentNodeFlagsORd1ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeParentNodeFlagsORd2ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeParentNodeFlagsORd3ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeParentNodeFlagsORd4ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeParentNodeFlagsORd5ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeParentNodeFlagsORd6ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeLeafFlagsToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeLeafFlags1ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeLeafFlags2ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeLeafFlags3ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeLeafFlags4ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeLeafFlags5ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeLeafFlags6ToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem bSPRenderingToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem includeTreeRootFlagsInORdParentFlagsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem includeLeafFlagsInORdParentFlagsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem debugPolygonFlagsHashToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem debugTextureAttributesHashToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem debugTexturePageHashToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeRootFlagsHashToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeNodeFlagsHashToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeParentNodeFlagsORdHashToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem bSPTreeLeafFlagsHashToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeRootFlagsHashToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeNodeFlagsHashToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeParentNodeFlagsORdHashToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem bspTreeLeafFlagsHashToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem debugTexturePageUpper28BitsHashToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem colourLookupTableToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem cLUTHashToolStripMenuItem;
