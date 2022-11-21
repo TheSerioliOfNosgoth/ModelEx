@@ -60,8 +60,8 @@ namespace CDC
 		{
 			// Portals
 			reader.BaseStream.Position = _dataStart;
-			UInt32 m_uConnectionData = _dataStart + reader.ReadUInt32(); // Same as _modelData?
-			reader.BaseStream.Position = m_uConnectionData + 0x24;
+			UInt32 terrainData = _dataStart + reader.ReadUInt32(); // Same as _modelData?
+			reader.BaseStream.Position = terrainData + 0x24;
 			_portalCount = reader.ReadUInt32();
 			reader.BaseStream.Position = _dataStart + reader.ReadUInt32();
 			_portals = new Portal[_portalCount];

@@ -195,15 +195,15 @@ namespace CDC
 
 			// Portals
 			reader.BaseStream.Position = _dataStart;
-			UInt32 m_uConnectionData = _dataStart + reader.ReadUInt32(); // Same as _modelData?
+			UInt32 terrainData = _dataStart + reader.ReadUInt32(); // Same as _modelData?
 
 			if (_version == PROTO_19981025_VERSION)
 			{
-				reader.BaseStream.Position = m_uConnectionData + 0x3C;
+				reader.BaseStream.Position = terrainData + 0x3C;
 			}
 			else
 			{
-				reader.BaseStream.Position = m_uConnectionData + 0x30;
+				reader.BaseStream.Position = terrainData + 0x30;
 			}
 
 			reader.BaseStream.Position = _dataStart + reader.ReadUInt32();

@@ -7,8 +7,8 @@ namespace CDC
 {
 	public class GexUnitModel : GexModel
 	{
-		protected UInt32 m_uBspTreeCount;
-		protected UInt32 m_uBspTreeStart;
+		protected UInt32 _bspTreeCount;
+		protected UInt32 _bspTreeStart;
 		protected UInt32 _vertexColourCount;
 		protected UInt32 _vertexColourStart;
 		protected UInt32 _polygonEnd;
@@ -18,9 +18,9 @@ namespace CDC
 		{
 			reader.BaseStream.Position = _modelData;
 
-			m_uBspTreeCount = 1;
-			m_uBspTreeStart = reader.ReadUInt32();
-			_groupCount = m_uBspTreeCount;
+			_bspTreeCount = 1;
+			_bspTreeStart = reader.ReadUInt32();
+			_groupCount = _bspTreeCount;
 
 			reader.BaseStream.Position += 0x14;
 			_vertexCount = reader.ReadUInt32();
@@ -198,7 +198,7 @@ namespace CDC
 			List<int> xMeshPositions = new List<int>();
 			List<UInt32> treePolygons = new List<UInt32>((Int32)_vertexCount * 3);
 
-			_trees[0] = ReadBSPTree(reader, treePolygons, m_uBspTreeStart, _trees[0], xMeshes, xMeshPositions, 0);
+			_trees[0] = ReadBSPTree(reader, treePolygons, _bspTreeStart, _trees[0], xMeshes, xMeshPositions, 0);
 
 			ProcessPolygons(options);
 

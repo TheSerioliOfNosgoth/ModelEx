@@ -6,7 +6,7 @@ namespace CDC
 {
 	public class TRLObjectModel : TRLModel
 	{
-		protected uint m_uColourStart;
+		protected uint _colourStart;
 
 		public TRLObjectModel(BinaryReader reader, DataFile dataFile, uint dataStart, uint modelData, String modelName, Platform ePlatform, uint version)
 			: base(reader, dataFile, dataStart, modelData, modelName, ePlatform, version)
@@ -30,7 +30,7 @@ namespace CDC
 			reader.BaseStream.Position += 0x08;
 			//_materialStart = 0; // ^^Whatever that was, it's a dword and then an array of shorts. 
 			_materialCount = 0;
-			m_uColourStart = _dataStart + reader.ReadUInt32();
+			_colourStart = _dataStart + reader.ReadUInt32();
 			_groupCount = 1;
 
 			_trees = new Tree[_groupCount];
@@ -64,7 +64,7 @@ namespace CDC
 		{
 			base.ReadVertices(reader, options);
 
-			reader.BaseStream.Position = m_uColourStart;
+			reader.BaseStream.Position = _colourStart;
 			for (ushort v = 0; v < _vertexCount; v++)
 			{
 				_geometry.Colours[v] = reader.ReadUInt32();
@@ -117,9 +117,9 @@ namespace CDC
 				{
 					//for (ushort ancestorID = b; ancestorID != 0xFFFF; )
 					//{
-					//    m_axBones[b].worldPos += m_axBones[ancestorID].localPos;
-					//    if (m_axBones[ancestorID].parentID1 == ancestorID) break;
-					//    ancestorID = m_axBones[ancestorID].parentID1;
+					//    _bones[b].worldPos += _bones[ancestorID].localPos;
+					//    if (_bones[ancestorID].parentID1 == ancestorID) break;
+					//    ancestorID = _bones[ancestorID].parentID1;
 					//}
 
 					_bones[b].worldPos = CombineParent(b);
@@ -178,7 +178,7 @@ namespace CDC
 				reader.BaseStream.Position = materialPosition;
 				TRLTriangleList triangleList = new TRLTriangleList();
 
-				bool isVisible = (ReadTriangleList(reader, ref triangleList) /*&& triangleList.m_usGroupID == 0*/);
+				bool isVisible = (ReadTriangleList(reader, ref triangleList));
 				if (isVisible)
 				{
 					triangleListList.Add(triangleList);

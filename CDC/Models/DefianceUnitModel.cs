@@ -8,8 +8,8 @@ namespace CDC
 	{
 		protected UInt32 _octTreeCount;
 		protected UInt32 _octTreeStart;
-		protected UInt32 m_uSpectralVertexStart;
-		protected UInt32 m_uSpectralColourStart;
+		protected UInt32 _spectralVertexStart;
+		protected UInt32 _spectralColourStart;
 
 		public DefianceUnitModel(BinaryReader reader, DataFile dataFile, UInt32 dataStart, UInt32 modelData, String modelName, Platform ePlatform, UInt32 version)
 			: base(reader, dataFile, dataStart, modelData, modelName, ePlatform, version)
@@ -21,9 +21,9 @@ namespace CDC
 			_vertexStart = _dataStart + reader.ReadUInt32();
 			_polygonStart = 0;
 			reader.BaseStream.Position += 0x18;
-			m_uSpectralVertexStart = _dataStart + reader.ReadUInt32();
-			reader.BaseStream.Position += 0x04; // m_uMaterialColourStart
-			m_uSpectralColourStart = _dataStart + reader.ReadUInt32();
+			_spectralVertexStart = _dataStart + reader.ReadUInt32();
+			reader.BaseStream.Position += 0x04; // _materialColourStart
+			_spectralColourStart = _dataStart + reader.ReadUInt32();
 			_materialStart = 0;
 			_materialCount = 0;
 			_octTreeCount = reader.ReadUInt32();
@@ -124,10 +124,10 @@ namespace CDC
 
 		protected virtual void ReadSpectralData(BinaryReader reader, ExportOptions options)
 		{
-			if (m_uSpectralColourStart != 0)
+			if (_spectralColourStart != 0)
 			{
 				// Spectral Colours
-				reader.BaseStream.Position = m_uSpectralColourStart;
+				reader.BaseStream.Position = _spectralColourStart;
 				for (int v = 0; v < _vertexCount; v++)
 				{
 					UInt32 uShiftColour = reader.ReadUInt32();
@@ -144,12 +144,12 @@ namespace CDC
 				}
 			}
 
-			if (m_uSpectralVertexStart != 0)
+			if (_spectralVertexStart != 0)
 			{
 				// Spectral vertices
 				reader.BaseStream.Position = _modelData + 0x2C;
 				UInt32 uCurrentIndexPosition = reader.ReadUInt32();
-				UInt32 uCurrentSpectralVertex = m_uSpectralVertexStart;
+				UInt32 uCurrentSpectralVertex = _spectralVertexStart;
 				while (true)
 				{
 					reader.BaseStream.Position = uCurrentIndexPosition;
