@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace CDC
 {
     class TRLBGObjectModel : TRLModel
     {
-        protected UInt32 _coloursStart;
+        protected uint _coloursStart;
 
-        public TRLBGObjectModel(BinaryReader reader, DataFile dataFile, UInt32 dataStart, UInt32 modelData, String modelName, Platform ePlatform, UInt32 version)
+        public TRLBGObjectModel(BinaryReader reader, DataFile dataFile, uint dataStart, uint modelData, String modelName, Platform ePlatform, uint version)
             : base(reader, dataFile, dataStart, modelData, modelName, ePlatform, version)
         {
             reader.BaseStream.Position = _modelData;
@@ -17,40 +16,23 @@ namespace CDC
             _vertexScale.x = reader.ReadSingle();
             _vertexScale.y = reader.ReadSingle();
             _vertexScale.z = reader.ReadSingle();
-
             reader.BaseStream.Position += 0x24;
-            _polygonStart = reader.ReadUInt32(); // is actually BGObjectStripInfo[3] but other 2 are LOD models
 
-            reader.BaseStream.Position += 0x10;
+            // Is actually BGObjectStripInfo[3] but other 2 are LOD models.
+            // So, should it be material start or maybe even model start if this was an object?
+            // Do it like objects in Gex?
+            _materialStart = reader.ReadUInt32(); // bgObjectStripInfo 0
+            reader.BaseStream.Position += 0x04;  // bgObjectStripInfo 1
+            reader.BaseStream.Position += 0x04;  // bgObjectStripInfo 2
+            reader.BaseStream.Position += 0x04;  // lodDistance 0
+            reader.BaseStream.Position += 0x04;  // lodDistance 1
+
             _vertexStart = reader.ReadUInt32();
             _vertexCount = reader.ReadUInt32();
             _coloursStart = reader.ReadUInt32();
-
             _groupCount = 1;
 
             _trees = new Tree[_groupCount];
-        }
-
-        protected override void ReadVertices(BinaryReader reader, ExportOptions options)
-        {
-            reader.BaseStream.Position = _coloursStart;
-
-            for (int i = 0; i < _vertexCount; i++)
-            {
-                UInt32 colour = reader.ReadUInt32();
-
-                if (options.IgnoreVertexColours)
-                {
-                    _geometry.Colours[i] = 0xFFFFFFFF;
-                }
-                else
-                {
-                    _geometry.Colours[i] = colour;
-                    _geometry.ColoursAlt[i] = _geometry.Colours[i];
-                }
-            }
-
-            base.ReadVertices(reader, options);
         }
 
         protected override void ReadVertex(BinaryReader reader, int v, ExportOptions options)
@@ -65,98 +47,140 @@ namespace CDC
 
             reader.BaseStream.Position += 2;
 
-            Int16 vU = reader.ReadInt16();
-            Int16 vV = reader.ReadInt16();
+            short vU = reader.ReadInt16();
+            short vV = reader.ReadInt16();
 
             _geometry.UVs[v].u = vU * 0.00024414062f;
             _geometry.UVs[v].v = vV * 0.00024414062f;
         }
 
-        protected override void ReadPolygons(BinaryReader reader, ExportOptions options)
+        protected override void ReadVertices(BinaryReader reader, ExportOptions options)
         {
-            List<Mesh> xMeshes = new List<Mesh>();
+            base.ReadVertices(reader, options);
 
-            UInt32 nextStrip = _polygonStart;
-            UInt32 polygonCount = 0;
+            reader.BaseStream.Position = _coloursStart;
 
-            do
+            for (int i = 0; i < _vertexCount; i++)
             {
-                reader.BaseStream.Position = nextStrip;
+                uint colour = reader.ReadUInt32();
 
-                UInt32 numVertices = reader.ReadUInt32();
-
-                if (numVertices == 0)
+                if (options.IgnoreVertexColours)
                 {
-                    break;
-                }
-
-                polygonCount += numVertices;
-
-                var xMesh = new Mesh();
-                xMesh.indexCount = numVertices;
-                xMesh.polygonCount = numVertices / 3;
-                xMesh.vertices = new Vertex[xMesh.indexCount];
-                xMesh.polygons = new Polygon[numVertices];
-
-                reader.BaseStream.Position += 8;
-
-                UInt32 tpageid = reader.ReadUInt32();
-
-                reader.BaseStream.Position += 8;
-                nextStrip = reader.ReadUInt32();
-
-                var xMaterial = new Material();
-                xMaterial.visible = true;
-                xMaterial.textureUsed = true;
-                xMaterial.textureID = ((UInt16)(tpageid & 0x1FFF));
-
-                var material = _materialsList.FirstOrDefault(x => x.textureID == xMaterial.textureID && x.textureUsed);
-
-                if (material == default)
-                {
-                    _materialsList.Add(xMaterial);
-                    _materialCount = (uint)_materialsList.Count;
+                    _geometry.Colours[i] = 0xFFFFFFFF;
                 }
                 else
                 {
-                    xMaterial = material;
+                    _geometry.Colours[i] = colour;
+                    _geometry.ColoursAlt[i] = _geometry.Colours[i];
                 }
-
-                for (int i = 0; i < numVertices / 3; i++)
-                {
-                    xMesh.polygons[i].v1 = _geometry.Vertices[reader.ReadUInt16()];
-                    xMesh.polygons[i].v2 = _geometry.Vertices[reader.ReadUInt16()];
-                    xMesh.polygons[i].v3 = _geometry.Vertices[reader.ReadUInt16()];
-
-                    xMesh.polygons[i].material = xMaterial;
-                }
-
-                xMeshes.Add(xMesh);
             }
-            while (nextStrip != 0);
+        }
 
-            _polygonCount = polygonCount;
-            _polygons = new Polygon[_polygonCount];
-            _trees = new Tree[xMeshes.Count];
-
-            polygonCount = 0;
-            for (int i = 0; i < xMeshes.Count; i++)
+        protected override void ReadPolygons(BinaryReader reader, ExportOptions options)
+        {
+            if (_materialStart == 0)
             {
-                var xMesh = xMeshes[i];
-
-                for (UInt32 poly = 0; poly < xMesh.polygonCount; poly++)
-                {
-                    _polygons[polygonCount++] = xMesh.polygons[poly];
-                    xMesh.vertices[(3 * poly) + 0] = xMesh.polygons[poly].v1;
-                    xMesh.vertices[(3 * poly) + 1] = xMesh.polygons[poly].v2;
-                    xMesh.vertices[(3 * poly) + 2] = xMesh.polygons[poly].v3;
-                }
-
-                var tree = new Tree();
-                tree.mesh = xMesh;
-
-                _trees[i] = tree;
+                return;
             }
+
+            List<TRLTriangleList> triangleListList = new List<TRLTriangleList>();
+            uint materialPosition = _materialStart;
+            _groupCount = 0;
+
+            while (materialPosition != 0)
+            {
+                reader.BaseStream.Position = materialPosition;
+
+                TRLTriangleList triangleList = new TRLTriangleList();
+                ReadTriangleList(reader, ref triangleList);
+                triangleListList.Add(triangleList);
+                _polygonCount += triangleList.polygonCount;
+
+                materialPosition = triangleList.next;
+            }
+
+            _materialCount = (uint)_materialsList.Count;
+
+            _groupCount++;
+            _trees = new Tree[_groupCount];
+            _trees[0] = new Tree();
+            _trees[0].mesh = new Mesh();
+
+            foreach (TRLTriangleList triangleList in triangleListList)
+            {
+                _trees[0].mesh.polygonCount += triangleList.polygonCount;
+            }
+
+            _trees[0].mesh.indexCount = _trees[0].mesh.polygonCount * 3;
+            _trees[0].mesh.polygons = new Polygon[_trees[0].mesh.polygonCount];
+            _trees[0].mesh.vertices = new Vertex[_trees[0].mesh.indexCount];
+
+            uint tp = 0;
+            foreach (TRLTriangleList triangleList in triangleListList)
+            {
+                reader.BaseStream.Position = triangleList.polygonStart;
+                for (int pl = 0; pl < triangleList.polygonCount; pl++)
+                {
+                    _trees[0].mesh.polygons[tp].v1 = _geometry.Vertices[reader.ReadUInt16()];
+                    _trees[0].mesh.polygons[tp].v2 = _geometry.Vertices[reader.ReadUInt16()];
+                    _trees[0].mesh.polygons[tp].v3 = _geometry.Vertices[reader.ReadUInt16()];
+                    _trees[0].mesh.polygons[tp].material = triangleList.material;
+                    tp++;
+                }
+            }
+
+            for (ushort poly = 0; poly < _trees[0].mesh.polygonCount; poly++)
+            {
+                _trees[0].mesh.vertices[(3 * poly) + 0] = _trees[0].mesh.polygons[poly].v1;
+                _trees[0].mesh.vertices[(3 * poly) + 1] = _trees[0].mesh.polygons[poly].v2;
+                _trees[0].mesh.vertices[(3 * poly) + 2] = _trees[0].mesh.polygons[poly].v3;
+            }
+
+            _polygons = new Polygon[_polygonCount];
+            uint p = 0;
+            foreach (TRLTriangleList triangleList in triangleListList)
+            {
+                reader.BaseStream.Position = triangleList.polygonStart;
+                for (int pl = 0; pl < triangleList.polygonCount; pl++)
+                {
+                    _polygons[p].v1 = _geometry.Vertices[reader.ReadUInt16()];
+                    _polygons[p].v2 = _geometry.Vertices[reader.ReadUInt16()];
+                    _polygons[p].v3 = _geometry.Vertices[reader.ReadUInt16()];
+                    _polygons[p].material = triangleList.material;
+                    p++;
+                }
+            }
+        }
+
+        protected virtual bool ReadTriangleList(BinaryReader reader, ref TRLTriangleList triangleList)
+        {
+            triangleList.polygonCount = reader.ReadUInt32() / 3;
+            triangleList.groupID = 0;
+            reader.BaseStream.Position += 8;
+            uint tpageid = reader.ReadUInt32();
+            reader.BaseStream.Position += 8;
+            triangleList.material = new Material();
+            triangleList.material.visible = true;
+            triangleList.material.textureUsed = true;
+            triangleList.material.textureID = (ushort)(tpageid & 0x1FFF);
+            triangleList.material.colour = 0xFFFFFFFF;
+            if (triangleList.material.textureID > 0)
+            {
+                triangleList.material.textureUsed = true;
+            }
+            else
+            {
+                triangleList.material.textureUsed = false;
+            }
+            triangleList.next = reader.ReadUInt32();
+            triangleList.polygonStart = (uint)reader.BaseStream.Position;
+
+            if (triangleList.polygonCount == 0)
+            {
+                triangleList.next = 0;
+            }
+
+            return (triangleList.material.visible);
         }
     }
 }

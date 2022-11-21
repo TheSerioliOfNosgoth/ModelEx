@@ -6,14 +6,14 @@ namespace CDC
 {
 	public class SR2ObjectModel : SR2Model
 	{
-		protected UInt32 m_uColourStart;
+		protected uint m_uColourStart;
 
-		public SR2ObjectModel(BinaryReader reader, DataFile dataFile, UInt32 dataStart, UInt32 modelData, String modelName, Platform ePlatform, UInt32 version)
+		public SR2ObjectModel(BinaryReader reader, DataFile dataFile, uint dataStart, uint modelData, String modelName, Platform ePlatform, uint version)
 			: base(reader, dataFile, dataStart, modelData, modelName, ePlatform, version)
 		{
 			reader.BaseStream.Position = _modelData + 0x04;
-			UInt32 uBoneCount1 = reader.ReadUInt32();
-			UInt32 uBoneCount2 = reader.ReadUInt32();
+			uint uBoneCount1 = reader.ReadUInt32();
+			uint uBoneCount2 = reader.ReadUInt32();
 			_boneCount = uBoneCount1 + uBoneCount2;
 			_boneStart = reader.ReadUInt32();
 			_vertexScale.x = reader.ReadSingle();
@@ -48,8 +48,8 @@ namespace CDC
 
 			_geometry.Vertices[v].UVID = v;
 
-			UInt16 vU = reader.ReadUInt16();
-			UInt16 vV = reader.ReadUInt16();
+			ushort vU = reader.ReadUInt16();
+			ushort vV = reader.ReadUInt16();
 
 			_geometry.UVs[v].u = Utility.BizarreFloatToNormalFloat(vU);
 			_geometry.UVs[v].v = Utility.BizarreFloatToNormalFloat(vV);
@@ -60,7 +60,7 @@ namespace CDC
 			base.ReadVertices(reader, options);
 
 			reader.BaseStream.Position = m_uColourStart;
-			for (UInt16 v = 0; v < _vertexCount; v++)
+			for (ushort v = 0; v < _vertexCount; v++)
 			{
 				_geometry.Colours[v] = reader.ReadUInt32();
 				_geometry.ColoursAlt[v] = _geometry.Colours[v];
@@ -76,7 +76,7 @@ namespace CDC
 
 			reader.BaseStream.Position = _boneStart;
 			_bones = new Bone[_boneCount];
-			for (UInt16 b = 0; b < _boneCount; b++)
+			for (ushort b = 0; b < _boneCount; b++)
 			{
 				// Get the bone data
 				_bones[b].localPos.x = reader.ReadSingle();
@@ -102,12 +102,12 @@ namespace CDC
 				reader.BaseStream.Position += 0x04;
 			}
 
-			for (UInt16 b = 0; b < _boneCount; b++)
+			for (ushort b = 0; b < _boneCount; b++)
 			{
 				// Combine this bone with it's ancestors if there are any
 				if ((_bones[b].vFirst != 0xFFFF) && (_bones[b].vLast != 0xFFFF))
 				{
-					//for (UInt16 ancestorID = b; ancestorID != 0xFFFF; )
+					//for (ushort ancestorID = b; ancestorID != 0xFFFF; )
 					//{
 					//    m_axBones[b].worldPos += m_axBones[ancestorID].localPos;
 					//    if (m_axBones[ancestorID].parentID1 == ancestorID) break;
@@ -120,7 +120,7 @@ namespace CDC
 			return;
 		}
 
-		protected Vector CombineParent(UInt16 bone)
+		protected Vector CombineParent(ushort bone)
 		{
 			if (bone == 0xFFFF)
 			{
@@ -140,11 +140,11 @@ namespace CDC
 			if ((_vertexStart == 0 || _vertexCount == 0) ||
 				(_boneStart == 0 || _boneCount == 0)) return;
 
-			for (UInt16 b = 0; b < _boneCount; b++)
+			for (ushort b = 0; b < _boneCount; b++)
 			{
 				if ((_bones[b].vFirst != 0xFFFF) && (_bones[b].vLast != 0xFFFF))
 				{
-					for (UInt16 v = _bones[b].vFirst; v <= _bones[b].vLast; v++)
+					for (ushort v = _bones[b].vFirst; v <= _bones[b].vLast; v++)
 					{
 						_geometry.PositionsPhys[v] += _bones[b].worldPos;
 						_geometry.Vertices[v].boneID = b;
@@ -162,7 +162,7 @@ namespace CDC
 			}
 
 			List<SR2TriangleList> triangleListList = new List<SR2TriangleList>();
-			UInt32 materialPosition = _materialStart;
+			uint materialPosition = _materialStart;
 			_groupCount = 0;
 			while (materialPosition != 0)
 			{
@@ -174,7 +174,7 @@ namespace CDC
 					triangleListList.Add(triangleList);
 					_polygonCount += triangleList.polygonCount;
 
-					if ((UInt32)triangleList.groupID > _groupCount)
+					if ((uint)triangleList.groupID > _groupCount)
 					{
 						_groupCount = triangleList.groupID;
 					}
@@ -185,18 +185,18 @@ namespace CDC
 				materialPosition = triangleList.next;
 			}
 
-			_materialCount = (UInt32)_materialsList.Count;
+			_materialCount = (uint)_materialsList.Count;
 
 			_groupCount++;
 			_trees = new Tree[_groupCount];
-			for (UInt32 t = 0; t < _groupCount; t++)
+			for (uint t = 0; t < _groupCount; t++)
 			{
 				_trees[t] = new Tree();
 				_trees[t].mesh = new Mesh();
 
 				foreach (SR2TriangleList triangleList in triangleListList)
 				{
-					if (t == (UInt32)triangleList.groupID)
+					if (t == (uint)triangleList.groupID)
 					{
 						_trees[t].mesh.polygonCount += triangleList.polygonCount;
 					}
@@ -207,12 +207,12 @@ namespace CDC
 				_trees[t].mesh.vertices = new Vertex[_trees[t].mesh.indexCount];
 			}
 
-			for (UInt32 t = 0; t < _groupCount; t++)
+			for (uint t = 0; t < _groupCount; t++)
 			{
-				UInt32 tp = 0;
+				uint tp = 0;
 				foreach (SR2TriangleList triangleList in triangleListList)
 				{
-					if (t != (UInt32)triangleList.groupID)
+					if (t != (uint)triangleList.groupID)
 					{
 						continue;
 					}
@@ -228,7 +228,7 @@ namespace CDC
 					}
 				}
 
-				for (UInt16 poly = 0; poly < _trees[t].mesh.polygonCount; poly++)
+				for (ushort poly = 0; poly < _trees[t].mesh.polygonCount; poly++)
 				{
 					_trees[t].mesh.vertices[(3 * poly) + 0] = _trees[t].mesh.polygons[poly].v1;
 					_trees[t].mesh.vertices[(3 * poly) + 1] = _trees[t].mesh.polygons[poly].v2;
@@ -237,7 +237,7 @@ namespace CDC
 			}
 
 			_polygons = new Polygon[_polygonCount];
-			UInt32 p = 0;
+			uint p = 0;
 			foreach (SR2TriangleList triangleList in triangleListList)
 			{
 				reader.BaseStream.Position = triangleList.polygonStart;
@@ -254,15 +254,14 @@ namespace CDC
 
 		protected virtual bool ReadTriangleList(BinaryReader reader, ref SR2TriangleList triangleList)
 		{
-			triangleList.polygonCount = (UInt32)reader.ReadUInt16() / 3;
+			triangleList.polygonCount = (uint)reader.ReadUInt16() / 3;
 			triangleList.groupID = reader.ReadUInt16(); // Used by MON_SetAccessories and INSTANCE_UnhideAllDrawGroups
-			triangleList.polygonStart = (UInt32)(reader.BaseStream.Position) + 0x0C;
-			UInt16 xWord0 = reader.ReadUInt16();
-			UInt16 xWord1 = reader.ReadUInt16();
-			UInt32 xDWord0 = reader.ReadUInt32();
+			ushort tpageid = reader.ReadUInt16();
+			ushort xWord1 = reader.ReadUInt16();
+			uint xDWord0 = reader.ReadUInt32();
 			triangleList.material = new Material();
-			triangleList.material.visible = ((xWord1 & 0x0800) == 0);
-			triangleList.material.textureID = (UInt16)(xWord0 & 0x0FFF);
+			triangleList.material.visible = ((xWord1 & 0xFF00) == 0);
+			triangleList.material.textureID = (ushort)(tpageid & 0x0FFF);
 			triangleList.material.colour = 0xFFFFFFFF;
 			if (triangleList.material.textureID > 0)
 			{
@@ -271,9 +270,14 @@ namespace CDC
 			else
 			{
 				triangleList.material.textureUsed = false;
-				//xMaterial.colour = 0x00000000;
 			}
 			triangleList.next = reader.ReadUInt32();
+			triangleList.polygonStart = (uint)reader.BaseStream.Position;
+
+			if (triangleList.polygonCount == 0)
+			{
+				triangleList.next = 0;
+			}
 
 			return (triangleList.material.visible);
 		}
