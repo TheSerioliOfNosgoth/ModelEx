@@ -174,6 +174,11 @@ namespace CDC
 		protected UInt32 _introStart;
 		protected Intro[] _intros;
 		protected UInt32 _objectNameStart;
+		protected UInt32 _bgObjectCount;
+		protected UInt32 _bgObjectStart;
+		protected UInt32 _bgInstanceCount;
+		protected UInt32 _bgInstanceStart;
+		protected BGInstance[] _bgInstances;
 		protected String[] _objectNames;
 		protected UInt32 _portalCount;
 		protected UInt32 _portalStart;
@@ -190,6 +195,8 @@ namespace CDC
 		public UInt32 IntroCount { get { return _introCount; } }
 		public Intro[] Intros { get { return _intros; } }
 		public String[] ObjectNames { get { return _objectNames; } }
+		public UInt32 BGInstanceCount { get { return _bgInstanceCount; } }
+		public BGInstance[] BGInstances { get { return _bgInstances; } }
 		public UInt32 PortalCount { get { return _portalCount; } }
 		public Portal[] Portals { get { return _portals; } }
 		public Game Game { get { return _game; } }

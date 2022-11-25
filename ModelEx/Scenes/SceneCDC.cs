@@ -56,7 +56,7 @@ namespace ModelEx
 						_renderInstances.Add(modelInstance);
 					}
 
-					if (!includeObjects)
+					if (!includeObjects || m >= (int)dataFile.PortalCount)
 					{
 						break;
 					}
@@ -132,6 +132,61 @@ namespace ModelEx
 						lock (_renderInstances)
 						{
 							_renderInstances.Add(introInstance);
+						}
+					}
+				}
+
+				if (dataFile.BGInstanceCount > 0)
+				{
+					foreach (CDC.BGInstance bgInstance in dataFile.BGInstances)
+					{
+						SlimDX.Matrix rMat = new SlimDX.Matrix()
+						{
+							M11 = bgInstance.matrix.v0.x,
+							M12 = bgInstance.matrix.v0.y,
+							M13 = bgInstance.matrix.v0.z,
+							M14 = bgInstance.matrix.v0.w,
+							M21 = bgInstance.matrix.v1.x,
+							M22 = bgInstance.matrix.v1.y,
+							M23 = bgInstance.matrix.v1.z,
+							M24 = bgInstance.matrix.v1.w,
+							M31 = bgInstance.matrix.v2.x,
+							M32 = bgInstance.matrix.v2.y,
+							M33 = bgInstance.matrix.v2.z,
+							M34 = bgInstance.matrix.v2.w,
+							M41 = bgInstance.matrix.v3.x,
+							M42 = bgInstance.matrix.v3.y,
+							M43 = bgInstance.matrix.v3.z,
+							M44 = bgInstance.matrix.v3.w,
+						};
+
+						SlimDX.Matrix lMat = new SlimDX.Matrix()
+						{
+							M11 = rMat.M11, M12 = rMat.M13, M13 = rMat.M12, M14 = rMat.M14,
+							M21 = rMat.M31, M22 = rMat.M33, M23 = rMat.M32, M24 = rMat.M34,
+							M31 = rMat.M21, M32 = rMat.M23, M33 = rMat.M22, M34 = rMat.M24,
+							M41 = rMat.M41, M42 = rMat.M43, M43 = rMat.M42, M44 = rMat.M44
+						};
+
+						lMat.Decompose(out SlimDX.Vector3 scale, out SlimDX.Quaternion rotation, out SlimDX.Vector3 position);
+						position *= 0.01f;
+
+						/*SlimDX.Vector3 position = new SlimDX.Vector3(
+							0.01f * bgInstance.matrix.v3.x,
+							0.01f * bgInstance.matrix.v3.z,
+							0.01f * bgInstance.matrix.v3.y
+						);
+
+						SlimDX.Vector3 scale = new SlimDX.Vector3(1.0f, 1.0f, 1.0f);
+
+						SlimDX.Quaternion rotation = new SlimDX.Quaternion();*/
+
+						RenderInstance instance = new RenderInstance(dataFile.Name, bgInstance.modelIndex + (int)dataFile.PortalCount + 1, position, rotation, scale);
+						instance.Name = bgInstance.name;
+
+						lock (_renderInstances)
+						{
+							_renderInstances.Add(instance);
 						}
 					}
 				}

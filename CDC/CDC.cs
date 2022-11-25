@@ -65,11 +65,52 @@ namespace CDC
 		}
 	}
 
+	public struct Vector4
+	{
+		public float x, y, z, w;
+		public Vector4(float x, float y, float z, float w)
+		{
+			this.x = x;
+			this.y = y;
+			this.z = z;
+			this.w = w;
+		}
+		public static Vector4 operator *(Vector4 v1, Vector4 v2)
+		{
+			return new Vector4(
+				v1.x * v2.x,
+				v1.y * v2.y,
+				v1.z * v2.z,
+				v1.w * v2.w
+			);
+		}
+
+		public static Vector4 operator +(Vector4 v1, Vector4 v2)
+		{
+			return new Vector4(
+				v1.x + v2.x,
+				v1.y + v2.y,
+				v1.z + v2.z,
+				v1.w + v2.w
+			);
+		}
+
+		public static Vector4 operator *(Vector4 v, float f)
+		{
+			return new Vector4(
+				v.x *= f,
+				v.y *= f,
+				v.z *= f,
+				v.w *= f
+			);
+		}
+	}
+
 	public struct Matrix
 	{
-		public Vector v0, v1, v2, v3;
+		public Vector4 v0, v1, v2, v3;
 
-		public Matrix(Vector v0, Vector v1, Vector v2, Vector v3)
+		public Matrix(Vector4 v0, Vector4 v1, Vector4 v2, Vector4 v3)
 		{
 			this.v0 = v0;
 			this.v1 = v1;
@@ -156,9 +197,11 @@ namespace CDC
 
 	public struct BGInstance
 	{
-		public ushort ID;
-		public int model;
+		public ushort id;
+		public uint bgObject;
 		public Matrix matrix;
+		public int modelIndex;
+		public string name;
 	}
 
 	public struct Portal

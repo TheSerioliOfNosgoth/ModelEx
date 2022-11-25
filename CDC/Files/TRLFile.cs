@@ -169,6 +169,36 @@ namespace CDC
 				_portals[i] = portal;
 			}
 
+			// BGObjects
+			reader.BaseStream.Position = terrainData + 0x30;
+			_bgObjectCount = reader.ReadUInt32();
+			_bgObjectStart = reader.ReadUInt32();
+
+			// BGInstances
+			reader.BaseStream.Position = terrainData + 0x28;
+			_bgInstanceCount = reader.ReadUInt32();
+			_bgInstanceStart = reader.ReadUInt32();
+
+			_bgInstances = new BGInstance[_bgInstanceCount];
+			for (int i = 0; i < _bgInstanceCount; i++)
+			{
+				reader.BaseStream.Position = _bgInstanceStart + (0xF0 * i);
+
+				_bgInstances[i].matrix = new Matrix()
+				{
+					v0 = new Vector4 { x = reader.ReadSingle(), y = reader.ReadSingle(), z = reader.ReadSingle(), w = reader.ReadSingle() },
+					v1 = new Vector4 { x = reader.ReadSingle(), y = reader.ReadSingle(), z = reader.ReadSingle(), w = reader.ReadSingle() },
+					v2 = new Vector4 { x = reader.ReadSingle(), y = reader.ReadSingle(), z = reader.ReadSingle(), w = reader.ReadSingle() },
+					v3 = new Vector4 { x = reader.ReadSingle(), y = reader.ReadSingle(), z = reader.ReadSingle(), w = reader.ReadSingle() },
+				};
+				reader.BaseStream.Position += 0x80;
+				_bgInstances[i].bgObject = reader.ReadUInt32();
+				reader.BaseStream.Position += 0x10;
+				_bgInstances[i].id = reader.ReadUInt16();
+				_bgInstances[i].modelIndex = (int)(_bgInstances[i].bgObject - _bgObjectStart) / 0x60;
+				_bgInstances[i].name = "bgInstance(" + _bgInstances[i].modelIndex + ")-" + _bgInstances[i].id;
+			}
+
 			// Intros
 			reader.BaseStream.Position = _dataStart + 0x74;
 			_introCount = reader.ReadUInt32();
@@ -231,7 +261,7 @@ namespace CDC
 			//}
 
 			_modelStart = _dataStart;
-			_modelCount = (ushort)(1 + _portalCount);
+			_modelCount = (ushort)(1 + _portalCount + _bgObjectCount);
 			_models = new IModel[_modelCount];
 			reader.BaseStream.Position = _modelStart;
 			uint modelData = _dataStart + reader.ReadUInt32();
@@ -252,6 +282,24 @@ namespace CDC
 					portal.quad
 				);
 				_models[modelIndex++] = portalModel;
+			}
+
+			uint bgObjectData = _bgObjectStart;
+			for (int i = 0; i < _bgObjectCount; i++)
+			{
+				TRLBGObjectModel bgObjectModel = new TRLBGObjectModel(
+					reader,
+					this,
+					_dataStart,
+					bgObjectData,
+					"bgobject-" + i,
+					_platform,
+					_version
+				);
+
+				bgObjectModel.ReadData(reader, options);
+				_models[modelIndex++] = bgObjectModel;
+				bgObjectData += 0x60;
 			}
 		}
 

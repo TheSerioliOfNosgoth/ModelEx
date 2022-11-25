@@ -112,7 +112,7 @@ namespace ModelEx
 		{
 			foreach (Mesh mesh in Meshes)
 			{
-				mesh.Dispose();
+				mesh?.Dispose();
 			}
 		}
 	}

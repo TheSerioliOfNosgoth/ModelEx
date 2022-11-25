@@ -96,6 +96,8 @@ namespace CDC
                 triangleListList.Add(triangleList);
                 _polygonCount += triangleList.polygonCount;
 
+                _materialsList.Add(triangleList.material);
+
                 materialPosition = triangleList.next;
             }
 
@@ -172,6 +174,14 @@ namespace CDC
             {
                 triangleList.material.textureUsed = false;
             }
+
+            if ((tpageid & 0x0001E000) == 0x00012000)
+			{
+                triangleList.material.colour = 0x00000000;
+                triangleList.material.visible = false;
+                triangleList.material.textureUsed = false;
+			}
+
             triangleList.next = reader.ReadUInt32();
             triangleList.polygonStart = (uint)reader.BaseStream.Position;
 

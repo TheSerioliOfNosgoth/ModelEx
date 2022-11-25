@@ -41,7 +41,7 @@ namespace ModelEx
 				//sortPush = 128 - sortPush;
 				//material.DepthBias = (1.0f / 100000.0f) * sortPush;
 				// Maybe use a hack for warpgates WARPGATE_DrawWarpGateRim indicates tree 3 should have lower priority.
-				if (_dataFile.Asset == CDC.Asset.Unit && modelIndex > 0)
+				if (_dataFile.Asset == CDC.Asset.Unit && modelIndex > 0 && modelIndex <= _dataFile.PortalCount)
 				{
 					material.BlendMode = 1;
 				}
