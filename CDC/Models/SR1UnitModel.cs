@@ -103,6 +103,7 @@ namespace CDC
 				_version == SR1File.ALPHA_19990123_VERSION_1 ||
 				_version == SR1File.ALPHA_19990204_VERSION_2 ||
 				_version == SR1File.ALPHA_19990216_VERSION_3 ||
+				_version == SR1File.ALPHA_19990414_VERSION_4 ||
 				_version == SR1File.BETA_19990512_VERSION)
 			{
 				// struct TextureFT3 *EndTextureList;
