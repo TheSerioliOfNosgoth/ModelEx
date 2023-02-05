@@ -141,6 +141,17 @@ namespace CDC
 					_intros[i].name = Utility.CleanObjectName(introName) + "-" + _intros[i].uniqueID;
 					_intros[i].fileName = Utility.CleanObjectName(introName);
 				}
+
+				reader.BaseStream.Position = _introStart + 0x34 * i;
+				reader.BaseStream.Position += 0x08;
+				_intros[i].rotation.x = (float)(Math.PI * 2 / 4096) * reader.ReadInt16();
+				_intros[i].rotation.y = (float)(Math.PI * 2 / 4096) * reader.ReadInt16();
+				_intros[i].rotation.z = (float)(Math.PI * 2 / 4096) * reader.ReadInt16();
+				reader.BaseStream.Position += 0x02;
+				_intros[i].position.x = (float)reader.ReadInt16();
+				_intros[i].position.y = (float)reader.ReadInt16();
+				_intros[i].position.z = (float)reader.ReadInt16();
+
 			}
 
 			// Unit name. No names in Gex :(
