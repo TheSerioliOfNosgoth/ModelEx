@@ -158,9 +158,9 @@ namespace ModelEx
             public IntPtr hIcon;
             public int iIcon;
             public uint dwAttributes;
-            [MarshalAs(UnmanagedType.LPStr, SizeConst = 260)]
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
             public string szDisplayName;
-            [MarshalAs(UnmanagedType.LPStr, SizeConst = 80)]
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
             public string szTypeName;
         };
 
