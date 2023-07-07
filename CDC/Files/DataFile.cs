@@ -282,7 +282,7 @@ namespace CDC
 				{
 					dataFile = new DefianceFile(dataFileName, objectListFile, platform, options);
 				}
-				else if (game == Game.TRL)
+				else if (game == Game.TRL || game == Game.TRA)
 				{
 					dataFile = new TRLFile(dataFileName, objectListFile, platform, options);
 				}

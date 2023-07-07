@@ -554,7 +554,7 @@ namespace ModelEx
 							loadRequest.TextureFile = inputFilePath;
 						}
 
-						if (loadRequest.GameType == CDC.Game.TRL)
+						if (loadRequest.GameType == CDC.Game.TRL || loadRequest.GameType == CDC.Game.TRA)
 						{
 							//
 						}
