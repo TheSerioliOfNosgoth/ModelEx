@@ -16,7 +16,7 @@ namespace ModelEx
 		public string ProjectFolder { get; private set; } = "";
 		public CDC.Game SelectedGameType { get; set; } = CDC.Game.Gex;
 		public CDC.Platform SelectedPlatform { get; set; } = CDC.Platform.PC;
-		public bool ClearLoadedFiles { get; private set; } = false;
+		public bool ClearLoadedFiles { get; set; } = false;
 		private DirectoryInfo _currentDirectory;
 
 		private readonly List<string> _specialFolders = new List<string>();
@@ -165,11 +165,14 @@ namespace ModelEx
 					break;
                 }
             }
+
+			clearLoadedFilesCheckBox.Checked = ClearLoadedFiles;
 		}
 
 		private void LoadResourceDialog_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			SelectedFolder = _currentDirectory.FullName;
+			ClearLoadedFiles = clearLoadedFilesCheckBox.Checked;
 
 			if (DialogResult != DialogResult.OK)
 			{
@@ -244,7 +247,6 @@ namespace ModelEx
 				TextureFile = textureFileNode.FileName;
 				ObjectListFile = objectListFileNode.FileName;
 				ProjectFolder = projectFolderTextBox.Text;
-				ClearLoadedFiles = clearLoadedFilesCheckBox.Checked;
 			}
 			catch (Exception)
 			{

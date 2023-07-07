@@ -348,6 +348,8 @@ namespace ModelEx
 
 		protected bool SelectResourceToLoad(SceneMode sceneModeOnLoad)
 		{
+			bool result = true;
+
 			LoadRequestCDC loadRequest = new LoadRequestCDC();
 			LoadResourceDialog loadResourceDialog = new LoadResourceDialog();
 
@@ -359,6 +361,7 @@ namespace ModelEx
 
 			loadResourceDialog.SelectedGameType = (CDC.Game)Properties.Settings.Default.RecentGame;
 			loadResourceDialog.SelectedPlatform = (CDC.Platform)Properties.Settings.Default.RecentPlatform;
+			loadResourceDialog.ClearLoadedFiles = Properties.Settings.Default.ClearLoadedFiles;
 
 			if (sceneModeOnLoad == SceneMode.Scene)
 			{
@@ -377,20 +380,12 @@ namespace ModelEx
 				loadResourceDialog.Text = "Load Resource...";
 			}
 
-			DialogResult dialogResult = loadResourceDialog.ShowDialog();
-			if (dialogResult != DialogResult.OK)
+			if (loadResourceDialog.ShowDialog() != DialogResult.OK)
 			{
-				Properties.Settings.Default.RecentFolder = loadResourceDialog.SelectedFolder;
-				Properties.Settings.Default.RecentGame = (int)loadResourceDialog.SelectedGameType;
-				Properties.Settings.Default.RecentPlatform = (int)loadResourceDialog.SelectedPlatform;
-				Properties.Settings.Default.Save();
-				loadResourceDialog.Dispose();
-				return false;
+				result = false;
 			}
 
-			loadResourceDialog.Dispose();
-
-			if (loadResourceDialog.SelectedGameType == CDC.Game.Gex)
+			if (result && loadResourceDialog.SelectedGameType == CDC.Game.Gex)
 			{
 				CDC.GexFile gexFile;
 				ObjectSelectWindow objectSelectDlg = new ObjectSelectWindow();
@@ -398,48 +393,57 @@ namespace ModelEx
 				try
 				{
 					gexFile = new CDC.GexFile(loadResourceDialog.DataFile, loadResourceDialog.SelectedPlatform, new CDC.ExportOptions());
+
 					if (gexFile.Asset == CDC.Asset.Unit)
 					{
 						objectSelectDlg.SetObjectNames(gexFile.ObjectNames);
+
 						if (objectSelectDlg.ShowDialog() != DialogResult.OK)
 						{
-							objectSelectDlg.Dispose();
-							return false;
+							result = false;
 						}
-
-						objectSelectDlg.Dispose();
 					}
 				}
 				catch
 				{
-					return false;
+					result = false;
 				}
 
-				loadRequest.ChildIndex = objectSelectDlg.SelectedObject;
+				if (result)
+				{
+					loadRequest.ChildIndex = objectSelectDlg.SelectedObject;
+				}
+
+				objectSelectDlg.Dispose();
 			}
 
-			loadRequest.DataFile = loadResourceDialog.DataFile;
-			loadRequest.TextureFile = loadResourceDialog.TextureFile;
-			loadRequest.ObjectListFile = loadResourceDialog.ObjectListFile;
-			loadRequest.ProjectFolder = loadResourceDialog.ProjectFolder;
-			loadRequest.GameType = loadResourceDialog.SelectedGameType;
-			loadRequest.Platform = loadResourceDialog.SelectedPlatform;
-			loadRequest.ExportOptions = sceneModeOnLoad == SceneMode.Debug ? _ImportExportOptions : new CDC.ExportOptions();
+			if (result)
+			{
+				loadRequest.DataFile = loadResourceDialog.DataFile;
+				loadRequest.TextureFile = loadResourceDialog.TextureFile;
+				loadRequest.ObjectListFile = loadResourceDialog.ObjectListFile;
+				loadRequest.ProjectFolder = loadResourceDialog.ProjectFolder;
+				loadRequest.GameType = loadResourceDialog.SelectedGameType;
+				loadRequest.Platform = loadResourceDialog.SelectedPlatform;
+				loadRequest.ExportOptions = sceneModeOnLoad == SceneMode.Debug ? _ImportExportOptions : new CDC.ExportOptions();
 
-			_LoadRequest = loadRequest;
-			_LoadDebugResource = sceneModeOnLoad == SceneMode.Debug;
-			_LoadDependancies = false;
-			_ClearResourcesOnLoad = loadResourceDialog.ClearLoadedFiles;
-			_SceneModeOnLoad = sceneModeOnLoad;
+				_LoadRequest = loadRequest;
+				_LoadDebugResource = sceneModeOnLoad == SceneMode.Debug;
+				_LoadDependancies = false;
+				_ClearResourcesOnLoad = loadResourceDialog.ClearLoadedFiles;
+				_SceneModeOnLoad = sceneModeOnLoad;
+
+				reloadCurrentModelToolStripMenuItem.Enabled = true;
+			}
 
 			Properties.Settings.Default.RecentFolder = loadResourceDialog.SelectedFolder;
 			Properties.Settings.Default.RecentGame = (int)loadResourceDialog.SelectedGameType;
 			Properties.Settings.Default.RecentPlatform = (int)loadResourceDialog.SelectedPlatform;
+			Properties.Settings.Default.ClearLoadedFiles = loadResourceDialog.ClearLoadedFiles;
 			Properties.Settings.Default.Save();
+			loadResourceDialog.Dispose();
 
-			reloadCurrentModelToolStripMenuItem.Enabled = true;
-
-			return true;
+			return result;
 		}
 
 		protected void LoadResource()
