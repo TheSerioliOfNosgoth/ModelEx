@@ -19,7 +19,8 @@ namespace CDC
 		SR1,
 		SR2,
 		Defiance,
-		TRL
+		TRL,
+		TRA
 	}
 
 	public enum Asset

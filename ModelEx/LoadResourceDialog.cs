@@ -74,7 +74,8 @@ namespace ModelEx
 			gameTypeComboBox.Items.Add("Soul Reaver 1 Files (*.drm)");
 			gameTypeComboBox.Items.Add("Soul Reaver 2 Files (*.drm)");
 			gameTypeComboBox.Items.Add("Defiance Files (*.drm)");
-			gameTypeComboBox.Items.Add("Tomb Raider Files(*.drm)");
+			gameTypeComboBox.Items.Add("Tomb Raider Legend Files(*.drm)");
+			gameTypeComboBox.Items.Add("Tomb Raider Anniversary Files(*.drm)");
 		}
 
 		private void LoadResourceDialog_Load(object sender, System.EventArgs e)
@@ -385,6 +386,7 @@ namespace ModelEx
 						case CDC.Game.SR2: rootFolderName = "pcenglish"; break;
 						case CDC.Game.Defiance: rootFolderName = "pcenglish"; break;
 						case CDC.Game.TRL: rootFolderName = "pc-w"; break;
+						case CDC.Game.TRA: rootFolderName = "pc-w"; break;
 						default: break;
 					}
 
@@ -451,6 +453,7 @@ namespace ModelEx
 							break;
 						}
 						case CDC.Game.TRL:
+						case CDC.Game.TRA:
 						{
 							textureFileComboBox.Items.Add(new FileNode(textureFileName, true));
 							break;
@@ -464,11 +467,13 @@ namespace ModelEx
 
 					#region Object List
 					string objectListFileName = fileInfo.FullName;
-					if (SelectedGameType == CDC.Game.Defiance || SelectedGameType == CDC.Game.TRL)
+					if (SelectedGameType == CDC.Game.Defiance || SelectedGameType == CDC.Game.TRL || SelectedGameType == CDC.Game.TRA)
 					{
 						if (foundRoot)
 						{
-							string gameFolderName = (SelectedGameType == CDC.Game.Defiance) ? "sr3" : "tr7";
+							string gameFolderName
+								= (SelectedGameType == CDC.Game.Defiance) ? "sr3" : (SelectedGameType == CDC.Game.TRL) ? "tr7" : "trae";
+
 							objectListFileName = Path.Combine(rootDirectory, gameFolderName, rootFolderName, "objectlist.txt");
 						}
 						else
