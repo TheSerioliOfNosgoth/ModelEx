@@ -56,16 +56,16 @@ namespace ModelEx
 
 		public override void ApplyTransform(Matrix transform)
 		{
-			Matrix ViewPerspective = CameraManager.Instance.frameCamera.ViewPerspective;
+			Matrix ViewPerspective = CameraManager.Instance.FrameCamera.ViewPerspective;
 			Matrix WorldViewPerspective = transform * ViewPerspective;
-			Vector3 viewDir = CameraManager.Instance.frameCamera.eye - CameraManager.Instance.frameCamera.target;
+			Vector3 viewDir = CameraManager.Instance.FrameCamera.eye - CameraManager.Instance.FrameCamera.target;
 
 			effect.Constants.World = Matrix.Transpose(transform);
 			//effect.Constants.World = Matrix.Scaling(-1, 1, 1) * transform;
-			effect.Constants.View = Matrix.Transpose(CameraManager.Instance.frameCamera.View);
-			effect.Constants.Projection = Matrix.Transpose(CameraManager.Instance.frameCamera.Perspective);
+			effect.Constants.View = Matrix.Transpose(CameraManager.Instance.FrameCamera.View);
+			effect.Constants.Projection = Matrix.Transpose(CameraManager.Instance.FrameCamera.Perspective);
 
-			effect.Constants.CameraPosition = CameraManager.Instance.frameCamera.eye;
+			effect.Constants.CameraPosition = CameraManager.Instance.FrameCamera.eye;
 			effect.Constants.LightDirection = viewDir;
 
 			effect.Constants.RealmBlend = RealmBlend;

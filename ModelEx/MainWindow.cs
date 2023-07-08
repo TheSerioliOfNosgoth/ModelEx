@@ -630,7 +630,7 @@ namespace ModelEx
 
 		private void EgoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			CameraManager.Instance.SetCamera(CameraManager.CameraMode.Ego);
+			CameraManager.Instance.Mode = CameraManager.CameraMode.Ego;
 			egoToolStripMenuItem.Checked = true;
 			orbitToolStripMenuItem.Checked = false;
 			orbitPanToolStripMenuItem.Checked = false;
@@ -638,7 +638,7 @@ namespace ModelEx
 
 		private void OrbitToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			CameraManager.Instance.SetCamera(CameraManager.CameraMode.Orbit);
+			CameraManager.Instance.Mode = CameraManager.CameraMode.Orbit;
 			egoToolStripMenuItem.Checked = false;
 			orbitToolStripMenuItem.Checked = true;
 			orbitPanToolStripMenuItem.Checked = false;
@@ -646,7 +646,7 @@ namespace ModelEx
 
 		private void OrbitPanToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			CameraManager.Instance.SetCamera(CameraManager.CameraMode.OrbitPan);
+			CameraManager.Instance.Mode = CameraManager.CameraMode.OrbitPan;
 			egoToolStripMenuItem.Checked = false;
 			orbitToolStripMenuItem.Checked = false;
 			orbitPanToolStripMenuItem.Checked = true;

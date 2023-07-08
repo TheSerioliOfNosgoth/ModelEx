@@ -248,8 +248,8 @@ namespace ModelEx
 					}
 
 					SlimDX.Matrix world = instance.Transform;
-					SlimDX.Matrix view = CameraManager.Instance.frameCamera.View;
-					SlimDX.Matrix projection = CameraManager.Instance.frameCamera.Perspective;
+					SlimDX.Matrix view = CameraManager.Instance.FrameCamera.View;
+					SlimDX.Matrix projection = CameraManager.Instance.FrameCamera.Perspective;
 
 					//SlimDX.Matrix viewProj = view * projection;
 					SlimDX.Matrix worldViewProjection = world * view * projection;
@@ -261,7 +261,7 @@ namespace ModelEx
 					{
 						SlimDX.Vector3 objPos = SlimDX.Vector3.Zero;
 						objPos = SlimDX.Vector3.TransformCoordinate(objPos, instance.Transform);
-						SlimDX.Vector3 camPos = CameraManager.Instance.frameCamera.eye;
+						SlimDX.Vector3 camPos = CameraManager.Instance.FrameCamera.eye;
 						SlimDX.Vector3 objOffset = objPos - camPos;
 						float scale = Math.Min(2.0f, 5.0f / (float)Math.Sqrt(Math.Max(1.0f, objOffset.Length())));
 

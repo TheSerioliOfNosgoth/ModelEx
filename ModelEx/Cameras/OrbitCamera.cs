@@ -16,8 +16,7 @@ namespace ModelEx
 			target = new Vector3(0, 0, 0);
 			up = new Vector3(0, 1, 0);
 
-			view = Matrix.LookAtLH(eye, target, up);
-			perspective = Matrix.PerspectiveFovLH((float)Math.PI / 4, 1.0f, 0.1f, 1000.0f);
+			View = Matrix.LookAtLH(eye, target, up);
 		}
 
 		public void RotateY(int value)

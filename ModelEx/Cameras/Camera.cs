@@ -10,28 +10,16 @@ namespace ModelEx
 		public Vector3 target;
 		public Vector3 up;
 
-		public Matrix view = Matrix.Identity;
-		public Matrix perspective = Matrix.Identity;
-		public Matrix viewPerspective = Matrix.Identity;
-
-		public Matrix View
-		{
-			get { return view; }
-		}
+		public Matrix View { get; protected set; } = Matrix.Identity;
 
 		public Matrix Perspective
 		{
-			get { return perspective; }
+			get { return CameraManager.Instance.Perspective; }
 		}
 
 		public Matrix ViewPerspective
 		{
-			get { return view * perspective; }
-		}
-
-		public void SetPerspective(float fov, float aspect, float znear, float zfar)
-		{
-			perspective = Matrix.PerspectiveFovLH(fov, aspect, znear, zfar);
+			get { return View * Perspective; }
 		}
 
 		public virtual void SetView(Vector3 eye, Vector3 target, Vector3 up)
@@ -39,13 +27,12 @@ namespace ModelEx
 			this.eye = eye;
 			this.target = target;
 			this.up = up;
-			view = Matrix.LookAtLH(eye, target, up);
+			View = Matrix.LookAtLH(eye, target, up);
 		}
 
 		public void CopyFromOther(Camera camera)
 		{
 			SetView(camera.eye, camera.target, camera.up);
-			perspective = camera.perspective;
 		}
 	}
 }

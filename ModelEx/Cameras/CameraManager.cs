@@ -13,11 +13,27 @@ namespace ModelEx
 			OrbitPan = 2
 		}
 
+		CameraMode mode;
+
+		public CameraMode Mode
+		{
+			get
+			{
+				return mode;
+			}
+			set
+			{
+				mode = value;
+				CurrentCamera = cameras[(int)mode];
+			}
+		}
+
 		List<DynamicCamera> cameras = new List<DynamicCamera>();
 
-		public Camera frameCamera;
-		public DynamicCamera currentCamera;
-		CameraMode cameraMode;
+		public Camera FrameCamera { get; set; }
+		public DynamicCamera CurrentCamera { get; set; }
+
+		public Matrix Perspective { get; private set; } = Matrix.Identity;
 
 		private static CameraManager instance = null;
 		public static CameraManager Instance
@@ -34,7 +50,7 @@ namespace ModelEx
 
 		private CameraManager()
 		{
-			frameCamera = new Camera();
+			FrameCamera = new Camera();
 			EgoCamera ec = new EgoCamera();
 			OrbitCamera oc = new OrbitCamera();
 			OrbitPanCamera ocp = new OrbitPanCamera();
@@ -42,8 +58,8 @@ namespace ModelEx
 			cameras.Add(oc);
 			cameras.Add(ocp);
 
-			cameraMode = 0;
-			currentCamera = cameras[(int)cameraMode];
+			mode = 0;
+			CurrentCamera = cameras[(int)mode];
 		}
 
 		public void Reset()
@@ -67,10 +83,7 @@ namespace ModelEx
 
 		public void SetPerspective(float fov, float aspect, float znear, float zfar)
 		{
-			foreach (Camera camera in cameras)
-			{
-				camera.SetPerspective(fov, aspect, znear, zfar);
-			}
+			Perspective = Matrix.PerspectiveFovLH(fov, aspect, znear, zfar);
 		}
 
 		public void SetView(Vector3 eye, Vector3 target)
@@ -81,16 +94,10 @@ namespace ModelEx
 			}
 		}
 
-		public void SetCamera(CameraMode mode)
-		{
-			cameraMode = mode;
-			currentCamera = cameras[(int)cameraMode];
-		}
-
 		public void UpdateFrameCamera()
 		{
-			currentCamera.Update();
-			frameCamera.CopyFromOther(currentCamera);
+			CurrentCamera.Update();
+			FrameCamera.CopyFromOther(CurrentCamera);
 		}
 	}
 }

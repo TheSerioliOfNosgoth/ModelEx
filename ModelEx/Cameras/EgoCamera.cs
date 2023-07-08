@@ -27,8 +27,7 @@ namespace ModelEx
 			eye = new Vector3(0, 1, 0);
 			target = eye + look;
 
-			view = Matrix.LookAtLH(eye, target, up);
-			perspective = Matrix.PerspectiveFovLH((float)Math.PI / 4, 1.0f, 0.1f, 1000.0f);
+			View = Matrix.LookAtLH(eye, target, up);
 		}
 
 		public void Yaw(int x)
@@ -37,7 +36,7 @@ namespace ModelEx
 			look = Vector3.TransformCoordinate(look, rot);
 
 			target = eye + look;
-			view = Matrix.LookAtLH(eye, target, up);
+			View = Matrix.LookAtLH(eye, target, up);
 		}
 
 		public void Pitch(int y)
@@ -66,7 +65,7 @@ namespace ModelEx
 			look.Normalize();
 
 			target = eye + look;
-			view = Matrix.LookAtLH(eye, target, up);
+			View = Matrix.LookAtLH(eye, target, up);
 		}
 
 		public void Strafe(int val)
@@ -89,7 +88,7 @@ namespace ModelEx
 			}
 
 			target = eye + look;
-			view = Matrix.LookAtLH(eye, target, up);
+			View = Matrix.LookAtLH(eye, target, up);
 		}
 
 		public void Move(int val)
@@ -110,7 +109,7 @@ namespace ModelEx
 			}
 
 			target = eye + look;
-			view = Matrix.LookAtLH(eye, target, up);
+			View = Matrix.LookAtLH(eye, target, up);
 		}
 
 		public void MoveVertically(int val)
@@ -133,7 +132,7 @@ namespace ModelEx
 			}
 
 			target = eye + look;
-			view = Matrix.LookAtLH(eye, target, up);
+			View = Matrix.LookAtLH(eye, target, up);
 		}
 
 		public override void SetView(Vector3 eye, Vector3 target, Vector3 up)
@@ -142,7 +141,7 @@ namespace ModelEx
 			this.eye = eye;
 			this.target = target;
 			this.up = up;
-			view = Matrix.LookAtLH(eye, target, up);
+			View = Matrix.LookAtLH(eye, target, up);
 
 			Vector3 dir = look;
 			dir.Normalize();
