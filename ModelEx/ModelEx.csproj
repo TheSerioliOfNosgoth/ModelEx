@@ -73,6 +73,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cameras\CameraSet.cs" />
     <Compile Include="Cameras\DynamicCamera.cs" />
     <Compile Include="Cameras\Camera.cs" />
     <Compile Include="Cameras\CameraManager.cs" />
