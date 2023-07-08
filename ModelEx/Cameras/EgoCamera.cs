@@ -80,11 +80,11 @@ namespace ModelEx
 
 			if (val > 0)
 			{
-				eye = eye + axis;
+				eye += axis;
 			}
 			else
 			{
-				eye = eye - axis;
+				eye -= axis;
 			}
 
 			target = eye + look;
@@ -101,11 +101,11 @@ namespace ModelEx
 
 			if (val > 0)
 			{
-				eye = eye + tempLook;
+				eye += tempLook;
 			}
 			else
 			{
-				eye = eye - tempLook;
+				eye -= tempLook;
 			}
 
 			target = eye + look;
@@ -124,11 +124,11 @@ namespace ModelEx
 
 			if (val > 0)
 			{
-				eye = eye + vertical;
+				eye += vertical;
 			}
 			else
 			{
-				eye = eye - vertical;
+				eye -= vertical;
 			}
 
 			target = eye + look;

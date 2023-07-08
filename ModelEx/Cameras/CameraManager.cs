@@ -30,12 +30,12 @@ namespace ModelEx
 
 		List<DynamicCamera> cameras = new List<DynamicCamera>();
 
-		public Camera FrameCamera { get; set; }
-		public DynamicCamera CurrentCamera { get; set; }
+		public Camera FrameCamera { get; }
+		public DynamicCamera CurrentCamera { get; private set; }
 
 		public Matrix Perspective { get; private set; } = Matrix.Identity;
 
-		private static CameraManager instance = null;
+		private static CameraManager instance;
 		public static CameraManager Instance
 		{
 			get
@@ -78,20 +78,15 @@ namespace ModelEx
 				}
 			}
 
-			SetView(eye, target);
+			foreach (Camera camera in cameras)
+			{
+				camera.SetView(eye, target, new Vector3(0, 1, 0));
+			}
 		}
 
 		public void SetPerspective(float fov, float aspect, float znear, float zfar)
 		{
 			Perspective = Matrix.PerspectiveFovLH(fov, aspect, znear, zfar);
-		}
-
-		public void SetView(Vector3 eye, Vector3 target)
-		{
-			foreach (Camera camera in cameras)
-			{
-				camera.SetView(eye, target, new Vector3(0, 1, 0));
-			}
 		}
 
 		public void UpdateFrameCamera()

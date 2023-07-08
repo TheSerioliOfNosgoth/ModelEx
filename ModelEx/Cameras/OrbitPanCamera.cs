@@ -70,8 +70,8 @@ namespace ModelEx
 			Matrix scaling = Matrix.Scaling(scaleFactor, scaleFactor, scaleFactor);
 			orhto = Vector3.TransformCoordinate(orhto, scaling);
 
-			target = target + orhto;
-			eye = eye + orhto;
+			target += orhto;
+			eye += orhto;
 			SetView(eye, target, up);
 		}
 
@@ -94,8 +94,8 @@ namespace ModelEx
 			Matrix scaling = Matrix.Scaling(scaleFactor, scaleFactor, scaleFactor);
 			viewDir = Vector3.TransformCoordinate(viewDir, scaling);
 
-			target = target + viewDir;
-			eye = eye + viewDir;
+			target += viewDir;
+			eye += viewDir;
 			SetView(eye, target, up);
 		}
 
@@ -119,11 +119,11 @@ namespace ModelEx
 			viewDir = Vector3.TransformCoordinate(viewDir, scale);
 			if (value > 0)
 			{
-				eye = eye + viewDir;
+				eye += viewDir;
 			}
 			else
 			{
-				eye = eye - viewDir;
+				eye -= viewDir;
 			}
 
 			SetView(eye, target, up);
