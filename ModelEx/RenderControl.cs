@@ -47,22 +47,22 @@ namespace ModelEx
 
 		private void RenderControl_MouseUp(object sender, MouseEventArgs e)
 		{
-			CameraManager.Instance.CurrentCamera.MouseUp(sender, e);
+			CameraManager.Instance.CurrentCamera?.MouseUp(sender, e);
 		}
 
 		private void RenderControl_MouseDown(object sender, MouseEventArgs e)
 		{
-			CameraManager.Instance.CurrentCamera.MouseDown(sender, e);
+			CameraManager.Instance.CurrentCamera?.MouseDown(sender, e);
 		}
 
 		private void RenderControl_MouseMove(object sender, MouseEventArgs e)
 		{
-			CameraManager.Instance.CurrentCamera.MouseMove(sender, e);
+			CameraManager.Instance.CurrentCamera?.MouseMove(sender, e);
 		}
 
 		private void RenderControl_MouseWheel(object sender, MouseEventArgs e)
 		{
-			CameraManager.Instance.CurrentCamera.MouseWheel(sender, e);
+			CameraManager.Instance.CurrentCamera?.MouseWheel(sender, e);
 		}
 
 		private void RenderControl_KeyUp(object sender, KeyEventArgs e)
@@ -72,17 +72,17 @@ namespace ModelEx
 				RenderManager.Instance.SwitchSyncInterval();
 			}
 
-			CameraManager.Instance.CurrentCamera.KeyUp(sender, e);
+			CameraManager.Instance.CurrentCamera?.KeyUp(sender, e);
 		}
 
 		private void RenderControl_KeyPress(object sender, KeyPressEventArgs e)
 		{
-			CameraManager.Instance.CurrentCamera.KeyPress(sender, e);
+			CameraManager.Instance.CurrentCamera?.KeyPress(sender, e);
 		}
 
 		private void RenderControl_KeyDown(object sender, KeyEventArgs e)
 		{
-			CameraManager.Instance.CurrentCamera.KeyDown(sender, e);
+			CameraManager.Instance.CurrentCamera?.KeyDown(sender, e);
 		}
 
 		private void RenderControl_Resize(object sender, EventArgs e)
