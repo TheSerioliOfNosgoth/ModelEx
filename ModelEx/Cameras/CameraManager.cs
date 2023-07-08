@@ -6,32 +6,8 @@ namespace ModelEx
 {
 	public class CameraManager
 	{
-		public enum CameraMode : int
-		{
-			Ego = 0,
-			Orbit = 1,
-			OrbitPan = 2
-		}
-
-		CameraMode mode;
-
-		public CameraMode Mode
-		{
-			get
-			{
-				return mode;
-			}
-			set
-			{
-				mode = value;
-				CurrentCamera = cameras[(int)mode];
-			}
-		}
-
-		List<DynamicCamera> cameras = new List<DynamicCamera>();
-
 		public Camera FrameCamera { get; }
-		public DynamicCamera CurrentCamera { get; private set; }
+		public DynamicCamera CurrentCamera { get; set; }
 
 		public Matrix Perspective { get; private set; } = Matrix.Identity;
 
@@ -51,37 +27,10 @@ namespace ModelEx
 		private CameraManager()
 		{
 			FrameCamera = new Camera();
-			EgoCamera ec = new EgoCamera();
-			OrbitCamera oc = new OrbitCamera();
-			OrbitPanCamera ocp = new OrbitPanCamera();
-			cameras.Add(ec);
-			cameras.Add(oc);
-			cameras.Add(ocp);
-
-			mode = 0;
-			CurrentCamera = cameras[(int)mode];
 		}
 
 		public void Reset()
 		{
-			Vector3 eye = new Vector3(0.0f, 0.0f, 0.0f);
-			Vector3 target = new Vector3(0.0f, 0.0f, 1.0f);
-
-			Renderable cameraTarget = RenderManager.Instance.GetCameraTarget();
-			if (cameraTarget != null)
-			{
-				BoundingSphere boundingSphere = cameraTarget.GetBoundingSphere();
-				if (boundingSphere != null)
-				{
-					target = boundingSphere.Center;
-					eye = target - new Vector3(0.0f, 0.0f, boundingSphere.Radius * 2.5f);
-				}
-			}
-
-			foreach (Camera camera in cameras)
-			{
-				camera.SetView(eye, target, new Vector3(0, 1, 0));
-			}
 		}
 
 		public void SetPerspective(float fov, float aspect, float znear, float zfar)
@@ -91,8 +40,11 @@ namespace ModelEx
 
 		public void UpdateFrameCamera()
 		{
-			CurrentCamera.Update();
-			FrameCamera.CopyFromOther(CurrentCamera);
+			if (CurrentCamera != null)
+			{
+				CurrentCamera.Update();
+				FrameCamera.CopyFromOther(CurrentCamera);
+			}
 		}
 	}
 }

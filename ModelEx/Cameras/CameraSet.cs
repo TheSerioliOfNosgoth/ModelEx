@@ -1,7 +1,7 @@
 ﻿using SlimDX;
 using System.Collections.Generic;
 
-namespace ModelEx.Cameras
+namespace ModelEx
 {
 	public class CameraSet
 	{
@@ -15,6 +15,19 @@ namespace ModelEx.Cameras
 		Scene _ownerScene;
 		int _cameraIndex;
 		List<DynamicCamera> _cameras = new List<DynamicCamera>();
+
+		public int CameraIndex
+		{
+			get
+			{
+				return _cameraIndex;
+			}
+			set
+			{
+				_cameraIndex = value;
+				CurrentCamera = _cameras[_cameraIndex];
+			}
+		}
 
 		public DynamicCamera CurrentCamera { get; private set; }
 
@@ -31,12 +44,6 @@ namespace ModelEx.Cameras
 
 			_cameraIndex = 0;
 			CurrentCamera = _cameras[_cameraIndex];
-		}
-
-		public void SetCameraIndex(int index)
-		{
-			_cameraIndex = index;
-			CurrentCamera = _cameras[(int)_cameraIndex];
 		}
 
 		public void ResetPositions()
