@@ -888,6 +888,12 @@ namespace ModelEx
 
 			Scene currentScene = (Scene)RenderManager.Instance.CurrentScene;
 
+			// UPDATE CAMERA MODE HERE!!!!
+			// Get the mode from the scene's CameraSet.
+			// egoToolStripMenuItem.Checked = false;
+			// orbitToolStripMenuItem.Checked = false;
+			// orbitPanToolStripMenuItem.Checked = false;
+
 			TreeNode sceneTreeNode = new TreeNode("Scene");
 			sceneTreeNode.Checked = true;
 
@@ -951,6 +957,12 @@ namespace ModelEx
 
 			Scene currentObject = (Scene)RenderManager.Instance.CurrentObject;
 
+			// UPDATE CAMERA MODE HERE!!!!
+			// Get the mode from the scene's CameraSet.
+			// egoToolStripMenuItem.Checked = false;
+			// orbitToolStripMenuItem.Checked = false;
+			// orbitPanToolStripMenuItem.Checked = false;
+
 			TreeNode objectSceneTreeNode = new TreeNode("Object");
 			objectSceneTreeNode.Checked = true;
 
@@ -1004,6 +1016,12 @@ namespace ModelEx
 			}
 
 			Scene currentDebug = (Scene)RenderManager.Instance.CurrentDebug;
+
+			// UPDATE CAMERA MODE HERE!!!!
+			// Get the mode from the scene's CameraSet.
+			// egoToolStripMenuItem.Checked = false;
+			// orbitToolStripMenuItem.Checked = false;
+			// orbitPanToolStripMenuItem.Checked = false;
 
 			TreeNode debugSceneTreeNode = new TreeNode("Debug");
 			debugSceneTreeNode.Checked = true;
