@@ -614,7 +614,7 @@ namespace ModelEx
 
 		private void ResetPositionToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			CameraManager.Instance.ResetPosition();
+			RenderManager.Instance.CameraTarget?.Cameras?.ResetPositions();
 		}
 
 		private void EgoToolStripMenuItem_Click(object sender, EventArgs e)
