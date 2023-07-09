@@ -181,7 +181,7 @@
             this.sceneView = new ModelEx.RenderControl();
             this.sceneTreeContainer = new System.Windows.Forms.SplitContainer();
             this.FPSText = new System.Windows.Forms.TextBox();
-            this.loadDependanciesButton = new System.Windows.Forms.Button();
+            this.loadDependenciesButton = new System.Windows.Forms.Button();
             this.menuBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.sceneViewContainer)).BeginInit();
             this.sceneViewContainer.Panel1.SuspendLayout();
@@ -1362,7 +1362,7 @@
             // 
             // resourcesTabControls.Panel1
             // 
-            this.resourcesTabControls.Panel1.Controls.Add(this.loadDependanciesButton);
+            this.resourcesTabControls.Panel1.Controls.Add(this.loadDependenciesButton);
             this.resourcesTabControls.Panel1.Controls.Add(this.unloadAllResources);
             this.resourcesTabControls.Panel1.Controls.Add(this.unloadResourceButton);
             this.resourcesTabControls.Panel1.Controls.Add(this.loadResourceButton);
@@ -1501,16 +1501,16 @@
             this.FPSText.TabIndex = 0;
             this.FPSText.Text = "Testing...\r\nTesting...\r\nTesting...";
             // 
-            // loadDependanciesButton
+            // loadDependenciesButton
             // 
-            this.loadDependanciesButton.Location = new System.Drawing.Point(6, 56);
-            this.loadDependanciesButton.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
-            this.loadDependanciesButton.Name = "loadDependanciesButton";
-            this.loadDependanciesButton.Size = new System.Drawing.Size(243, 23);
-            this.loadDependanciesButton.TabIndex = 3;
-            this.loadDependanciesButton.Text = "Load Dependancies";
-            this.loadDependanciesButton.UseVisualStyleBackColor = true;
-            this.loadDependanciesButton.Click += new System.EventHandler(this.loadDependanciesButton_Click);
+            this.loadDependenciesButton.Location = new System.Drawing.Point(6, 56);
+            this.loadDependenciesButton.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
+            this.loadDependenciesButton.Name = "loadDependenciesButton";
+            this.loadDependenciesButton.Size = new System.Drawing.Size(243, 23);
+            this.loadDependenciesButton.TabIndex = 3;
+            this.loadDependenciesButton.Text = "Load Dependencies";
+            this.loadDependenciesButton.UseVisualStyleBackColor = true;
+            this.loadDependenciesButton.Click += new System.EventHandler(this.loadDependenciesButton_Click);
             // 
             // MainWindow
             // 
@@ -1703,6 +1703,6 @@
         private ResourceControls debugControls;
         private System.Windows.Forms.ToolStripMenuItem loadDebugToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem debugToolStripMenuItem;
-        private System.Windows.Forms.Button loadDependanciesButton;
+        private System.Windows.Forms.Button loadDependenciesButton;
     }
 }
