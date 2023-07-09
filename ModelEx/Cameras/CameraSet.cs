@@ -46,6 +46,30 @@ namespace ModelEx
 			CurrentCamera = _cameras[_cameraIndex];
 		}
 
+		public void ResetCurrentCameraPosition()
+		{
+			Vector3 eye = new Vector3(0.0f, 0.0f, 0.0f);
+			Vector3 target = new Vector3(0.0f, 0.0f, 1.0f);
+
+			if (_ownerScene != null)
+			{
+				BoundingSphere boundingSphere = _ownerScene.GetBoundingSphere();
+				if (boundingSphere != null)
+				{
+					target = boundingSphere.Center;
+					eye = target - new Vector3(0.0f, 0.0f, boundingSphere.Radius * 2.5f);
+				}
+			}
+
+			// Only reset the predefined ones!
+			if (_cameraIndex == (int)CameraMode.Ego ||
+				_cameraIndex == (int)CameraMode.Orbit ||
+				_cameraIndex == (int)CameraMode.OrbitPan)
+			{
+				_cameras[_cameraIndex].SetView(eye, target, new Vector3(0, 1, 0));
+			}
+		}
+
 		public void ResetPositions()
 		{
 			Vector3 eye = new Vector3(0.0f, 0.0f, 0.0f);
