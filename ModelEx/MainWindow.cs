@@ -311,21 +311,21 @@ namespace ModelEx
 			{
 				optionTabs.SelectedIndex = 1;
 				SceneMode = _SceneModeOnLoad;
-				CameraManager.Instance.Reset();
+				CameraManager.Instance.ResetPosition();
 			}
 
 			if (_SceneModeOnLoad == SceneMode.Object)
 			{
 				optionTabs.SelectedIndex = 1;
 				SceneMode = _SceneModeOnLoad;
-				CameraManager.Instance.Reset();
+				CameraManager.Instance.ResetPosition();
 			}
 
 			if (_SceneModeOnLoad == SceneMode.Debug)
 			{
 				optionTabs.SelectedIndex = 1;
 				SceneMode = _SceneModeOnLoad;
-				CameraManager.Instance.Reset();
+				CameraManager.Instance.ResetPosition();
 			}
 
 			_LoadDebugResource = false;
@@ -335,7 +335,7 @@ namespace ModelEx
 
 			if (_ResetCameraOnModelLoad)
 			{
-				CameraManager.Instance.Reset();
+				CameraManager.Instance.ResetPosition();
 			}
 
 			Enabled = true;
@@ -622,7 +622,7 @@ namespace ModelEx
 
 		private void ResetPositionToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			CameraManager.Instance.Reset();
+			CameraManager.Instance.ResetPosition();
 		}
 
 		private void EgoToolStripMenuItem_Click(object sender, EventArgs e)
@@ -631,6 +631,7 @@ namespace ModelEx
 			if (scene != null)
 			{
 				scene.Cameras.CameraIndex = (int)CameraSet.CameraMode.Ego;
+				CameraManager.Instance.CurrentCamera = scene.Cameras.CurrentCamera;
 				egoToolStripMenuItem.Checked = true;
 				orbitToolStripMenuItem.Checked = false;
 				orbitPanToolStripMenuItem.Checked = false;
@@ -643,6 +644,7 @@ namespace ModelEx
 			if (scene != null)
 			{
 				scene.Cameras.CameraIndex = (int)CameraSet.CameraMode.Orbit;
+				CameraManager.Instance.CurrentCamera = scene.Cameras.CurrentCamera;
 				egoToolStripMenuItem.Checked = false;
 				orbitToolStripMenuItem.Checked = true;
 				orbitPanToolStripMenuItem.Checked = false;
@@ -655,6 +657,7 @@ namespace ModelEx
 			if (scene != null)
 			{
 				scene.Cameras.CameraIndex = (int)CameraSet.CameraMode.OrbitPan;
+				CameraManager.Instance.CurrentCamera = scene.Cameras.CurrentCamera;
 				egoToolStripMenuItem.Checked = false;
 				orbitToolStripMenuItem.Checked = false;
 				orbitPanToolStripMenuItem.Checked = true;
@@ -897,6 +900,7 @@ namespace ModelEx
 
 			Scene currentScene = (Scene)RenderManager.Instance.CurrentScene;
 
+			// CAN'T DO THIS HERE. THE SCENE MODE MIGHT BE WRONG.
 			CameraManager.Instance.CurrentCamera = currentScene.Cameras.CurrentCamera;
 			egoToolStripMenuItem.Checked = (currentScene.Cameras.CameraIndex == (int)CameraSet.CameraMode.Ego);
 			orbitToolStripMenuItem.Checked = (currentScene.Cameras.CameraIndex == (int)CameraSet.CameraMode.Orbit);
@@ -965,6 +969,7 @@ namespace ModelEx
 
 			Scene currentObject = (Scene)RenderManager.Instance.CurrentObject;
 
+			// CAN'T DO THIS HERE. THE SCENE MODE MIGHT BE WRONG.
 			CameraManager.Instance.CurrentCamera = currentObject.Cameras.CurrentCamera;
 			egoToolStripMenuItem.Checked = (currentObject.Cameras.CameraIndex == (int)CameraSet.CameraMode.Ego);
 			orbitToolStripMenuItem.Checked = (currentObject.Cameras.CameraIndex == (int)CameraSet.CameraMode.Orbit);
@@ -1024,6 +1029,7 @@ namespace ModelEx
 
 			Scene currentDebug = (Scene)RenderManager.Instance.CurrentDebug;
 
+			// CAN'T DO THIS HERE. THE SCENE MODE MIGHT BE WRONG.
 			CameraManager.Instance.CurrentCamera = currentDebug.Cameras.CurrentCamera;
 			egoToolStripMenuItem.Checked = (currentDebug.Cameras.CameraIndex == (int)CameraSet.CameraMode.Ego);
 			orbitToolStripMenuItem.Checked = (currentDebug.Cameras.CameraIndex == (int)CameraSet.CameraMode.Orbit);

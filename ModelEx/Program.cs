@@ -564,7 +564,7 @@ namespace ModelEx
 						}
 
 						RenderManager.Instance.LoadResourceCDC(loadRequest, false, true);
-						CameraManager.Instance.Reset();
+						CameraManager.Instance.ResetPosition();
 					}));
 
 					loadingThread.Name = "LoadingThread";

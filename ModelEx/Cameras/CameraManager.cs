@@ -29,8 +29,13 @@ namespace ModelEx
 			FrameCamera = new Camera();
 		}
 
-		public void Reset()
+		public void ResetPosition()
 		{
+			Scene scene = (Scene)RenderManager.Instance.GetCameraTarget();
+			if (scene != null)
+			{
+				scene.Cameras.ResetPositions();
+			}
 		}
 
 		public void SetPerspective(float fov, float aspect, float znear, float zfar)
