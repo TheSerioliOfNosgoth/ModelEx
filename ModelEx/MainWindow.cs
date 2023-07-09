@@ -311,32 +311,24 @@ namespace ModelEx
 			{
 				optionTabs.SelectedIndex = 1;
 				SceneMode = _SceneModeOnLoad;
-				CameraManager.Instance.ResetPosition();
 			}
 
 			if (_SceneModeOnLoad == SceneMode.Object)
 			{
 				optionTabs.SelectedIndex = 1;
 				SceneMode = _SceneModeOnLoad;
-				CameraManager.Instance.ResetPosition();
 			}
 
 			if (_SceneModeOnLoad == SceneMode.Debug)
 			{
 				optionTabs.SelectedIndex = 1;
 				SceneMode = _SceneModeOnLoad;
-				CameraManager.Instance.ResetPosition();
 			}
 
 			_LoadDebugResource = false;
 			_LoadDependancies = false;
 			_ClearResourcesOnLoad = false;
 			_SceneModeOnLoad = SceneMode.Current;
-
-			if (_ResetCameraOnModelLoad)
-			{
-				CameraManager.Instance.ResetPosition();
-			}
 
 			Enabled = true;
 			_ProgressWindow.Hide();

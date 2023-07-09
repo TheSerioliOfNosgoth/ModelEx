@@ -188,8 +188,11 @@ namespace ModelEx
 			{
 				renderResource = (RenderResourceCDC)Resources[dataFile.Name];
 				Resources.Remove(dataFile.Name);
+
+				// Should the cameras be reset here too? Need flag in LoadRequestCDC.
 				CurrentObject?.UpdateModels();
 				CurrentScene?.UpdateModels();
+
 				renderResource.Dispose();
 			}
 
@@ -204,11 +207,14 @@ namespace ModelEx
 			{
 				DebugResource = renderResource;
 				CurrentDebug = new SceneCDC(renderResource.File, renderResource);
+				CurrentDebug.Cameras.ResetPositions();
 				UpdateCameraSelection();
 			}
 			else
 			{
 				Resources.Add(renderResource.Name, renderResource);
+				
+				// Should the cameras be reset here too? Need flag in LoadRequestCDC.
 				CurrentObject?.UpdateModels();
 				CurrentScene?.UpdateModels();
 			}
@@ -359,6 +365,7 @@ namespace ModelEx
 			{
 				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[objectName];
 				CurrentObject = new SceneCDC(renderResource.File, false);
+				CurrentObject.Cameras.ResetPositions();
 				UpdateCameraSelection();
 			}
 		}
@@ -383,6 +390,7 @@ namespace ModelEx
 			{
 				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[sceneName];
 				CurrentScene = new SceneCDC(renderResource.File, true);
+				CurrentScene.Cameras.ResetPositions();
 				UpdateCameraSelection();
 			}
 		}
