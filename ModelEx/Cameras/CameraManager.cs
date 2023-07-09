@@ -31,7 +31,7 @@ namespace ModelEx
 
 		public void ResetPosition()
 		{
-			Scene scene = (Scene)RenderManager.Instance.GetCameraTarget();
+			Scene scene = (Scene)RenderManager.Instance.CameraTarget;
 			if (scene != null)
 			{
 				scene.Cameras.ResetPositions();
