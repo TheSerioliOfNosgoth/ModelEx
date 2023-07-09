@@ -365,7 +365,10 @@ namespace ModelEx
 			{
 				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[objectName];
 				CurrentObject = new SceneCDC(renderResource.File, false);
+
+				// TODO - Remove when SceneCDC can be made persistant.
 				CurrentObject.Cameras.ResetPositions();
+
 				UpdateCameraSelection();
 			}
 		}
@@ -390,7 +393,10 @@ namespace ModelEx
 			{
 				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[sceneName];
 				CurrentScene = new SceneCDC(renderResource.File, true);
+
+				// TODO - Remove when SceneCDC can be made persistant.
 				CurrentScene.Cameras.ResetPositions();
+
 				UpdateCameraSelection();
 			}
 		}
