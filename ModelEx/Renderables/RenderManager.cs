@@ -291,6 +291,32 @@ namespace ModelEx
 						objectLoadRequest.ExportOptions = loadRequest.ExportOptions;
 						LoadResourceCDC(objectLoadRequest);
 					}
+					else if (loadRequest.GameType == Game.TRL || loadRequest.GameType == Game.TRA)
+					{
+						if (loadRequest.ProjectFolder != "")
+						{
+							objectLoadRequest.DataFile = System.IO.Path.Combine(loadRequest.ProjectFolder, "pc-w", objectName + ".drm");
+						}
+						else
+						{
+							string projectFolder = System.IO.Path.GetDirectoryName(loadRequest.DataFile);
+							objectLoadRequest.DataFile = System.IO.Path.Combine(projectFolder, objectName, ".drm");
+						}
+
+						if (!System.IO.File.Exists(objectLoadRequest.DataFile))
+						{
+							continue;
+						}
+
+						objectLoadRequest.TextureFile = objectLoadRequest.DataFile;
+
+						objectLoadRequest.ObjectListFile = loadRequest.ObjectListFile;
+						objectLoadRequest.ProjectFolder = loadRequest.ProjectFolder;
+						objectLoadRequest.GameType = loadRequest.GameType;
+						objectLoadRequest.Platform = loadRequest.Platform;
+						objectLoadRequest.ExportOptions = loadRequest.ExportOptions;
+						LoadResourceCDC(objectLoadRequest);
+					}
 				}
 			}
 		}

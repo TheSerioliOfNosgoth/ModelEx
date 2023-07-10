@@ -1178,7 +1178,7 @@ namespace ModelEx
 			}
 		}
 
-        private void loadDependanciesButton_Click(object sender, EventArgs e)
+        private void loadDependenciesButton_Click(object sender, EventArgs e)
 		{
 			if (resourceList.SelectedItems.Count > 0)
 			{
