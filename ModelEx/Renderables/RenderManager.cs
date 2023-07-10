@@ -8,6 +8,7 @@ using SlimDX.DXGI;
 using Game = CDC.Game;
 using Platform = CDC.Platform;
 using ExportOptions = CDC.ExportOptions;
+using CDC;
 
 namespace ModelEx
 {
@@ -77,6 +78,9 @@ namespace ModelEx
 
 		public Color BackgroundColour = Color.Gray;
 		public bool Wireframe = false;
+
+		private SortedList<string, Scene> Scenes = new SortedList<string, Scene>();
+		private SortedList<string, Scene> Objects = new SortedList<string, Scene>();
 
 		public Scene CurrentScene { get; private set; }
 		public Scene CurrentObject { get; private set; }
@@ -177,6 +181,8 @@ namespace ModelEx
 			}
 
 			RenderResourceCDC renderResource;
+			bool wasCurrentScene = CurrentScene?.Name == dataFile.Name;
+			bool wasCurrentObject = CurrentObject?.Name == dataFile.Name;
 
 			if (loadDebugResource)
 			{
@@ -184,16 +190,9 @@ namespace ModelEx
 				DebugResource?.Dispose();
 				DebugResource = null;
 			}
-			else if (Resources.ContainsKey(dataFile.Name))
+			else
 			{
-				renderResource = (RenderResourceCDC)Resources[dataFile.Name];
-				Resources.Remove(dataFile.Name);
-
-				// Should the cameras be reset here too? Need flag in LoadRequestCDC.
-				CurrentObject?.UpdateModels();
-				CurrentScene?.UpdateModels();
-
-				renderResource.Dispose();
+				UnloadResource(dataFile.Name);
 			}
 
 			renderResource = new RenderResourceCDC(dataFile, loadRequest);
@@ -213,10 +212,21 @@ namespace ModelEx
 			else
 			{
 				Resources.Add(renderResource.Name, renderResource);
-				
+
+				Scenes.Add(renderResource.Name, new SceneCDC(renderResource.File, true));
+				if (wasCurrentScene)
+				{
+					SetCurrentScene(renderResource.Name);
+				}
+
+				Objects.Add(renderResource.Name, new SceneCDC(renderResource.File, false));
+				if (wasCurrentObject)
+				{
+					SetCurrentObject(renderResource.Name);
+				}
+
 				// Should the cameras be reset here too? Need flag in LoadRequestCDC.
-				CurrentObject?.UpdateModels();
-				CurrentScene?.UpdateModels();
+				UpdateModels();
 			}
 
 			SceneCDC.progressLevel = SceneCDC.progressLevels;
@@ -325,23 +335,29 @@ namespace ModelEx
 		{
 			if (resourceName != "" && Resources.ContainsKey(resourceName))
 			{
-				RenderResource renderResource = Resources[resourceName];
-				Resources.Remove(resourceName);
-				CurrentObject?.UpdateModels();
-				CurrentScene?.UpdateModels();
-				renderResource.Dispose();
-
-				if (CurrentScene != null && CurrentScene.Name == resourceName)
+				if (CurrentScene?.Name == resourceName)
 				{
-					CurrentScene.Dispose();
 					CurrentScene = null;
 				}
 
-				if (CurrentObject != null && CurrentObject.Name == resourceName)
+				if (CurrentObject?.Name == resourceName)
 				{
-					CurrentObject.Dispose();
 					CurrentObject = null;
 				}
+
+				RenderResource removeResource = Resources[resourceName];
+				Resources.Remove(resourceName);
+				removeResource.Dispose();
+
+				Scene removeScene = Scenes[resourceName];
+				Scenes.Remove(resourceName);
+				removeScene.Dispose();
+
+				Scene removeObject = Objects[resourceName];
+				Objects.Remove(resourceName);
+				removeObject.Dispose();
+
+				UpdateModels();
 			}
 		}
 
@@ -349,25 +365,28 @@ namespace ModelEx
 		{
 			_loadRequestsCDC.Clear();
 
-			if (CurrentScene != null)
-			{
-				CurrentScene.Dispose();
-				CurrentScene = null;
-			}
-
-			if (CurrentObject != null)
-			{
-				CurrentObject.Dispose();
-				CurrentObject = null;
-			}
+			CurrentScene = null;
+			CurrentObject = null;
 
 			while (Resources.Count > 1)
 			{
-				RenderResource resource = Resources[Resources.Keys[1]];
-				Resources.Remove(Resources.Keys[1]);
-				CurrentObject?.UpdateModels();
-				CurrentScene?.UpdateModels();
-				resource.Dispose();
+				RenderResource removeResoource = Resources.Values[1];
+				Resources.RemoveAt(1);
+				removeResoource.Dispose();
+			}
+
+			while (Scenes.Count > 0)
+			{
+				Scene removeScene = Scenes.Values[0];
+				Scenes.RemoveAt(0);
+				removeScene.Dispose();
+			}
+
+			while (Objects.Count > 0)
+			{
+				Scene removeObject = Objects.Values[0];
+				Objects.RemoveAt(0);
+				removeObject.Dispose();
 			}
 		}
 
@@ -382,19 +401,9 @@ namespace ModelEx
 
 		public void SetCurrentObject(string objectName)
 		{
-			if (CurrentObject != null)
+			if (objectName != "" && Objects.ContainsKey(objectName))
 			{
-				CurrentObject = null;
-			}
-
-			if (objectName != "" && Resources.ContainsKey(objectName))
-			{
-				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[objectName];
-				CurrentObject = new SceneCDC(renderResource.File, false);
-
-				// TODO - Remove when SceneCDC can be made persistant.
-				CurrentObject.Cameras.ResetPositions();
-
+				CurrentObject = Objects[objectName];
 				UpdateCameraSelection();
 			}
 		}
@@ -409,20 +418,9 @@ namespace ModelEx
 
 		public void SetCurrentScene(string sceneName)
 		{
-			if (CurrentScene != null)
+			if (sceneName != "" && Scenes.ContainsKey(sceneName))
 			{
-				CurrentScene.Dispose();
-				CurrentScene = null;
-			}
-
-			if (sceneName != "" && Resources.ContainsKey(sceneName))
-			{
-				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[sceneName];
-				CurrentScene = new SceneCDC(renderResource.File, true);
-
-				// TODO - Remove when SceneCDC can be made persistant.
-				CurrentScene.Cameras.ResetPositions();
-
+				CurrentScene = Scenes[sceneName];
 				UpdateCameraSelection();
 			}
 		}
@@ -432,6 +430,19 @@ namespace ModelEx
 			if (CurrentScene != null)
 			{
 				ExportResourceCDC(CurrentScene.Name, fileName);
+			}
+		}
+
+		protected void UpdateModels()
+		{
+			foreach (Scene scene in Scenes.Values)
+			{
+				scene.UpdateModels();
+			}
+
+			foreach (Scene scene in Objects.Values)
+			{
+				scene.UpdateModels();
 			}
 		}
 
