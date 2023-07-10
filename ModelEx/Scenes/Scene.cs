@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
-using ModelEx.Cameras;
 using SlimDX;
 
 namespace ModelEx
@@ -14,14 +13,14 @@ namespace ModelEx
 
 		public readonly ReadOnlyCollection<RenderInstance> RenderInstances;
 		public Renderable CurrentObject { get { return _renderInstances.Count > 0 ? _renderInstances[0] : null; } }
-		//public CameraSet Cameras { get; protected set; }
+		public CameraSet Cameras { get; protected set; }
 
 		protected Scene(bool includeObjects)
 		{
 			_includeObjects = includeObjects;
 			_renderInstances = new List<RenderInstance>();
 			RenderInstances = new ReadOnlyCollection<RenderInstance>(_renderInstances);
-			//Cameras = new CameraSet(this);
+			Cameras = new CameraSet(this);
 		}
 
 		public override void Dispose()

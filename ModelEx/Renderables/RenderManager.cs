@@ -61,7 +61,20 @@ namespace ModelEx
 
 		public bool Resize = false;
 
-		public SceneMode SceneMode = SceneMode.Scene;
+		private SceneMode _sceneMode = SceneMode.Scene;
+		public SceneMode SceneMode
+		{
+			get
+			{
+				return _sceneMode;
+			}
+			set
+			{
+				_sceneMode = value;
+				UpdateCameraSelection();
+			}
+		}
+
 		public Color BackgroundColour = Color.Gray;
 		public bool Wireframe = false;
 
@@ -69,6 +82,7 @@ namespace ModelEx
 		public Scene CurrentObject { get; private set; }
 		public Scene CurrentDebug { get; private set; }
 		public RenderResource DebugResource { get; private set; }
+		public Scene CameraTarget { get; private set; }
 
 		SpriteRenderer _spriteRenderer;
 		public TextBlockRenderer _textBlockRenderer;
@@ -174,8 +188,11 @@ namespace ModelEx
 			{
 				renderResource = (RenderResourceCDC)Resources[dataFile.Name];
 				Resources.Remove(dataFile.Name);
+
+				// Should the cameras be reset here too? Need flag in LoadRequestCDC.
 				CurrentObject?.UpdateModels();
 				CurrentScene?.UpdateModels();
+
 				renderResource.Dispose();
 			}
 
@@ -190,10 +207,14 @@ namespace ModelEx
 			{
 				DebugResource = renderResource;
 				CurrentDebug = new SceneCDC(renderResource.File, renderResource);
+				CurrentDebug.Cameras.ResetPositions();
+				UpdateCameraSelection();
 			}
 			else
 			{
 				Resources.Add(renderResource.Name, renderResource);
+				
+				// Should the cameras be reset here too? Need flag in LoadRequestCDC.
 				CurrentObject?.UpdateModels();
 				CurrentScene?.UpdateModels();
 			}
@@ -344,6 +365,11 @@ namespace ModelEx
 			{
 				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[objectName];
 				CurrentObject = new SceneCDC(renderResource.File, false);
+
+				// TODO - Remove when SceneCDC can be made persistant.
+				CurrentObject.Cameras.ResetPositions();
+
+				UpdateCameraSelection();
 			}
 		}
 
@@ -367,6 +393,11 @@ namespace ModelEx
 			{
 				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[sceneName];
 				CurrentScene = new SceneCDC(renderResource.File, true);
+
+				// TODO - Remove when SceneCDC can be made persistant.
+				CurrentScene.Cameras.ResetPositions();
+
+				UpdateCameraSelection();
 			}
 		}
 
@@ -378,15 +409,33 @@ namespace ModelEx
 			}
 		}
 
-		public Renderable GetCameraTarget()
+		public void UpdateCameraSelection(int cameraIndex = -1)
 		{
-			switch (SceneMode)
-            {
-				case SceneMode.Scene: return CurrentScene;
-				case SceneMode.Object: return CurrentObject;
-				case SceneMode.Debug: return CurrentDebug;
-				default: return null;
-            }
+			switch (_sceneMode)
+			{
+				case SceneMode.Scene:
+					CameraTarget = CurrentScene;
+					break;
+				case SceneMode.Object:
+					CameraTarget = CurrentObject;
+					break;
+				case SceneMode.Debug:
+					CameraTarget = CurrentDebug;
+					break;
+				default:
+					CameraTarget = null;
+					break;
+			}
+
+			if (CameraTarget != null)
+			{
+				if (cameraIndex != -1)
+				{
+					CameraTarget.Cameras.CameraIndex = cameraIndex;
+				}
+
+				CameraManager.Instance.CurrentCamera = CameraTarget.Cameras.CurrentCamera;
+			}
 		}
 
 		public void DrawString(string text, Vector2 position, float realFontSize, Color4 color)
@@ -426,13 +475,7 @@ namespace ModelEx
 				SlimDX.Direct3D11.ShaderResourceView[] oldShaderResources = DeviceManager.Instance.context.PixelShader.GetShaderResources(0, 10);
 				SlimDX.Direct3D11.GeometryShader oldGeometryShader = DeviceManager.Instance.context.GeometryShader.Get();
 
-				switch (SceneMode)
-				{
-					case SceneMode.Scene: CurrentScene?.Render(); break;
-					case SceneMode.Object: CurrentObject?.Render(); break;
-					case SceneMode.Debug: CurrentDebug?.Render(); break;
-					default: break;
-				}
+				CameraTarget?.Render();
 
 				DeviceManager.Instance.context.OutputMerger.DepthStencilState = oldDSState;
 				DeviceManager.Instance.context.OutputMerger.BlendState = oldBlendState;

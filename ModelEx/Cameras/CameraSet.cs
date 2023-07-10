@@ -1,7 +1,7 @@
 ﻿using SlimDX;
 using System.Collections.Generic;
 
-namespace ModelEx.Cameras
+namespace ModelEx
 {
 	public class CameraSet
 	{
@@ -15,6 +15,19 @@ namespace ModelEx.Cameras
 		Scene _ownerScene;
 		int _cameraIndex;
 		List<DynamicCamera> _cameras = new List<DynamicCamera>();
+
+		public int CameraIndex
+		{
+			get
+			{
+				return _cameraIndex;
+			}
+			set
+			{
+				_cameraIndex = value;
+				CurrentCamera = _cameras[_cameraIndex];
+			}
+		}
 
 		public DynamicCamera CurrentCamera { get; private set; }
 
@@ -33,10 +46,28 @@ namespace ModelEx.Cameras
 			CurrentCamera = _cameras[_cameraIndex];
 		}
 
-		public void SetCameraIndex(int index)
+		public void ResetCurrentCameraPosition()
 		{
-			_cameraIndex = index;
-			CurrentCamera = _cameras[(int)_cameraIndex];
+			Vector3 eye = new Vector3(0.0f, 0.0f, 0.0f);
+			Vector3 target = new Vector3(0.0f, 0.0f, 1.0f);
+
+			if (_ownerScene != null)
+			{
+				BoundingSphere boundingSphere = _ownerScene.GetBoundingSphere();
+				if (boundingSphere != null)
+				{
+					target = boundingSphere.Center;
+					eye = target - new Vector3(0.0f, 0.0f, boundingSphere.Radius * 2.5f);
+				}
+			}
+
+			// Only reset the predefined ones!
+			if (_cameraIndex == (int)CameraMode.Ego ||
+				_cameraIndex == (int)CameraMode.Orbit ||
+				_cameraIndex == (int)CameraMode.OrbitPan)
+			{
+				_cameras[_cameraIndex].SetView(eye, target, new Vector3(0, 1, 0));
+			}
 		}
 
 		public void ResetPositions()
