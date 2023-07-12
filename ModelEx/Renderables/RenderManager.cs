@@ -8,7 +8,6 @@ using SlimDX.DXGI;
 using Game = CDC.Game;
 using Platform = CDC.Platform;
 using ExportOptions = CDC.ExportOptions;
-using CDC;
 
 namespace ModelEx
 {
@@ -189,13 +188,15 @@ namespace ModelEx
 			}
 
 			RenderResourceCDC renderResource;
-			bool wasCurrentScene = CurrentScene?.Name == dataFile.Name;
-			bool wasCurrentObject = CurrentObject?.Name == dataFile.Name;
 
 			if (loadDebugResource)
 			{
-				CurrentDebug?.Dispose();
-				CurrentDebug = null;
+				if (loadRequest.ReloadScene)
+				{
+					CurrentDebug?.Dispose();
+					CurrentDebug = null;
+				}
+
 				DebugResource?.Dispose();
 				DebugResource = null;
 			}
@@ -213,13 +214,19 @@ namespace ModelEx
 						CurrentObject = null;
 					}
 
-					Scene removeScene = Scenes[dataFile.Name];
-					Scenes.Remove(dataFile.Name);
-					removeScene.Dispose();
+					if (Scenes.ContainsKey(dataFile.Name))
+					{
+						Scene removeScene = Scenes[dataFile.Name];
+						Scenes.Remove(dataFile.Name);
+						removeScene.Dispose();
+					}
 
-					Scene removeObject = Objects[dataFile.Name];
-					Objects.Remove(dataFile.Name);
-					removeObject.Dispose();
+					if (Objects.ContainsKey(dataFile.Name))
+					{
+						Scene removeObject = Objects[dataFile.Name];
+						Objects.Remove(dataFile.Name);
+						removeObject.Dispose();
+					}
 				}
 
 				RenderResource removeResource = Resources[dataFile.Name];
@@ -237,60 +244,50 @@ namespace ModelEx
 			if (loadDebugResource)
 			{
 				DebugResource = renderResource;
-				CurrentDebug = new SceneCDC(renderResource.File, renderResource);
+
+				if (CurrentDebug?.Name != dataFile.Name)
+				{
+					CurrentDebug = new SceneCDC(renderResource.File, renderResource);
+					UpdateCameraSelection();
+				}
+
 				CurrentDebug.Cameras.ResetPositions();
-				UpdateCameraSelection();
 			}
 			else
 			{
-				Resources.Add(renderResource.Name, renderResource);
+				Resources.Add(dataFile.Name, renderResource);
 
-				if (!Scenes.ContainsKey(renderResource.Name))
+				Scene addScene;
+
+				if (!Scenes.ContainsKey(dataFile.Name))
 				{
-					Scene addScene = new SceneCDC(renderResource.File, true);
-					Scenes.Add(renderResource.Name, addScene);
-
-					// I created a brand new scene here, so there's no need to update the models,
-					// but I still need to reset the camera if requested.
-					addScene.Cameras.ResetPositions();
-					if (wasCurrentScene)
-					{
-						SetCurrentScene(renderResource.Name);
-					}
+					addScene = new SceneCDC(renderResource.File, true);
+					Scenes.Add(dataFile.Name, addScene);
+					SetCurrentScene(dataFile.Name);
 				}
-				else if (loadRequest.ResetCamera && wasCurrentScene)
+				else
 				{
-					// Need to update the models and reset the cameras here.
-					// Actually, I might not even need to check wasCurrentScene,
-					// because any scene that changes it's models would need it.
-					CurrentScene.Cameras.ResetPositions();
+					addScene = Scenes[dataFile.Name];
+					addScene.UpdateModels();
 				}
+				
+				addScene.Cameras.ResetPositions();
 
-				if (!Objects.ContainsKey(renderResource.Name))
+				Scene addObject;
+
+				if (!Objects.ContainsKey(dataFile.Name))
 				{
-					Scene addObject = new SceneCDC(renderResource.File, false);
-					Objects.Add(renderResource.Name, addObject);
-
-					// I created a brand new scene here, so there's no need to update the models,
-					// but I still need to reset the camera if requested.
-					addObject.Cameras.ResetPositions();
-					if (wasCurrentObject)
-					{
-						SetCurrentObject(renderResource.Name);
-					}
+					addObject = new SceneCDC(renderResource.File, false);
+					Objects.Add(dataFile.Name, addObject);
+					SetCurrentObject(dataFile.Name);
 				}
-				else if (loadRequest.ResetCamera && wasCurrentObject)
+				else
 				{
-					// Need to update the models and reset the cameras here.
-					// Actually, I might not even need to check wasCurrentScene,
-					// because any scene that changes it's models would need it.
-					CurrentObject.Cameras.ResetPositions();
+					addObject = Objects[dataFile.Name];
+					addObject.UpdateModels();
 				}
 
-				// I'm going to have to update the scenes for any resource I load.
-				// Maybe I should update them individually?
-				// Also, is this really needed for newly created scenes?
-				UpdateModels();
+				addObject.Cameras.ResetPositions();
 			}
 
 			SceneCDC.progressLevel = SceneCDC.progressLevels;
@@ -414,13 +411,19 @@ namespace ModelEx
 				Resources.Remove(resourceName);
 				removeResource.Dispose();
 
-				Scene removeScene = Scenes[resourceName];
-				Scenes.Remove(resourceName);
-				removeScene.Dispose();
+				if (Scenes.ContainsKey(resourceName))
+				{
+					Scene removeScene = Scenes[resourceName];
+					Scenes.Remove(resourceName);
+					removeScene.Dispose();
+				}
 
-				Scene removeObject = Objects[resourceName];
-				Objects.Remove(resourceName);
-				removeObject.Dispose();
+				if (Objects.ContainsKey(resourceName))
+				{
+					Scene removeObject = Objects[resourceName];
+					Objects.Remove(resourceName);
+					removeObject.Dispose();
+				}
 
 				UpdateModels();
 			}
