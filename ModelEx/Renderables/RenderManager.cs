@@ -220,6 +220,7 @@ namespace ModelEx
 							CameraManager.Instance.CurrentCamera = null;
 						}
 
+						// The CurrentScene should be restored after everything else in this function is completed.
 						CurrentScene = null;
 					}
 
@@ -232,6 +233,7 @@ namespace ModelEx
 							CameraManager.Instance.CurrentCamera = null;
 						}
 
+						// The CurrentObject should be restored after everything else in this function is completed.
 						CurrentObject = null;
 					}
 
