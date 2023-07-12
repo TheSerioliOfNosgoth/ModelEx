@@ -34,8 +34,8 @@ namespace ModelEx
 		public Game GameType = Game.Gex;
 		public Platform Platform = Platform.PC;
 		public int ChildIndex = -1;
-		public bool ReloadScene = false;
-		public bool ResetCamera = false;
+		public bool ReloadScene = false; // If the Scene was already loaded, destroy it and make a new one.
+		public bool ResetCamera = false; // If the Scene was already loaded and not reloaded, still reset the camera.
 		public ExportOptions ExportOptions;
 
 		public void CopyFrom(LoadRequestCDC loadRequest)
