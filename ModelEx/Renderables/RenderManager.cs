@@ -193,6 +193,13 @@ namespace ModelEx
 			{
 				if (loadRequest.ReloadScene)
 				{
+					if (CameraTarget == CurrentDebug)
+					{
+						// These should be null because both the target and the camera are being destroyed.
+						CameraTarget = null;
+						CameraManager.Instance.CurrentCamera = null;
+					}
+
 					CurrentDebug?.Dispose();
 					CurrentDebug = null;
 				}
@@ -206,11 +213,25 @@ namespace ModelEx
 				{
 					if (CurrentScene?.Name == dataFile.Name)
 					{
+						if (CameraTarget == CurrentScene)
+						{
+							// These should be null because both the target and the camera are being destroyed.
+							CameraTarget = null;
+							CameraManager.Instance.CurrentCamera = null;
+						}
+
 						CurrentScene = null;
 					}
 
 					if (CurrentObject?.Name == dataFile.Name)
 					{
+						if (CameraTarget == CurrentObject)
+						{
+							// These should be null because both the target and the camera are being destroyed.
+							CameraTarget = null;
+							CameraManager.Instance.CurrentCamera = null;
+						}
+
 						CurrentObject = null;
 					}
 
@@ -248,10 +269,23 @@ namespace ModelEx
 				if (CurrentDebug?.Name != dataFile.Name)
 				{
 					CurrentDebug = new SceneCDC(renderResource.File, renderResource);
-					UpdateCameraSelection();
-				}
+					CurrentDebug.Cameras.ResetPositions();
 
-				CurrentDebug.Cameras.ResetPositions();
+					if (SceneMode == SceneMode.Debug)
+					{
+						CameraTarget = CurrentDebug;
+						CameraManager.Instance.CurrentCamera = CameraTarget.Cameras.CurrentCamera;
+					}
+				}
+				else // loadRequest.ReloadScene should be false to get here.
+				{
+					CurrentDebug.UpdateModels();
+
+					if (loadRequest.ResetCamera)
+					{
+						CurrentDebug.Cameras.ResetPositions();
+					}
+				}
 			}
 			else
 			{
@@ -263,15 +297,18 @@ namespace ModelEx
 				{
 					addScene = new SceneCDC(renderResource.File, true);
 					Scenes.Add(dataFile.Name, addScene);
-					SetCurrentScene(dataFile.Name);
+					addScene.Cameras.ResetPositions();
 				}
-				else
+				else // loadRequest.ReloadScene should be false to get here.
 				{
 					addScene = Scenes[dataFile.Name];
 					addScene.UpdateModels();
+
+					if (loadRequest.ResetCamera)
+					{
+						addScene.Cameras.ResetPositions();
+					}
 				}
-				
-				addScene.Cameras.ResetPositions();
 
 				Scene addObject;
 
@@ -279,15 +316,18 @@ namespace ModelEx
 				{
 					addObject = new SceneCDC(renderResource.File, false);
 					Objects.Add(dataFile.Name, addObject);
-					SetCurrentObject(dataFile.Name);
+					addObject.Cameras.ResetPositions();
 				}
-				else
+				else // loadRequest.ReloadScene should be false to get here.
 				{
 					addObject = Objects[dataFile.Name];
 					addObject.UpdateModels();
-				}
 
-				addObject.Cameras.ResetPositions();
+					if (loadRequest.ResetCamera)
+					{
+						addObject.Cameras.ResetPositions();
+					}
+				}
 			}
 
 			SceneCDC.progressLevel = SceneCDC.progressLevels;
@@ -516,7 +556,7 @@ namespace ModelEx
 
 		public void UpdateCameraSelection(int cameraIndex = -1)
 		{
-			switch (_sceneMode)
+			switch (SceneMode)
 			{
 				case SceneMode.Scene:
 					CameraTarget = CurrentScene;
