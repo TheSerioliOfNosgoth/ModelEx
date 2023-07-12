@@ -21,6 +21,10 @@ namespace ModelEx
 		Debug = 3
 	}
 
+	// The load request contains the data that will be kept and reused if the uder requests a reload.
+	// Therefore is should only contain data that will be the same as the initial load.
+	// TODO - Figure out what to do with ReloadScene and ResetCamera, in light of the above.
+	// Should they just be parameters?
 	public class LoadRequestCDC : System.ICloneable
 	{
 		public string ResourceName = "";
@@ -31,6 +35,8 @@ namespace ModelEx
 		public Game GameType = Game.Gex;
 		public Platform Platform = Platform.PC;
 		public int ChildIndex = -1;
+		public bool ReloadScene = false;
+		public bool ResetCamera = false;
 		public ExportOptions ExportOptions;
 
 		public void CopyFrom(LoadRequestCDC loadRequest)
@@ -43,6 +49,8 @@ namespace ModelEx
 			GameType = loadRequest.GameType;
 			Platform = loadRequest.Platform;
 			ChildIndex = loadRequest.ChildIndex;
+			ReloadScene = loadRequest.ReloadScene;
+			ResetCamera = loadRequest.ResetCamera;
 			ExportOptions = loadRequest.ExportOptions;
         }
 
@@ -186,13 +194,37 @@ namespace ModelEx
 
 			if (loadDebugResource)
 			{
+				CurrentDebug?.Dispose();
 				CurrentDebug = null;
 				DebugResource?.Dispose();
 				DebugResource = null;
 			}
-			else
+			else if (Resources.ContainsKey(dataFile.Name))
 			{
-				UnloadResource(dataFile.Name);
+				if (loadRequest.ReloadScene)
+				{
+					if (CurrentScene?.Name == dataFile.Name)
+					{
+						CurrentScene = null;
+					}
+
+					if (CurrentObject?.Name == dataFile.Name)
+					{
+						CurrentObject = null;
+					}
+
+					Scene removeScene = Scenes[dataFile.Name];
+					Scenes.Remove(dataFile.Name);
+					removeScene.Dispose();
+
+					Scene removeObject = Objects[dataFile.Name];
+					Objects.Remove(dataFile.Name);
+					removeObject.Dispose();
+				}
+
+				RenderResource removeResource = Resources[dataFile.Name];
+				Resources.Remove(dataFile.Name);
+				removeResource.Dispose();
 			}
 
 			renderResource = new RenderResourceCDC(dataFile, loadRequest);
@@ -213,19 +245,51 @@ namespace ModelEx
 			{
 				Resources.Add(renderResource.Name, renderResource);
 
-				Scenes.Add(renderResource.Name, new SceneCDC(renderResource.File, true));
-				if (wasCurrentScene)
+				if (!Scenes.ContainsKey(renderResource.Name))
 				{
-					SetCurrentScene(renderResource.Name);
+					Scene addScene = new SceneCDC(renderResource.File, true);
+					Scenes.Add(renderResource.Name, addScene);
+
+					// I created a brand new scene here, so there's no need to update the models,
+					// but I still need to reset the camera if requested.
+					addScene.Cameras.ResetPositions();
+					if (wasCurrentScene)
+					{
+						SetCurrentScene(renderResource.Name);
+					}
+				}
+				else if (loadRequest.ResetCamera && wasCurrentScene)
+				{
+					// Need to update the models and reset the cameras here.
+					// Actually, I might not even need to check wasCurrentScene,
+					// because any scene that changes it's models would need it.
+					CurrentScene.Cameras.ResetPositions();
 				}
 
-				Objects.Add(renderResource.Name, new SceneCDC(renderResource.File, false));
-				if (wasCurrentObject)
+				if (!Objects.ContainsKey(renderResource.Name))
 				{
-					SetCurrentObject(renderResource.Name);
+					Scene addObject = new SceneCDC(renderResource.File, false);
+					Objects.Add(renderResource.Name, addObject);
+
+					// I created a brand new scene here, so there's no need to update the models,
+					// but I still need to reset the camera if requested.
+					addObject.Cameras.ResetPositions();
+					if (wasCurrentObject)
+					{
+						SetCurrentObject(renderResource.Name);
+					}
+				}
+				else if (loadRequest.ResetCamera && wasCurrentObject)
+				{
+					// Need to update the models and reset the cameras here.
+					// Actually, I might not even need to check wasCurrentScene,
+					// because any scene that changes it's models would need it.
+					CurrentObject.Cameras.ResetPositions();
 				}
 
-				// Should the cameras be reset here too? Need flag in LoadRequestCDC.
+				// I'm going to have to update the scenes for any resource I load.
+				// Maybe I should update them individually?
+				// Also, is this really needed for newly created scenes?
 				UpdateModels();
 			}
 
@@ -234,7 +298,8 @@ namespace ModelEx
 
 			loadRequest.ResourceName = dataFile.Name;
 
-			if (loadDependancies && dataFile.ObjectNames != null && dataFile.ObjectNames.Length > 0)
+			if (loadDependancies && !loadDebugResource &&
+				dataFile.ObjectNames != null && dataFile.ObjectNames.Length > 0)
 			{
 				foreach (string objectName in dataFile.ObjectNames)
 				{
