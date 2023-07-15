@@ -20,13 +20,21 @@ namespace ModelEx
 		Debug = 3
 	}
 
-	public enum LoadResourceFlags
+	public enum LoadResourceFlags : int
 	{
 		None = 0,
 		LoadDependencies = 1,
 		LoadDebugResource = 2,
 		ReloadScene = 4,
 		ResetCamera = 8
+	}
+
+	public static class LoadResourceFlagsExtensions
+	{
+		public static LoadResourceFlags Check(this LoadResourceFlags flags, bool condition)
+		{
+			return (condition) ? flags : LoadResourceFlags.None;
+		}
 	}
 
 	// The load request contains the data that will be kept and reused if the uder requests a reload.
