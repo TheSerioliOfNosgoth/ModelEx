@@ -20,6 +20,15 @@ namespace ModelEx
 		Debug = 3
 	}
 
+	public enum LoadResourceFlags
+	{
+		None = 0,
+		LoadDependencies = 1,
+		LoadDebugResource = 2,
+		ReloadScene = 4,
+		ResetCamera = 8
+	}
+
 	// The load request contains the data that will be kept and reused if the uder requests a reload.
 	// Therefore is should only contain data that will be the same as the initial load.
 	// TODO - Figure out what to do with ReloadScene and ResetCamera, in light of the above.
@@ -34,8 +43,6 @@ namespace ModelEx
 		public Game GameType = Game.Gex;
 		public Platform Platform = Platform.PC;
 		public int ChildIndex = -1;
-		public bool ReloadScene = false; // If the Scene was already loaded, destroy it and make a new one.
-		public bool ResetCamera = false; // If the Scene was already loaded and not reloaded, still reset the camera.
 		public ExportOptions ExportOptions;
 
 		public void CopyFrom(LoadRequestCDC loadRequest)
@@ -48,8 +55,6 @@ namespace ModelEx
 			GameType = loadRequest.GameType;
 			Platform = loadRequest.Platform;
 			ChildIndex = loadRequest.ChildIndex;
-			ReloadScene = loadRequest.ReloadScene;
-			ResetCamera = loadRequest.ResetCamera;
 			ExportOptions = loadRequest.ExportOptions;
         }
 
@@ -173,7 +178,7 @@ namespace ModelEx
 			}
 		}
 
-		public void LoadResourceCDC(LoadRequestCDC loadRequest, bool loadDependancies = false, bool loadDebugResource = false)
+		public void LoadResourceCDC(LoadRequestCDC loadRequest, LoadResourceFlags flags = LoadResourceFlags.ReloadScene)
 		{
 			SceneCDC.progressLevel = 0;
 			SceneCDC.progressLevels = 1;
@@ -189,9 +194,9 @@ namespace ModelEx
 
 			RenderResourceCDC renderResource;
 
-			if (loadDebugResource)
+			if ((flags & LoadResourceFlags.LoadDebugResource) != 0)
 			{
-				if (loadRequest.ReloadScene)
+				if ((flags & LoadResourceFlags.ReloadScene) != 0)
 				{
 					if (CameraTarget == CurrentDebug)
 					{
@@ -209,7 +214,7 @@ namespace ModelEx
 			}
 			else if (Resources.ContainsKey(dataFile.Name))
 			{
-				if (loadRequest.ReloadScene)
+				if ((flags & LoadResourceFlags.ReloadScene) != 0)
 				{
 					if (CurrentScene?.Name == dataFile.Name)
 					{
@@ -264,7 +269,7 @@ namespace ModelEx
 
 			renderResource.LoadTextures(loadRequest.TextureFile);
 
-			if (loadDebugResource)
+			if ((flags & LoadResourceFlags.LoadDebugResource) != 0)
 			{
 				DebugResource = renderResource;
 
@@ -283,7 +288,7 @@ namespace ModelEx
 				{
 					CurrentDebug.UpdateModels();
 
-					if (loadRequest.ResetCamera)
+					if ((flags & LoadResourceFlags.ResetCamera) != 0)
 					{
 						CurrentDebug.Cameras.ResetPositions();
 					}
@@ -306,7 +311,7 @@ namespace ModelEx
 					addScene = Scenes[dataFile.Name];
 					addScene.UpdateModels();
 
-					if (loadRequest.ResetCamera)
+					if ((flags & LoadResourceFlags.ResetCamera) != 0)
 					{
 						addScene.Cameras.ResetPositions();
 					}
@@ -325,7 +330,7 @@ namespace ModelEx
 					addObject = Objects[dataFile.Name];
 					addObject.UpdateModels();
 
-					if (loadRequest.ResetCamera)
+					if ((flags & LoadResourceFlags.ResetCamera) != 0)
 					{
 						addObject.Cameras.ResetPositions();
 					}
@@ -337,7 +342,8 @@ namespace ModelEx
 
 			loadRequest.ResourceName = dataFile.Name;
 
-			if (loadDependancies && !loadDebugResource &&
+			if (((flags & LoadResourceFlags.LoadDebugResource) == 0) &&
+				((flags & LoadResourceFlags.LoadDependencies) != 0) &&
 				dataFile.ObjectNames != null && dataFile.ObjectNames.Length > 0)
 			{
 				foreach (string objectName in dataFile.ObjectNames)

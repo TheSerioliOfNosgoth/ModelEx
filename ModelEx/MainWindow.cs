@@ -14,6 +14,8 @@ namespace ModelEx
 		protected bool _ReloadModelOnRenderModeChange;
 		protected bool _LoadDebugResource;
 		protected bool _LoadDependancies;
+		protected bool _ReloadScene;
+		protected bool _ResetCamera;
 		protected bool _ClearResourcesOnLoad;
 		protected bool _ResetCameraOnModelLoad;
 		protected SceneMode _SceneModeOnLoad = SceneMode.Current;
@@ -181,7 +183,7 @@ namespace ModelEx
 		{
 			RenderManager.Instance.Wireframe = _ImportExportOptions.RenderMode == CDC.RenderMode.Wireframe;
 
-			if (_ReloadModelOnRenderModeChange)
+			if (_ReloadModelOnRenderModeChange && SceneMode == SceneMode.Debug)
 			{
 				if (RenderManager.Instance.DebugResource != null)
 				{
@@ -190,6 +192,8 @@ namespace ModelEx
 
 					_LoadDebugResource = true;
 					_LoadDependancies = false;
+					_ReloadScene = false;
+					_ResetCamera = _ResetCameraOnModelLoad;
 					_ClearResourcesOnLoad = false;
 
 					LoadResource();
@@ -327,6 +331,8 @@ namespace ModelEx
 
 			_LoadDebugResource = false;
 			_LoadDependancies = false;
+			_ReloadScene = false;
+			_ResetCamera = false;
 			_ClearResourcesOnLoad = false;
 			_SceneModeOnLoad = SceneMode.Current;
 
@@ -419,6 +425,8 @@ namespace ModelEx
 				_LoadRequest = loadRequest;
 				_LoadDebugResource = sceneModeOnLoad == SceneMode.Debug;
 				_LoadDependancies = false;
+				_ReloadScene = true;
+				_ResetCamera = true;
 				_ClearResourcesOnLoad = loadResourceDialog.ClearLoadedFiles;
 				_SceneModeOnLoad = sceneModeOnLoad;
 
@@ -451,7 +459,19 @@ namespace ModelEx
 					RenderManager.Instance.UnloadResources();
 				}
 
-				RenderManager.Instance.LoadResourceCDC(_LoadRequest, _LoadDependancies, _LoadDebugResource);
+				LoadResourceFlags loadResourceFlags = LoadResourceFlags.ReloadScene;
+
+				if (_LoadDependancies)
+				{
+					loadResourceFlags |= LoadResourceFlags.LoadDependencies;
+				}
+
+				if (_LoadDebugResource)
+				{
+					loadResourceFlags |= LoadResourceFlags.LoadDebugResource;
+				}
+
+				RenderManager.Instance.LoadResourceCDC(_LoadRequest, loadResourceFlags);
 
 				Invoke(new MethodInvoker(EndLoading));
 			}));
@@ -839,13 +859,15 @@ namespace ModelEx
 
 		private void reloadCurrentModelToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (RenderManager.Instance.DebugResource != null)
+			if (RenderManager.Instance.DebugResource != null && SceneMode == SceneMode.Debug)
 			{
 				RenderResourceCDC debugRenderResource = (RenderResourceCDC)RenderManager.Instance.DebugResource;
 				_LoadRequest.CopyFrom(debugRenderResource.LoadRequest);
 
 				_LoadDebugResource = true;
 				_LoadDependancies = false;
+				_ReloadScene = false;
+				_ResetCamera = _ResetCameraOnModelLoad;
 				_ClearResourcesOnLoad = false;
 
 				LoadResource();
@@ -1140,6 +1162,8 @@ namespace ModelEx
 
 				_LoadDebugResource = false;
 				_LoadDependancies = false;
+				_ReloadScene = false;
+				_ResetCamera = false;
 				_ClearResourcesOnLoad = false;
 
 				LoadResource();
@@ -1157,6 +1181,8 @@ namespace ModelEx
 
 				_LoadDebugResource = false;
 				_LoadDependancies = false;
+				_ReloadScene = false;
+				_ResetCamera = false;
 				_ClearResourcesOnLoad = false;
 
 				LoadResource();
@@ -1172,6 +1198,8 @@ namespace ModelEx
 
 				_LoadDebugResource = true;
 				_LoadDependancies = false;
+				_ReloadScene = false;
+				_ResetCamera = false;
 				_ClearResourcesOnLoad = false;
 
 				LoadResource();
@@ -1189,6 +1217,8 @@ namespace ModelEx
 
 				_LoadDebugResource = false;
 				_LoadDependancies = true;
+				_ReloadScene = false;
+				_ResetCamera = false;
 				_ClearResourcesOnLoad = false;
 
 				LoadResource();
