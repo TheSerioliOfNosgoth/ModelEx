@@ -463,10 +463,6 @@ namespace ModelEx
 					CurrentObject = null;
 				}
 
-				RenderResource removeResource = Resources[resourceName];
-				Resources.Remove(resourceName);
-				removeResource.Dispose();
-
 				if (Scenes.ContainsKey(resourceName))
 				{
 					Scene removeScene = Scenes[resourceName];
@@ -481,6 +477,10 @@ namespace ModelEx
 					removeObject.Dispose();
 				}
 
+				RenderResource removeResource = Resources[resourceName];
+				Resources.Remove(resourceName);
+				removeResource.Dispose();
+
 				UpdateModels();
 			}
 		}
@@ -491,13 +491,6 @@ namespace ModelEx
 
 			CurrentScene = null;
 			CurrentObject = null;
-
-			while (Resources.Count > 1)
-			{
-				RenderResource removeResoource = Resources.Values[1];
-				Resources.RemoveAt(1);
-				removeResoource.Dispose();
-			}
 
 			while (Scenes.Count > 0)
 			{
@@ -511,6 +504,13 @@ namespace ModelEx
 				Scene removeObject = Objects.Values[0];
 				Objects.RemoveAt(0);
 				removeObject.Dispose();
+			}
+
+			while (Resources.Count > 1)
+			{
+				RenderResource removeResource = Resources.Values[1];
+				Resources.RemoveAt(1);
+				removeResource.Dispose();
 			}
 		}
 

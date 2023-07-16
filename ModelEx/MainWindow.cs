@@ -299,11 +299,13 @@ namespace ModelEx
 
 				if (sceneControls.ResourceCombo.Items.Contains(loadRequest.ResourceName))
 				{
+					sceneControls.ResourceCombo.SelectedIndex = -1;
 					sceneControls.ResourceCombo.SelectedIndex = sceneControls.ResourceCombo.Items.IndexOf(loadRequest.ResourceName);
 				}
 
 				if (objectControls.ResourceCombo.Items.Contains(loadRequest.ResourceName))
 				{
+					objectControls.ResourceCombo.SelectedIndex = -1;
 					objectControls.ResourceCombo.SelectedIndex = objectControls.ResourceCombo.Items.IndexOf(loadRequest.ResourceName);
 				}
 			}
@@ -844,13 +846,12 @@ namespace ModelEx
 
 		private void reloadCurrentModelToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (RenderManager.Instance.DebugResource != null && SceneMode == SceneMode.Debug)
+			if (RenderManager.Instance.CameraTarget != null)
 			{
 				RenderResourceCDC debugRenderResource = (RenderResourceCDC)RenderManager.Instance.DebugResource;
 				_LoadRequest.CopyFrom(debugRenderResource.LoadRequest);
 
-				_LoadResourceFlags = LoadResourceFlags.None;
-				_LoadResourceFlags |= LoadResourceFlags.LoadDebugResource;
+				_LoadResourceFlags = LoadResourceFlags.LoadDebugResource.Check(SceneMode == SceneMode.Debug);
 				_LoadResourceFlags |= LoadResourceFlags.ResetCamera.Check(_ResetCameraOnModelLoad);
 
 				_ClearResourcesOnLoad = false;
