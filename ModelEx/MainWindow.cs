@@ -213,6 +213,7 @@ namespace ModelEx
 
 			ThreadStart tsUIMonitor = new ThreadStart(UIMonitor);
 			Thread uiMonitor = new Thread(tsUIMonitor);
+			uiMonitor.Name = "UIMonitorThread";
 			uiMonitor.Start();
 		}
 
@@ -270,6 +271,7 @@ namespace ModelEx
 
 				if (debugControls.ResourceCombo.Items.Contains(loadRequest.ResourceName))
 				{
+					debugControls.ResourceCombo.SelectedIndex = -1;
 					debugControls.ResourceCombo.SelectedIndex = debugControls.ResourceCombo.Items.IndexOf(loadRequest.ResourceName);
 				}
 			}
@@ -1001,6 +1003,8 @@ namespace ModelEx
 			{
 				return;
 			}
+
+			RenderManager.Instance.UpdateCameraSelection();
 
 			if (RenderManager.Instance.CurrentDebug == null)
 			{

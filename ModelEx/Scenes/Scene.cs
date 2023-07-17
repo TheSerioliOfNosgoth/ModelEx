@@ -8,16 +8,14 @@ namespace ModelEx
 {
 	public abstract class Scene : Renderable
 	{
-		protected bool _includeObjects;
 		protected List<RenderInstance> _renderInstances;
 
 		public readonly ReadOnlyCollection<RenderInstance> RenderInstances;
 		public Renderable CurrentObject { get { return _renderInstances.Count > 0 ? _renderInstances[0] : null; } }
 		public CameraSet Cameras { get; protected set; }
 
-		protected Scene(bool includeObjects)
+		protected Scene()
 		{
-			_includeObjects = includeObjects;
 			_renderInstances = new List<RenderInstance>();
 			RenderInstances = new ReadOnlyCollection<RenderInstance>(_renderInstances);
 			Cameras = new CameraSet(this);
@@ -41,6 +39,21 @@ namespace ModelEx
 					{
 						RenderInstance renderInstance = (RenderInstance)renderable;
 						renderInstance.UpdateModel();
+					}
+				}
+			}
+		}
+
+		public void UpdateModels(RenderResource resource)
+		{
+			lock (_renderInstances)
+			{
+				foreach (Renderable renderable in _renderInstances)
+				{
+					if (renderable is RenderInstance)
+					{
+						RenderInstance renderInstance = (RenderInstance)renderable;
+						renderInstance.UpdateModel(resource);
 					}
 				}
 			}

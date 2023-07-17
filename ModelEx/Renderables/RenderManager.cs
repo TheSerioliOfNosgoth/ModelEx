@@ -216,12 +216,19 @@ namespace ModelEx
 					CurrentDebug?.Dispose();
 					CurrentDebug = null;
 				}
+				else
+				{
+					CurrentDebug?.UpdateModels(null);
+				}
 
-				DebugResource?.Dispose();
 				DebugResource = null;
+				DebugResource?.Dispose();
 			}
 			else if (Resources.ContainsKey(dataFile.Name))
 			{
+				RenderResource removeResource = Resources[dataFile.Name];
+				Resources.Remove(dataFile.Name);
+
 				if ((flags & LoadResourceFlags.ReloadScene) != 0)
 				{
 					if (CurrentScene?.Name == dataFile.Name)
@@ -264,9 +271,19 @@ namespace ModelEx
 						removeObject.Dispose();
 					}
 				}
+				else
+				{
+					foreach (Scene scene in Scenes.Values)
+					{
+						scene.UpdateModels();
+					}
 
-				RenderResource removeResource = Resources[dataFile.Name];
-				Resources.Remove(dataFile.Name);
+					foreach (Scene scene in Objects.Values)
+					{
+						scene.UpdateModels();
+					}
+				}
+
 				removeResource.Dispose();
 			}
 
@@ -294,7 +311,7 @@ namespace ModelEx
 				}
 				else // loadRequest.ReloadScene should be false to get here.
 				{
-					CurrentDebug.UpdateModels();
+					CurrentDebug.UpdateModels(renderResource);
 
 					if ((flags & LoadResourceFlags.ResetCamera) != 0)
 					{
@@ -568,6 +585,8 @@ namespace ModelEx
 			{
 				scene.UpdateModels();
 			}
+
+			CurrentDebug?.UpdateModels(null);
 		}
 
 		public void UpdateCameraSelection(int cameraIndex = -1)
