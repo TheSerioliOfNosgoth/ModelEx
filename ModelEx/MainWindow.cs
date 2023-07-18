@@ -12,13 +12,12 @@ namespace ModelEx
 		int _MainSplitPanelPosition;
 		protected bool _RunUIMonitoringThread;
 		protected bool _ReloadModelOnRenderModeChange;
-		protected bool _LoadDebugResource;
-		protected bool _LoadDependancies;
 		protected bool _ClearResourcesOnLoad;
 		protected bool _ResetCameraOnModelLoad;
 		protected SceneMode _SceneModeOnLoad = SceneMode.Current;
 		protected string _LastExportDirectory = "";
 		protected LoadRequestCDC _LoadRequest;
+		protected LoadResourceFlags _LoadResourceFlags;
 
 		SceneMode _SceneMode;
 		public SceneMode SceneMode
@@ -181,15 +180,17 @@ namespace ModelEx
 		{
 			RenderManager.Instance.Wireframe = _ImportExportOptions.RenderMode == CDC.RenderMode.Wireframe;
 
-			if (_ReloadModelOnRenderModeChange)
+			if (_ReloadModelOnRenderModeChange && SceneMode == SceneMode.Debug)
 			{
 				if (RenderManager.Instance.DebugResource != null)
 				{
 					RenderResourceCDC debugRenderResource = (RenderResourceCDC)RenderManager.Instance.DebugResource;
 					_LoadRequest.CopyFrom(debugRenderResource.LoadRequest);
 
-					_LoadDebugResource = true;
-					_LoadDependancies = false;
+					_LoadResourceFlags = LoadResourceFlags.None;
+					_LoadResourceFlags |= LoadResourceFlags.LoadDebugResource;
+					_LoadResourceFlags |= LoadResourceFlags.ResetCamera.Check(_ResetCameraOnModelLoad);
+
 					_ClearResourcesOnLoad = false;
 
 					LoadResource();
@@ -212,6 +213,7 @@ namespace ModelEx
 
 			ThreadStart tsUIMonitor = new ThreadStart(UIMonitor);
 			Thread uiMonitor = new Thread(tsUIMonitor);
+			uiMonitor.Name = "UIMonitorThread";
 			uiMonitor.Start();
 		}
 
@@ -241,7 +243,7 @@ namespace ModelEx
 			_ProgressWindow.ShowInTaskbar = false;
 			_ProgressWindow.Show();
 
-			if (_LoadDebugResource)
+			if ((_LoadResourceFlags & LoadResourceFlags.LoadDebugResource) != 0)
 			{
 				debugControls.ResourceCombo.SelectedIndex = -1;
 				debugControls.ResourceCombo.Items.Clear();
@@ -262,13 +264,14 @@ namespace ModelEx
 		{
 			LoadRequestCDC loadRequest = _LoadRequest;
 
-			if (_LoadDebugResource)
+			if ((_LoadResourceFlags & LoadResourceFlags.LoadDebugResource) != 0)
 			{
 				string resourceName = RenderManager.Instance.DebugResource.Name;
 				debugControls.ResourceCombo.Items.Add(resourceName);
 
 				if (debugControls.ResourceCombo.Items.Contains(loadRequest.ResourceName))
 				{
+					debugControls.ResourceCombo.SelectedIndex = -1;
 					debugControls.ResourceCombo.SelectedIndex = debugControls.ResourceCombo.Items.IndexOf(loadRequest.ResourceName);
 				}
 			}
@@ -298,11 +301,13 @@ namespace ModelEx
 
 				if (sceneControls.ResourceCombo.Items.Contains(loadRequest.ResourceName))
 				{
+					sceneControls.ResourceCombo.SelectedIndex = -1;
 					sceneControls.ResourceCombo.SelectedIndex = sceneControls.ResourceCombo.Items.IndexOf(loadRequest.ResourceName);
 				}
 
 				if (objectControls.ResourceCombo.Items.Contains(loadRequest.ResourceName))
 				{
+					objectControls.ResourceCombo.SelectedIndex = -1;
 					objectControls.ResourceCombo.SelectedIndex = objectControls.ResourceCombo.Items.IndexOf(loadRequest.ResourceName);
 				}
 			}
@@ -325,8 +330,8 @@ namespace ModelEx
 				SceneMode = _SceneModeOnLoad;
 			}
 
-			_LoadDebugResource = false;
-			_LoadDependancies = false;
+			_LoadResourceFlags = LoadResourceFlags.None;
+
 			_ClearResourcesOnLoad = false;
 			_SceneModeOnLoad = SceneMode.Current;
 
@@ -417,8 +422,12 @@ namespace ModelEx
 				loadRequest.ExportOptions = sceneModeOnLoad == SceneMode.Debug ? _ImportExportOptions : new CDC.ExportOptions();
 
 				_LoadRequest = loadRequest;
-				_LoadDebugResource = sceneModeOnLoad == SceneMode.Debug;
-				_LoadDependancies = false;
+
+				_LoadResourceFlags = LoadResourceFlags.None;
+				_LoadResourceFlags |= LoadResourceFlags.LoadDebugResource.Check(sceneModeOnLoad == SceneMode.Debug);
+				_LoadResourceFlags |= LoadResourceFlags.ReloadScene;
+				_LoadResourceFlags |= LoadResourceFlags.ResetCamera;
+
 				_ClearResourcesOnLoad = loadResourceDialog.ClearLoadedFiles;
 				_SceneModeOnLoad = sceneModeOnLoad;
 
@@ -451,7 +460,7 @@ namespace ModelEx
 					RenderManager.Instance.UnloadResources();
 				}
 
-				RenderManager.Instance.LoadResourceCDC(_LoadRequest, _LoadDependancies, _LoadDebugResource);
+				RenderManager.Instance.LoadResourceCDC(_LoadRequest, _LoadResourceFlags);
 
 				Invoke(new MethodInvoker(EndLoading));
 			}));
@@ -839,13 +848,14 @@ namespace ModelEx
 
 		private void reloadCurrentModelToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (RenderManager.Instance.DebugResource != null)
+			if (RenderManager.Instance.CameraTarget != null)
 			{
 				RenderResourceCDC debugRenderResource = (RenderResourceCDC)RenderManager.Instance.DebugResource;
 				_LoadRequest.CopyFrom(debugRenderResource.LoadRequest);
 
-				_LoadDebugResource = true;
-				_LoadDependancies = false;
+				_LoadResourceFlags = LoadResourceFlags.LoadDebugResource.Check(SceneMode == SceneMode.Debug);
+				_LoadResourceFlags |= LoadResourceFlags.ResetCamera.Check(_ResetCameraOnModelLoad);
+
 				_ClearResourcesOnLoad = false;
 
 				LoadResource();
@@ -994,6 +1004,8 @@ namespace ModelEx
 				return;
 			}
 
+			RenderManager.Instance.UpdateCameraSelection();
+
 			if (RenderManager.Instance.CurrentDebug == null)
 			{
 				return;
@@ -1138,8 +1150,8 @@ namespace ModelEx
 				RenderResourceCDC sceneRenderResource = (RenderResourceCDC)renderResource;
 				_LoadRequest.CopyFrom(sceneRenderResource.LoadRequest);
 
-				_LoadDebugResource = false;
-				_LoadDependancies = false;
+				_LoadResourceFlags = LoadResourceFlags.None;
+
 				_ClearResourcesOnLoad = false;
 
 				LoadResource();
@@ -1155,8 +1167,8 @@ namespace ModelEx
 				RenderResourceCDC objectRenderResource = (RenderResourceCDC)renderResource;
 				_LoadRequest.CopyFrom(objectRenderResource.LoadRequest);
 
-				_LoadDebugResource = false;
-				_LoadDependancies = false;
+				_LoadResourceFlags = LoadResourceFlags.None;
+
 				_ClearResourcesOnLoad = false;
 
 				LoadResource();
@@ -1170,8 +1182,8 @@ namespace ModelEx
 				RenderResourceCDC debugRenderResource = (RenderResourceCDC)RenderManager.Instance.DebugResource;
 				_LoadRequest.CopyFrom(debugRenderResource.LoadRequest);
 
-				_LoadDebugResource = true;
-				_LoadDependancies = false;
+				_LoadResourceFlags = LoadResourceFlags.LoadDebugResource;
+
 				_ClearResourcesOnLoad = false;
 
 				LoadResource();
@@ -1187,8 +1199,11 @@ namespace ModelEx
 				RenderResourceCDC sceneRenderResource = (RenderResourceCDC)renderResource;
 				_LoadRequest.CopyFrom(sceneRenderResource.LoadRequest);
 
-				_LoadDebugResource = false;
-				_LoadDependancies = true;
+				_LoadResourceFlags = LoadResourceFlags.None;
+				_LoadResourceFlags |= LoadResourceFlags.LoadDependencies;
+				_LoadResourceFlags |= LoadResourceFlags.ReloadScene;
+				_LoadResourceFlags |= LoadResourceFlags.ResetCamera;
+
 				_ClearResourcesOnLoad = false;
 
 				LoadResource();

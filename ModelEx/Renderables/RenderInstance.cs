@@ -35,7 +35,7 @@ namespace ModelEx
 			_rotation = rotation;
 			_scale = scale;
 
-			UpdateModel(resource, _modelIndex);
+			UpdateModel(resource);
 		}
 
 		public VisibilityNode FindNode(string name)
@@ -64,24 +64,29 @@ namespace ModelEx
 
 		public void UpdateModel()
 		{
-			bool foundResource;
-			RenderResource resource;
+			RenderResource resource = null;
+
 			if (_resourceName != "" && RenderManager.Instance.Resources.ContainsKey(_resourceName))
 			{
 				resource = RenderManager.Instance.Resources[_resourceName];
-				foundResource = true;
-			}
-			else
-			{
-				resource = RenderManager.Instance.Resources[""];
-				foundResource = false;
 			}
 
-			UpdateModel(resource, foundResource ? _modelIndex : (int)RenderResourceShapes.Shape.Octahedron);
+			UpdateModel(resource);
 		}
 
-		public void UpdateModel(RenderResource resource, int modelIndex)
+		public void UpdateModel(RenderResource resource, int modelIndex = -1)
 		{
+			if (modelIndex == -1)
+			{
+				modelIndex = _modelIndex;
+			}
+
+			if (resource == null)
+			{
+				resource = RenderManager.Instance.Resources[""];
+				modelIndex = (int)RenderResourceShapes.Shape.Octahedron;
+			}
+
 			Model newModel = resource.Models[modelIndex];
 
 			if (Model != newModel)

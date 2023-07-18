@@ -343,7 +343,6 @@ namespace CDC
 			// Get the polygons
 			_polygons = new Polygon[_polygonCount];
 			_geometry.UVs = new UV[_indexCount];
-			Console.WriteLine("\tDebug: reading polygons");
 			ReadPolygons(reader, options);
 
 			// Generate the output

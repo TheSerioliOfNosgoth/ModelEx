@@ -20,6 +20,27 @@ namespace ModelEx
 		Debug = 3
 	}
 
+	public enum LoadResourceFlags : int
+	{
+		None = 0,
+		LoadDependencies = 1,
+		LoadDebugResource = 2,
+		ReloadScene = 4,
+		ResetCamera = 8
+	}
+
+	public static class LoadResourceFlagsExtensions
+	{
+		public static LoadResourceFlags Check(this LoadResourceFlags flags, bool condition)
+		{
+			return (condition) ? flags : LoadResourceFlags.None;
+		}
+	}
+
+	// The load request contains the data that will be kept and reused if the uder requests a reload.
+	// Therefore is should only contain data that will be the same as the initial load.
+	// TODO - Figure out what to do with ReloadScene and ResetCamera, in light of the above.
+	// Should they just be parameters?
 	public class LoadRequestCDC : System.ICloneable
 	{
 		public string ResourceName = "";
@@ -77,6 +98,9 @@ namespace ModelEx
 
 		public Color BackgroundColour = Color.Gray;
 		public bool Wireframe = false;
+
+		private SortedList<string, Scene> Scenes = new SortedList<string, Scene>();
+		private SortedList<string, Scene> Objects = new SortedList<string, Scene>();
 
 		public Scene CurrentScene { get; private set; }
 		public Scene CurrentObject { get; private set; }
@@ -162,7 +186,7 @@ namespace ModelEx
 			}
 		}
 
-		public void LoadResourceCDC(LoadRequestCDC loadRequest, bool loadDependancies = false, bool loadDebugResource = false)
+		public void LoadResourceCDC(LoadRequestCDC loadRequest, LoadResourceFlags flags = LoadResourceFlags.ReloadScene)
 		{
 			SceneCDC.progressLevel = 0;
 			SceneCDC.progressLevels = 1;
@@ -178,22 +202,89 @@ namespace ModelEx
 
 			RenderResourceCDC renderResource;
 
-			if (loadDebugResource)
+			if ((flags & LoadResourceFlags.LoadDebugResource) != 0)
 			{
-				CurrentDebug = null;
-				DebugResource?.Dispose();
+				if ((flags & LoadResourceFlags.ReloadScene) != 0)
+				{
+					if (CameraTarget == CurrentDebug)
+					{
+						// These should be null because both the target and the camera are being destroyed.
+						CameraTarget = null;
+						CameraManager.Instance.CurrentCamera = null;
+					}
+
+					CurrentDebug?.Dispose();
+					CurrentDebug = null;
+				}
+				else
+				{
+					CurrentDebug?.UpdateModels(null);
+				}
+
 				DebugResource = null;
+				DebugResource?.Dispose();
 			}
 			else if (Resources.ContainsKey(dataFile.Name))
 			{
-				renderResource = (RenderResourceCDC)Resources[dataFile.Name];
+				RenderResource removeResource = Resources[dataFile.Name];
 				Resources.Remove(dataFile.Name);
 
-				// Should the cameras be reset here too? Need flag in LoadRequestCDC.
-				CurrentObject?.UpdateModels();
-				CurrentScene?.UpdateModels();
+				if ((flags & LoadResourceFlags.ReloadScene) != 0)
+				{
+					if (CurrentScene?.Name == dataFile.Name)
+					{
+						if (CameraTarget == CurrentScene)
+						{
+							// These should be null because both the target and the camera are being destroyed.
+							CameraTarget = null;
+							CameraManager.Instance.CurrentCamera = null;
+						}
 
-				renderResource.Dispose();
+						// The CurrentScene should be restored after everything else in this function is completed.
+						CurrentScene = null;
+					}
+
+					if (CurrentObject?.Name == dataFile.Name)
+					{
+						if (CameraTarget == CurrentObject)
+						{
+							// These should be null because both the target and the camera are being destroyed.
+							CameraTarget = null;
+							CameraManager.Instance.CurrentCamera = null;
+						}
+
+						// The CurrentObject should be restored after everything else in this function is completed.
+						CurrentObject = null;
+					}
+
+					if (Scenes.ContainsKey(dataFile.Name))
+					{
+						Scene removeScene = Scenes[dataFile.Name];
+						Scenes.Remove(dataFile.Name);
+						removeScene.Dispose();
+					}
+
+					if (Objects.ContainsKey(dataFile.Name))
+					{
+						Scene removeObject = Objects[dataFile.Name];
+						Objects.Remove(dataFile.Name);
+						removeObject.Dispose();
+					}
+				}
+				else
+				{
+					foreach (Scene scene in Scenes.Values)
+					{
+						scene.UpdateModels();
+					}
+
+					foreach (Scene scene in Objects.Values)
+					{
+						scene.UpdateModels();
+					}
+				}
+
+				removeResource.Dispose();
 			}
 
 			renderResource = new RenderResourceCDC(dataFile, loadRequest);
@@ -203,20 +294,72 @@ namespace ModelEx
 
 			renderResource.LoadTextures(loadRequest.TextureFile);
 
-			if (loadDebugResource)
+			if ((flags & LoadResourceFlags.LoadDebugResource) != 0)
 			{
 				DebugResource = renderResource;
-				CurrentDebug = new SceneCDC(renderResource.File, renderResource);
-				CurrentDebug.Cameras.ResetPositions();
-				UpdateCameraSelection();
+
+				if (CurrentDebug?.Name != dataFile.Name)
+				{
+					CurrentDebug = new SceneCDC(renderResource.File, renderResource);
+					CurrentDebug.Cameras.ResetPositions();
+
+					if (SceneMode == SceneMode.Debug)
+					{
+						CameraTarget = CurrentDebug;
+						CameraManager.Instance.CurrentCamera = CameraTarget.Cameras.CurrentCamera;
+					}
+				}
+				else // loadRequest.ReloadScene should be false to get here.
+				{
+					CurrentDebug.UpdateModels(renderResource);
+
+					if ((flags & LoadResourceFlags.ResetCamera) != 0)
+					{
+						CurrentDebug.Cameras.ResetPositions();
+					}
+				}
 			}
 			else
 			{
-				Resources.Add(renderResource.Name, renderResource);
-				
-				// Should the cameras be reset here too? Need flag in LoadRequestCDC.
-				CurrentObject?.UpdateModels();
-				CurrentScene?.UpdateModels();
+				Resources.Add(dataFile.Name, renderResource);
+
+				Scene addScene;
+
+				if (!Scenes.ContainsKey(dataFile.Name))
+				{
+					addScene = new SceneCDC(renderResource.File, true);
+					Scenes.Add(dataFile.Name, addScene);
+					addScene.Cameras.ResetPositions();
+				}
+				else // loadRequest.ReloadScene should be false to get here.
+				{
+					addScene = Scenes[dataFile.Name];
+					addScene.UpdateModels();
+
+					if ((flags & LoadResourceFlags.ResetCamera) != 0)
+					{
+						addScene.Cameras.ResetPositions();
+					}
+				}
+
+				Scene addObject;
+
+				if (!Objects.ContainsKey(dataFile.Name))
+				{
+					addObject = new SceneCDC(renderResource.File, false);
+					Objects.Add(dataFile.Name, addObject);
+					addObject.Cameras.ResetPositions();
+				}
+				else // loadRequest.ReloadScene should be false to get here.
+				{
+					addObject = Objects[dataFile.Name];
+					addObject.UpdateModels();
+
+					if ((flags & LoadResourceFlags.ResetCamera) != 0)
+					{
+						addObject.Cameras.ResetPositions();
+					}
+				}
 			}
 
 			SceneCDC.progressLevel = SceneCDC.progressLevels;
@@ -224,7 +367,9 @@ namespace ModelEx
 
 			loadRequest.ResourceName = dataFile.Name;
 
-			if (loadDependancies && dataFile.ObjectNames != null && dataFile.ObjectNames.Length > 0)
+			if (((flags & LoadResourceFlags.LoadDebugResource) == 0) &&
+				((flags & LoadResourceFlags.LoadDependencies) != 0) &&
+				dataFile.ObjectNames != null && dataFile.ObjectNames.Length > 0)
 			{
 				foreach (string objectName in dataFile.ObjectNames)
 				{
@@ -325,23 +470,35 @@ namespace ModelEx
 		{
 			if (resourceName != "" && Resources.ContainsKey(resourceName))
 			{
-				RenderResource renderResource = Resources[resourceName];
-				Resources.Remove(resourceName);
-				CurrentObject?.UpdateModels();
-				CurrentScene?.UpdateModels();
-				renderResource.Dispose();
-
-				if (CurrentScene != null && CurrentScene.Name == resourceName)
+				if (CurrentScene?.Name == resourceName)
 				{
-					CurrentScene.Dispose();
 					CurrentScene = null;
 				}
 
-				if (CurrentObject != null && CurrentObject.Name == resourceName)
+				if (CurrentObject?.Name == resourceName)
 				{
-					CurrentObject.Dispose();
 					CurrentObject = null;
 				}
+
+				if (Scenes.ContainsKey(resourceName))
+				{
+					Scene removeScene = Scenes[resourceName];
+					Scenes.Remove(resourceName);
+					removeScene.Dispose();
+				}
+
+				if (Objects.ContainsKey(resourceName))
+				{
+					Scene removeObject = Objects[resourceName];
+					Objects.Remove(resourceName);
+					removeObject.Dispose();
+				}
+
+				RenderResource removeResource = Resources[resourceName];
+				Resources.Remove(resourceName);
+				removeResource.Dispose();
+
+				UpdateModels();
 			}
 		}
 
@@ -349,25 +506,28 @@ namespace ModelEx
 		{
 			_loadRequestsCDC.Clear();
 
-			if (CurrentScene != null)
+			CurrentScene = null;
+			CurrentObject = null;
+
+			while (Scenes.Count > 0)
 			{
-				CurrentScene.Dispose();
-				CurrentScene = null;
+				Scene removeScene = Scenes.Values[0];
+				Scenes.RemoveAt(0);
+				removeScene.Dispose();
 			}
 
-			if (CurrentObject != null)
+			while (Objects.Count > 0)
 			{
-				CurrentObject.Dispose();
-				CurrentObject = null;
+				Scene removeObject = Objects.Values[0];
+				Objects.RemoveAt(0);
+				removeObject.Dispose();
 			}
 
 			while (Resources.Count > 1)
 			{
-				RenderResource resource = Resources[Resources.Keys[1]];
-				Resources.Remove(Resources.Keys[1]);
-				CurrentObject?.UpdateModels();
-				CurrentScene?.UpdateModels();
-				resource.Dispose();
+				RenderResource removeResource = Resources.Values[1];
+				Resources.RemoveAt(1);
+				removeResource.Dispose();
 			}
 		}
 
@@ -382,19 +542,9 @@ namespace ModelEx
 
 		public void SetCurrentObject(string objectName)
 		{
-			if (CurrentObject != null)
+			if (objectName != "" && Objects.ContainsKey(objectName))
 			{
-				CurrentObject = null;
-			}
-
-			if (objectName != "" && Resources.ContainsKey(objectName))
-			{
-				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[objectName];
-				CurrentObject = new SceneCDC(renderResource.File, false);
-
-				// TODO - Remove when SceneCDC can be made persistant.
-				CurrentObject.Cameras.ResetPositions();
-
+				CurrentObject = Objects[objectName];
 				UpdateCameraSelection();
 			}
 		}
@@ -409,20 +559,9 @@ namespace ModelEx
 
 		public void SetCurrentScene(string sceneName)
 		{
-			if (CurrentScene != null)
+			if (sceneName != "" && Scenes.ContainsKey(sceneName))
 			{
-				CurrentScene.Dispose();
-				CurrentScene = null;
-			}
-
-			if (sceneName != "" && Resources.ContainsKey(sceneName))
-			{
-				RenderResourceCDC renderResource = (RenderResourceCDC)Resources[sceneName];
-				CurrentScene = new SceneCDC(renderResource.File, true);
-
-				// TODO - Remove when SceneCDC can be made persistant.
-				CurrentScene.Cameras.ResetPositions();
-
+				CurrentScene = Scenes[sceneName];
 				UpdateCameraSelection();
 			}
 		}
@@ -435,9 +574,24 @@ namespace ModelEx
 			}
 		}
 
+		protected void UpdateModels()
+		{
+			foreach (Scene scene in Scenes.Values)
+			{
+				scene.UpdateModels();
+			}
+
+			foreach (Scene scene in Objects.Values)
+			{
+				scene.UpdateModels();
+			}
+
+			CurrentDebug?.UpdateModels(null);
+		}
+
 		public void UpdateCameraSelection(int cameraIndex = -1)
 		{
-			switch (_sceneMode)
+			switch (SceneMode)
 			{
 				case SceneMode.Scene:
 					CameraTarget = CurrentScene;

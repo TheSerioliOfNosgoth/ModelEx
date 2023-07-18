@@ -29,7 +29,6 @@ namespace ModelEx
 		}
 
 		public SceneCDC(CDC.DataFile dataFile, bool includeObjects)
-			: base(includeObjects)
 		{
 			Name = dataFile.Name;
 
@@ -194,7 +193,6 @@ namespace ModelEx
 		}
 
 		public SceneCDC(CDC.DataFile dataFile, RenderResource resource)
-			: base(false)
 		{
 			Name = dataFile.Name;
 

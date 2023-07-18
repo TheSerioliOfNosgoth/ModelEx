@@ -563,7 +563,8 @@ namespace ModelEx
 							loadRequest.ObjectListFile = inputFilePath;
 						}
 
-						RenderManager.Instance.LoadResourceCDC(loadRequest, false, true);
+						LoadResourceFlags loadResourceFlags = LoadResourceFlags.ReloadScene | LoadResourceFlags.LoadDebugResource;
+						RenderManager.Instance.LoadResourceCDC(loadRequest, loadResourceFlags);
 					}));
 
 					loadingThread.Name = "LoadingThread";
