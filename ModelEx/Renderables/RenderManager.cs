@@ -181,12 +181,23 @@ namespace ModelEx
 		{
 			while (_loadRequestsCDC.Count > 0)
 			{
-				LoadResourceCDC(_loadRequestsCDC[0]);
+				LoadResourceCDCInternal(_loadRequestsCDC[0]);
 				_loadRequestsCDC.RemoveAt(0);
 			}
+
+			UpdateModels();
 		}
 
 		public void LoadResourceCDC(LoadRequestCDC loadRequest, LoadResourceFlags flags = LoadResourceFlags.ReloadScene)
+		{
+			// I can disable rendering during the load here if needed.
+			LoadResourceCDCInternal(loadRequest, flags);
+
+			// Update all the models once done loading.
+			UpdateModels();
+		}
+
+		private void LoadResourceCDCInternal(LoadRequestCDC loadRequest, LoadResourceFlags flags = LoadResourceFlags.ReloadScene)
 		{
 			SceneCDC.progressLevel = 0;
 			SceneCDC.progressLevels = 1;
@@ -377,7 +388,9 @@ namespace ModelEx
 
 					if (loadRequest.GameType == Game.SR1)
 					{
-						string extension = (loadRequest.Platform == Platform.PC) ? ".pcm" : ".drm";
+						// Soul Spiral incorrectly exports PSX files as *.pcm!
+						//string extension = (loadRequest.Platform == Platform.PC) ? ".pcm" : ".drm";
+						string extension = ".drm";
 
 						if (loadRequest.ProjectFolder != "")
 						{
@@ -387,6 +400,11 @@ namespace ModelEx
 						{
 							string projectFolder = System.IO.Path.GetDirectoryName(loadRequest.DataFile);
 							objectLoadRequest.DataFile = System.IO.Path.Combine(projectFolder, objectName, extension);
+						}
+
+						if (!System.IO.File.Exists(objectLoadRequest.DataFile))
+						{
+							objectLoadRequest.DataFile = System.IO.Path.ChangeExtension(objectLoadRequest.DataFile, ".pcm");
 						}
 
 						if (!System.IO.File.Exists(objectLoadRequest.DataFile))
@@ -408,9 +426,9 @@ namespace ModelEx
 						objectLoadRequest.GameType = loadRequest.GameType;
 						objectLoadRequest.Platform = loadRequest.Platform;
 						objectLoadRequest.ExportOptions = loadRequest.ExportOptions;
-						LoadResourceCDC(objectLoadRequest);
+						LoadResourceCDCInternal(objectLoadRequest);
 					}
-					else if (loadRequest.GameType == Game.SR2)
+					else if (loadRequest.GameType == Game.SR2 || loadRequest.GameType == Game.Defiance)
 					{
 						if (loadRequest.ProjectFolder != "")
 						{
@@ -434,7 +452,7 @@ namespace ModelEx
 						objectLoadRequest.GameType = loadRequest.GameType;
 						objectLoadRequest.Platform = loadRequest.Platform;
 						objectLoadRequest.ExportOptions = loadRequest.ExportOptions;
-						LoadResourceCDC(objectLoadRequest);
+						LoadResourceCDCInternal(objectLoadRequest);
 					}
 					else if (loadRequest.GameType == Game.TRL || loadRequest.GameType == Game.TRA)
 					{
@@ -460,7 +478,7 @@ namespace ModelEx
 						objectLoadRequest.GameType = loadRequest.GameType;
 						objectLoadRequest.Platform = loadRequest.Platform;
 						objectLoadRequest.ExportOptions = loadRequest.ExportOptions;
-						LoadResourceCDC(objectLoadRequest);
+						LoadResourceCDCInternal(objectLoadRequest);
 					}
 				}
 			}

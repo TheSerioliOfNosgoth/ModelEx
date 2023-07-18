@@ -349,6 +349,17 @@ namespace CDC
 					_intros[i].fileName = _objectNamesList[_intros[i].objectID];
 				}
 			}
+
+			if (_objectIDs != null)
+			{
+				for (int i = 0; i < _objectIDs.Length; i++)
+				{
+					if (_objectNamesList.TryGetValue(_objectIDs[i], out string objectName))
+					{
+						_objectNames[i] = objectName;
+					}
+				}
+			}
 		}
 	}
 }
