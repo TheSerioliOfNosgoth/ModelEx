@@ -160,7 +160,7 @@ namespace ModelEx
 									System.IO.MemoryStream stream = textureFile.GetDataAsStream(material.textureID);
 									if (stream != null)
 									{
-										String textureName = CDC.Utility.GetSoulReaverPCOrDreamcastTextureName(cdcModel.Name, material.textureID) + TextureExtension;
+										String textureName = CDC.Utility.GetSoulReaverPCOrDreamcastTextureName(File.Name, material.textureID) + TextureExtension;
 										AddTexture(stream, textureName);
 										if (!_TexturesAsPNGs.ContainsKey(textureName))
 										{
@@ -202,7 +202,7 @@ namespace ModelEx
 									System.IO.MemoryStream stream = textureFile.GetDataAsStream(textureID);
 									if (stream != null)
 									{
-										String textureName = CDC.Utility.GetSoulReaverPCOrDreamcastTextureName(cdcModel.Name, material.textureID) + TextureExtension;
+										String textureName = CDC.Utility.GetSoulReaverPCOrDreamcastTextureName(File.Name, material.textureID) + TextureExtension;
 
 										AddTexture(stream, textureName);
 
