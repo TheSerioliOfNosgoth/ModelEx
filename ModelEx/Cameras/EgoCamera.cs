@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using SlimDX;
 using SlimDX.Direct3D11;
 using SlimDX.DXGI;
@@ -18,7 +19,7 @@ namespace ModelEx
 		bool movingUp = false;
 
 		float pitchVal = 0.0f;
-		float moveSpeed = 10.0f;
+		float moveSpeed = 100.0f;
 
 		public EgoCamera()
 		{
@@ -33,7 +34,9 @@ namespace ModelEx
 		public void Yaw(int x)
 		{
 			Matrix rot = Matrix.RotationY(x / 100.0f);
+
 			look = Vector3.TransformCoordinate(look, rot);
+			look.Normalize();
 
 			target = eye + look;
 			View = Matrix.LookAtLH(eye, target, up);
@@ -61,7 +64,6 @@ namespace ModelEx
 			Matrix rot = Matrix.RotationAxis(axis, rotation);
 
 			look = Vector3.TransformCoordinate(look, rot);
-
 			look.Normalize();
 
 			target = eye + look;
@@ -137,15 +139,16 @@ namespace ModelEx
 
 		public override void SetView(Vector3 eye, Vector3 target, Vector3 up)
 		{
-			this.look = target - eye;
+			look = target - eye;
+			look.Normalize();
+
 			this.eye = eye;
 			this.target = target;
 			this.up = up;
+
 			View = Matrix.LookAtLH(eye, target, up);
 
-			Vector3 dir = look;
-			dir.Normalize();
-			pitchVal = (float)System.Math.Asin(dir.Y);
+			pitchVal = (float)System.Math.Asin(look.Y);
 		}
 
 		public override void MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -183,6 +186,26 @@ namespace ModelEx
 
 		public override void MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
+			int delta = Math.Abs(e.Delta) / SystemInformation.MouseWheelScrollDelta;
+			while (delta-- > 0)
+			{
+				if (e.Delta >= 0)
+				{
+					moveSpeed *= 10.0f;
+					if (moveSpeed > 10000.0f)
+					{
+						moveSpeed = 10000.0f;
+					}
+				}
+				else
+				{
+					moveSpeed /= 10.0f;
+					if (moveSpeed < 1.0f)
+					{
+						moveSpeed = 1.0f;
+					}
+				}
+			}
 		}
 
 		public override void KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
