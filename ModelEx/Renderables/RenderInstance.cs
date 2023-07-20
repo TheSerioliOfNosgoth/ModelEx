@@ -91,6 +91,8 @@ namespace ModelEx
 
 			if (Model != newModel)
 			{
+				Root.Nodes.Clear();
+
 				Model = newModel;
 
 				Root.Name = Model.Root.Name;

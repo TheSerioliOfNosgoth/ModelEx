@@ -604,7 +604,7 @@ namespace ModelEx
 				scene.UpdateModels();
 			}
 
-			CurrentDebug?.UpdateModels(null);
+			CurrentDebug?.UpdateModels(DebugResource);
 		}
 
 		public void UpdateCameraSelection(int cameraIndex = -1)
