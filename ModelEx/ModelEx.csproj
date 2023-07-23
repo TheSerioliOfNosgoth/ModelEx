@@ -116,6 +116,7 @@
       <DependentUpon>ProgressWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Renderables\LineCloud.cs" />
     <Compile Include="Renderables\Material.cs" />
     <Compile Include="Renderables\MeshMorphingUnit.cs" />
     <Compile Include="Renderables\MeshParser.cs" />
@@ -160,6 +161,7 @@
     <Compile Include="Shaders\Effect.cs" />
     <Compile Include="Shaders\Effect3D.cs" />
     <Compile Include="Shaders\EffectMorphingUnit.cs" />
+    <Compile Include="Shaders\EffectWrapperLineCloud.cs" />
     <Compile Include="Shaders\EffectWrapperGouraudTexture.cs" />
     <Compile Include="Shaders\EffectWrapperPhongTexture.cs" />
     <Compile Include="Shaders\EffectWrapperTransformEffectWireframe.cs" />
@@ -223,6 +225,9 @@
     <None Include="RefreshIcon2.ico" />
     <None Include="RefreshIconDisabled2.ico" />
     <Content Include="Shaders\Constants.fx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Shaders\LineCloud.fx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Shaders\GouraudTextured.fx">
