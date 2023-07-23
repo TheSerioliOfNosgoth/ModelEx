@@ -498,6 +498,54 @@ namespace ModelEx
 			progressThread.Start();
 		}
 
+		protected void ReloadCurrentResource()
+		{
+			RenderResource renderResource = null;
+
+			if (SceneMode == SceneMode.Scene)
+			{
+				if (RenderManager.Instance.CurrentScene != null)
+				{
+					Scene scene = RenderManager.Instance.CurrentScene;
+					renderResource = RenderManager.Instance.Resources[scene.Name];
+				}
+			}
+			else if (SceneMode == SceneMode.Object)
+			{
+				if (RenderManager.Instance.CurrentObject != null)
+				{
+					Scene scene = RenderManager.Instance.CurrentObject;
+					renderResource = RenderManager.Instance.Resources[scene.Name];
+				}
+			}
+			else if (SceneMode == SceneMode.Debug)
+			{
+				if (RenderManager.Instance.DebugResource != null)
+				{
+					renderResource = RenderManager.Instance.DebugResource;
+				}
+			}
+			else
+			{
+				return;
+			}
+
+			_LoadRequest.CopyFrom(((RenderResourceCDC)renderResource).LoadRequest);
+
+			if (SceneMode == SceneMode.Debug)
+			{
+				_LoadResourceFlags = LoadResourceFlags.LoadDebugResource;
+			}
+			else
+			{
+				_LoadResourceFlags = LoadResourceFlags.None;
+			}
+
+			_ClearResourcesOnLoad = false;
+
+			LoadResource();
+		}
+
 		private void exportObjectToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			SaveFileDialog SaveDlg = new SaveFileDialog
@@ -848,18 +896,7 @@ namespace ModelEx
 
 		private void reloadCurrentModelToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (RenderManager.Instance.CameraTarget != null)
-			{
-				RenderResourceCDC debugRenderResource = (RenderResourceCDC)RenderManager.Instance.DebugResource;
-				_LoadRequest.CopyFrom(debugRenderResource.LoadRequest);
-
-				_LoadResourceFlags = LoadResourceFlags.LoadDebugResource.Check(SceneMode == SceneMode.Debug);
-				_LoadResourceFlags |= LoadResourceFlags.ResetCamera.Check(_ResetCameraOnModelLoad);
-
-				_ClearResourcesOnLoad = false;
-
-				LoadResource();
-			}
+			ReloadCurrentResource();
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1143,51 +1180,17 @@ namespace ModelEx
 
         private void sceneControls_RefreshClick(object sender, EventArgs e)
 		{
-			if (RenderManager.Instance.CurrentScene != null)
-			{
-				Scene scene = RenderManager.Instance.CurrentScene;
-				RenderResource renderResource = RenderManager.Instance.Resources[scene.Name];
-				RenderResourceCDC sceneRenderResource = (RenderResourceCDC)renderResource;
-				_LoadRequest.CopyFrom(sceneRenderResource.LoadRequest);
-
-				_LoadResourceFlags = LoadResourceFlags.None;
-
-				_ClearResourcesOnLoad = false;
-
-				LoadResource();
-			}
+			ReloadCurrentResource();
 		}
 
         private void objectControls_RefreshClick(object sender, EventArgs e)
         {
-			if (RenderManager.Instance.CurrentObject != null)
-			{
-				Scene scene = RenderManager.Instance.CurrentObject;
-				RenderResource renderResource = RenderManager.Instance.Resources[scene.Name];
-				RenderResourceCDC objectRenderResource = (RenderResourceCDC)renderResource;
-				_LoadRequest.CopyFrom(objectRenderResource.LoadRequest);
-
-				_LoadResourceFlags = LoadResourceFlags.None;
-
-				_ClearResourcesOnLoad = false;
-
-				LoadResource();
-			}
+			ReloadCurrentResource();
 		}
 
 		private void debugControls_RefreshClick(object sender, EventArgs e)
         {
-			if (RenderManager.Instance.DebugResource != null)
-			{
-				RenderResourceCDC debugRenderResource = (RenderResourceCDC)RenderManager.Instance.DebugResource;
-				_LoadRequest.CopyFrom(debugRenderResource.LoadRequest);
-
-				_LoadResourceFlags = LoadResourceFlags.LoadDebugResource;
-
-				_ClearResourcesOnLoad = false;
-
-				LoadResource();
-			}
+			ReloadCurrentResource();
 		}
 
         private void loadDependenciesButton_Click(object sender, EventArgs e)
