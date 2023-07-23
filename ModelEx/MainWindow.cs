@@ -352,6 +352,11 @@ namespace ModelEx
 			{
 				loadResourceDialog.SelectedFolder = Properties.Settings.Default.RecentFolder;
 			}
+			else
+			{
+				loadResourceDialog.SelectedFolder =
+					Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+			}
 
 			loadResourceDialog.SelectedGameType = (CDC.Game)Properties.Settings.Default.RecentGame;
 			loadResourceDialog.SelectedPlatform = (CDC.Platform)Properties.Settings.Default.RecentPlatform;

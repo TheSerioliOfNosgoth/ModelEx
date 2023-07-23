@@ -172,7 +172,15 @@ namespace ModelEx
 
 		private void LoadResourceDialog_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			if (_currentDirectory != null) SelectedFolder = _currentDirectory.FullName;
+			if (_currentDirectory != null)
+			{
+				SelectedFolder = _currentDirectory.FullName;
+			}
+			else
+			{
+				SelectedFolder = "";
+			}
+
 			ClearLoadedFiles = clearLoadedFilesCheckBox.Checked;
 
 			if (DialogResult != DialogResult.OK)
