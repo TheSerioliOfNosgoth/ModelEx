@@ -120,6 +120,7 @@
     <Compile Include="Renderables\Material.cs" />
     <Compile Include="Renderables\MeshMorphingUnit.cs" />
     <Compile Include="Renderables\MeshParser.cs" />
+    <Compile Include="Renderables\MeshParserCDCNormals.cs" />
     <Compile Include="Renderables\MeshParserCDC.cs" />
     <Compile Include="Renderables\MeshPCT.cs" />
     <Compile Include="Renderables\MeshPNT.cs" />

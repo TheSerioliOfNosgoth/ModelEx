@@ -44,7 +44,7 @@ namespace ModelEx
 
 			for (int modelIndex = 0; modelIndex < File.Models.Length; modelIndex++)
 			{
-				SRModelParser modelParser = new SRModelParser(File.Name, File);
+				ModelParserCDC modelParser = new ModelParserCDC(File.Name, File);
 				modelParser.BuildModel(this, modelIndex, ExportOptions);
 				if (File.Asset == CDC.Asset.Unit)
 				{

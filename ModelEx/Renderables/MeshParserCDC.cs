@@ -3,12 +3,11 @@ using System.Collections.Generic;
 
 namespace ModelEx
 {
-	class SRMeshParser :
+	class MeshParserCDC :
 		IMeshParser<PositionNormalTexturedVertex, short>,
 		IMeshParser<PositionColorTexturedVertex, short>,
 		IMeshParser<Position2Color2TexturedVertex, short>
 	{
-		string _objectName;
 		CDC.DataFile _dataFile;
 		CDC.IModel _cdcModel;
 		CDC.Tree _cdcGroup;
@@ -17,9 +16,8 @@ namespace ModelEx
 		public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
 		public Mesh Mesh;
 
-		public SRMeshParser(string objectName, CDC.DataFile dataFile)
+		public MeshParserCDC(string objectName, CDC.DataFile dataFile)
 		{
-			_objectName = objectName;
 			_dataFile = dataFile;
 		}
 

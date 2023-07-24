@@ -5,7 +5,7 @@ using Tree = CDC.Tree;
 
 namespace ModelEx
 {
-	class SRModelParser :
+	class ModelParserCDC :
 		IModelParser
 	{
 		string _objectName;
@@ -18,7 +18,7 @@ namespace ModelEx
 		public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
 		public List<ModelNode> Groups { get; } = new List<ModelNode>();
 
-		public SRModelParser(string objectName, CDC.DataFile dataFile)
+		public ModelParserCDC(string objectName, CDC.DataFile dataFile)
 		{
 			_objectName = objectName;
 			_dataFile = dataFile;
@@ -63,7 +63,7 @@ namespace ModelEx
 					srGroup.mesh.indexCount > 0 && srGroup.mesh.polygonCount > 0)
 				{
 					ModelNode group = new ModelNode();
-					SRMeshParser meshParser = new SRMeshParser(_objectName, _dataFile);
+					MeshParserCDC meshParser = new MeshParserCDC(_objectName, _dataFile);
 					meshParser.BuildMesh(resource, modelIndex, groupIndex, 0);
 					foreach (SubMesh subMesh in meshParser.SubMeshes)
 					{

@@ -35,6 +35,22 @@ namespace ModelEx
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
+	public struct PositionVertex
+	{
+		public Vector3 Position;
+
+		public PositionVertex(Vector3 position)
+		{
+			Position = position;
+		}
+
+		public PositionVertex(float x, float y, float z)
+		{
+			Position = new Vector3(x, y, z);
+		}
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
 	public struct PositionColoredVertex
 	{
 		public Vector3 Position;

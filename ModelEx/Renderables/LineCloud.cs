@@ -11,7 +11,7 @@ namespace ModelEx
 		protected EffectWrapperLineCloud effect = ShaderManager.Instance.effectLineCloud;
 		protected string technique = "";
 
-		public LineCloud(RenderResource resource, IMeshParser<PositionNormalTexturedVertex, short> meshParser)
+		public LineCloud(RenderResource resource, IMeshParser<PositionVertex, short> meshParser)
 			: base(resource)
 		{
 			Name = meshParser.MeshName;
