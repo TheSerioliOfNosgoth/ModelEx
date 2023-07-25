@@ -8,8 +8,8 @@ namespace ModelEx
 		public String Name = "";
 		public int MeshIndex = 0;
 		public int MaterialIndex = 0;
-		public int indexCount = 0;
-		public int startIndexLocation = 0;
-		public int baseVertexLocation = 0;
+		public int IndexCount = 0;
+		public int StartIndexLocation = 0;
+		public int BaseVertexLocation = 0;
 	}
 }

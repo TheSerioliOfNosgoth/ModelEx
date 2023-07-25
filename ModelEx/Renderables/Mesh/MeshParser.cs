@@ -89,9 +89,9 @@ namespace ModelEx
 			{
 				Name = MeshName + "-0",
 				MaterialIndex = 0,
-				indexCount = 12,
-				startIndexLocation = 0,
-				baseVertexLocation = 0
+				IndexCount = 12,
+				StartIndexLocation = 0,
+				BaseVertexLocation = 0
 			};
 
 			SubMeshes.Add(subMeshA);
@@ -100,9 +100,9 @@ namespace ModelEx
 			{
 				Name = MeshName + "-1",
 				MaterialIndex = 1,
-				indexCount = 12,
-				startIndexLocation = 12,
-				baseVertexLocation = 0
+				IndexCount = 12,
+				StartIndexLocation = 12,
+				BaseVertexLocation = 0
 			};
 
 			SubMeshes.Add(subMeshB);
@@ -111,9 +111,9 @@ namespace ModelEx
 			{
 				Name = MeshName + "-2",
 				MaterialIndex = 2,
-				indexCount = 12,
-				startIndexLocation = 24,
-				baseVertexLocation = 0
+				IndexCount = 12,
+				StartIndexLocation = 24,
+				BaseVertexLocation = 0
 			};
 
 			SubMeshes.Add(subMeshC);
@@ -158,9 +158,9 @@ namespace ModelEx
 			{
 				Name = MeshName + "-0",
 				MaterialIndex = 0,
-				indexCount = 12,
-				startIndexLocation = 0,
-				baseVertexLocation = 0
+				IndexCount = 12,
+				StartIndexLocation = 0,
+				BaseVertexLocation = 0
 			};
 
 			SubMeshes.Add(subMeshA);
@@ -169,9 +169,9 @@ namespace ModelEx
 			{
 				Name = MeshName + "-1",
 				MaterialIndex = 1,
-				indexCount = 12,
-				startIndexLocation = 12,
-				baseVertexLocation = 0
+				IndexCount = 12,
+				StartIndexLocation = 12,
+				BaseVertexLocation = 0
 			};
 
 			SubMeshes.Add(subMeshB);

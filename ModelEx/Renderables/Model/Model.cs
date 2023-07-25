@@ -60,7 +60,7 @@ namespace ModelEx
 					mesh.ApplyMaterial(material);
 					mesh.ApplyTransform(localTransform);
 					mesh.ApplyBuffers();
-					mesh.Render(subMesh.indexCount, subMesh.startIndexLocation, subMesh.baseVertexLocation);
+					mesh.Render(subMesh.IndexCount, subMesh.StartIndexLocation, subMesh.BaseVertexLocation);
 				}
 				//}
 			}

@@ -51,9 +51,9 @@ namespace ModelEx
 					{
 						Name = subMeshName,
 						MaterialIndex = materialIndex,
-						indexCount = indexCount,
-						startIndexLocation = startIndexLocation,
-						baseVertexLocation = startIndexLocation
+						IndexCount = indexCount,
+						StartIndexLocation = startIndexLocation,
+						BaseVertexLocation = startIndexLocation
 					};
 					SubMeshes.Add(subMesh);
 
@@ -77,17 +77,9 @@ namespace ModelEx
 			}
 		}
 
-		public string MeshName
-		{
-			get;
-			private set;
-		}
+		public string MeshName { get; private set; }
 
-		public string Technique
-		{
-			get;
-			private set;
-		}
+		public string Technique { get; private set; }
 
 		public int VertexCount { get { return _vertexList.Count; } }
 

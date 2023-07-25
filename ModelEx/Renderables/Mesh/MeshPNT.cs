@@ -8,21 +8,21 @@ namespace ModelEx
 {
 	public class MeshPNT : MeshIndexed
 	{
-		protected EffectWrapperPhongTexture effect = ShaderManager.Instance.effectPhongTexture;
-		protected string technique = "";
+		protected EffectWrapperPhongTexture _effect = ShaderManager.Instance.effectPhongTexture;
+		protected string _technique = "";
 
 		public MeshPNT(RenderResource resource, IMeshParserIndexed<PositionNormalTexturedVertex, short> meshParser)
 			: base(resource)
 		{
 			Name = meshParser.MeshName;
-			technique = meshParser.Technique;
+			_technique = meshParser.Technique;
 			SetIndexBuffer(meshParser);
 			SetVertexBuffer(meshParser);
 		}
 
 		public override void ApplyBuffers()
 		{
-			DeviceManager.Instance.context.InputAssembler.InputLayout = effect.layout;
+			DeviceManager.Instance.context.InputAssembler.InputLayout = _effect.layout;
 			DeviceManager.Instance.context.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
 			DeviceManager.Instance.context.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(_vertexBuffer, _vertexStride, 0));
 			DeviceManager.Instance.context.InputAssembler.SetIndexBuffer(_indexBuffer, Format.R16_UInt, 0);
@@ -30,25 +30,25 @@ namespace ModelEx
 
 		public override void ApplyMaterial(Material material)
 		{
-			effect.Constants.DiffuseColor = ColorToVector4(material.Diffuse);
-			effect.Constants.AmbientColor = ColorToVector4(material.Ambient);
-			effect.Constants.SpecularColor = ColorToVector4(material.Specular);
-			effect.Constants.LightColor = new Vector4(1, 1, 1, 1);
-			effect.Constants.SpecularPower = 128;
+			_effect.Constants.DiffuseColor = ColorToVector4(material.Diffuse);
+			_effect.Constants.AmbientColor = ColorToVector4(material.Ambient);
+			_effect.Constants.SpecularColor = ColorToVector4(material.Specular);
+			_effect.Constants.LightColor = new Vector4(1, 1, 1, 1);
+			_effect.Constants.SpecularPower = 128;
 
 			if (material.TextureFileName != null && material.TextureFileName != "")
 			{
-				effect.Constants.UseTexture = true;
-				effect.Texture = _renderResource.GetShaderResourceView(material.TextureFileName + RenderResourceCDC.TextureExtension);
+				_effect.Constants.UseTexture = true;
+				_effect.Texture = _renderResource.GetShaderResourceView(material.TextureFileName + RenderResourceCDC.TextureExtension);
 			}
 			else
 			{
-				effect.Constants.UseTexture = false;
+				_effect.Constants.UseTexture = false;
 			}
 
-			effect.Constants.DepthBias = material.DepthBias;
+			_effect.Constants.DepthBias = material.DepthBias;
 
-			effect.BlendMode = material.BlendMode;
+			_effect.BlendMode = material.BlendMode;
 		}
 
 		public override void ApplyTransform(Matrix transform)
@@ -57,20 +57,20 @@ namespace ModelEx
 			Matrix WorldViewPerspective = transform * ViewPerspective;
 			Vector3 viewDir = CameraManager.Instance.FrameCamera.eye - CameraManager.Instance.FrameCamera.target;
 
-			effect.Constants.World = Matrix.Transpose(transform);
+			_effect.Constants.World = Matrix.Transpose(transform);
 			//effect.Constants.World = Matrix.Scaling(-1, 1, 1) * transform;
-			effect.Constants.View = Matrix.Transpose(CameraManager.Instance.FrameCamera.View);
-			effect.Constants.Projection = Matrix.Transpose(CameraManager.Instance.FrameCamera.Perspective);
+			_effect.Constants.View = Matrix.Transpose(CameraManager.Instance.FrameCamera.View);
+			_effect.Constants.Projection = Matrix.Transpose(CameraManager.Instance.FrameCamera.Perspective);
 
-			effect.Constants.CameraPosition = CameraManager.Instance.FrameCamera.eye;
-			effect.Constants.LightDirection = viewDir;
+			_effect.Constants.CameraPosition = CameraManager.Instance.FrameCamera.eye;
+			_effect.Constants.LightDirection = viewDir;
 
-			effect.Constants.RealmBlend = 0.0f;
+			_effect.Constants.RealmBlend = 0.0f;
 		}
 
 		public override void Render(int indexCount, int startIndexLocation, int baseVertexLocation)
 		{
-			effect.Apply(1);
+			_effect.Apply(1);
 			DeviceManager.Instance.context.DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
 		}
 	}
