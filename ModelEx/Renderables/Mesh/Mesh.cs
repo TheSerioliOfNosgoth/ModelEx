@@ -8,31 +8,22 @@ namespace ModelEx
 {
 	public abstract class Mesh
 	{
-		protected RenderResource renderResource;
+		protected RenderResource _renderResource;
 
-		protected Buffer vertexBuffer;
-		protected DataStream vertices;
+		protected Buffer _vertexBuffer;
+		protected DataStream _vertices;
 
-		protected int vertexStride = 0;
-		protected int numVertices = 0;
+		protected int _vertexStride = 0;
+		protected int _numVertices = 0;
 
-		protected Buffer indexBuffer;
-		protected int indexStride = 0;
-		protected int numIndices = 0;
-		protected int indexBufferSizeInBytes = 0;
-		protected DataStream indices;
+		public BoundingBox BoundingBox { get; protected set; }
+		public BoundingSphere BoundingSphere { get; protected set; }
 
-		protected BoundingBox boundingBox;
-		public BoundingBox BoundingBox { get { return boundingBox; } }
-
-		protected BoundingSphere boundingSphere;
-		public BoundingSphere BoundingSphere { get { return boundingSphere; } }
-
-		public String Name = "";
+		public String Name { get; protected set; } = "";
 
 		protected Mesh(RenderResource resource)
 		{
-			renderResource = resource;
+			_renderResource = resource;
 		}
 
 		protected Vector4 ColorToVector4(System.Drawing.Color color)
@@ -45,52 +36,26 @@ namespace ModelEx
 			return new Color4(1, color.R / 255.0f, color.G / 255.0f, color.B / 255.0f);
 		}
 
-		protected void SetIndexBuffer<I>(IIndexParser<I> indexParser) where I : struct
+		protected void SetVertexBuffer<V>(IMeshParser<V> vertexParser) where V : struct
 		{
-			numIndices = indexParser.IndexCount;
-			indexStride = Marshal.SizeOf(typeof(I));
-			indexBufferSizeInBytes = numIndices * indexStride;
+			_numVertices = vertexParser.VertexCount;
+			_vertexStride = Marshal.SizeOf(typeof(V));
+			int SizeOfVertexBufferInBytes = _numVertices * _vertexStride;
 
-			indices = new DataStream(indexBufferSizeInBytes, true, true);
-			for (int i = 0; i < numIndices; i++)
-			{
-				indexParser.FillIndex(i, out I index);
-				indices.Write(index);
-			}
-
-			indices.Position = 0;
-
-			indexBuffer = new Buffer(
-				DeviceManager.Instance.device,
-				indices,
-				indexBufferSizeInBytes,
-				ResourceUsage.Default,
-				BindFlags.IndexBuffer,
-				CpuAccessFlags.None,
-				ResourceOptionFlags.None,
-				0);
-		}
-
-		protected void SetVertexBuffer<V>(IVertexParser<V> vertexParser) where V : struct
-		{
-			numVertices = vertexParser.VertexCount;
-			vertexStride = Marshal.SizeOf(typeof(V));
-			int SizeOfVertexBufferInBytes = numVertices * vertexStride;
-
-			vertices = new DataStream(SizeOfVertexBufferInBytes, true, true);
-			for (int i = 0; i < numVertices; i++)
+			_vertices = new DataStream(SizeOfVertexBufferInBytes, true, true);
+			for (int i = 0; i < _numVertices; i++)
 			{
 				vertexParser.FillVertex(i, out V vertex);
-				vertices.Write(vertex);
+				_vertices.Write(vertex);
 			}
 
-			vertices.Position = 0;
+			_vertices.Position = 0;
 
-			boundingBox = BoundingBox.FromPoints(vertices, numVertices, vertexStride);
-			boundingSphere = BoundingSphere.FromBox(boundingBox);
+			BoundingBox = BoundingBox.FromPoints(_vertices, _numVertices, _vertexStride);
+			BoundingSphere = BoundingSphere.FromBox(BoundingBox);
 
-			vertexBuffer = new Buffer(DeviceManager.Instance.device,
-				vertices,
+			_vertexBuffer = new Buffer(DeviceManager.Instance.device,
+				_vertices,
 				SizeOfVertexBufferInBytes,
 				ResourceUsage.Default,
 				BindFlags.VertexBuffer,
@@ -107,10 +72,9 @@ namespace ModelEx
 
 		public abstract void Render(int indexCount, int startIndexLocation, int baseVertexLocation);
 
-		public void Dispose()
+		public virtual void Dispose()
 		{
-			indexBuffer?.Dispose();
-			vertexBuffer?.Dispose();
+			_vertexBuffer?.Dispose();
 		}
 	}
 }

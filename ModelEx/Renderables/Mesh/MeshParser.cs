@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace ModelEx
 {
 	class MeshParser :
-		IMeshParser<PositionColorTexturedVertex, short>
+		IMeshParserIndexed<PositionColorTexturedVertex, short>
 	{
 		struct BasicVertex
 		{

@@ -7,22 +7,18 @@ using SlimDX;
 
 namespace ModelEx
 {
-	public interface IVertexParser<V>
+	public interface IMeshParser<V>
 	{
+		string MeshName { get; }
+		string Technique { get; }
 		int VertexCount { get; }
 		void FillVertex(int v, out V vertex);
 	}
 
-	public interface IIndexParser<I>
+	public interface IMeshParserIndexed<V, I> : IMeshParser<V>
 	{
 		int IndexCount { get; }
 		void FillIndex(int i, out I index);
-	}
-
-	public interface IMeshParser<V, I> : IVertexParser<V>, IIndexParser<I>
-	{
-		string MeshName { get; }
-		string Technique { get; }
 	}
 
 	public interface IModelParser

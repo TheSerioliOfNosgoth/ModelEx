@@ -4,9 +4,9 @@ using System.Collections.Generic;
 namespace ModelEx
 {
 	class MeshParserCDC :
-		IMeshParser<PositionNormalTexturedVertex, short>,
-		IMeshParser<PositionColorTexturedVertex, short>,
-		IMeshParser<Position2Color2TexturedVertex, short>
+		IMeshParserIndexed<PositionNormalTexturedVertex, short>,
+		IMeshParserIndexed<PositionColorTexturedVertex, short>,
+		IMeshParserIndexed<Position2Color2TexturedVertex, short>
 	{
 		CDC.DataFile _dataFile;
 		CDC.IModel _cdcModel;

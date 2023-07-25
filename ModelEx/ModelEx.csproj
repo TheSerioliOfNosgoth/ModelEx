@@ -118,6 +118,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderables\Mesh\LineCloud.cs" />
     <Compile Include="Renderables\Material.cs" />
+    <Compile Include="Renderables\Mesh\MeshIndexed.cs" />
     <Compile Include="Renderables\Mesh\MeshMorphingUnit.cs" />
     <Compile Include="Renderables\Mesh\MeshParser.cs" />
     <Compile Include="Renderables\Mesh\MeshParserCDCNormals.cs" />

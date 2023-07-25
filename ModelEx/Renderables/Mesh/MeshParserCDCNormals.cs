@@ -4,15 +4,14 @@ using System.Collections.Generic;
 namespace ModelEx
 {
 	class MeshParserCDCNormals :
-		IMeshParser<PositionVertex, short>
+		IMeshParser<PositionVertex>
 	{
 		CDC.DataFile _dataFile;
 		CDC.IModel _cdcModel;
 		CDC.Tree _cdcGroup;
 		List<int> _polygonList = new List<int>();
-		List<int> _indexList = new List<int>();
 		public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
-		public Mesh Mesh;
+		public Mesh Mesh { get; protected set; }
 
 		public MeshParserCDCNormals(string objectName, CDC.DataFile dataFile)
 		{
@@ -37,9 +36,7 @@ namespace ModelEx
 					if (_cdcGroup.mesh.polygons[p].material.ID == materialIndex)
 					{
 						_polygonList.Add(p);
-						_indexList.Add(_indexList.Count - startIndexLocation);
 						_polygonList.Add(p);
-						_indexList.Add(_indexList.Count - startIndexLocation);
 						indexCount += 2;
 					}
 				}
@@ -121,13 +118,6 @@ namespace ModelEx
 				SlimDX.Vector3 normal = SlimDX.Vector3.Normalize(vertex.Position);
 				vertex.Position += normal;
 			}
-		}
-
-		public int IndexCount { get { return _polygonList.Count; } }
-
-		public void FillIndex(int i, out short index)
-		{
-			index = (short)_indexList[i];
 		}
 	}
 }

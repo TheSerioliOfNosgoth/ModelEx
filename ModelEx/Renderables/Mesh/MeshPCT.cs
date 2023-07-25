@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 
 namespace ModelEx
 {
-	public class MeshPCT : Mesh
+	public class MeshPCT : MeshIndexed
 	{
 		protected EffectWrapperGouraudTexture effect = ShaderManager.Instance.effectGouraudTexture;
 		protected string technique = "";
 
-		public MeshPCT(RenderResource resource, IMeshParser<PositionColorTexturedVertex, short> meshParser)
+		public MeshPCT(RenderResource resource, IMeshParserIndexed<PositionColorTexturedVertex, short> meshParser)
 			: base(resource)
 		{
 			Name = meshParser.MeshName;
@@ -24,8 +24,8 @@ namespace ModelEx
 		{
 			DeviceManager.Instance.context.InputAssembler.InputLayout = effect.layout;
 			DeviceManager.Instance.context.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
-			DeviceManager.Instance.context.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(vertexBuffer, vertexStride, 0));
-			DeviceManager.Instance.context.InputAssembler.SetIndexBuffer(indexBuffer, Format.R16_UInt, 0);
+			DeviceManager.Instance.context.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(_vertexBuffer, _vertexStride, 0));
+			DeviceManager.Instance.context.InputAssembler.SetIndexBuffer(_indexBuffer, Format.R16_UInt, 0);
 		}
 
 		public override void ApplyMaterial(Material material)
@@ -39,7 +39,7 @@ namespace ModelEx
 			if (material.TextureFileName != null && material.TextureFileName != "")
 			{
 				effect.Constants.UseTexture = true;
-				effect.Texture = renderResource.GetShaderResourceView(material.TextureFileName + RenderResourceCDC.TextureExtension);
+				effect.Texture = _renderResource.GetShaderResourceView(material.TextureFileName + RenderResourceCDC.TextureExtension);
 			}
 			else
 			{

@@ -11,12 +11,11 @@ namespace ModelEx
 		protected EffectWrapperLineCloud effect = ShaderManager.Instance.effectLineCloud;
 		protected string technique = "";
 
-		public LineCloud(RenderResource resource, IMeshParser<PositionVertex, short> meshParser)
+		public LineCloud(RenderResource resource, IMeshParser<PositionVertex> meshParser)
 			: base(resource)
 		{
 			Name = meshParser.MeshName;
 			technique = meshParser.Technique;
-			SetIndexBuffer(meshParser);
 			SetVertexBuffer(meshParser);
 		}
 
@@ -24,8 +23,7 @@ namespace ModelEx
 		{
 			DeviceManager.Instance.context.InputAssembler.InputLayout = effect.layout;
 			DeviceManager.Instance.context.InputAssembler.PrimitiveTopology = PrimitiveTopology.LineList;
-			DeviceManager.Instance.context.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(vertexBuffer, vertexStride, 0));
-			DeviceManager.Instance.context.InputAssembler.SetIndexBuffer(indexBuffer, Format.R16_UInt, 0);
+			DeviceManager.Instance.context.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(_vertexBuffer, _vertexStride, 0));
 		}
 
 		public override void ApplyMaterial(Material material)
@@ -39,7 +37,7 @@ namespace ModelEx
 			if (material.TextureFileName != null && material.TextureFileName != "")
 			{
 				effect.Constants.UseTexture = true;
-				effect.Texture = renderResource.GetShaderResourceView(material.TextureFileName + RenderResourceCDC.TextureExtension);
+				effect.Texture = _renderResource.GetShaderResourceView(material.TextureFileName + RenderResourceCDC.TextureExtension);
 			}
 			else
 			{
@@ -71,7 +69,7 @@ namespace ModelEx
 		public override void Render(int indexCount, int startIndexLocation, int baseVertexLocation)
 		{
 			effect.Apply(1);
-			DeviceManager.Instance.context.DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
+			DeviceManager.Instance.context.Draw(indexCount, baseVertexLocation);
 		}
 	}
 }
