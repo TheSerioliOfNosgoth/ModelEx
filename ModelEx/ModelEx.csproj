@@ -125,6 +125,7 @@
     <Compile Include="Renderables\Mesh\MeshPCT.cs" />
     <Compile Include="Renderables\Mesh\MeshPNT.cs" />
     <Compile Include="Renderables\Mesh\Mesh.cs" />
+    <Compile Include="Renderables\Model\ModelParserCDCNormals.cs" />
     <Compile Include="Renderables\VisibilityNode.cs" />
     <Compile Include="Renderables\Model\ModelParser.cs" />
     <Compile Include="Renderables\Model\ModelParserCDC.cs" />

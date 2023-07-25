@@ -41,6 +41,7 @@ namespace ModelEx
 			effectPhongTexture.Initialize();
 			effectGouraudTexture.Initialize();
 			effectMorphingUnit.Initialize();
+			effectLineCloud.Initialize();
 			effectSprite.Initialize();
 		}
 

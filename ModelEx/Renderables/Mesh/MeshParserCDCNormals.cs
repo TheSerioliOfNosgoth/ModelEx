@@ -9,7 +9,7 @@ namespace ModelEx
 		CDC.DataFile _dataFile;
 		CDC.IModel _cdcModel;
 		CDC.Tree _cdcGroup;
-		List<int> _vertexList = new List<int>();
+		List<int> _polygonList = new List<int>();
 		List<int> _indexList = new List<int>();
 		public List<SubMesh> SubMeshes { get; } = new List<SubMesh>();
 		public Mesh Mesh;
@@ -31,14 +31,16 @@ namespace ModelEx
 			for (int materialIndex = 0; materialIndex < _cdcModel.Materials.Length; materialIndex++)
 			{
 				int indexCount = 0;
-				int totalIndexCount = (int)_cdcGroup.mesh.indexCount;
-				for (int v = 0; v < totalIndexCount; v++)
+				int totalIndexCount = (int)_cdcGroup.mesh.polygonCount;
+				for (int p = 0; p < totalIndexCount; p++)
 				{
-					if (_cdcGroup.mesh.polygons[v / 3].material.ID == materialIndex)
+					if (_cdcGroup.mesh.polygons[p].material.ID == materialIndex)
 					{
-						_vertexList.Add(v);
+						_polygonList.Add(p);
 						_indexList.Add(_indexList.Count - startIndexLocation);
-						indexCount++;
+						_polygonList.Add(p);
+						_indexList.Add(_indexList.Count - startIndexLocation);
+						indexCount += 2;
 					}
 				}
 
@@ -79,22 +81,49 @@ namespace ModelEx
 			private set;
 		}
 
-		public int VertexCount { get { return _vertexList.Count; } }
+		public int VertexCount { get { return _polygonList.Count; } }
 
 		public void FillVertex(int v, out PositionVertex vertex)
 		{
-			ref CDC.Vertex exVertex = ref _cdcGroup.mesh.vertices[_vertexList[v]];
-			CDC.Geometry exGeometry = exVertex.isExtraGeometry ? _cdcModel.ExtraGeometry : _cdcModel.Geometry;
+			ref CDC.Polygon exPolygon = ref _cdcGroup.mesh.polygons[_polygonList[v]];
 
-			vertex.Position = new SlimDX.Vector3()
+			ref CDC.Vertex exV1 = ref exPolygon.v1;
+			ref CDC.Vertex exV2 = ref exPolygon.v2;
+			ref CDC.Vertex exV3 = ref exPolygon.v3;
+
+			CDC.Geometry exG1 = exV1.isExtraGeometry ? _cdcModel.ExtraGeometry : _cdcModel.Geometry;
+			CDC.Geometry exG2 = exV2.isExtraGeometry ? _cdcModel.ExtraGeometry : _cdcModel.Geometry;
+			CDC.Geometry exG3 = exV3.isExtraGeometry ? _cdcModel.ExtraGeometry : _cdcModel.Geometry;
+
+			vertex.Position = new SlimDX.Vector3();
+
+			vertex.Position.X += exG1.PositionsPhys[exV1.positionID].x;
+			vertex.Position.Y += exG1.PositionsPhys[exV1.positionID].z;
+			vertex.Position.Z += exG1.PositionsPhys[exV1.positionID].y;
+
+			vertex.Position.X += exG2.PositionsPhys[exV2.positionID].x;
+			vertex.Position.Y += exG2.PositionsPhys[exV2.positionID].z;
+			vertex.Position.Z += exG2.PositionsPhys[exV2.positionID].y;
+
+			vertex.Position.X += exG3.PositionsPhys[exV3.positionID].x;
+			vertex.Position.Y += exG3.PositionsPhys[exV3.positionID].z;
+			vertex.Position.Z += exG3.PositionsPhys[exV3.positionID].y;
+
+			vertex.Position.X /= 3.0f;
+			vertex.Position.Y /= 3.0f;
+			vertex.Position.Z /= 3.0f;
+			vertex.Position.X *= 0.01f;
+			vertex.Position.Y *= 0.01f;
+			vertex.Position.Z *= 0.01f;
+
+			if (v % 2 != 0)
 			{
-				X = 0.01f * exGeometry.PositionsPhys[exVertex.positionID].x,
-				Y = 0.01f * exGeometry.PositionsPhys[exVertex.positionID].z,
-				Z = 0.01f * exGeometry.PositionsPhys[exVertex.positionID].y
-			};
+				SlimDX.Vector3 normal = SlimDX.Vector3.Normalize(vertex.Position);
+				vertex.Position += normal;
+			}
 		}
 
-		public int IndexCount { get { return _vertexList.Count; } }
+		public int IndexCount { get { return _polygonList.Count; } }
 
 		public void FillIndex(int i, out short index)
 		{
