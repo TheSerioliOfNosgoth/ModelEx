@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace ModelEx
 {
 	class MeshParserCDCNormals :
-		IMeshParser<PositionVertex>
+		IMeshParser<PositionNormalVertex>
 	{
 		CDC.DataFile _dataFile;
 		CDC.IModel _cdcModel;
@@ -36,8 +36,7 @@ namespace ModelEx
 					if (_cdcGroup.mesh.polygons[p].material.ID == materialIndex)
 					{
 						_polygonList.Add(p);
-						_polygonList.Add(p);
-						indexCount += 2;
+						indexCount++;
 					}
 				}
 
@@ -72,7 +71,7 @@ namespace ModelEx
 
 		public int VertexCount { get { return _polygonList.Count; } }
 
-		public void FillVertex(int v, out PositionVertex vertex)
+		public void FillVertex(int v, out PositionNormalVertex vertex)
 		{
 			ref CDC.Polygon exPolygon = ref _cdcGroup.mesh.polygons[_polygonList[v]];
 
@@ -83,6 +82,8 @@ namespace ModelEx
 			CDC.Geometry exG1 = exV1.isExtraGeometry ? _cdcModel.ExtraGeometry : _cdcModel.Geometry;
 			CDC.Geometry exG2 = exV2.isExtraGeometry ? _cdcModel.ExtraGeometry : _cdcModel.Geometry;
 			CDC.Geometry exG3 = exV3.isExtraGeometry ? _cdcModel.ExtraGeometry : _cdcModel.Geometry;
+
+			#region Position
 
 			vertex.Position = new SlimDX.Vector3();
 
@@ -105,11 +106,15 @@ namespace ModelEx
 			vertex.Position.Y *= 0.01f;
 			vertex.Position.Z *= 0.01f;
 
-			if (v % 2 != 0)
-			{
-				SlimDX.Vector3 normal = SlimDX.Vector3.Normalize(vertex.Position);
-				vertex.Position += normal;
-			}
+			#endregion
+
+			//vertex.Normal = new SlimDX.Vector3();
+
+			//vertex.Normal.X = exG1.Normals[exPolygon.normal].x;
+			//vertex.Normal.Y = exG1.Normals[exPolygon.normal].z;
+			//vertex.Normal.Z = exG1.Normals[exPolygon.normal].y;
+
+			vertex.Normal = SlimDX.Vector3.Normalize(vertex.Position);
 		}
 	}
 }

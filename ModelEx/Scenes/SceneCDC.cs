@@ -219,10 +219,11 @@ namespace ModelEx
 			SlimDX.Direct3D11.RasterizerState oldRasterizerState = DeviceManager.Instance.context.Rasterizer.State;
 			SlimDX.Direct3D11.VertexShader oldVertexShader = DeviceManager.Instance.context.VertexShader.Get();
 			SlimDX.Direct3D11.Buffer[] oldVSCBuffers = DeviceManager.Instance.context.VertexShader.GetConstantBuffers(0, 10);
+			SlimDX.Direct3D11.GeometryShader oldGeometryShader = DeviceManager.Instance.context.GeometryShader.Get();
+			SlimDX.Direct3D11.Buffer[] oldGSCBuffers = DeviceManager.Instance.context.GeometryShader.GetConstantBuffers(0, 10);
 			SlimDX.Direct3D11.PixelShader oldPixelShader = DeviceManager.Instance.context.PixelShader.Get();
 			SlimDX.Direct3D11.Buffer[] oldPSCBuffers = DeviceManager.Instance.context.PixelShader.GetConstantBuffers(0, 10);
-			SlimDX.Direct3D11.ShaderResourceView[] oldShaderResources = DeviceManager.Instance.context.PixelShader.GetShaderResources(0, 10);
-			SlimDX.Direct3D11.GeometryShader oldGeometryShader = DeviceManager.Instance.context.GeometryShader.Get();
+			SlimDX.Direct3D11.ShaderResourceView[] oldPSResources = DeviceManager.Instance.context.PixelShader.GetShaderResources(0, 10);
 
 			base.Render();
 
@@ -231,10 +232,11 @@ namespace ModelEx
 			DeviceManager.Instance.context.Rasterizer.State = oldRasterizerState;
 			DeviceManager.Instance.context.VertexShader.Set(oldVertexShader);
 			DeviceManager.Instance.context.VertexShader.SetConstantBuffers(oldVSCBuffers, 0, 10);
+			DeviceManager.Instance.context.GeometryShader.Set(oldGeometryShader);
+			DeviceManager.Instance.context.GeometryShader.SetConstantBuffers(oldGSCBuffers, 0, 10);
 			DeviceManager.Instance.context.PixelShader.Set(oldPixelShader);
 			DeviceManager.Instance.context.PixelShader.SetConstantBuffers(oldPSCBuffers, 0, 10);
-			DeviceManager.Instance.context.PixelShader.SetShaderResources(oldShaderResources, 0, 10);
-			DeviceManager.Instance.context.GeometryShader.Set(oldGeometryShader);
+			DeviceManager.Instance.context.PixelShader.SetShaderResources(oldPSResources, 0, 10);
 
 			lock (_renderInstances)
 			{
@@ -273,10 +275,11 @@ namespace ModelEx
 			DeviceManager.Instance.context.Rasterizer.State = oldRasterizerState;
 			DeviceManager.Instance.context.VertexShader.Set(oldVertexShader);
 			DeviceManager.Instance.context.VertexShader.SetConstantBuffers(oldVSCBuffers, 0, 10);
+			DeviceManager.Instance.context.GeometryShader.Set(oldGeometryShader);
+			DeviceManager.Instance.context.GeometryShader.SetConstantBuffers(oldGSCBuffers, 0, 10);
 			DeviceManager.Instance.context.PixelShader.Set(oldPixelShader);
 			DeviceManager.Instance.context.PixelShader.SetConstantBuffers(oldPSCBuffers, 0, 10);
-			DeviceManager.Instance.context.PixelShader.SetShaderResources(oldShaderResources, 0, 10);
-			DeviceManager.Instance.context.GeometryShader.Set(oldGeometryShader);
+			DeviceManager.Instance.context.PixelShader.SetShaderResources(oldPSResources, 0, 10);
 		}
 	}
 }

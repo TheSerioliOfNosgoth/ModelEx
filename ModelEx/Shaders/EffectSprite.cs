@@ -140,8 +140,8 @@ namespace ModelEx
 			DeviceManager.Instance.context.OutputMerger.BlendState = blendStateDepth;
 			DeviceManager.Instance.context.OutputMerger.DepthStencilState = depthStencilStateNoDepth;
 
-			DeviceManager.Instance.context.GeometryShader.Set(geometryShader);
 			DeviceManager.Instance.context.VertexShader.Set(vertexShader);
+			DeviceManager.Instance.context.GeometryShader.Set(geometryShader);
 			DeviceManager.Instance.context.PixelShader.Set(pixelShader);
 			DeviceManager.Instance.context.PixelShader.SetShaderResource(Texture, 0);
 		}

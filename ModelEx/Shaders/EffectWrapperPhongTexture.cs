@@ -107,10 +107,9 @@ namespace ModelEx
 			box.Data.Position = 0;
 			DeviceManager.Instance.context.UnmapSubresource(ConstantsBuffer, 0);
 
-			//DeviceManager.Instance.context.PixelShader.SetSampler(SamplerState, 0);
-
 			DeviceManager.Instance.context.VertexShader.Set(vertexShader);
 			DeviceManager.Instance.context.VertexShader.SetConstantBuffer(ConstantsBuffer, 0);
+			DeviceManager.Instance.context.GeometryShader.Set(null);
 
 			if (pass == 0)
 			{

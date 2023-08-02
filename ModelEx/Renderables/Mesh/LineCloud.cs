@@ -11,7 +11,7 @@ namespace ModelEx
 		protected EffectWrapperLineCloud _effect = ShaderManager.Instance.effectLineCloud;
 		protected string _technique = "";
 
-		public LineCloud(RenderResource resource, IMeshParser<PositionVertex> meshParser)
+		public LineCloud(RenderResource resource, IMeshParser<PositionNormalVertex> meshParser)
 			: base(resource)
 		{
 			Name = meshParser.MeshName;
@@ -22,7 +22,7 @@ namespace ModelEx
 		public override void ApplyBuffers()
 		{
 			DeviceManager.Instance.context.InputAssembler.InputLayout = _effect.layout;
-			DeviceManager.Instance.context.InputAssembler.PrimitiveTopology = PrimitiveTopology.LineList;
+			DeviceManager.Instance.context.InputAssembler.PrimitiveTopology = PrimitiveTopology.PointList;
 			DeviceManager.Instance.context.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(_vertexBuffer, _vertexStride, 0));
 		}
 

@@ -10,6 +10,7 @@ namespace ModelEx
 	public class EffectWrapperLineCloud : Effect3D
 	{
 		public VertexShader vertexShader;
+		public GeometryShader geometryShader;
 		public PixelShader pixelShader;
 		public ShaderSignature inputSignature;
 		public InputLayout layout;
@@ -20,7 +21,8 @@ namespace ModelEx
 		public SamplerState Sampler;
 
 		InputElement[] elements = new[] {
-				new InputElement("POSITION", 0, Format.R32G32B32_Float, 0)
+				new InputElement("POSITION", 0, Format.R32G32B32_Float, 0),
+				new InputElement("NORMAL", 0, Format.R32G32B32_Float, 12, 0)
 			};
 
 		public override void Initialize()
@@ -40,6 +42,18 @@ namespace ModelEx
 				{
 					vertexShader = new VertexShader(DeviceManager.Instance.device, vertexShaderByteCode);
 					inputSignature = ShaderSignature.GetInputSignature(vertexShaderByteCode);
+				}
+
+				using (ShaderBytecode geometryShaderByteCode = ShaderBytecode.CompileFromFile(
+					"Shaders/LineCloud.fx",
+					"GShader",
+					"gs_4_0",
+					ShaderFlags.None,
+					EffectFlags.None,
+					null,
+					new IncludeFX("Shaders")))
+				{
+					geometryShader = new GeometryShader(DeviceManager.Instance.device, geometryShaderByteCode);
 				}
 
 				using (ShaderBytecode pixelShaderByteCode = ShaderBytecode.CompileFromFile(
@@ -86,6 +100,7 @@ namespace ModelEx
 		public override void Dispose()
 		{
 			vertexShader?.Dispose();
+			geometryShader?.Dispose();
 			pixelShader?.Dispose();
 			inputSignature?.Dispose();
 			layout?.Dispose();
@@ -105,10 +120,10 @@ namespace ModelEx
 			box.Data.Position = 0;
 			DeviceManager.Instance.context.UnmapSubresource(ConstantsBuffer, 0);
 
-			//DeviceManager.Instance.context.PixelShader.SetSampler(SamplerState, 0);
-
 			DeviceManager.Instance.context.VertexShader.Set(vertexShader);
 			DeviceManager.Instance.context.VertexShader.SetConstantBuffer(ConstantsBuffer, 0);
+			DeviceManager.Instance.context.GeometryShader.Set(geometryShader);
+			DeviceManager.Instance.context.GeometryShader.SetConstantBuffer(ConstantsBuffer, 0);
 
 			if (pass == 0)
 			{
