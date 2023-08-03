@@ -97,9 +97,9 @@ namespace ModelEx
 
 			vertex.Normal = new SlimDX.Vector3()
 			{
-				X = exGeometry.Normals[exVertex.normalID].x,
-				Y = exGeometry.Normals[exVertex.normalID].z,
-				Z = exGeometry.Normals[exVertex.normalID].y
+				X = exGeometry.VertexNormals[exVertex.normalID].x,
+				Y = exGeometry.VertexNormals[exVertex.normalID].z,
+				Z = exGeometry.VertexNormals[exVertex.normalID].y
 			};
 			vertex.Normal.Normalize();
 

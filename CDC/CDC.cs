@@ -543,7 +543,8 @@ namespace CDC
 		public Vector[] PositionsRaw;
 		public Vector[] PositionsPhys;
 		public Vector[] PositionsAltPhys;
-		public Vector[] Normals;
+		public Vector[] VertexNormals;
+		public Vector[] PolygonNormals;
 		public uint[] Colours;
 		public uint[] ColoursAlt;
 		public UV[] UVs;

@@ -273,6 +273,12 @@ namespace CDC
 		protected uint _modelData;
 		protected uint _vertexCount;
 		protected uint _vertexStart;
+		protected uint _extraVertexCount;
+		protected uint _extraVertexStart;
+		protected uint _normalCount;
+		protected uint _normalStart;
+		protected uint _extraNormalCount;
+		protected uint _extraNormalStart;
 		protected uint _polygonCount;
 		protected uint _polygonStart;
 		protected uint _boneCount;
@@ -291,8 +297,6 @@ namespace CDC
 		protected Tree[] _trees;
 		protected Material[] _materials;
 		protected List<Material> _materialsList;
-		protected UInt32 _extraVertexCount;
-		protected UInt32 _extraVertexStart;
 
 		public override string Name { get { return _name; } }
 		public override string ModelTypePrefix { get { return _modelTypePrefix; } }
@@ -341,7 +345,6 @@ namespace CDC
 			_geometry.PositionsRaw = new Vector[_vertexCount];
 			_geometry.PositionsPhys = new Vector[_vertexCount];
 			_geometry.PositionsAltPhys = new Vector[_vertexCount];
-			_geometry.Normals = new Vector[s_aiNormals.Length / 3];
 			_geometry.Colours = new UInt32[_vertexCount];
 			_geometry.ColoursAlt = new UInt32[_vertexCount];
 			_geometry.UVs = new UV[_vertexCount];
@@ -352,11 +355,34 @@ namespace CDC
 			_extraGeometry.PositionsRaw = new Vector[_extraVertexCount];
 			_extraGeometry.PositionsPhys = new Vector[_extraVertexCount];
 			_extraGeometry.PositionsAltPhys = new Vector[_extraVertexCount];
-			_extraGeometry.Normals = new Vector[s_aiNormals.Length / 3];
 			_extraGeometry.Colours = new UInt32[_extraVertexCount];
 			_extraGeometry.ColoursAlt = new UInt32[_extraVertexCount];
 			_extraGeometry.UVs = new UV[_extraVertexCount];
 			ReadTypeBVertices(reader, options);
+
+			// Get the vertex normals
+			_geometry.VertexNormals = new Vector[s_aiNormals.Length / 3];
+			for (int n = 0; n < _geometry.VertexNormals.Length; n++)
+			{
+				_geometry.VertexNormals[n].x = s_aiNormals[n, 0];
+				_geometry.VertexNormals[n].y = s_aiNormals[n, 1];
+				_geometry.VertexNormals[n].z = s_aiNormals[n, 2];
+			}
+
+			// Get the extra vertex normals
+			_extraGeometry.VertexNormals = new Vector[s_aiNormals.Length / 3];
+			for (int n = 0; n < _geometry.VertexNormals.Length; n++)
+			{
+				_extraGeometry.VertexNormals[n].x = s_aiNormals[n, 0];
+				_extraGeometry.VertexNormals[n].y = s_aiNormals[n, 1];
+				_extraGeometry.VertexNormals[n].z = s_aiNormals[n, 2];
+			}
+
+			// Get the polygon normals
+			_geometry.PolygonNormals = new Vector[_normalCount];
+
+			// Get the extra polygon normals
+			_geometry.PolygonNormals = new Vector[_extraNormalCount];
 
 			// Get the polygons
 			_polygons = new Polygon[_polygonCount];
@@ -395,15 +421,6 @@ namespace CDC
 			{
 				ReadTypeAVertex(reader, v, options);
 			}
-
-			for (int n = 0; n < _geometry.Normals.Length; n++)
-			{
-				_geometry.Normals[n].x = s_aiNormals[n, 0];
-				_geometry.Normals[n].y = s_aiNormals[n, 1];
-				_geometry.Normals[n].z = s_aiNormals[n, 2];
-			}
-
-			return;
 		}
 
 		protected virtual void ReadTypeBVertex(BinaryReader reader, int v, ExportOptions options)
@@ -430,15 +447,6 @@ namespace CDC
 			{
 				ReadTypeBVertex(reader, v, options);
 			}
-
-			for (int n = 0; n < _geometry.Normals.Length; n++)
-			{
-				_extraGeometry.Normals[n].x = s_aiNormals[n, 0];
-				_extraGeometry.Normals[n].y = s_aiNormals[n, 1];
-				_extraGeometry.Normals[n].z = s_aiNormals[n, 2];
-			}
-
-			return;
 		}
 
 		protected abstract void ReadPolygons(BinaryReader reader, ExportOptions options);

@@ -40,15 +40,6 @@ namespace CDC
 
 		public override void ReadData(BinaryReader reader, ExportOptions options)
 		{
-			// Get the normals
-			_geometry.Normals = new Vector[s_aiNormals.Length / 3];
-			for (int n = 0; n < _geometry.Normals.Length; n++)
-			{
-				_geometry.Normals[n].x = ((float)s_aiNormals[n, 0] / 4096.0f);
-				_geometry.Normals[n].y = ((float)s_aiNormals[n, 1] / 4096.0f);
-				_geometry.Normals[n].z = ((float)s_aiNormals[n, 2] / 4096.0f);
-			}
-
 			// Get the vertices
 			_geometry.Vertices = new Vertex[_vertexCount];
 			_geometry.PositionsRaw = new Vector[_vertexCount];
@@ -58,6 +49,18 @@ namespace CDC
 			_geometry.ColoursAlt = new UInt32[_vertexColourStart];
 			ReadVertices(reader, options);
 			ReadVertexColours(reader, options);
+
+			// Get the normals
+			_geometry.VertexNormals = new Vector[s_aiNormals.Length / 3];
+			for (int n = 0; n < _geometry.VertexNormals.Length; n++)
+			{
+				_geometry.VertexNormals[n].x = ((float)s_aiNormals[n, 0] / 4096.0f);
+				_geometry.VertexNormals[n].y = ((float)s_aiNormals[n, 1] / 4096.0f);
+				_geometry.VertexNormals[n].z = ((float)s_aiNormals[n, 2] / 4096.0f);
+			}
+
+			// Get the polygon normals
+			_geometry.PolygonNormals = new Vector[_normalCount];
 
 			// Get the polygons
 			_polygons = new Polygon[_polygonCount];

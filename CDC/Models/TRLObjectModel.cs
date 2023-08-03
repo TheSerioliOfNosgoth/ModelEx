@@ -44,9 +44,9 @@ namespace CDC
 			_geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
 
 			_geometry.Vertices[v].normalID = v;
-			_geometry.Normals[v].x = reader.ReadSByte() / 127.0f;
-			_geometry.Normals[v].y = reader.ReadSByte() / 127.0f;
-			_geometry.Normals[v].z = reader.ReadSByte() / 127.0f;
+			_geometry.VertexNormals[v].x = reader.ReadSByte() / 127.0f;
+			_geometry.VertexNormals[v].y = reader.ReadSByte() / 127.0f;
+			_geometry.VertexNormals[v].z = reader.ReadSByte() / 127.0f;
 			reader.BaseStream.Position += 0x01;
 
 			reader.BaseStream.Position += 0x02; // boneID

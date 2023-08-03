@@ -30,6 +30,8 @@ namespace CDC
 		protected uint _modelData;
 		protected uint _vertexCount;
 		protected uint _vertexStart;
+		protected uint _normalCount;
+		protected uint _normalStart;
 		protected uint _polygonCount;
 		protected uint _polygonStart;
 		protected uint _boneCount;
@@ -87,11 +89,14 @@ namespace CDC
 			_geometry.PositionsRaw = new Vector[_vertexCount];
 			_geometry.PositionsPhys = new Vector[_vertexCount];
 			_geometry.PositionsAltPhys = new Vector[_vertexCount];
-			_geometry.Normals = new Vector[_vertexCount];
+			_geometry.VertexNormals = new Vector[_vertexCount];
 			_geometry.Colours = new UInt32[_vertexCount];
 			_geometry.ColoursAlt = new UInt32[_vertexCount];
 			_geometry.UVs = new UV[_vertexCount];
 			ReadVertices(reader, options);
+
+			// Get the polygon normals
+			_geometry.PolygonNormals = new Vector[_normalCount];
 
 			// Get the polygons
 			_polygons = new Polygon[_polygonCount];

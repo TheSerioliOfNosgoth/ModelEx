@@ -273,6 +273,8 @@ namespace CDC
 		protected uint _modelData;
 		protected uint _vertexCount;
 		protected uint _vertexStart;
+		protected uint _normalCount;
+		protected uint _normalStart;
 		protected uint _polygonCount;
 		protected uint _polygonStart;
 		protected uint _boneCount;
@@ -339,11 +341,27 @@ namespace CDC
 			_geometry.PositionsRaw = new Vector[_vertexCount];
 			_geometry.PositionsPhys = new Vector[_vertexCount];
 			_geometry.PositionsAltPhys = new Vector[_vertexCount];
-			_geometry.Normals = new Vector[s_aiNormals.Length / 3];
 			_geometry.Colours = new UInt32[_vertexCount];
 			_geometry.ColoursAlt = new UInt32[_vertexCount];
 			_geometry.UVs = new UV[_vertexCount];
 			ReadVertices(reader, options);
+
+			// Get the vertex normals
+			_geometry.VertexNormals = new Vector[s_aiNormals.Length / 3];
+			for (int n = 0; n < _geometry.VertexNormals.Length; n++)
+			{
+				// Are these wrong? Different on PC and PS2?
+				_geometry.VertexNormals[n].x = s_aiNormals[n, 0];
+				_geometry.VertexNormals[n].y = s_aiNormals[n, 1];
+				_geometry.VertexNormals[n].z = s_aiNormals[n, 2];
+
+				//_normals[n].x = ((float)s_aiNormals[n, 0] / 4096.0f);
+				//_normals[n].y = ((float)s_aiNormals[n, 1] / 4096.0f);
+				//_normals[n].z = ((float)s_aiNormals[n, 2] / 4096.0f);
+			}
+
+			// Get the polygon normals
+			_geometry.PolygonNormals = new Vector[_normalCount];
 
 			// Get the polygons
 			_polygons = new Polygon[_polygonCount];
@@ -382,20 +400,6 @@ namespace CDC
 			{
 				ReadVertex(reader, v, options);
 			}
-
-			for (int n = 0; n < _geometry.Normals.Length; n++)
-			{
-				// Are these wrong? Different on PC and PS2?
-				_geometry.Normals[n].x = s_aiNormals[n, 0];
-				_geometry.Normals[n].y = s_aiNormals[n, 1];
-				_geometry.Normals[n].z = s_aiNormals[n, 2];
-
-				//_normals[n].x = ((float)s_aiNormals[n, 0] / 4096.0f);
-				//_normals[n].y = ((float)s_aiNormals[n, 1] / 4096.0f);
-				//_normals[n].z = ((float)s_aiNormals[n, 2] / 4096.0f);
-			}
-
-			return;
 		}
 
 		protected abstract void ReadPolygons(BinaryReader reader, ExportOptions options);

@@ -38,7 +38,7 @@ namespace CDC
 			_geometry = new Geometry();
 			_extraGeometry = new Geometry();
 
-			_geometry.Normals = new Vector[1] { new Vector(1.0f, 1.0f, 1.0f) };
+			_geometry.VertexNormals = new Vector[1] { new Vector(1.0f, 1.0f, 1.0f) };
 			_geometry.Colours = new uint[1] { 0xFFFFFFFF };
 			_geometry.ColoursAlt = new uint[1] { 0xFFFFFFFF };
 			_geometry.Vertices = new Vertex[8];
@@ -66,6 +66,8 @@ namespace CDC
 					positionID = i,
 				};
 			}
+
+			_geometry.PolygonNormals = new Vector[1] { new Vector(1.0f, 1.0f, 1.0f) };
 
 			Material material = new Material();
 			material.ID = 0;

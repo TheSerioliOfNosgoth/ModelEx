@@ -434,7 +434,7 @@ namespace CDC
 										Geometry geometry = vert.isExtraGeometry ? model.ExtraGeometry : model.Geometry;
 
 										ref Vector[] positions = ref geometry.PositionsPhys;
-										ref Vector[] normals = ref geometry.Normals;
+										ref Vector[] normals = ref geometry.VertexNormals;
 										ref UInt32[] colors = ref geometry.Colours;
 										ref UV[] uvs = ref geometry.UVs;
 
