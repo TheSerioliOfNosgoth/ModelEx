@@ -328,6 +328,12 @@ namespace CDC
 			_modelData = modelData;
 			_vertexCount = 0;
 			_vertexStart = 0;
+			_extraVertexCount = 0;
+			_extraVertexStart = 0;
+			_normalCount = 0;
+			_normalStart = 0;
+			_extraNormalCount = 0;
+			_extraNormalStart = 0;
 			_polygonCount = 0;
 			_polygonStart = 0;
 			_vertexScale.x = 1.0f;
