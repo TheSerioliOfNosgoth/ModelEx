@@ -51,12 +51,12 @@ namespace CDC
 			ReadVertexColours(reader, options);
 
 			// Get the normals
-			_geometry.VertexNormals = new Vector[s_aiNormals.Length / 3];
+			_geometry.VertexNormals = new Vector[_normals.Length / 3];
 			for (int n = 0; n < _geometry.VertexNormals.Length; n++)
 			{
-				_geometry.VertexNormals[n].x = ((float)s_aiNormals[n, 0] / 4096.0f);
-				_geometry.VertexNormals[n].y = ((float)s_aiNormals[n, 1] / 4096.0f);
-				_geometry.VertexNormals[n].z = ((float)s_aiNormals[n, 2] / 4096.0f);
+				_geometry.VertexNormals[n].x = ((float)_normals[n, 0] / 4096.0f);
+				_geometry.VertexNormals[n].y = ((float)_normals[n, 1] / 4096.0f);
+				_geometry.VertexNormals[n].z = ((float)_normals[n, 2] / 4096.0f);
 			}
 
 			// Get the polygon normals

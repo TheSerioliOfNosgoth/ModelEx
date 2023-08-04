@@ -9,7 +9,7 @@ namespace CDC
 	public abstract class GexModel : Model
 	{
 		#region Normals
-		protected static Int32[,] s_aiNormals =
+		protected static Int32[,] _normals =
 		{
 			{0, 0, 4096},
 			{-1930, -3344, -1365},
@@ -335,7 +335,7 @@ namespace CDC
 			ReadVertices(reader, options);
 
 			// Get the normals
-			_geometry.VertexNormals = new Vector[s_aiNormals.Length / 3];
+			_geometry.VertexNormals = new Vector[_normals.Length / 3];
 			_geometry.PolygonNormals = new Vector[_normalCount];
 			ReadNormals(reader, options);
 
@@ -383,9 +383,9 @@ namespace CDC
 		{
 			for (int n = 0; n < _geometry.VertexNormals.Length; n++)
 			{
-				_geometry.VertexNormals[n].x = (s_aiNormals[n, 0] / 4096.0f);
-				_geometry.VertexNormals[n].y = (s_aiNormals[n, 1] / 4096.0f);
-				_geometry.VertexNormals[n].z = (s_aiNormals[n, 2] / 4096.0f);
+				_geometry.VertexNormals[n].x = (_normals[n, 0] / 4096.0f);
+				_geometry.VertexNormals[n].y = (_normals[n, 1] / 4096.0f);
+				_geometry.VertexNormals[n].z = (_normals[n, 2] / 4096.0f);
 			}
 
 			if (_normalStart == 0 || _normalCount == 0)

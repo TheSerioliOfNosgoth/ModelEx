@@ -7,7 +7,7 @@ namespace CDC
 	public abstract class DefianceModel : Model
 	{
 		#region Normals
-		protected static float[,] s_aiNormals =
+		protected static float[,] _normals =
 		{
 			{0.000000f, 0.000000f, 1.000000f},
 			{-0.471191f, -0.816406f, -0.333252f},
@@ -367,12 +367,12 @@ namespace CDC
 			ReadTypeBVertices(reader, options);
 
 			// Get the normals
-			_geometry.VertexNormals = new Vector[s_aiNormals.Length / 3];
+			_geometry.VertexNormals = new Vector[_normals.Length / 3];
 			_geometry.PolygonNormals = new Vector[_normalCount];
 			ReadTypeANormals(reader, options);
 
 			// Get the extra normals
-			_extraGeometry.VertexNormals = new Vector[s_aiNormals.Length / 3];
+			_extraGeometry.VertexNormals = new Vector[_normals.Length / 3];
 			_extraGeometry.PolygonNormals = new Vector[_extraNormalCount];
 			ReadTypeBNormals(reader, options);
 
@@ -450,9 +450,9 @@ namespace CDC
 		{
 			for (int n = 0; n < _geometry.VertexNormals.Length; n++)
 			{
-				_geometry.VertexNormals[n].x = s_aiNormals[n, 0];
-				_geometry.VertexNormals[n].y = s_aiNormals[n, 1];
-				_geometry.VertexNormals[n].z = s_aiNormals[n, 2];
+				_geometry.VertexNormals[n].x = _normals[n, 0];
+				_geometry.VertexNormals[n].y = _normals[n, 1];
+				_geometry.VertexNormals[n].z = _normals[n, 2];
 			}
 
 			if (_normalStart == 0 || _normalCount == 0)
@@ -479,9 +479,9 @@ namespace CDC
 		{
 			for (int n = 0; n < _extraGeometry.VertexNormals.Length; n++)
 			{
-				_extraGeometry.VertexNormals[n].x = s_aiNormals[n, 0];
-				_extraGeometry.VertexNormals[n].y = s_aiNormals[n, 1];
-				_extraGeometry.VertexNormals[n].z = s_aiNormals[n, 2];
+				_extraGeometry.VertexNormals[n].x = _normals[n, 0];
+				_extraGeometry.VertexNormals[n].y = _normals[n, 1];
+				_extraGeometry.VertexNormals[n].z = _normals[n, 2];
 			}
 
 			if (_normalStart == 0 || _normalCount == 0)
