@@ -97,8 +97,10 @@ namespace CDC
 			_geometry.UVs = new UV[_vertexCount];
 			ReadVertices(reader, options);
 
-			// Get the polygon normals
+			// Get the normals
+			//_geometry.VertexNormals = new Vector[s_aiNormals.Length / 3];
 			_geometry.PolygonNormals = new Vector[_normalCount];
+			ReadNormals(reader, options);
 
 			// Get the polygons
 			_polygons = new Polygon[_polygonCount];
@@ -117,7 +119,6 @@ namespace CDC
 		{
 			_geometry.Vertices[v].positionID = v;
 
-			// Read the local coordinates
 			_geometry.PositionsRaw[v].x = (float)reader.ReadInt16();
 			_geometry.PositionsRaw[v].y = (float)reader.ReadInt16();
 			_geometry.PositionsRaw[v].z = (float)reader.ReadInt16();
@@ -136,8 +137,35 @@ namespace CDC
 			{
 				ReadVertex(reader, v, options);
 			}
+		}
 
-			return;
+		protected virtual void ReadNormal(BinaryReader reader, int n, ExportOptions options)
+		{
+			_geometry.PolygonNormals[n].x = reader.ReadInt16();
+			_geometry.PolygonNormals[n].y = reader.ReadInt16();
+			_geometry.PolygonNormals[n].z = reader.ReadInt16();
+		}
+
+		protected virtual void ReadNormals(BinaryReader reader, ExportOptions options)
+		{
+			//for (int n = 0; n < _geometry.VertexNormals.Length; n++)
+			//{
+			//	_geometry.VertexNormals[n].x = s_aiNormals[n, 0];
+			//	_geometry.VertexNormals[n].y = s_aiNormals[n, 1];
+			//	_geometry.VertexNormals[n].z = s_aiNormals[n, 2];
+			//}
+
+			if (_normalStart == 0 || _normalCount == 0)
+			{
+				return;
+			}
+
+			reader.BaseStream.Position = _normalStart;
+
+			for (int v = 0; v < _normalCount; v++)
+			{
+				ReadNormal(reader, v, options);
+			}
 		}
 
 		protected abstract void ReadPolygons(BinaryReader reader, ExportOptions options);
