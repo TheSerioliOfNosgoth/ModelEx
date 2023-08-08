@@ -16,22 +16,28 @@ namespace CDC
 		public GexUnitModel(BinaryReader reader, DataFile dataFile, UInt32 dataStart, UInt32 modelData, String modelName, Platform ePlatform, UInt32 version, TPages tPages)
 			: base(reader, dataFile, dataStart, modelData, modelName, ePlatform, version, tPages)
 		{
+			// In snow96.drm, _modelData is at 0x00017314.
+			// Add 0x00010000 to account for the pointers at the start.
 			reader.BaseStream.Position = _modelData;
-
 			_bspTreeCount = 1;
 			_bspTreeStart = reader.ReadUInt32();
 			_groupCount = _bspTreeCount;
-
 			reader.BaseStream.Position += 0x14;
 			_vertexCount = reader.ReadUInt32();
 			_vertexColourCount = reader.ReadUInt32();
 			_polygonCount = reader.ReadUInt32();
-			reader.BaseStream.Position += 0x0C;
+			uint unknown1Count = reader.ReadUInt32();
+			uint unknown2Count = reader.ReadUInt32();
+			_normalCount = reader.ReadUInt32();
 			_vertexStart = reader.ReadUInt32();
 			_vertexColourStart = reader.ReadUInt32();
 			_polygonStart = reader.ReadUInt32();
-			UInt32 _otherThing = reader.ReadUInt32(); // Very short. The 0x1B thing.
-			reader.BaseStream.Position += 0x04; // Collision
+			// Based on snow96.drm
+			// 0x00044DE0 + (27 (0x1B) unknown2s * 4 bytes) = _vertexStart at 0x00044E4C.
+			uint unknown2sStart = reader.ReadUInt32();
+			// Based on snow96.drm, it looks like these are normals.
+			// 0x000465CC + (7658 (0x1DEA) normals * 6 bytes) = _bspTreeStart at 0x00061948.
+			_normalStart = reader.ReadUInt32();
 			_materialStart = reader.ReadUInt32();
 			_materialCount = 0;
 
@@ -52,15 +58,8 @@ namespace CDC
 
 			// Get the normals
 			_geometry.VertexNormals = new Vector[_normals.Length / 3];
-			for (int n = 0; n < _geometry.VertexNormals.Length; n++)
-			{
-				_geometry.VertexNormals[n].x = ((float)_normals[n, 0] / 4096.0f);
-				_geometry.VertexNormals[n].y = ((float)_normals[n, 1] / 4096.0f);
-				_geometry.VertexNormals[n].z = ((float)_normals[n, 2] / 4096.0f);
-			}
-
-			// Get the polygon normals
 			_geometry.PolygonNormals = new Vector[_normalCount];
+			ReadNormals(reader, options);
 
 			// Get the polygons
 			_polygons = new Polygon[_polygonCount];
@@ -79,11 +78,6 @@ namespace CDC
 			_geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
 
 			_geometry.Vertices[v].colourID = reader.ReadUInt16();
-		}
-
-		protected override void ReadVertices(BinaryReader reader, ExportOptions options)
-		{
-			base.ReadVertices(reader, options);
 		}
 
 		protected void ReadVertexColours(BinaryReader reader, ExportOptions options)

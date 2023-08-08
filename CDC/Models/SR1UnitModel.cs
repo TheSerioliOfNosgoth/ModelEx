@@ -73,14 +73,13 @@ namespace CDC
 			// long numFaces;
 			_polygonCount = reader.ReadUInt32();
 			// long numNormals; 
-			//reader.BaseStream.Position += 0x04;
-			long numNormals = reader.ReadUInt32();
+			_normalCount = reader.ReadUInt32();
 			// struct _TVertex *vertexList;
 			_vertexStart = _dataStart + reader.ReadUInt32();
 			// struct _TFace *faceList; 
 			_polygonStart = _dataStart + reader.ReadUInt32();
 			// struct _Normal *normalList;
-			uint normalStart = reader.ReadUInt32();
+			_normalStart = reader.ReadUInt32();
 			// struct DrMoveAniTex *aniList;
 			uint drMoveAniTex = reader.ReadUInt32();
 			// 1999-02-16: struct _BSPNode *sbspRoot; // size=44, offset=44 

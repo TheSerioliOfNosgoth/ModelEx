@@ -33,7 +33,8 @@ namespace CDC
 			_vertexScale.x = 1.0f;
 			_vertexScale.y = 1.0f;
 			_vertexScale.z = 1.0f;
-			reader.BaseStream.Position += 0x08;
+			_normalCount = reader.ReadUInt32();
+			_normalStart = reader.ReadUInt32();
 			_polygonCount = reader.ReadUInt32();
 			_polygonStart = _dataStart + reader.ReadUInt32();
 			_boneCount = reader.ReadUInt32();

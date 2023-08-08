@@ -9,17 +9,24 @@ namespace CDC
 		public GexObjectModel(BinaryReader reader, DataFile dataFile, UInt32 dataStart, UInt32 modelData, String modelName, Platform ePlatform, UInt32 version, TPages tPages)
 			: base(reader, dataFile, dataStart, modelData, modelName, ePlatform, version, tPages)
 		{
+			// In anicnsl in anime1.drm, _modelData is at 0x000AD1D0.
+			// Add 0x00011800 to account for the pointers at the start.
 			reader.BaseStream.Position = _modelData;
 			_vertexCount = reader.ReadUInt16();
-			reader.BaseStream.Position += 0x02;
+			// Most objects have no normals. Be careful!
+			_normalCount = reader.ReadUInt16();
 			_polygonCount = reader.ReadUInt16();
 			_boneCount = reader.ReadUInt16();
 			_vertexStart = reader.ReadUInt32();
 			_vertexScale.x = 1.0f;
 			_vertexScale.y = 1.0f;
 			_vertexScale.z = 1.0f;
-			// Vertex colours here? Objects have them in Gex?
-			reader.BaseStream.Position += 0x08;
+			// Based on anicnsl in anime1.drm, it looks like vertex colours.
+			// 0x000AD774 + (120 vertices * 4 bytes) = _polygonStart at 0x000AD954.
+			uint vertexColourStart = reader.ReadUInt32();
+			// Based on anicnsl in anime1.drm, it looks like these are normals.
+			// 0x000ADFCC + (25 normals * 6 bytes) + 2 bytes of padding = next struct at 0x000AD064
+			_normalStart = reader.ReadUInt32();
 			_polygonStart = reader.ReadUInt32();
 			_boneStart = reader.ReadUInt32();
 			_materialStart = reader.ReadUInt32();

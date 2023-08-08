@@ -17,10 +17,13 @@ namespace CDC
 			reader.BaseStream.Position = _modelData + 0x0C;
 			_vertexCount = reader.ReadUInt32();
 			_polygonCount = 0; // reader.ReadUInt32();
-			reader.BaseStream.Position += 0x08;
+			reader.BaseStream.Position += 0x04;
+			_normalCount = reader.ReadUInt32();
 			_vertexStart = _dataStart + reader.ReadUInt32();
-			_polygonStart = 0;
-			reader.BaseStream.Position += 0x18;
+			_polygonStart = 0; // _dataStart + reader.ReadUInt32();
+			reader.BaseStream.Position += 0x04;
+			_normalStart = _dataStart + reader.ReadUInt32();
+			reader.BaseStream.Position += 0x10;
 			_spectralVertexStart = _dataStart + reader.ReadUInt32();
 			reader.BaseStream.Position += 0x04; // _materialColourStart
 			_spectralColourStart = _dataStart + reader.ReadUInt32();

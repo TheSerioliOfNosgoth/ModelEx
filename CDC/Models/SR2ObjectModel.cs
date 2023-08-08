@@ -22,14 +22,15 @@ namespace CDC
 			reader.BaseStream.Position += 0x04;
 			_vertexCount = reader.ReadUInt32();
 			_vertexStart = _dataStart + reader.ReadUInt32();
-			reader.BaseStream.Position += 0x08;
+			_normalCount = reader.ReadUInt32();
+			_normalStart = _dataStart + reader.ReadUInt32();
 			_polygonCount = 0; // reader.ReadUInt32();
 			_polygonStart = 0; // _dataStart + reader.ReadUInt32();
 			reader.BaseStream.Position += 0x18;
 			_colourStart = _dataStart + reader.ReadUInt32();
 			reader.BaseStream.Position += 0x0C;
-			_materialStart = _dataStart + reader.ReadUInt32();
 			_materialCount = 0;
+			_materialStart = _dataStart + reader.ReadUInt32();
 			_groupCount = 1;
 
 			_trees = new Tree[_groupCount];
