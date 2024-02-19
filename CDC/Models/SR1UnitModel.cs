@@ -82,7 +82,7 @@ namespace CDC
 			// struct _Normal *normalList;
 			uint normalStart = reader.ReadUInt32();
 			// struct DrMoveAniTex *aniList;
-			uint drMoveAniTex = reader.ReadUInt32();
+			uint drMoveAniTex = _dataStart + reader.ReadUInt32();
 			// 1999-02-16: struct _BSPNode *sbspRoot; // size=44, offset=44 
 			// 1999-07-14: long pad 
 			uint sbspRoot = reader.ReadUInt32();
@@ -134,6 +134,62 @@ namespace CDC
 			}
 
 			_trees = new Tree[_groupCount];
+
+			if (_version == SR1File.RETAIL_VERSION &&
+				_platform == Platform.PSX &&
+				drMoveAniTex != 0)
+			{
+				reader.BaseStream.Position = drMoveAniTex;
+
+				uint aniTexSrcCount = reader.ReadUInt32();
+				uint aniTexSrcPtrStart = reader.ReadUInt32();
+
+				_aniTextures = new AniTextureDest[aniTexSrcCount];
+				for (int a = 0; a < aniTexSrcCount; a++)
+				{
+					reader.BaseStream.Position = aniTexSrcPtrStart + (a * 4);
+
+					AniTextureDest aniTextureDst = new AniTextureDest();
+
+					aniTextureDst.tPageX = reader.ReadInt16();
+					aniTextureDst.tPageY = reader.ReadInt16();
+					aniTextureDst.tPageW = reader.ReadInt16();
+					aniTextureDst.tPageH = reader.ReadInt16();
+					aniTextureDst.clutX = reader.ReadInt16();
+					aniTextureDst.clutY = reader.ReadInt16();
+					aniTextureDst.clutW = reader.ReadInt16();
+					aniTextureDst.clutH = reader.ReadInt16();
+					reader.BaseStream.Position += 0x08;
+					uint numFrames = reader.ReadUInt32();
+					reader.BaseStream.Position += 0x04;
+
+					aniTextureDst.frames = new AniTextureSource[numFrames];
+					for (int f = 0; f < numFrames; f++)
+					{
+						AniTextureSource aniTextureSrc = new AniTextureSource();
+
+						aniTextureSrc.tPageX = reader.ReadInt16();
+						aniTextureSrc.tPageY = reader.ReadInt16();
+						aniTextureSrc.clutX = reader.ReadInt16();
+						aniTextureSrc.clutY = reader.ReadInt16();
+
+						// Subtract 512 from tPageX and clutX to account for framebuffer.
+						short tPageX = (short)Math.Max(0, (int)aniTextureSrc.tPageX);
+						short clutX = (short)Math.Max(0, (int)aniTextureSrc.clutX);
+
+						// The last line is intentionally the w and h of the dest, not the source.
+						AddAniTextureTile(
+							tPageX, aniTextureSrc.tPageY,
+							clutX, aniTextureSrc.clutY,
+							aniTextureDst.tPageW, aniTextureDst.tPageH
+						);
+
+						aniTextureDst.frames[f] = aniTextureSrc;
+					}
+
+					_aniTextures[a] = aniTextureDst;
+				}
+			}
 		}
 
 		protected override void ReadVertex(BinaryReader reader, int v, ExportOptions options)

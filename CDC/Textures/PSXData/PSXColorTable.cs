@@ -30,8 +30,8 @@ namespace BenLincoln.TheLostWorlds.CDTextures
 			int width = textureData.GetUpperBound(1) + 1;
 			int height = textureData.GetUpperBound(0) + 1;
 
-			X = (clut & 0x3F) << 4; // 0x003F
-			Y = clut >> 6; // 0xFFC0 >> 6 = 0x03FF
+			X = (clut << 4) & 0x03F0; // 0x003F << 4 = 0x03F0
+			Y = (clut >> 6) & 0x03FF; // 0xFFC0 >> 6 = 0x03FF
 			X %= 512;
 			X += width - xShift;
 			X %= width;
