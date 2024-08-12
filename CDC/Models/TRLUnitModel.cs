@@ -8,6 +8,8 @@ namespace CDC
 	{
 		protected UInt32 _octTreeCount;
 		protected UInt32 _octTreeStart;
+		protected UInt32 _vmoVertexStart;
+		protected UInt32 _vmoVertexCount;
 
 		public TRLUnitModel(BinaryReader reader, DataFile dataFile, UInt32 dataStart, UInt32 modelData, String modelName, Platform ePlatform, UInt32 version)
 			: base(reader, dataFile, dataStart, modelData, modelName, ePlatform, version)
@@ -20,8 +22,11 @@ namespace CDC
 			_octTreeStart = _dataStart + reader.ReadUInt32();
 			reader.BaseStream.Position = _modelData + 0x44;
 			_vertexStart = _dataStart + reader.ReadUInt32();
+			_vmoVertexStart = _dataStart + reader.ReadUInt32();
 			reader.BaseStream.Position = _modelData + 0x54;
 			_vertexCount = reader.ReadUInt32();
+			reader.BaseStream.Position = _modelData + 0x5C;
+			_vmoVertexCount = reader.ReadUInt32();
 			_polygonCount = 0;
 			_polygonStart = 0;
 			_materialStart = 0;
@@ -29,6 +34,20 @@ namespace CDC
 			_groupCount = _octTreeCount;
 
 			_trees = new Tree[_groupCount];
+		}
+
+		public override void ReadData(BinaryReader reader, ExportOptions options)
+		{
+			// Get the extra vertices
+			_extraGeometry.Vertices = new Vertex[_vmoVertexCount];
+			_extraGeometry.PositionsRaw = new Vector[_vmoVertexCount];
+			_extraGeometry.PositionsPhys = new Vector[_vmoVertexCount];
+			_extraGeometry.PositionsAltPhys = new Vector[_vmoVertexCount];
+			_extraGeometry.Colours = new UInt32[_vmoVertexCount];
+			_extraGeometry.ColoursAlt = new UInt32[_vmoVertexCount];
+			_extraGeometry.UVs = new UV[_vmoVertexCount];
+
+			base.ReadData(reader, options);
 		}
 
 		protected override void ReadVertex(BinaryReader reader, int v, ExportOptions options)
@@ -65,9 +84,56 @@ namespace CDC
 			reader.BaseStream.Position += 0x04;
 		}
 
+		protected virtual void ReadMorphVertex(BinaryReader reader, int v, ExportOptions options)
+		{
+			_extraGeometry.Vertices[v].positionID = v;
+
+			// Read the local coordinates
+			_extraGeometry.PositionsRaw[v].x = (float)reader.ReadInt16();
+			_extraGeometry.PositionsRaw[v].y = (float)reader.ReadInt16();
+			_extraGeometry.PositionsRaw[v].z = (float)reader.ReadInt16();
+
+			reader.BaseStream.Position += 0x02;
+
+			_extraGeometry.PositionsPhys[v] = _extraGeometry.PositionsRaw[v];
+			_extraGeometry.PositionsAltPhys[v] = _extraGeometry.PositionsPhys[v];
+
+			_extraGeometry.Vertices[v].colourID = v;
+
+			uint vColour = reader.ReadUInt32();
+
+			if (options.IgnoreVertexColours)
+			{
+				_extraGeometry.Colours[v] = 0xFFFFFFFF;
+			}
+			else
+			{
+				_extraGeometry.Colours[v] = vColour;
+				_extraGeometry.ColoursAlt[v] = _extraGeometry.Colours[v];
+			}
+
+			_extraGeometry.Vertices[v].UVID = v;
+
+			Int16 vU = reader.ReadInt16();
+			Int16 vV = reader.ReadInt16();
+
+			_extraGeometry.UVs[v].u = vU * 0.00024414062f;
+			_extraGeometry.UVs[v].v = vV * 0.00024414062f;
+
+			reader.BaseStream.Position += 0x14;
+		}
+
 		protected override void ReadVertices(BinaryReader reader, ExportOptions options)
 		{
 			base.ReadVertices(reader, options);
+
+			// Read the VMO vertices
+			reader.BaseStream.Position = _vmoVertexStart;
+
+			for (int v = 0; v < _vmoVertexCount; v++)
+			{
+				ReadMorphVertex(reader, v, options);
+			}
 		}
 
 		protected override void ReadPolygons(BinaryReader reader, ExportOptions options)
@@ -134,8 +200,9 @@ namespace CDC
 		protected virtual void ReadMaterial(BinaryReader reader, ref TRLMaterial material)
 		{
 			material.textureID = reader.ReadUInt32();
-			reader.BaseStream.Position += 0x04;
+			material.flags = reader.ReadUInt32();
 			material.vbBaseOffset = reader.ReadUInt32();
+			material.useExtraGeometry = (material.flags & 0x1C) != 0;
 			reader.BaseStream.Position += 0x08;
 		}
 
@@ -244,6 +311,7 @@ namespace CDC
 						newPolygon.v3 = axStripIndices[i++];
 						newPolygon.textureID = trlMaterial.textureID;
 						newPolygon.vbBaseOffset = trlMaterial.vbBaseOffset;
+						newPolygon.useExtraGeometry = trlMaterial.useExtraGeometry;
 						treePolygons.Add(newPolygon);
 					}
 
@@ -275,9 +343,21 @@ namespace CDC
 				UInt32 uV2 = treePolygons[firstPolygon + p].v2;
 				UInt32 uV3 = treePolygons[firstPolygon + p].v3;
 
-				xMesh.polygons[p].v1 = _geometry.Vertices[uV1 + treePolygons[firstPolygon + p].vbBaseOffset];
-				xMesh.polygons[p].v2 = _geometry.Vertices[uV2 + treePolygons[firstPolygon + p].vbBaseOffset];
-				xMesh.polygons[p].v3 = _geometry.Vertices[uV3 + treePolygons[firstPolygon + p].vbBaseOffset];
+				if (treePolygons[firstPolygon + p].useExtraGeometry == false)
+				{
+					xMesh.polygons[p].v1 = _geometry.Vertices[uV1 + treePolygons[firstPolygon + p].vbBaseOffset];
+					xMesh.polygons[p].v2 = _geometry.Vertices[uV2 + treePolygons[firstPolygon + p].vbBaseOffset];
+					xMesh.polygons[p].v3 = _geometry.Vertices[uV3 + treePolygons[firstPolygon + p].vbBaseOffset];
+				}
+				else
+				{
+					xMesh.polygons[p].v1 = _extraGeometry.Vertices[uV1 + treePolygons[firstPolygon + p].vbBaseOffset];
+					xMesh.polygons[p].v2 = _extraGeometry.Vertices[uV2 + treePolygons[firstPolygon + p].vbBaseOffset];
+					xMesh.polygons[p].v3 = _extraGeometry.Vertices[uV3 + treePolygons[firstPolygon + p].vbBaseOffset];
+					xMesh.polygons[p].v1.isExtraGeometry = true;
+					xMesh.polygons[p].v2.isExtraGeometry = true;
+					xMesh.polygons[p].v3.isExtraGeometry = true;
+				}
 
 				xMaterial = new Material();
 

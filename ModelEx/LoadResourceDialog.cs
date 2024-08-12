@@ -566,7 +566,8 @@ namespace ModelEx
 			{
 				foreach (FileInfo file in directoryInfo.GetFiles())
 				{
-					if (file.Extension != ".pcm" && file.Extension != ".drm")
+					string extension = file.Extension.ToLower();
+					if (extension != ".pcm" && extension != ".drm")
 					{
 						continue;
 					}

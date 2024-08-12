@@ -18,7 +18,9 @@ namespace CDC
 		protected class TRLMaterial
 		{
 			public UInt32 textureID;
+			public UInt32 flags;
 			public UInt32 vbBaseOffset;
+			public bool useExtraGeometry;
 		}
 
 		protected DataFile _dataFile;
