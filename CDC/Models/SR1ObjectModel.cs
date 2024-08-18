@@ -139,7 +139,7 @@ namespace CDC
 			// unsigned char normal
 			byte normal = reader.ReadByte();
 			// unsigned char flags
-			byte flags = reader.ReadByte();
+			ushort flags = reader.ReadByte();
 			// long color;
 			uint color = reader.ReadUInt32();
 
@@ -176,17 +176,17 @@ namespace CDC
 			ref Polygon polygon = ref _polygons[p];
 			ref Material material = ref polygon.material;
 
-			if ((material.polygonFlags & (byte)PolygonFlags.TextureUsed) != 0)
+			if ((material.polygonFlags & (ushort)PolygonFlags.TextureUsed) != 0)
 			{
 				material.textureUsed = true;
 			}
 
-			if ((material.polygonFlags & (byte)PolygonFlags.Emissive) != 0)
+			if ((material.polygonFlags & (ushort)PolygonFlags.Emissive) != 0)
 			{
 				material.isEmissive = true;
 			}
 
-			if ((material.polygonFlags & (byte)PolygonFlags.Hidden0) != 0)
+			if ((material.polygonFlags & (ushort)PolygonFlags.Hidden0) != 0)
 			{
 				material.visible = false;
 			}

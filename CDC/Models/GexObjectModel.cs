@@ -113,7 +113,7 @@ namespace CDC
 			reader.ReadByte();
 			_polygons[p].material.polygonFlags = reader.ReadByte();
 
-			if ((_polygons[p].material.polygonFlags & 0x02) == 0x02)
+			if ((_polygons[p].material.polygonFlags & 0x0002) == 0x0002)
 			{
 				_polygons[p].material.textureUsed = true;
 			}

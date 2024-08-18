@@ -245,7 +245,7 @@ namespace CDC
 		public float opacity;
 		public float emissivity;
 		public bool UseAlphaMask;
-		public byte polygonFlags;
+		public ushort polygonFlags;
 		public byte sortPush;
 		public ushort textureAttributes;
 		public ushort textureAttributesA;
@@ -257,7 +257,7 @@ namespace CDC
 		public ushort BSPTreeLeafFlags;
 
 		// bitflag masks
-		public byte polygonFlagsUsedMask;
+		public ushort polygonFlagsUsedMask;
 		public byte sortPushUsedMask;
 		public ushort texturePageUsedMask;
 		public uint colourUsedMask;
@@ -270,7 +270,7 @@ namespace CDC
 		public ushort BSPTreeLeafFlagsUsedMask;
 
 		// values for matching whether or not a material is the same or not
-		public byte polygonFlagsEffective { get { return (byte)(polygonFlagsUsedMask & polygonFlags); } }
+		public ushort polygonFlagsEffective { get { return (ushort)(polygonFlagsUsedMask & polygonFlags); } }
 
 		public byte sortPushEffective { get { return (byte)(sortPushUsedMask & sortPush); } }
 

@@ -121,11 +121,10 @@ namespace CDC
 			_polygons[p].v3 = _geometry.Vertices[reader.ReadUInt16()];
 			_polygons[p].material = new Material();
 
-			byte flags0 = reader.ReadByte();
-			byte flags1 = reader.ReadByte();
+			ushort flags = reader.ReadUInt16();
 			reader.BaseStream.Position += 2;
 
-			_polygons[p].material.polygonFlags = flags0;
+			_polygons[p].material.polygonFlags = flags;
 
 			UInt16 materialOffset = reader.ReadUInt16();
 
@@ -135,7 +134,7 @@ namespace CDC
 				_polygons[p].material.visible = false;
 			}
 
-			if ((flags0 & 0x01) == 0x01)
+			if ((flags & 0x0001) == 0x0001)
 			{
 				_polygons[p].material.visible = false;
 			}
@@ -172,7 +171,7 @@ namespace CDC
 
 			reader.BaseStream.Position = uPolygonPosition + 0x0C;
 
-			if ((flags1 & 0x04) != 0)
+			if ((flags & 0x0400) != 0)
 			{
 				Vertex tempVertex = _polygons[p].v2;
 				_polygons[p].v2 = _polygons[p].v3;

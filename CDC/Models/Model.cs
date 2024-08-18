@@ -83,6 +83,18 @@ namespace CDC
 				Utility.ColourPolygonFromFlags(ref polygon, material.polygonFlags, 0x0040, 0x0080, 0x0100);
 				// 0x40 = hidden polygon (portal, collision box, etc.), not sure why sometimes it's this and sometimes 0x01
 			}
+			if (options.RenderMode == RenderMode.DebugPolygonFlags4)
+			{
+				Utility.ColourPolygonFromFlags(ref polygon, material.polygonFlags, 0x0200, 0x0400, 0x0800);
+			}
+			if (options.RenderMode == RenderMode.DebugPolygonFlags5)
+			{
+				Utility.ColourPolygonFromFlags(ref polygon, material.polygonFlags, 0x1000, 0x2000, 0x4000);
+			}
+			if (options.RenderMode == RenderMode.DebugPolygonFlags6)
+			{
+				Utility.ColourPolygonFromFlags(ref polygon, material.polygonFlags, 0x8000, 0x10000, 0x20000);
+			}
 			#endregion
 
 			#region Texture
@@ -124,7 +136,7 @@ namespace CDC
 			}
 			if (options.RenderMode == RenderMode.DebugTextureAttributes6)
 			{
-				Utility.ColourPolygonFromFlags(ref polygon, material.textureAttributes, 0x10000, 0x8000, 0x20000);
+				Utility.ColourPolygonFromFlags(ref polygon, material.textureAttributes, 0x8000, 0x10000, 0x20000);
 				// 0x8000 = lighting effects? i.e. invisible, animated polygon that only affects vertex colours?
 			}
 			#endregion
