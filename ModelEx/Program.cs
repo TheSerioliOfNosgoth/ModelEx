@@ -149,9 +149,6 @@ namespace ModelEx
 									case "polyflags3":
 										options.RenderMode = CDC.RenderMode.DebugPolygonFlags3;
 										break;
-									case "polyflagssra":
-										options.RenderMode = CDC.RenderMode.DebugPolygonFlagsSoulReaverA;
-										break;
 									case "polyflagshash":
 										options.RenderMode = CDC.RenderMode.DebugPolygonFlagsHash;
 										break;

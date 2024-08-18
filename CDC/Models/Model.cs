@@ -83,18 +83,6 @@ namespace CDC
 				Utility.ColourPolygonFromFlags(ref polygon, material.polygonFlags, 0x0040, 0x0080, 0x0100);
 				// 0x40 = hidden polygon (portal, collision box, etc.), not sure why sometimes it's this and sometimes 0x01
 			}
-			if (options.RenderMode == RenderMode.DebugPolygonFlagsSoulReaverA)
-			{
-				byte tempFlags = material.polygonFlags;
-				if ((material.polygonFlags & 0x40) == 0x40)
-				{
-					tempFlags |= 0x01;
-				}
-				Utility.ColourPolygonFromFlags(ref polygon, material.polygonFlags, 0x0001, 0x0020, 0x0010);
-				// hidden polygons == red
-				// transparent/translucent == green
-				// glowing? reflective? == blue
-			}
 			#endregion
 
 			#region Texture

@@ -101,7 +101,6 @@ namespace ModelEx
 			debugPolygonFlags1ToolStripMenuItem.Checked = false;
 			debugPolygonFlags2ToolStripMenuItem.Checked = false;
 			debugPolygonFlags3ToolStripMenuItem.Checked = false;
-			debugPolygonFlagsSoulReaverAToolStripMenuItem.Checked = false;
 			debugPolygonFlagsHashToolStripMenuItem.Checked = false;
 			debugTextureAttributes1ToolStripMenuItem.Checked = false;
 			debugTextureAttributes2ToolStripMenuItem.Checked = false;
@@ -781,7 +780,6 @@ namespace ModelEx
 				(sender == debugPolygonFlags1ToolStripMenuItem) ? CDC.RenderMode.DebugPolygonFlags1 :
 				(sender == debugPolygonFlags2ToolStripMenuItem) ? CDC.RenderMode.DebugPolygonFlags2 :
 				(sender == debugPolygonFlags3ToolStripMenuItem) ? CDC.RenderMode.DebugPolygonFlags3 :
-				(sender == debugPolygonFlagsSoulReaverAToolStripMenuItem) ? CDC.RenderMode.DebugPolygonFlagsSoulReaverA :
 				(sender == debugPolygonFlagsHashToolStripMenuItem) ? CDC.RenderMode.DebugPolygonFlagsHash :
 				(sender == debugTextureAttributes1ToolStripMenuItem) ? CDC.RenderMode.DebugTextureAttributes1 :
 				(sender == debugTextureAttributes2ToolStripMenuItem) ? CDC.RenderMode.DebugTextureAttributes2 :

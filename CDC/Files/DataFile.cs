@@ -13,7 +13,6 @@ namespace CDC
 		DebugPolygonFlags1,
 		DebugPolygonFlags2,
 		DebugPolygonFlags3,
-		DebugPolygonFlagsSoulReaverA,
 		DebugPolygonFlagsHash,
 		DebugTextureAttributes1,
 		DebugTextureAttributes2,
