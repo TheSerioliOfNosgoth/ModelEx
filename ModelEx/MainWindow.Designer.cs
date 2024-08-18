@@ -59,6 +59,9 @@
 			this.debugPolygonFlags1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.debugPolygonFlags2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.debugPolygonFlags3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.debugPolygonFlags4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.debugPolygonFlags5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.debugPolygonFlags6ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.colourLookupTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.cLUTHashToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.cLUTNonRowColBitsHashToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -422,7 +425,10 @@
             this.debugPolygonFlagsHashToolStripMenuItem,
             this.debugPolygonFlags1ToolStripMenuItem,
             this.debugPolygonFlags2ToolStripMenuItem,
-            this.debugPolygonFlags3ToolStripMenuItem});
+            this.debugPolygonFlags3ToolStripMenuItem,
+            this.debugPolygonFlags4ToolStripMenuItem,
+            this.debugPolygonFlags5ToolStripMenuItem,
+            this.debugPolygonFlags6ToolStripMenuItem});
 			this.polygonFlagsToolStripMenuItem.Name = "polygonFlagsToolStripMenuItem";
 			this.polygonFlagsToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
 			this.polygonFlagsToolStripMenuItem.Text = "Polygon Flags";
@@ -454,6 +460,27 @@
 			this.debugPolygonFlags3ToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
 			this.debugPolygonFlags3ToolStripMenuItem.Text = "DebugPolygonFlags3";
 			this.debugPolygonFlags3ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+			// 
+			// debugPolygonFlags4ToolStripMenuItem
+			// 
+			this.debugPolygonFlags4ToolStripMenuItem.Name = "debugPolygonFlags4ToolStripMenuItem";
+			this.debugPolygonFlags4ToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+			this.debugPolygonFlags4ToolStripMenuItem.Text = "DebugPolygonFlags4";
+			this.debugPolygonFlags4ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+			// 
+			// debugPolygonFlags5ToolStripMenuItem
+			// 
+			this.debugPolygonFlags5ToolStripMenuItem.Name = "debugPolygonFlags5ToolStripMenuItem";
+			this.debugPolygonFlags5ToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+			this.debugPolygonFlags5ToolStripMenuItem.Text = "DebugPolygonFlags5";
+			this.debugPolygonFlags5ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
+			// 
+			// debugPolygonFlags6ToolStripMenuItem
+			// 
+			this.debugPolygonFlags6ToolStripMenuItem.Name = "debugPolygonFlags6ToolStripMenuItem";
+			this.debugPolygonFlags6ToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+			this.debugPolygonFlags6ToolStripMenuItem.Text = "DebugPolygonFlags6";
+			this.debugPolygonFlags6ToolStripMenuItem.Click += new System.EventHandler(this.debugRenderModeToolStripMenuItem_Click);
 			// 
 			// colourLookupTableToolStripMenuItem
 			// 
@@ -1578,6 +1605,9 @@
 		private System.Windows.Forms.ToolStripMenuItem debugPolygonFlags1ToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem debugPolygonFlags2ToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem debugPolygonFlags3ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem debugPolygonFlags4ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem debugPolygonFlags5ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem debugPolygonFlags6ToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem textureAttributesToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem debugTextureAttributes1ToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem debugTextureAttributes2ToolStripMenuItem;
@@ -1694,5 +1724,5 @@
         private System.Windows.Forms.ToolStripMenuItem loadDebugToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem debugToolStripMenuItem;
         private System.Windows.Forms.Button loadDependenciesButton;
-    }
+	}
 }

@@ -101,6 +101,9 @@ namespace ModelEx
 			debugPolygonFlags1ToolStripMenuItem.Checked = false;
 			debugPolygonFlags2ToolStripMenuItem.Checked = false;
 			debugPolygonFlags3ToolStripMenuItem.Checked = false;
+			debugPolygonFlags4ToolStripMenuItem.Checked = false;
+			debugPolygonFlags5ToolStripMenuItem.Checked = false;
+			debugPolygonFlags6ToolStripMenuItem.Checked = false;
 			debugPolygonFlagsHashToolStripMenuItem.Checked = false;
 			debugTextureAttributes1ToolStripMenuItem.Checked = false;
 			debugTextureAttributes2ToolStripMenuItem.Checked = false;
@@ -780,6 +783,9 @@ namespace ModelEx
 				(sender == debugPolygonFlags1ToolStripMenuItem) ? CDC.RenderMode.DebugPolygonFlags1 :
 				(sender == debugPolygonFlags2ToolStripMenuItem) ? CDC.RenderMode.DebugPolygonFlags2 :
 				(sender == debugPolygonFlags3ToolStripMenuItem) ? CDC.RenderMode.DebugPolygonFlags3 :
+				(sender == debugPolygonFlags4ToolStripMenuItem) ? CDC.RenderMode.DebugPolygonFlags4 :
+				(sender == debugPolygonFlags5ToolStripMenuItem) ? CDC.RenderMode.DebugPolygonFlags5 :
+				(sender == debugPolygonFlags6ToolStripMenuItem) ? CDC.RenderMode.DebugPolygonFlags6 :
 				(sender == debugPolygonFlagsHashToolStripMenuItem) ? CDC.RenderMode.DebugPolygonFlagsHash :
 				(sender == debugTextureAttributes1ToolStripMenuItem) ? CDC.RenderMode.DebugTextureAttributes1 :
 				(sender == debugTextureAttributes2ToolStripMenuItem) ? CDC.RenderMode.DebugTextureAttributes2 :
@@ -1215,5 +1221,5 @@ namespace ModelEx
 				LoadResource();
 			}
 		}
-    }
+	}
 }
