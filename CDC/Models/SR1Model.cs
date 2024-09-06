@@ -281,6 +281,7 @@ namespace CDC
 		protected Geometry _geometry;
 		protected Geometry _extraGeometry;
 		protected Polygon[] _polygons;
+		protected AniTextureDest[] _aniTextures;
 		protected Bone[] _bones;
 		protected Tree[] _trees;
 		protected Material[] _materials;
@@ -672,6 +673,80 @@ namespace CDC
 			}
 
 			return textureName;
+		}
+
+		protected void AddAniTextureTile(
+			short tX, short tY,
+			short cX, short cY,
+			short tW, short tH)
+		{
+			if (_version != SR1File.RETAIL_VERSION &&
+				_platform != Platform.PSX)
+			{
+				return;
+			}
+
+			short x = (short)((tX & 0x7F) << 2);
+			short y = (short)(tY & 0xFF);
+			short w = (short)((tW & 0xFF) << 2);
+			short h = (short)(tH & 0xFF);
+
+			//#define getTPage(tp, abr, x, y)\
+			// ((((tp)&0x3)<<7)|(((abr)&0x3)<<5)|(((y)&0x100)>>4)|(((x)&0x3ff)>>6)| \
+			// (((y)&0x200)<<2))
+
+			int tPageX = (tX & 0x07C0) >> 6; // 0x3ff in getTPage, but 0x07c0 in GET_TPAGE_X?
+			int tPageY = (tY & 0x0100) >> 4 | (tY & 0x0200) << 2;
+			ushort tPage = (ushort)(tPageX | tPageY);
+
+			//#define getClut(x, y)\
+			// (((y)<<6)|(((x)>>4)&0x3f))
+
+			int clutX = (cX & 0x03F0) >> 4;
+			int clutY = (cY & 0x03FF) << 6;
+			ushort clut = (ushort)(clutX | clutY);
+
+			for (int i = 0; i < 2; i++)
+			{
+				TextureTile tile = new TextureTile()
+				{
+					textureID = 0,
+					tPage = tPage,
+					clut = clut,
+					textureUsed = true,
+					visible = true,
+					u = new int[3],
+					v = new int[3],
+				};
+
+				if (i == 0)
+				{
+					// Top left
+					tile.u[0] = x & 0xFF;
+					tile.v[0] = y & 0xFF;
+					// Top right
+					tile.u[1] = (x + w) & 0xFF;
+					tile.v[1] = y & 0xFF;
+					// Bottom left
+					tile.u[2] = x & 0xFF;
+					tile.v[2] = (y + h) & 0xFF;
+				}
+				else
+				{
+					// Top right
+					tile.u[0] = (x + w) & 0xFF;
+					tile.v[0] = y & 0xFF;
+					// Bottom left
+					tile.u[1] = x & 0xFF;
+					tile.v[1] = (y + h) & 0xFF;
+					// Bottom right
+					tile.u[2] = (x + w) & 0xFF;
+					tile.v[2] = (y + h) & 0xFF;
+				}
+
+				_tPages.AddTextureTile2(tile);
+				_tPages.AddTextureTile(tile);
+			}
 		}
 	}
 }

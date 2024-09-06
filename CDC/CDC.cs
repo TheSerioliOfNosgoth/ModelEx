@@ -429,6 +429,27 @@ namespace CDC
 		}
 	}
 
+	public struct AniTextureDest
+	{
+		public short tPageX;
+		public short tPageY;
+		public short tPageW;
+		public short tPageH;
+		public short clutX;
+		public short clutY;
+		public short clutW;
+		public short clutH;
+		public AniTextureSource[] frames;
+	}
+
+	public struct AniTextureSource
+	{
+		public short tPageX;
+		public short tPageY;
+		public short clutX;
+		public short clutY;
+	}
+
 	public class TreeStack
 	{
 		private class Node
