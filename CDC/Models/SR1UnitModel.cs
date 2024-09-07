@@ -135,8 +135,7 @@ namespace CDC
 
 			_trees = new Tree[_groupCount];
 
-			if (_version == SR1File.RETAIL_VERSION &&
-				_platform == Platform.PSX &&
+			if (_platform == Platform.PSX &&
 				drMoveAniTex != 0)
 			{
 				reader.BaseStream.Position = drMoveAniTex;
