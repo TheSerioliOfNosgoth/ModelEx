@@ -402,6 +402,37 @@ namespace CDC
 				material.visible = false;
 			}
 
+			Vector v1 = _geometry.PositionsRaw[_polygons[p].v1.positionID];
+			Vector v2 = _geometry.PositionsRaw[_polygons[p].v2.positionID];
+			Vector v3 = _geometry.PositionsRaw[_polygons[p].v3.positionID];
+			short midX = 100;
+			short minX = (short)(midX - 3500);
+			short maxX = (short)(midX + 3500);
+			short midY = 2000;
+			short minY = (short)(midY - 2000);
+			short maxY = (short)(midY + 2000);
+			short midZ = 2200;
+			short minZ = (short)(midZ - 400);
+			short maxZ = (short)(midZ + 400);
+
+			if (v1.x < minX || v1.x > maxX ||
+				v2.x < minX || v2.x > maxX ||
+				v3.x < minX || v3.x > maxX ||
+				v1.y < minY || v1.y > maxY ||
+				v2.y < minY || v2.y > maxY ||
+				v3.y < minY || v3.y > maxY ||
+				v1.z < minZ || v1.z > maxZ ||
+				v2.z < minZ || v2.z > maxZ ||
+				v3.z < minZ || v3.z > maxZ)
+			{
+				material.visible = false;
+				material.isTranslucent = true;
+			}
+			else
+			{
+				Console.WriteLine(string.Format("tFace {0}", p));
+			}
+
 			if ((material.polygonFlags & (ushort)PolygonFlags.Emissive) != 0)
 			{
 				material.isEmissive = true;
@@ -457,6 +488,11 @@ namespace CDC
 
 			Utility.FlipRedAndBlue(ref material.colour);
 			material.colour |= 0xFF000000;
+
+			if (!material.visible)
+			{
+				material.colour = 0;
+			}
 		}
 
 		protected override void ReadPolygons(BinaryReader reader, ExportOptions options)
