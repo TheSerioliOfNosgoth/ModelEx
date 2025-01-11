@@ -185,16 +185,15 @@ namespace CDC
 			//xUV.v = WraparoundUVValues(xUV.v + fOffsetAdjust, 0.0f, 255.0f);
 		}
 
-		public static string GetTextureFileLocation(ExportOptions options, string defaultTextureFileName, string modelFileName)
+		public static string GetTextureFileLocation(ExportOptions options, string modelFileName, params string[] textureFileNames)
 		{
 			string result = "";
+
 			List<string> possibleLocations = new List<string>();
 			for (int i = 0; i < options.TextureFileLocations.Count; i++)
 			{
 				possibleLocations.Add(options.TextureFileLocations[i]);
 			}
-
-			List<string> searchDirectories = new List<string>();
 
 			string rootDirectory = Path.GetDirectoryName(modelFileName);
 			while (rootDirectory != null && rootDirectory != "")
@@ -204,29 +203,39 @@ namespace CDC
 				if (parentDirectory == "kain2")
 				{
 					string outputDirectory = Path.Combine(rootDirectory, "output");
-					searchDirectories.Add(outputDirectory);
-					searchDirectories.Add(rootDirectory);
-				}
-			}
-
-			searchDirectories.Add(Path.GetDirectoryName(modelFileName));
-			searchDirectories.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-
-			for (int i = 0; i < searchDirectories.Count; i++)
-			{
-				string textureFileName = Path.Combine(searchDirectories[i], defaultTextureFileName);
-				possibleLocations.Add(textureFileName);
-			}
-
-			for (int i = 0; i < possibleLocations.Count; i++)
-			{
-				if (System.IO.File.Exists(possibleLocations[i]))
-				{
-					result = possibleLocations[i];
-					Console.WriteLine(string.Format("Debug: using texture file '{0}'", result));
+					possibleLocations.Add(outputDirectory);
+					possibleLocations.Add(rootDirectory);
 					break;
 				}
 			}
+
+			possibleLocations.Add(Path.GetDirectoryName(modelFileName));
+			possibleLocations.Add(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+
+			for (int i = 0; i < possibleLocations.Count; i++)
+			{
+				if (Directory.Exists(possibleLocations[i]))
+				{
+					bool foundTextures = true;
+					foreach (string textureFileName in textureFileNames)
+					{
+						string textureFilePath = Path.Combine(possibleLocations[i], textureFileName);
+						if (!File.Exists(textureFileName))
+						{
+							foundTextures = false;
+							break;
+						}
+					}
+
+					if (foundTextures)
+					{
+						result = possibleLocations[i];
+						break;
+					}
+				}
+			}
+
+			Console.WriteLine(string.Format("Debug: using texture file '{0}'", result));
 			return result;
 		}
 

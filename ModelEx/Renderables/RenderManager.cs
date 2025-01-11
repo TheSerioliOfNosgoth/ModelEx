@@ -45,9 +45,9 @@ namespace ModelEx
 	{
 		public string ResourceName = "";
 		public string DataFile = "";
-		public string TextureFile = "";
-		public string ObjectListFile = "";
 		public string ProjectFolder = "";
+		public string TexturesFolder = "";
+		public string ObjectListFolder = "";
 		public Game GameType = Game.Gex;
 		public Platform Platform = Platform.PC;
 		public int ChildIndex = -1;
@@ -57,9 +57,9 @@ namespace ModelEx
         {
 			ResourceName = loadRequest.ResourceName;
 			DataFile = loadRequest.DataFile;
-			TextureFile = loadRequest.TextureFile;
-			ObjectListFile = loadRequest.ObjectListFile;
 			ProjectFolder = loadRequest.ProjectFolder;
+			TexturesFolder = loadRequest.TexturesFolder;
+			ObjectListFolder = loadRequest.ObjectListFolder;
 			GameType = loadRequest.GameType;
 			Platform = loadRequest.Platform;
 			ChildIndex = loadRequest.ChildIndex;
@@ -203,7 +203,7 @@ namespace ModelEx
 			SceneCDC.progressLevels = 1;
 			SceneCDC.ProgressStage = "Reading Data";
 
-			CDC.DataFile dataFile = CDC.DataFile.Create(loadRequest.DataFile, loadRequest.ObjectListFile, loadRequest.GameType, loadRequest.Platform, loadRequest.ExportOptions, loadRequest.ChildIndex);
+			CDC.DataFile dataFile = CDC.DataFile.Create(loadRequest.DataFile, loadRequest.ObjectListFolder, loadRequest.GameType, loadRequest.Platform, loadRequest.ExportOptions, loadRequest.ChildIndex);
 
 			if (dataFile == null)
 			{
@@ -303,7 +303,7 @@ namespace ModelEx
 
 			SceneCDC.progressLevel = 1;
 
-			renderResource.LoadTextures(loadRequest.TextureFile);
+			renderResource.LoadTextures(loadRequest.TexturesFolder);
 
 			if ((flags & LoadResourceFlags.LoadDebugResource) != 0)
 			{
@@ -414,15 +414,15 @@ namespace ModelEx
 
 						if (loadRequest.Platform != Platform.PSX)
 						{
-							objectLoadRequest.TextureFile = loadRequest.TextureFile;
+							objectLoadRequest.TexturesFolder = loadRequest.TexturesFolder;
 						}
 						else
 						{
-							objectLoadRequest.TextureFile = System.IO.Path.ChangeExtension(objectLoadRequest.DataFile, "crm");
+							objectLoadRequest.TexturesFolder = System.IO.Path.GetDirectoryName(objectLoadRequest.DataFile);
 						}
 
-						objectLoadRequest.ObjectListFile = loadRequest.ObjectListFile;
 						objectLoadRequest.ProjectFolder = loadRequest.ProjectFolder;
+						objectLoadRequest.ObjectListFolder = loadRequest.ObjectListFolder;
 						objectLoadRequest.GameType = loadRequest.GameType;
 						objectLoadRequest.Platform = loadRequest.Platform;
 						objectLoadRequest.ExportOptions = loadRequest.ExportOptions;
@@ -445,10 +445,9 @@ namespace ModelEx
 							continue;
 						}
 
-						objectLoadRequest.TextureFile = System.IO.Path.ChangeExtension(objectLoadRequest.DataFile, "vrm");
-
-						objectLoadRequest.ObjectListFile = loadRequest.ObjectListFile;
 						objectLoadRequest.ProjectFolder = loadRequest.ProjectFolder;
+						objectLoadRequest.TexturesFolder = System.IO.Path.GetDirectoryName(objectLoadRequest.DataFile);
+						objectLoadRequest.ObjectListFolder = loadRequest.ObjectListFolder;
 						objectLoadRequest.GameType = loadRequest.GameType;
 						objectLoadRequest.Platform = loadRequest.Platform;
 						objectLoadRequest.ExportOptions = loadRequest.ExportOptions;
@@ -471,10 +470,9 @@ namespace ModelEx
 							continue;
 						}
 
-						objectLoadRequest.TextureFile = objectLoadRequest.DataFile;
-
-						objectLoadRequest.ObjectListFile = loadRequest.ObjectListFile;
 						objectLoadRequest.ProjectFolder = loadRequest.ProjectFolder;
+						objectLoadRequest.TexturesFolder = System.IO.Path.GetDirectoryName(objectLoadRequest.DataFile);
+						objectLoadRequest.ObjectListFolder = loadRequest.ObjectListFolder;
 						objectLoadRequest.GameType = loadRequest.GameType;
 						objectLoadRequest.Platform = loadRequest.Platform;
 						objectLoadRequest.ExportOptions = loadRequest.ExportOptions;

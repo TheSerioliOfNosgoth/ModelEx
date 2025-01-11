@@ -10,7 +10,8 @@ namespace CDC
 		PSX,
 		PlayStation2,
 		Dreamcast,
-		Xbox
+		Xbox,
+		Remaster,
 	}
 
 	public enum Game : int

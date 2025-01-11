@@ -421,9 +421,9 @@ namespace ModelEx
 			if (result)
 			{
 				loadRequest.DataFile = loadResourceDialog.DataFile;
-				loadRequest.TextureFile = loadResourceDialog.TextureFile;
-				loadRequest.ObjectListFile = loadResourceDialog.ObjectListFile;
 				loadRequest.ProjectFolder = loadResourceDialog.ProjectFolder;
+				loadRequest.TexturesFolder = loadResourceDialog.TexturesFolder;
+				loadRequest.ObjectListFolder = loadResourceDialog.ObjectListFolder;
 				loadRequest.GameType = loadResourceDialog.SelectedGameType;
 				loadRequest.Platform = loadResourceDialog.SelectedPlatform;
 				loadRequest.ExportOptions = sceneModeOnLoad == SceneMode.Debug ? _ImportExportOptions : new CDC.ExportOptions();

@@ -57,7 +57,7 @@ namespace ModelEx
 			}
 		}
 
-		public void LoadTextures(string fileName)
+		public void LoadTextures(string folderName)
 		{
 			FileShaderResourceViewDictionary.Clear();
 
@@ -66,6 +66,7 @@ namespace ModelEx
 			{
 				try
 				{
+					string fileName = Path.Combine(folderName, File.Name + ".drm");
 					TRLPCTextureFile textureFile = new TRLPCTextureFile(fileName);
 
 					SceneCDC.progressLevel = 0;
@@ -109,6 +110,7 @@ namespace ModelEx
 			{
 				try
 				{
+					string fileName = Path.Combine(folderName, File.Name + ".vrm");
 					SR2PCTextureFile textureFile = new SR2PCTextureFile(fileName);
 
 					SceneCDC.progressLevel = 0;
@@ -141,10 +143,11 @@ namespace ModelEx
 			}
 			else if (currentFileType == typeof(SR1File))
 			{
-				if (File.Platform == CDC.Platform.PC)
+				if (File.Platform == CDC.Platform.PC || File.Platform == CDC.Platform.Remaster)
 				{
 					try
 					{
+						string fileName = Path.Combine(folderName, "textures.big");
 						SR1PCTextureFile textureFile = new SR1PCTextureFile(fileName);
 
 						SceneCDC.progressLevel = 0;
@@ -186,6 +189,7 @@ namespace ModelEx
 				{
 					try
 					{
+						string fileName = Path.Combine(folderName, "textures.vq");
 						SR1DCTextureFile textureFile = new SR1DCTextureFile(fileName);
 
 						SceneCDC.progressLevel = 0;
@@ -260,6 +264,7 @@ namespace ModelEx
 
 						bool drawGreyscaleFirst = false;
 						bool quantizeBounds = true;
+						string fileName = Path.Combine(folderName, File.Name + ".crm");
 						SR1PSXTextureFile textureFile = new SR1PSXTextureFile(fileName);
 						textureFile.BuildTexturesFromPolygonData(tPages, drawGreyscaleFirst, quantizeBounds, ExportOptions);
 						//textureFile.ExportAllPaletteVariations(tPages, false);
@@ -370,6 +375,7 @@ namespace ModelEx
 
 					bool drawGreyscaleFirst = false;
 					bool quantizeBounds = true;
+					string fileName = Path.Combine(folderName, File.Name + ".vrm");
 					Gex3PSXTextureFile textureFile = new Gex3PSXTextureFile(fileName);
 					textureFile.BuildTexturesFromPolygonData(tPages, drawGreyscaleFirst, quantizeBounds, ExportOptions);
 
