@@ -143,7 +143,7 @@ namespace ModelEx
 			}
 			else if (currentFileType == typeof(SR1File))
 			{
-				if (File.Platform == CDC.Platform.PC || File.Platform == CDC.Platform.Remaster)
+				if (File.Platform == CDC.Platform.PC)
 				{
 					try
 					{
@@ -161,6 +161,69 @@ namespace ModelEx
 								if (material.textureUsed)
 								{
 									System.IO.MemoryStream stream = textureFile.GetDataAsStream(material.textureID);
+									if (stream != null)
+									{
+										String textureName = CDC.Utility.GetSoulReaverPCOrDreamcastTextureName(File.Name, material.textureID) + TextureExtension;
+										AddTexture(stream, textureName);
+										if (!_TexturesAsPNGs.ContainsKey(textureName))
+										{
+											_TexturesAsPNGs.Add(textureName, textureFile.GetTextureAsBitmap(material.textureID));
+										}
+									}
+								}
+
+								SceneCDC.progressLevel++;
+							}
+						}
+					}
+					catch (FileNotFoundException)
+					{
+						Console.WriteLine("Error: couldn't find a texture file");
+					}
+					catch (Exception ex)
+					{
+						Console.Write(ex.ToString());
+					}
+				}
+				if (File.Platform == CDC.Platform.Remaster)
+				{
+					try
+					{
+						string fileName0 = Path.Combine(folderName, "TEXTURES.BIG");
+						string fileName1 = Path.Combine(folderName, "MOVIES.BIG");
+						string fileName2 = Path.Combine(folderName, "BONUS.BIG");
+						SR1PCTextureFile textureFile0 = new SR1PCTextureFile(fileName0);
+						SR1PCTextureFile textureFile1 = new SR1PCTextureFile(fileName1);
+						SR1PCTextureFile textureFile2 = new SR1PCTextureFile(fileName2);
+
+						SceneCDC.progressLevel = 0;
+						SceneCDC.progressLevels = File.GetNumMaterials();
+						SceneCDC.ProgressStage = "Loading Textures";
+
+						foreach (CDC.IModel cdcModel in File.Models)
+						{
+							foreach (CDC.Material material in cdcModel.Materials)
+							{
+								if (material.textureUsed)
+								{
+									SR1PCTextureFile textureFile;
+									MemoryStream stream;
+									if (material.textureID >= 1312)
+									{
+										textureFile = textureFile2;
+										stream = textureFile.GetDataAsStream(material.textureID - 1312);
+									}
+									else if (material.textureID >= 1285)
+									{
+										textureFile = textureFile1;
+										stream = textureFile.GetDataAsStream(material.textureID - 1285);
+									}
+									else
+									{
+										textureFile = textureFile0;
+										stream = textureFile.GetDataAsStream(material.textureID);
+									}
+
 									if (stream != null)
 									{
 										String textureName = CDC.Utility.GetSoulReaverPCOrDreamcastTextureName(File.Name, material.textureID) + TextureExtension;
