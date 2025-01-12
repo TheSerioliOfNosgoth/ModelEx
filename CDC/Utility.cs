@@ -185,7 +185,7 @@ namespace CDC
 			//xUV.v = WraparoundUVValues(xUV.v + fOffsetAdjust, 0.0f, 255.0f);
 		}
 
-		public static string GetTextureFileLocation(ExportOptions options, string modelFileName, params string[] textureFileNames)
+		public static string GetSR1TexturePath(ExportOptions options, string modelFileName, bool isRemaster, params string[] textureFileNames)
 		{
 			string result = "";
 
@@ -195,18 +195,41 @@ namespace CDC
 				possibleLocations.Add(options.TextureFileLocations[i]);
 			}
 
+			bool foundRoot = false;
+			bool foundFallback = false;
 			string rootDirectory = Path.GetDirectoryName(modelFileName);
+			string fallbackDirectory = "";
 			while (rootDirectory != null && rootDirectory != "")
 			{
 				string parentDirectory = Path.GetFileName(rootDirectory);
 				rootDirectory = Path.GetDirectoryName(rootDirectory);
 				if (parentDirectory == "kain2")
 				{
-					string outputDirectory = Path.Combine(rootDirectory, "output");
-					possibleLocations.Add(outputDirectory);
-					possibleLocations.Add(rootDirectory);
+					foundRoot = true;
 					break;
 				}
+
+				if (isRemaster && !foundFallback &&
+					(parentDirectory.ToLower() == "area" || parentDirectory.ToLower() == "object"))
+				{
+					fallbackDirectory = rootDirectory;
+					foundFallback = true;
+				}
+			}
+
+			if (foundRoot)
+			{
+				possibleLocations.Add(rootDirectory);
+
+				if (!isRemaster)
+				{
+					string outputDirectory = Path.Combine(rootDirectory, "output");
+					possibleLocations.Add(outputDirectory);
+				}
+			}
+			else if (foundFallback)
+			{
+				possibleLocations.Add(fallbackDirectory);
 			}
 
 			possibleLocations.Add(Path.GetDirectoryName(modelFileName));

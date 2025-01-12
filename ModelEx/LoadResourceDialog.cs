@@ -453,6 +453,7 @@ namespace ModelEx
 					objectListFileComboBox.SelectedIndex = -1;
 
 					string rootDirectory = Path.GetDirectoryName(fileInfo.FullName);
+					string fallbackDirectory = "";
 					string rootFolderName = "";
 					switch (SelectedGameType)
 					{
@@ -466,19 +467,33 @@ namespace ModelEx
 					}
 
 					bool foundRoot = false;
+					bool foundFallback = false;
 					while (rootDirectory != null && rootDirectory != "")
 					{
 						string parentDirectory = Path.GetFileName(rootDirectory);
 						rootDirectory = Path.GetDirectoryName(rootDirectory);
-						if (parentDirectory == rootFolderName)
+						if (parentDirectory.ToLower() == rootFolderName)
 						{
 							foundRoot = true;
 							break;
+						}
+
+						if (SelectedGameType == CDC.Game.SR1 && SelectedPlatform == CDC.Platform.Remaster && !foundFallback &&
+							(parentDirectory.ToLower() == "area" || parentDirectory.ToLower() == "object"))
+						{
+							fallbackDirectory = rootDirectory;
+							foundFallback = true;
 						}
 					}
 
 					if (foundRoot)
 					{
+						ProjectFolder = rootDirectory;
+						projectFolderTextBox.Text = rootDirectory;
+					}
+					else if (foundFallback)
+					{
+						rootDirectory = fallbackDirectory;
 						ProjectFolder = rootDirectory;
 						projectFolderTextBox.Text = rootDirectory;
 					}
@@ -502,7 +517,9 @@ namespace ModelEx
 							else if (SelectedPlatform == CDC.Platform.PC)
 							{
 								string textureFileName = "textures.big";
+								string outputDirectory = Path.Combine(rootDirectory, "output");
 								textureFileComboBox.Items.Add(new FileNode(rootDirectory, textureFileName));
+								textureFileComboBox.Items.Add(new FileNode(outputDirectory, textureFileName));
 								textureFileComboBox.Items.Add(new FileNode(fileInfo.DirectoryName, textureFileName));
 								textureFileComboBox.Enabled = true;
 							}
@@ -515,11 +532,11 @@ namespace ModelEx
 							}
 							else if (SelectedPlatform == CDC.Platform.Remaster)
 							{
-								string textureFileName0 = "textures.big";
-								string textureFileName1 = "movies.big";
-								string textureFileName2 = "bonus.big";
-								textureFileComboBox.Items.Add(new FileNode(rootDirectory, textureFileName0, textureFileName1, textureFileName2));
-								textureFileComboBox.Items.Add(new FileNode(fileInfo.DirectoryName, textureFileName0, textureFileName1, textureFileName2));
+								string tex0 = "TEXTURES.BIG";
+								string tex1 = "MOVIES.BIG";
+								string tex2 = "BONUS.BIG";
+								textureFileComboBox.Items.Add(new FileNode(rootDirectory, tex0, tex1, tex2));
+								textureFileComboBox.Items.Add(new FileNode(fileInfo.DirectoryName, tex0, tex1, tex2));
 								textureFileComboBox.Enabled = true;
 							}
 							break;

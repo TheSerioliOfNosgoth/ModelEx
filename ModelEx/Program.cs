@@ -543,15 +543,18 @@ namespace ModelEx
 
 							if (sr1File.Platform == CDC.Platform.PC)
 							{
-								loadRequest.TexturesFolder = CDC.Utility.GetTextureFileLocation(options, inputFilePath, "textures.big");
+								loadRequest.TexturesFolder = CDC.Utility.GetSR1TexturePath(options, inputFilePath, false, "textures.big");
 							}
 							else if (sr1File.Platform == CDC.Platform.Dreamcast)
 							{
-								loadRequest.TexturesFolder = CDC.Utility.GetTextureFileLocation(options, inputFilePath, "textures.vq");
+								loadRequest.TexturesFolder = CDC.Utility.GetSR1TexturePath(options, inputFilePath, false, "textures.vq");
 							}
 							else if (sr1File.Platform == CDC.Platform.Remaster)
 							{
-								loadRequest.TexturesFolder = CDC.Utility.GetTextureFileLocation(options, inputFilePath, "textures.big", "movies.big", "bonus.big");
+								string tex0 = "TEXTURES.BIG";
+								string tex1 = "MOVIES.BIG";
+								string tex2 = "BONUS.BIG";
+								loadRequest.TexturesFolder = CDC.Utility.GetSR1TexturePath(options, inputFilePath, true, tex0, tex1, tex2);
 							}
 							else
 							{

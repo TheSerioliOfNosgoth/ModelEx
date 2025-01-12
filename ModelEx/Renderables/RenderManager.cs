@@ -8,6 +8,7 @@ using SlimDX.DXGI;
 using Game = CDC.Game;
 using Platform = CDC.Platform;
 using ExportOptions = CDC.ExportOptions;
+using System.IO;
 
 namespace ModelEx
 {
@@ -394,20 +395,28 @@ namespace ModelEx
 
 						if (loadRequest.ProjectFolder != "")
 						{
-							objectLoadRequest.DataFile = System.IO.Path.Combine(loadRequest.ProjectFolder, "kain2\\object", objectName, objectName + extension);
+							if (loadRequest.Platform == Platform.Remaster)
+							{
+								objectLoadRequest.DataFile = Path.Combine(loadRequest.ProjectFolder, "OBJECT", objectName, objectName + extension);
+							}
+
+							if (loadRequest.Platform != Platform.Remaster || !File.Exists(objectLoadRequest.DataFile))
+							{
+								objectLoadRequest.DataFile = Path.Combine(loadRequest.ProjectFolder, "kain2\\object", objectName, objectName + extension);
+							}
 						}
 						else
 						{
-							string projectFolder = System.IO.Path.GetDirectoryName(loadRequest.DataFile);
-							objectLoadRequest.DataFile = System.IO.Path.Combine(projectFolder, objectName, extension);
+							string projectFolder = Path.GetDirectoryName(loadRequest.DataFile);
+							objectLoadRequest.DataFile = Path.Combine(projectFolder, objectName, extension);
 						}
 
-						if (!System.IO.File.Exists(objectLoadRequest.DataFile))
+						if (!File.Exists(objectLoadRequest.DataFile))
 						{
-							objectLoadRequest.DataFile = System.IO.Path.ChangeExtension(objectLoadRequest.DataFile, ".pcm");
+							objectLoadRequest.DataFile = Path.ChangeExtension(objectLoadRequest.DataFile, ".pcm");
 						}
 
-						if (!System.IO.File.Exists(objectLoadRequest.DataFile))
+						if (!File.Exists(objectLoadRequest.DataFile))
 						{
 							continue;
 						}
@@ -418,7 +427,7 @@ namespace ModelEx
 						}
 						else
 						{
-							objectLoadRequest.TexturesFolder = System.IO.Path.GetDirectoryName(objectLoadRequest.DataFile);
+							objectLoadRequest.TexturesFolder = Path.GetDirectoryName(objectLoadRequest.DataFile);
 						}
 
 						objectLoadRequest.ProjectFolder = loadRequest.ProjectFolder;
@@ -432,21 +441,21 @@ namespace ModelEx
 					{
 						if (loadRequest.ProjectFolder != "")
 						{
-							objectLoadRequest.DataFile = System.IO.Path.Combine(loadRequest.ProjectFolder, "pcenglish", objectName + ".drm");
+							objectLoadRequest.DataFile = Path.Combine(loadRequest.ProjectFolder, "pcenglish", objectName + ".drm");
 						}
 						else
 						{
-							string projectFolder = System.IO.Path.GetDirectoryName(loadRequest.DataFile);
-							objectLoadRequest.DataFile = System.IO.Path.Combine(projectFolder, objectName, ".drm");
+							string projectFolder = Path.GetDirectoryName(loadRequest.DataFile);
+							objectLoadRequest.DataFile = Path.Combine(projectFolder, objectName, ".drm");
 						}
 
-						if (!System.IO.File.Exists(objectLoadRequest.DataFile))
+						if (!File.Exists(objectLoadRequest.DataFile))
 						{
 							continue;
 						}
 
 						objectLoadRequest.ProjectFolder = loadRequest.ProjectFolder;
-						objectLoadRequest.TexturesFolder = System.IO.Path.GetDirectoryName(objectLoadRequest.DataFile);
+						objectLoadRequest.TexturesFolder = Path.GetDirectoryName(objectLoadRequest.DataFile);
 						objectLoadRequest.ObjectListFolder = loadRequest.ObjectListFolder;
 						objectLoadRequest.GameType = loadRequest.GameType;
 						objectLoadRequest.Platform = loadRequest.Platform;
@@ -457,21 +466,21 @@ namespace ModelEx
 					{
 						if (loadRequest.ProjectFolder != "")
 						{
-							objectLoadRequest.DataFile = System.IO.Path.Combine(loadRequest.ProjectFolder, "pc-w", objectName + ".drm");
+							objectLoadRequest.DataFile = Path.Combine(loadRequest.ProjectFolder, "pc-w", objectName + ".drm");
 						}
 						else
 						{
-							string projectFolder = System.IO.Path.GetDirectoryName(loadRequest.DataFile);
-							objectLoadRequest.DataFile = System.IO.Path.Combine(projectFolder, objectName, ".drm");
+							string projectFolder = Path.GetDirectoryName(loadRequest.DataFile);
+							objectLoadRequest.DataFile = Path.Combine(projectFolder, objectName, ".drm");
 						}
 
-						if (!System.IO.File.Exists(objectLoadRequest.DataFile))
+						if (!File.Exists(objectLoadRequest.DataFile))
 						{
 							continue;
 						}
 
 						objectLoadRequest.ProjectFolder = loadRequest.ProjectFolder;
-						objectLoadRequest.TexturesFolder = System.IO.Path.GetDirectoryName(objectLoadRequest.DataFile);
+						objectLoadRequest.TexturesFolder = Path.GetDirectoryName(objectLoadRequest.DataFile);
 						objectLoadRequest.ObjectListFolder = loadRequest.ObjectListFolder;
 						objectLoadRequest.GameType = loadRequest.GameType;
 						objectLoadRequest.Platform = loadRequest.Platform;
