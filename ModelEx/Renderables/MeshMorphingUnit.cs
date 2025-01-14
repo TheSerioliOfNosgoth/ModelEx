@@ -51,7 +51,7 @@ namespace ModelEx
 			effect.Constants.DepthBias = material.DepthBias;
 
 			effect.BlendMode = material.BlendMode;
-			effect.Constants.VertexColorFactor = 1.0f; // 2.0f for Gex
+			effect.Constants.ColorFactor = material.ColorFactor;
 		}
 
 		public override void ApplyTransform(Matrix transform)

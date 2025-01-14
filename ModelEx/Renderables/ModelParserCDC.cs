@@ -48,6 +48,9 @@ namespace ModelEx
 
 				Color colorDiffuse = Color.FromArgb((int)unchecked(_cdcModel.Materials[materialIndex].colour));
 				material.Diffuse = colorDiffuse;
+
+				material.ColorFactor = _cdcModel.Materials[materialIndex].colorFactor;
+
 				material.TextureFileName = _cdcModel.GetTextureName(materialIndex, options);
 				Materials.Add(material);
 			}

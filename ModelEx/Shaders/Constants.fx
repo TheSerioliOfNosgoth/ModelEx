@@ -12,7 +12,7 @@ cbuffer Constants : register(b0)
 	float4 SpecularColor;
 	float SpecularPower;
 	bool UseTexture;
-	float VertexColorFactor;
+	float ColorFactor;
 	float DepthBias;
 	float RealmBlend;
 };

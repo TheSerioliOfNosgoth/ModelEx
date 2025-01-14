@@ -245,6 +245,7 @@ namespace CDC
 		public Boolean isEmissive;
 		public float opacity;
 		public float emissivity;
+		public float colorFactor;
 		public bool UseAlphaMask;
 		public ushort polygonFlags;
 		public byte sortPush;
@@ -297,6 +298,7 @@ namespace CDC
 		{
 			opacity = 1.0f;
 			emissivity = 0.0f;
+			colorFactor = 1.0f;
 			UseAlphaMask = false;
 			polygonFlags = 0;
 			sortPush = 0;
@@ -337,6 +339,7 @@ namespace CDC
 			clone.isEmissive = isEmissive;
 			clone.opacity = opacity;
 			clone.emissivity = emissivity;
+			clone.colorFactor = colorFactor;
 			clone.UseAlphaMask = UseAlphaMask;
 			clone.polygonFlags = polygonFlags;
 			clone.sortPush = sortPush;

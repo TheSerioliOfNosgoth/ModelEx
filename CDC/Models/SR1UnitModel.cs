@@ -352,6 +352,7 @@ namespace CDC
 			#endregion
 
 			Material material = new Material();
+			material.colorFactor = 2.0f;
 			material.visible = true;
 			material.textureUsed = textureUsed;
 			material.isTranslucent = false;

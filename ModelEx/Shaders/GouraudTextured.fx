@@ -32,7 +32,7 @@ VertexShaderOutput VShader(VertexShaderInput input)
 
 	output.Position = mul(worldPosition, viewProjection);
 	output.Color = input.Color;
-	output.Color *= VertexColorFactor;
+	output.Color *= ColorFactor;
 	output.ViewDirection = worldPosition - CameraPosition;
 	output.TexCoord = input.TexCoord;
 

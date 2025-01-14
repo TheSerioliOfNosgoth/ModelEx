@@ -121,6 +121,8 @@ namespace CDC
 			_polygons[p].v3 = _geometry.Vertices[reader.ReadUInt16()];
 			_polygons[p].material = new Material();
 
+			_polygons[p].material.colorFactor = 2.0f;
+
 			ushort flags = reader.ReadUInt16();
 			reader.BaseStream.Position += 2;
 

@@ -15,6 +15,7 @@ namespace ModelEx
 		public System.Drawing.Color Reflective = System.Drawing.Color.White;
 		public System.Drawing.Color Specular = System.Drawing.Color.White;
 		public System.Drawing.Color Transparent = System.Drawing.Color.White;
+		public float ColorFactor = 1.0f;
 		public string TextureFileName = "";
 	}
 }

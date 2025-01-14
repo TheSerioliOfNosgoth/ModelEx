@@ -41,7 +41,7 @@ namespace ModelEx
 		[FieldOffset(0x124)]
 		public bool UseTexture;
 		[FieldOffset(0x128)]
-		public float VertexColorFactor;
+		public float ColorFactor;
 
 		// Rasterizer
 		[FieldOffset(0x12C)]
