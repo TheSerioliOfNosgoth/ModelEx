@@ -14,9 +14,10 @@ namespace CDC
 		{
 		}
 
-		public DefianceFile(String dataFileName, String objectListFile, Platform platform, ExportOptions options)
+		public DefianceFile(String dataFileName, String objectListFolder, Platform platform, ExportOptions options)
 			: base(dataFileName, Game.Defiance, platform, options)
 		{
+			string objectListFile = Path.Combine(objectListFolder, "objectlist.txt");
 			LoadObjectList(objectListFile);
 		}
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
 using System.Security.AccessControl;
@@ -11,14 +12,14 @@ namespace ModelEx
 	{
 		public string SelectedFolder { get; set; } = "";
 		public string DataFile { get; private set; } = "";
-		public string TextureFile { get; private set; } = "";
-		public string ObjectListFile { get; private set; } = "";
 		public string ProjectFolder { get; private set; } = "";
+		public string TexturesFolder { get; private set; } = "";
+		public string ObjectListFolder { get; private set; } = "";
 		public CDC.Game SelectedGameType { get; set; } = CDC.Game.Gex;
 		public CDC.Platform SelectedPlatform { get; set; } = CDC.Platform.PC;
 		public bool ClearLoadedFiles { get; set; } = false;
-		private DirectoryInfo _currentDirectory;
 
+		private DirectoryInfo _currentDirectory;
 		private readonly List<string> _specialFolders = new List<string>();
 
 		class PlatformNode
@@ -38,6 +39,7 @@ namespace ModelEx
 					case CDC.Platform.PlayStation2: PlatformName = "PlayStation 2"; break;
 					case CDC.Platform.Dreamcast: PlatformName = "Dreamcast"; break;
 					case CDC.Platform.Xbox: PlatformName = "XBox"; break;
+					case CDC.Platform.Remaster: PlatformName = "Remaster"; break;
 				}
 			}
 
@@ -49,20 +51,66 @@ namespace ModelEx
 
 		class FileNode
 		{
-			public readonly bool FileExists;
-			public readonly string FileName;
-			public readonly string FileDescription;
+			public readonly string FolderName;
+			public readonly bool FolderExists;
+			public readonly List<string> FileNames;
+			public readonly bool FilesExist;
+			public readonly string Description;
 
-			public FileNode(string fileName, bool fileExists)
+			public FileNode(string folderName, params string[] fileNames)
 			{
-				FileName = fileName;
-				FileExists = fileExists && File.Exists(fileName);
-				FileDescription = FileExists ? FileName : (FileName + " (NOT FOUND)");
+				FolderName = folderName;
+				FolderExists = folderName != null && folderName != "" && Directory.Exists(folderName);
+				FileNames = new List<string>(fileNames);
+				FilesExist = true;
+				Description = (FolderExists) ? FolderName : "(No Project Folder)";
+
+				for (int i = 0; i < FileNames.Count; i++)
+				{
+					if (FileNames[i] == null)
+					{
+						FileNames[i] = "";
+					}
+
+					if (i == 0)
+					{
+						Description += " - (";
+					}
+					else
+					{
+						Description += ", ";
+					}
+
+					Description += FileNames[i];
+
+					if ((i + 1) == FileNames.Count)
+					{
+						Description += ")";
+					}
+
+					// Don't check if the file exists if there's no folder to look in,
+					// but still set FilesExist as false.
+					if (!FolderExists || !File.Exists(Path.Combine(FolderName, FileNames[i])))
+					{
+						FilesExist = false;
+					}
+				}
+
+				// Only show the Files Missing message if the folder was found.
+				if (FolderExists && !FilesExist)
+				{
+					Description += " - (Files Missing)";
+				}
+			}
+
+			public string GetFilePath(int index)
+			{
+				return Path.Combine(FolderName, FileNames[index]);
 			}
 
 			public override string ToString()
 			{
-				return FileDescription;
+				return Description;
 			}
 		}
 
@@ -225,11 +273,20 @@ namespace ModelEx
 				}
 
 				FileNode textureFileNode = (FileNode)textureFileComboBox.SelectedItem;
-				if (textureFileComboBox.Enabled && !textureFileNode.FileExists)
+				if (!textureFileNode.FilesExist)
 				{
+					string textureFileList = "";
+					for (int i = 0; i < textureFileNode.FileNames.Count; i++)
+					{
+						if (!File.Exists(textureFileNode.GetFilePath(i)))
+						{
+							textureFileList += "\r\n" + textureFileNode.FileNames[i];
+						}
+					}
+
 					MessageBox.Show(
-						"Texture file \"" + dataFileTextBox.Text + "\" not found.\r\nPlease select another option.",
-						"File not found",
+						"Texture file(s) not found. Please select another option." + textureFileList,
+						"File(s) not found",
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Exclamation
 					);
@@ -239,11 +296,20 @@ namespace ModelEx
 				}
 
 				FileNode objectListFileNode = (FileNode)objectListFileComboBox.SelectedItem;
-				if (objectListFileComboBox.Enabled && !objectListFileNode.FileExists)
+				if (!objectListFileNode.FilesExist)
 				{
+					string objectListFile = "";
+					if (objectListFileNode.FileNames.Count > 0)
+					{
+						if (!File.Exists(objectListFileNode.GetFilePath(0)))
+						{
+							objectListFile += "\r\n" + objectListFileNode.FileNames[0];
+						}
+					}
+
 					MessageBox.Show(
-						"Object list file \"" + objectListFileNode.FileName + "\" not found.\r\nPlease select another option.",
-						"File not found",
+						"Object list file(s) not found. Please select another option." + objectListFile,
+						"File(s) not found",
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Exclamation
 					);
@@ -253,9 +319,9 @@ namespace ModelEx
 				}
 
 				DataFile = dataFileTextBox.Text;
-				TextureFile = textureFileNode.FileName;
-				ObjectListFile = objectListFileNode.FileName;
 				ProjectFolder = projectFolderTextBox.Text;
+				TexturesFolder = textureFileNode.FolderName;
+				ObjectListFolder = objectListFileNode.FolderName;
 			}
 			catch (Exception)
 			{
@@ -344,6 +410,7 @@ namespace ModelEx
 				platformComboBox.Items.Add(new PlatformNode(CDC.Platform.PC));
 				platformComboBox.Items.Add(new PlatformNode(CDC.Platform.PSX));
 				platformComboBox.Items.Add(new PlatformNode(CDC.Platform.Dreamcast));
+				platformComboBox.Items.Add(new PlatformNode(CDC.Platform.Remaster));
 			}
 			else if (SelectedGameType == CDC.Game.SR2 || SelectedGameType == CDC.Game.Defiance)
 			{
@@ -386,6 +453,7 @@ namespace ModelEx
 					objectListFileComboBox.SelectedIndex = -1;
 
 					string rootDirectory = Path.GetDirectoryName(fileInfo.FullName);
+					string fallbackDirectory = "";
 					string rootFolderName = "";
 					switch (SelectedGameType)
 					{
@@ -399,14 +467,22 @@ namespace ModelEx
 					}
 
 					bool foundRoot = false;
+					bool foundFallback = false;
 					while (rootDirectory != null && rootDirectory != "")
 					{
 						string parentDirectory = Path.GetFileName(rootDirectory);
 						rootDirectory = Path.GetDirectoryName(rootDirectory);
-						if (parentDirectory == rootFolderName)
+						if (parentDirectory.ToLower() == rootFolderName)
 						{
 							foundRoot = true;
 							break;
+						}
+
+						if (SelectedGameType == CDC.Game.SR1 && SelectedPlatform == CDC.Platform.Remaster && !foundFallback &&
+							(parentDirectory.ToLower() == "area" || parentDirectory.ToLower() == "object"))
+						{
+							fallbackDirectory = rootDirectory;
+							foundFallback = true;
 						}
 					}
 
@@ -415,38 +491,52 @@ namespace ModelEx
 						ProjectFolder = rootDirectory;
 						projectFolderTextBox.Text = rootDirectory;
 					}
+					else if (foundFallback)
+					{
+						rootDirectory = fallbackDirectory;
+						ProjectFolder = rootDirectory;
+						projectFolderTextBox.Text = rootDirectory;
+					}
 					else
 					{
 						rootDirectory = "";
 						ProjectFolder = "";
-						projectFolderTextBox.Text = "(NOT FOUND)";
+						projectFolderTextBox.Text = "[No Project Folder]";
 					}
 
 					#region Textures
-					string textureFileName = fileInfo.FullName;
 					switch (SelectedGameType)
 					{
 						case CDC.Game.SR1:
 						{
 							if (SelectedPlatform == CDC.Platform.PSX)
 							{
-								textureFileName = Path.ChangeExtension(fileInfo.FullName, "crm");
-								textureFileComboBox.Items.Add(new FileNode(textureFileName, true));
+								string textureFileName = Path.ChangeExtension(fileInfo.Name, "crm");
+								textureFileComboBox.Items.Add(new FileNode(fileInfo.DirectoryName, textureFileName));
 							}
 							else if (SelectedPlatform == CDC.Platform.PC)
 							{
-								textureFileName = Path.Combine(rootDirectory, "textures.big");
-								textureFileComboBox.Items.Add(new FileNode(textureFileName, foundRoot));
-								textureFileName = Path.Combine(fileInfo.DirectoryName, "textures.big");
-								textureFileComboBox.Items.Add(new FileNode(textureFileName, true));
+								string textureFileName = "textures.big";
+								string outputDirectory = Path.Combine(rootDirectory, "output");
+								textureFileComboBox.Items.Add(new FileNode(rootDirectory, textureFileName));
+								textureFileComboBox.Items.Add(new FileNode(outputDirectory, textureFileName));
+								textureFileComboBox.Items.Add(new FileNode(fileInfo.DirectoryName, textureFileName));
 								textureFileComboBox.Enabled = true;
 							}
 							else if (SelectedPlatform == CDC.Platform.Dreamcast)
 							{
-								textureFileName = Path.Combine(rootDirectory, "textures.vq");
-								textureFileComboBox.Items.Add(new FileNode(textureFileName, foundRoot));
-								textureFileName = Path.Combine(fileInfo.DirectoryName, "textures.vq");
-								textureFileComboBox.Items.Add(new FileNode(textureFileName, true));
+								string textureFileName = "textures.vq";
+								textureFileComboBox.Items.Add(new FileNode(rootDirectory, textureFileName));
+								textureFileComboBox.Items.Add(new FileNode(fileInfo.DirectoryName, textureFileName));
+								textureFileComboBox.Enabled = true;
+							}
+							else if (SelectedPlatform == CDC.Platform.Remaster)
+							{
+								string tex0 = "TEXTURES.BIG";
+								string tex1 = "MOVIES.BIG";
+								string tex2 = "BONUS.BIG";
+								textureFileComboBox.Items.Add(new FileNode(rootDirectory, tex0, tex1, tex2));
+								textureFileComboBox.Items.Add(new FileNode(fileInfo.DirectoryName, tex0, tex1, tex2));
 								textureFileComboBox.Enabled = true;
 							}
 							break;
@@ -455,15 +545,15 @@ namespace ModelEx
 						case CDC.Game.SR2:
 						case CDC.Game.Defiance:
 						{
-							textureFileName = Path.ChangeExtension(fileInfo.FullName, "vrm");
-							textureFileComboBox.Items.Add(new FileNode(textureFileName, true));
-							textureFileComboBox.Enabled = true;
+							string textureFileName = Path.ChangeExtension(fileInfo.Name, "vrm");
+							textureFileComboBox.Items.Add(new FileNode(fileInfo.DirectoryName, textureFileName));
 							break;
 						}
 						case CDC.Game.TRL:
 						case CDC.Game.TRA:
 						{
-							textureFileComboBox.Items.Add(new FileNode(textureFileName, true));
+							string textureFileName = fileInfo.Name;
+							textureFileComboBox.Items.Add(new FileNode(fileInfo.DirectoryName, textureFileName));
 							break;
 						}
 						default:
@@ -474,28 +564,33 @@ namespace ModelEx
 					#endregion
 
 					#region Object List
-					string objectListFileName = fileInfo.FullName;
 					if (SelectedGameType == CDC.Game.Defiance || SelectedGameType == CDC.Game.TRL || SelectedGameType == CDC.Game.TRA)
 					{
+						string objectListDirectoryName = "";
 						if (foundRoot)
 						{
-							string gameFolderName
-								= (SelectedGameType == CDC.Game.Defiance) ? "sr3" : (SelectedGameType == CDC.Game.TRL) ? "tr7" : "trae";
-
-							objectListFileName = Path.Combine(rootDirectory, gameFolderName, rootFolderName, "objectlist.txt");
+							string gameFolderName = "";
+							switch (SelectedGameType)
+							{
+								case CDC.Game.Defiance:
+									gameFolderName = "sr3";
+									break;
+								case CDC.Game.TRL:
+									gameFolderName = "tr7";
+									break;
+								case CDC.Game.TRA:
+									gameFolderName = "trae";
+									break;
+							}
+							objectListDirectoryName = Path.Combine(rootDirectory, gameFolderName, rootFolderName);
 						}
-						else
-						{
-							objectListFileName = "objectlist.txt";
-						}
-						objectListFileComboBox.Items.Add(new FileNode(objectListFileName, foundRoot));
-						objectListFileName = Path.Combine(fileInfo.DirectoryName, "objectlist.txt");
-						objectListFileComboBox.Items.Add(new FileNode(objectListFileName, true));
+						objectListFileComboBox.Items.Add(new FileNode(objectListDirectoryName, "objectlist.txt"));
+						objectListFileComboBox.Items.Add(new FileNode(fileInfo.DirectoryName, "objectlist.txt"));
 						objectListFileComboBox.Enabled = true;
 					}
 					else
 					{
-						objectListFileComboBox.Items.Add(new FileNode(objectListFileName, true));
+						objectListFileComboBox.Items.Add(new FileNode(fileInfo.DirectoryName, fileInfo.Name));
 					}
 
 					objectListFileComboBox.SelectedIndex = 0;

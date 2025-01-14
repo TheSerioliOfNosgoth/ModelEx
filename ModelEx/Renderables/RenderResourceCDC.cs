@@ -57,7 +57,7 @@ namespace ModelEx
 			}
 		}
 
-		public void LoadTextures(string fileName)
+		public void LoadTextures(string folderName)
 		{
 			FileShaderResourceViewDictionary.Clear();
 
@@ -66,6 +66,7 @@ namespace ModelEx
 			{
 				try
 				{
+					string fileName = Path.Combine(folderName, File.Name + ".drm");
 					TRLPCTextureFile textureFile = new TRLPCTextureFile(fileName);
 
 					SceneCDC.progressLevel = 0;
@@ -109,6 +110,7 @@ namespace ModelEx
 			{
 				try
 				{
+					string fileName = Path.Combine(folderName, File.Name + ".vrm");
 					SR2PCTextureFile textureFile = new SR2PCTextureFile(fileName);
 
 					SceneCDC.progressLevel = 0;
@@ -145,6 +147,7 @@ namespace ModelEx
 				{
 					try
 					{
+						string fileName = Path.Combine(folderName, "textures.big");
 						SR1PCTextureFile textureFile = new SR1PCTextureFile(fileName);
 
 						SceneCDC.progressLevel = 0;
@@ -182,10 +185,76 @@ namespace ModelEx
 						Console.Write(ex.ToString());
 					}
 				}
+				if (File.Platform == CDC.Platform.Remaster)
+				{
+					try
+					{
+						string fileName0 = Path.Combine(folderName, "TEXTURES.BIG");
+						string fileName1 = Path.Combine(folderName, "MOVIES.BIG");
+						string fileName2 = Path.Combine(folderName, "BONUS.BIG");
+						SR1PCTextureFile textureFile0 = new SR1PCTextureFile(fileName0);
+						SR1PCTextureFile textureFile1 = new SR1PCTextureFile(fileName1);
+						SR1PCTextureFile textureFile2 = new SR1PCTextureFile(fileName2);
+
+						SceneCDC.progressLevel = 0;
+						SceneCDC.progressLevels = File.GetNumMaterials();
+						SceneCDC.ProgressStage = "Loading Textures";
+
+						foreach (CDC.IModel cdcModel in File.Models)
+						{
+							foreach (CDC.Material material in cdcModel.Materials)
+							{
+								if (material.textureUsed)
+								{
+									SR1PCTextureFile textureFile;
+									MemoryStream stream;
+									int textureID = 0;
+									if (material.textureID >= 1314) // 2 duplicates
+									{
+										textureFile = textureFile2;
+										textureID = material.textureID - 1312;
+									}
+									else if (material.textureID >= 1287) // 2 duplicates
+									{
+										textureFile = textureFile1;
+										textureID = material.textureID - 1285;
+									}
+									else
+									{
+										textureFile = textureFile0;
+										textureID = material.textureID;
+									}
+
+									stream = textureFile.GetDataAsStream(textureID);
+									if (stream != null)
+									{
+										String textureName = CDC.Utility.GetSoulReaverPCOrDreamcastTextureName(File.Name, material.textureID) + TextureExtension;
+										AddTexture(stream, textureName);
+										if (!_TexturesAsPNGs.ContainsKey(textureName))
+										{
+											_TexturesAsPNGs.Add(textureName, textureFile.GetTextureAsBitmap(textureID));
+										}
+									}
+								}
+
+								SceneCDC.progressLevel++;
+							}
+						}
+					}
+					catch (FileNotFoundException)
+					{
+						Console.WriteLine("Error: couldn't find a texture file");
+					}
+					catch (Exception ex)
+					{
+						Console.Write(ex.ToString());
+					}
+				}
 				else if (File.Platform == CDC.Platform.Dreamcast)
 				{
 					try
 					{
+						string fileName = Path.Combine(folderName, "textures.vq");
 						SR1DCTextureFile textureFile = new SR1DCTextureFile(fileName);
 
 						SceneCDC.progressLevel = 0;
@@ -260,6 +329,7 @@ namespace ModelEx
 
 						bool drawGreyscaleFirst = false;
 						bool quantizeBounds = true;
+						string fileName = Path.Combine(folderName, File.Name + ".crm");
 						SR1PSXTextureFile textureFile = new SR1PSXTextureFile(fileName);
 						textureFile.BuildTexturesFromPolygonData(tPages, drawGreyscaleFirst, quantizeBounds, ExportOptions);
 						//textureFile.ExportAllPaletteVariations(tPages, false);
@@ -370,6 +440,7 @@ namespace ModelEx
 
 					bool drawGreyscaleFirst = false;
 					bool quantizeBounds = true;
+					string fileName = Path.Combine(folderName, File.Name + ".vrm");
 					Gex3PSXTextureFile textureFile = new Gex3PSXTextureFile(fileName);
 					textureFile.BuildTexturesFromPolygonData(tPages, drawGreyscaleFirst, quantizeBounds, ExportOptions);
 

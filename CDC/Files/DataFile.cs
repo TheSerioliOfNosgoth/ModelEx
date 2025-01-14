@@ -254,7 +254,7 @@ namespace CDC
 
 		protected abstract void ResolvePointers(BinaryReader reader, BinaryWriter writer);
 
-		public static DataFile Create(string dataFileName, string objectListFile, Game game, Platform platform, ExportOptions options, int childIndex = -1)
+		public static DataFile Create(string dataFileName, string objectListFolder, Game game, Platform platform, ExportOptions options, int childIndex = -1)
 		{
 			DataFile dataFile;
 
@@ -282,11 +282,11 @@ namespace CDC
 				}
 				else if (game == Game.Defiance)
 				{
-					dataFile = new DefianceFile(dataFileName, objectListFile, platform, options);
+					dataFile = new DefianceFile(dataFileName, objectListFolder, platform, options);
 				}
 				else if (game == Game.TRL || game == Game.TRA)
 				{
-					dataFile = new TRLFile(dataFileName, objectListFile, platform, options);
+					dataFile = new TRLFile(dataFileName, objectListFolder, platform, options);
 				}
 				else
 				{

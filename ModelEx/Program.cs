@@ -55,7 +55,7 @@ namespace ModelEx
 								outputFilePath = Path.GetFullPath(nextArg);
 								i++;
 								break;
-							case "--texture-file":
+							case "--texture-folder":
 								nextArg = args[i + 1];
 								options.TextureFileLocations.Add(Path.GetFullPath(nextArg));
 								i++;
@@ -123,6 +123,9 @@ namespace ModelEx
 										break;
 									case "xbox":
 										platform = CDC.Platform.Xbox;
+										break;
+									case "remaster":
+										platform = CDC.Platform.Remaster;
 										break;
 								}
 								i++;
@@ -532,6 +535,7 @@ namespace ModelEx
 						else if (mode == "sr2") loadRequest.GameType = CDC.Game.SR2;
 						else if (mode == "defiance") loadRequest.GameType = CDC.Game.Defiance;
 						else if (mode == "trl") loadRequest.GameType = CDC.Game.TRL;
+						else if (mode == "tra") loadRequest.GameType = CDC.Game.TRA;
 
 						if (loadRequest.GameType == CDC.Game.SR1)
 						{
@@ -539,34 +543,38 @@ namespace ModelEx
 
 							if (sr1File.Platform == CDC.Platform.PC)
 							{
-								loadRequest.TextureFile = CDC.Utility.GetTextureFileLocation(options, "textures.big", inputFilePath);
+								loadRequest.TexturesFolder = CDC.Utility.GetSR1TexturePath(options, inputFilePath, false, "textures.big");
 							}
 							else if (sr1File.Platform == CDC.Platform.Dreamcast)
 							{
-								loadRequest.TextureFile = CDC.Utility.GetTextureFileLocation(options, "textures.vq", inputFilePath);
+								loadRequest.TexturesFolder = CDC.Utility.GetSR1TexturePath(options, inputFilePath, false, "textures.vq");
+							}
+							else if (sr1File.Platform == CDC.Platform.Remaster)
+							{
+								string tex0 = "TEXTURES.BIG";
+								string tex1 = "MOVIES.BIG";
+								string tex2 = "BONUS.BIG";
+								loadRequest.TexturesFolder = CDC.Utility.GetSR1TexturePath(options, inputFilePath, true, tex0, tex1, tex2);
 							}
 							else
 							{
-								loadRequest.TextureFile = Path.ChangeExtension(inputFilePath, "crm");
+								loadRequest.TexturesFolder = Path.GetDirectoryName(inputFilePath);
 							}
 						}
 						else if (loadRequest.GameType == CDC.Game.Gex ||
 							loadRequest.GameType == CDC.Game.SR2 || loadRequest.GameType == CDC.Game.Defiance)
 						{
-							loadRequest.TextureFile = Path.ChangeExtension(inputFilePath, "vrm");
+							loadRequest.TexturesFolder = Path.GetDirectoryName(inputFilePath);
 						}
 						else
 						{
-							loadRequest.TextureFile = inputFilePath;
+							loadRequest.TexturesFolder = Path.GetDirectoryName(inputFilePath);
 						}
 
-						if (loadRequest.GameType == CDC.Game.TRL || loadRequest.GameType == CDC.Game.TRA)
+						if (loadRequest.GameType == CDC.Game.Defiance ||
+							loadRequest.GameType == CDC.Game.TRL || loadRequest.GameType == CDC.Game.TRA)
 						{
-							//
-						}
-						else
-						{
-							loadRequest.ObjectListFile = inputFilePath;
+							// TODO
 						}
 
 						LoadResourceFlags loadResourceFlags = LoadResourceFlags.ReloadScene | LoadResourceFlags.LoadDebugResource;
