@@ -543,6 +543,11 @@ namespace CDC
 		public ushort sr1Flags;
 		public Vector globalOffset = new Vector();
 	}
+	public struct Sphere
+	{
+		public Vector position;
+		public float radius;
+	}
 
 	public class Mesh
 	{

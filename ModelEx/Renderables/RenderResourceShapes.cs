@@ -11,7 +11,8 @@ namespace ModelEx
 		public enum Shape
 		{
 			Cube,
-			Octahedron
+			Octahedron,
+			Sphere
 		}
 
 		public RenderResourceShapes()
@@ -33,6 +34,10 @@ namespace ModelEx
 			ModelParser octaParser = new ModelParser("octahedron");
 			octaParser.BuildModel(this, RenderResourceShapes.Shape.Octahedron);
 			Models.Add(octaParser.Model);
+
+			ModelParser sphereParser = new ModelParser("sphere");
+			sphereParser.BuildModel(this, RenderResourceShapes.Shape.Sphere);
+			Models.Add(sphereParser.Model);
 		}
 	}
 }

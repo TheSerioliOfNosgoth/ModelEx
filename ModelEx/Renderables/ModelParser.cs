@@ -53,6 +53,9 @@ namespace ModelEx
 				case RenderResourceShapes.Shape.Octahedron:
 					meshParser.BuildOctahedron(resource);
 					break;
+				case RenderResourceShapes.Shape.Sphere:
+					meshParser.BuildSphere(resource);
+					break;
 			}
 
 			foreach (SubMesh subMesh in meshParser.SubMeshes)

@@ -11,6 +11,20 @@ namespace ModelEx
 			public float X;
 			public float Y;
 			public float Z;
+
+			public BasicVertex(float x, float y, float z)
+			{
+				X = x;
+				Y = y;
+				Z = z;
+			}
+
+			// Normalize the vertex to lie on a sphere of the given radius
+			public BasicVertex Normalize(float radius)
+			{
+				float length = (float)Math.Sqrt(X * X + Y * Y + Z * Z);
+				return new BasicVertex(X / length * radius, Y / length * radius, Z / length * radius);
+			}
 		}
 
 		List<BasicVertex> _vertexList = new List<BasicVertex>();
@@ -177,6 +191,33 @@ namespace ModelEx
 			SubMeshes.Add(subMeshB);
 		}
 
+		public void BuildSphere(RenderResource resource)
+		{
+			var (vertices, faces) = GenerateSphere(10, 2);
+
+			_vertexList.AddRange(vertices);
+
+			foreach (var face in faces)
+			{
+				_indexList.AddRange(face);
+			}
+
+			Technique = "DefaultRender";
+
+			Mesh = new MeshPCT(resource, this);
+
+			SubMesh subMesh = new SubMesh
+			{
+				Name = MeshName + "-0",
+				MaterialIndex = 0,
+				indexCount = _indexList.Count,
+				startIndexLocation = 0,
+				baseVertexLocation = 0
+			};
+
+			SubMeshes.Add(subMesh);
+		}
+
 		public void FillVertex(int v, out PositionColorTexturedVertex vertex)
 		{
 			vertex.Position = new SlimDX.Vector3()
@@ -204,6 +245,90 @@ namespace ModelEx
 		public void FillIndex(int i, out short index)
 		{
 			index = (short)_indexList[i];
+		}
+
+		// Generate the base icosahedron
+		private static (List<BasicVertex>, List<int[]>) GenerateIcosahedron(float radius)
+		{
+			float phi = (1 + (float)Math.Sqrt(5)) / 2; // Golden ratio
+
+			// Define the 12 vertices of an icosahedron
+			List<BasicVertex> vertices = new List<BasicVertex>
+			{
+				new BasicVertex(-1,  phi,  0).Normalize(radius),
+				new BasicVertex( 1,  phi,  0).Normalize(radius),
+				new BasicVertex(-1, -phi,  0).Normalize(radius),
+				new BasicVertex( 1, -phi,  0).Normalize(radius),
+				new BasicVertex( 0, -1,  phi).Normalize(radius),
+				new BasicVertex( 0,  1,  phi).Normalize(radius),
+				new BasicVertex( 0, -1, -phi).Normalize(radius),
+				new BasicVertex( 0,  1, -phi).Normalize(radius),
+				new BasicVertex( phi,  0, -1).Normalize(radius),
+				new BasicVertex( phi,  0,  1).Normalize(radius),
+				new BasicVertex(-phi,  0, -1).Normalize(radius),
+				new BasicVertex(-phi,  0,  1).Normalize(radius)
+			};
+
+			// Define the 20 triangular faces
+			List<int[]> faces = new List<int[]>
+			{
+				new int[] { 0, 11, 5 }, new int[] { 0, 5, 1 }, new int[] { 0, 1, 7 }, new int[] { 0, 7, 10 }, new int[] { 0, 10, 11 },
+				new int[] { 1, 5, 9 }, new int[] { 5, 11, 4 }, new int[] { 11, 10, 2 }, new int[] { 10, 7, 6 }, new int[] { 7, 1, 8 },
+				new int[] { 3, 9, 4 }, new int[] { 3, 4, 2 }, new int[] { 3, 2, 6 }, new int[] { 3, 6, 8 }, new int[] { 3, 8, 9 },
+				new int[] { 4, 9, 5 }, new int[] { 2, 4, 11 }, new int[] { 6, 2, 10 }, new int[] { 8, 6, 7 }, new int[] { 9, 8, 1 }
+			};
+
+			return (vertices, faces);
+		}
+
+		// Subdivide a triangular face into four smaller triangles
+		private static List<int[]> Subdivide(List<BasicVertex> vertices, List<int[]> faces, float radius)
+		{
+			Dictionary<(int, int), int> midpointCache = new Dictionary<(int, int), int>();
+
+			int GetMidpoint(int v1, int v2)
+			{
+				var key = v1 < v2 ? (v1, v2) : (v2, v1);
+				if (!midpointCache.ContainsKey(key))
+				{
+					BasicVertex midpoint = new BasicVertex(
+						(vertices[v1].X + vertices[v2].X) / 2,
+						(vertices[v1].Y + vertices[v2].Y) / 2,
+						(vertices[v1].Z + vertices[v2].Z) / 2
+					).Normalize(radius);
+					vertices.Add(midpoint);
+					midpointCache[key] = vertices.Count - 1;
+				}
+				return midpointCache[key];
+			}
+
+			List<int[]> newFaces = new List<int[]>();
+			foreach (var face in faces)
+			{
+				int a = GetMidpoint(face[0], face[1]);
+				int b = GetMidpoint(face[1], face[2]);
+				int c = GetMidpoint(face[2], face[0]);
+
+				newFaces.Add(new int[] { face[0], a, c });
+				newFaces.Add(new int[] { face[1], b, a });
+				newFaces.Add(new int[] { face[2], c, b });
+				newFaces.Add(new int[] { a, b, c });
+			}
+
+			return newFaces;
+		}
+
+		// Generate a sphere by subdividing an icosahedron
+		private static (List<BasicVertex>, List<int[]>) GenerateSphere(float radius, int subdivisions)
+		{
+			var (vertices, faces) = GenerateIcosahedron(radius);
+
+			for (int i = 0; i < subdivisions; i++)
+			{
+				faces = Subdivide(vertices, faces, radius);
+			}
+
+			return (vertices, faces);
 		}
 	}
 }
