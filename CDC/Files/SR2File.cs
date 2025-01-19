@@ -71,6 +71,7 @@ namespace CDC
 				portal.toLevelName = new String(reader.ReadChars(16));
 				portal.toLevelName = Utility.CleanName(portal.toLevelName);
 				portal.mSignalID = reader.ReadInt32();
+				portal.name = "portal-" + _name + "," + portal.mSignalID + "-" + portal.toLevelName;
 				reader.BaseStream.Position += 0x04; // streamID
 				reader.BaseStream.Position += 0x04; // activeDistance
 				reader.BaseStream.Position += 0x04; // toStreamUnit
@@ -213,7 +214,7 @@ namespace CDC
 			{
 				PortalModel portalModel = new PortalModel(
 					this,
-					"portal-" + _name + "," + portal.mSignalID + "-" + portal.toLevelName,
+					portal.name,
 					_platform,
 					portal.min,
 					portal.max,

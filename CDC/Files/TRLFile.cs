@@ -114,6 +114,7 @@ namespace CDC
 				short toSignalID = reader.ReadInt16();
 				portal.toLevelName += "," + toSignalID;
 				portal.mSignalID = reader.ReadInt16();
+				portal.name = "portal-" + _name + "," + portal.mSignalID + "-" + portal.toLevelName;
 				reader.BaseStream.Position += 0x02; // streamID
 				reader.BaseStream.Position += 0x04; // closeVertList
 				reader.BaseStream.Position += 0x04; // activeDist
@@ -196,8 +197,7 @@ namespace CDC
 				_bgInstances[i].bgObject = reader.ReadUInt32();
 				reader.BaseStream.Position += 0x10;
 				_bgInstances[i].id = reader.ReadUInt16();
-				_bgInstances[i].modelIndex = (int)(_bgInstances[i].bgObject - _bgObjectStart) / 0x60;
-				_bgInstances[i].name = "bgInstance(" + _bgInstances[i].modelIndex + ")-" + _bgInstances[i].id;
+				_bgInstances[i].name = "bgInstance-" + _bgInstances[i].id;
 			}
 
 			// Intros
@@ -276,7 +276,7 @@ namespace CDC
 			{
 				PortalModel portalModel = new PortalModel(
 					this,
-					"portal-" + _name + "," + portal.mSignalID + "-" + portal.toLevelName,
+					portal.name,
 					_platform,
 					portal.min,
 					portal.max,

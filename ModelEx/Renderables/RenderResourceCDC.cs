@@ -49,6 +49,13 @@ namespace ModelEx
 				if (File.Asset == CDC.Asset.Unit)
 				{
 					Models.Add(modelParser.Model);
+
+					if (modelIndex == 0)
+					{
+						SRModelParser sphereModelParser = new SRModelParser(File.Name, File);
+						sphereModelParser.BuildSphereModel(this, modelIndex);
+						Models.Add(sphereModelParser.Model);
+					}
 				}
 				else
 				{

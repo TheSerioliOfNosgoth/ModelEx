@@ -121,6 +121,12 @@ namespace CDC
 		}
 	}
 
+	public struct Sphere
+	{
+		public Vector position;
+		public float radius;
+	}
+
 	public struct Bone
 	{
 		public ushort vFirst, vLast; // The ID of first and last effected vertex 
@@ -202,7 +208,6 @@ namespace CDC
 		public ushort id;
 		public uint bgObject;
 		public Matrix matrix;
-		public int modelIndex;
 		public string name;
 	}
 
@@ -215,6 +220,7 @@ namespace CDC
 		public Vector[] t1;
 		public Vector[] t2;
 		public Vector[] quad;
+		public string name;
 	}
 
 	public struct MonsterAttributes
@@ -542,11 +548,7 @@ namespace CDC
 		public Mesh mesh;
 		public ushort sr1Flags;
 		public Vector globalOffset = new Vector();
-	}
-	public struct Sphere
-	{
-		public Vector position;
-		public float radius;
+		public Sphere sphere = new Sphere();
 	}
 
 	public class Mesh

@@ -284,7 +284,6 @@ namespace CDC
 		protected AniTextureDest[] _aniTextures;
 		protected Bone[] _bones;
 		protected Tree[] _trees;
-		protected Sphere[] _spheres;
 		protected Material[] _materials;
 		protected List<Material> _materialsList;
 		protected TPages _tPages;
@@ -297,7 +296,6 @@ namespace CDC
 		public override Geometry ExtraGeometry { get { return _extraGeometry; } }
 		public override Bone[] Bones { get { return _bones; } }
 		public override Tree[] Groups { get { return _trees; } }
-		public Sphere[] Spheres { get { return _spheres; } }
 		public override Material[] Materials { get { return _materials; } }
 		public override Platform Platform { get { return _platform; } }
 

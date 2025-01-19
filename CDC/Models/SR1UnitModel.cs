@@ -134,7 +134,6 @@ namespace CDC
 			}
 
 			_trees = new Tree[_groupCount];
-			_spheres = new Sphere[_groupCount];
 
 			if (_platform == Platform.PSX &&
 				drMoveAniTex != 0)
@@ -519,12 +518,10 @@ namespace CDC
 
 					reader.BaseStream.Position = uDataPos;
 
-					Sphere sphere = new Sphere();
-					sphere.position.x = reader.ReadInt16();
-					sphere.position.y = reader.ReadInt16();
-					sphere.position.z = reader.ReadInt16();
-					sphere.radius = reader.ReadUInt16();
-					_spheres[t] = sphere;
+					_trees[t].sphere.position.x = reader.ReadInt16();
+					_trees[t].sphere.position.y = reader.ReadInt16();
+					_trees[t].sphere.position.z = reader.ReadInt16();
+					_trees[t].sphere.radius = reader.ReadUInt16();
 				}
 			}
 

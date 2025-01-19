@@ -10,7 +10,6 @@ namespace ModelEx
 	{
 		string _objectName;
 		CDC.DataFile _dataFile;
-		CDC.IModel _cdcModel;
 		public Model Model;
 		public string ModelName { get; private set; }
 		public List<Material> Materials { get; } = new List<Material>();
@@ -26,11 +25,10 @@ namespace ModelEx
 
 		public void BuildModel(RenderResource resource, int modelIndex, CDC.ExportOptions options)
 		{
-			_cdcModel = _dataFile.Models[modelIndex];
+			CDC.IModel _cdcModel = _dataFile.Models[modelIndex];
 			string modelName = _cdcModel.Name;
 
 			#region Materials
-
 			for (int materialIndex = 0; materialIndex < _cdcModel.Materials.Length; materialIndex++)
 			{
 				Material material = new Material();
@@ -54,7 +52,6 @@ namespace ModelEx
 				material.TextureFileName = _cdcModel.GetTextureName(materialIndex, options);
 				Materials.Add(material);
 			}
-
 			#endregion
 
 			#region Groups
@@ -85,6 +82,63 @@ namespace ModelEx
 						X = 0.01f * srGroup.globalOffset.x,
 						Y = 0.01f * srGroup.globalOffset.z,
 						Z = 0.01f * srGroup.globalOffset.y,
+					};
+
+					SlimDX.Matrix.Translation(ref offset, out SlimDX.Matrix transform);
+					group.Transform = transform;
+
+					Groups.Add(group);
+				}
+			}
+			#endregion
+
+			ModelName = modelName;
+			Model = new Model(this);
+		}
+
+		public void BuildSphereModel(RenderResource resource, int modelIndex)
+		{
+			CDC.IModel _cdcModel = _dataFile.Models[modelIndex];
+			string modelName = _cdcModel.Name + "-spheres";
+
+			#region Materials
+			Material materialA = new Material();
+			materialA.Visible = true;
+			materialA.BlendMode = 1;
+			Color colorDiffuseA = Color.FromArgb(unchecked((int)0xFF002000));
+			materialA.Diffuse = colorDiffuseA;
+			materialA.TextureFileName = "";
+			Materials.Add(materialA);
+			#endregion
+
+			#region Groups
+			for (int groupIndex = 0; groupIndex < _cdcModel.Groups.Length; groupIndex++)
+			{
+				Tree srGroup = _cdcModel.Groups[groupIndex];
+				string groupName = modelName + "-group-" + groupIndex.ToString();
+				string meshName = groupName + "-mesh";
+				if (srGroup != null)
+				{
+					ModelNode group = new ModelNode();
+					MeshParser meshParser = new MeshParser(meshName);
+					meshParser.BuildSphere(resource, srGroup.sphere.radius * 0.01f, 2);
+					foreach (SubMesh subMesh in meshParser.SubMeshes)
+					{
+						// If the mesh parser knew the total submeshes for the model,
+						// then this could be done inside BuildMesh.
+						subMesh.MeshIndex = Meshes.Count;
+						group.SubMeshIndices.Add(SubMeshes.Count);
+						SubMeshes.Add(subMesh);
+					}
+					Meshes.Add(meshParser.Mesh);
+
+					group.Name = groupName;
+
+					SlimDX.Vector3 offset = new SlimDX.Vector3()
+					{
+						X = 0.01f * srGroup.sphere.position.x,
+						Y = 0.01f * srGroup.sphere.position.z,
+						Z = 0.01f * srGroup.sphere.position.y,
 					};
 
 					SlimDX.Matrix.Translation(ref offset, out SlimDX.Matrix transform);
