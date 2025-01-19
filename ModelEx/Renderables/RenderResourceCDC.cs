@@ -185,7 +185,7 @@ namespace ModelEx
 						Console.Write(ex.ToString());
 					}
 				}
-				if (File.Platform == CDC.Platform.Remaster)
+				else if (File.Platform == CDC.Platform.Remaster)
 				{
 					try
 					{
