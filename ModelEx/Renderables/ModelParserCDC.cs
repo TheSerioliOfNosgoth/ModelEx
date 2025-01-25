@@ -121,7 +121,7 @@ namespace ModelEx
 				{
 					ModelNode group = new ModelNode();
 					MeshParser meshParser = new MeshParser(meshName);
-					meshParser.BuildSphere(resource, srGroup.sphere.radius * 0.01f, 2);
+					meshParser.BuildSphere(resource, srGroup.sphere.radius * 0.01f, (int)Math.Log(srGroup.sphere.radius, 10f));
 					foreach (SubMesh subMesh in meshParser.SubMeshes)
 					{
 						// If the mesh parser knew the total submeshes for the model,

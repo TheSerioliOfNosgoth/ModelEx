@@ -48,7 +48,7 @@ namespace ModelEx
 
 		public override void Render()
 		{
-			Model.Render(Transform, Root);
+			Model.Render(Transform, Root, null);
 
 			foreach (RenderInstance attachment in Attachments)
 			{
@@ -60,11 +60,11 @@ namespace ModelEx
 		{
 			Matrix localTransform = transform * Transform;
 
-			Model.Render(localTransform, visibilityNode);
+			Model.Render(localTransform, Root, visibilityNode);
 
 			foreach (RenderInstance attachment in Attachments)
 			{
-				attachment.Render(localTransform, visibilityNode);
+				attachment.Render(localTransform, Root);
 			}
 		}
 

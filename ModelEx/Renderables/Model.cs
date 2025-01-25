@@ -25,23 +25,24 @@ namespace ModelEx
 		{
 			if (SubMeshes.Count > 0)
 			{
-				RenderNode(Root, Transform, null, false);
-				RenderNode(Root, Transform, null, true);
+				RenderNode(Root, Transform, null, null, false);
+				RenderNode(Root, Transform, null, null, true);
 			}
 		}
 
-		public void Render(Matrix transform, VisibilityNode visibilityNode)
+		public void Render(Matrix transform, VisibilityNode visibilityNode, VisibilityNode parentVisibilityNode)
 		{
 			if (SubMeshes.Count > 0)
 			{
-				RenderNode(Root, transform, visibilityNode, false);
-				RenderNode(Root, transform, visibilityNode, true);
+				RenderNode(Root, transform, visibilityNode, parentVisibilityNode, false);
+				RenderNode(Root, transform, visibilityNode, parentVisibilityNode, true);
 			}
 		}
 
-		public void RenderNode(ModelNode node, SlimDX.Matrix transform, VisibilityNode visibilityNode, bool isTransparent)
+		public void RenderNode(ModelNode node, SlimDX.Matrix transform, VisibilityNode visibilityNode, VisibilityNode parentVisibilityNode, bool isTransparent)
 		{
-			if (visibilityNode != null && !visibilityNode.Visible)
+			if ((visibilityNode != null && !visibilityNode.Visible) ||
+				(parentVisibilityNode != null && !parentVisibilityNode.Visible))
 			{
 				return;
 			}
@@ -68,7 +69,7 @@ namespace ModelEx
 			int n = 0;
 			foreach (ModelNode child in node.Nodes)
 			{
-				RenderNode(child, localTransform, visibilityNode?.Nodes[n], isTransparent);
+				RenderNode(child, localTransform, visibilityNode?.Nodes[n], parentVisibilityNode?.Nodes[n], isTransparent);
 				n++;
 			}
 		}
