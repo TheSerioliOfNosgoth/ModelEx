@@ -191,9 +191,9 @@ namespace ModelEx
 			SubMeshes.Add(subMeshB);
 		}
 
-		public void BuildSphere(RenderResource resource)
+		public void BuildSphere(RenderResource resource, float radius, int subdivisions)
 		{
-			var (vertices, faces) = GenerateSphere(10, 2);
+			var (vertices, faces) = GenerateSphere(radius, subdivisions);
 
 			_vertexList.AddRange(vertices);
 

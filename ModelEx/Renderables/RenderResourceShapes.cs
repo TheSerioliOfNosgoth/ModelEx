@@ -12,7 +12,9 @@ namespace ModelEx
 		{
 			Cube,
 			Octahedron,
-			Sphere
+			Sphere0,
+			Sphere1,
+			Sphere2
 		}
 
 		public RenderResourceShapes()
@@ -35,9 +37,17 @@ namespace ModelEx
 			octaParser.BuildModel(this, RenderResourceShapes.Shape.Octahedron);
 			Models.Add(octaParser.Model);
 
-			ModelParser sphereParser = new ModelParser("sphere");
-			sphereParser.BuildModel(this, RenderResourceShapes.Shape.Sphere);
-			Models.Add(sphereParser.Model);
+			ModelParser sphereParser0 = new ModelParser("sphere0");
+			sphereParser0.BuildModel(this, RenderResourceShapes.Shape.Sphere0);
+			Models.Add(sphereParser0.Model);
+
+			ModelParser sphereParser1 = new ModelParser("sphere1");
+			sphereParser1.BuildModel(this, RenderResourceShapes.Shape.Sphere1);
+			Models.Add(sphereParser1.Model);
+
+			ModelParser sphereParser2 = new ModelParser("sphere2");
+			sphereParser2.BuildModel(this, RenderResourceShapes.Shape.Sphere2);
+			Models.Add(sphereParser2.Model);
 		}
 	}
 }
