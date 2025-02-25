@@ -39,14 +39,14 @@ namespace ModelEx
 			}
 		}
 
-		public void RenderNode(ModelNode node, SlimDX.Matrix transform, VisibilityNode visibilityNode, bool isTransparent)
+		public void RenderNode(ModelNode node, Matrix transform, VisibilityNode visibilityNode, bool isTransparent)
 		{
 			if (visibilityNode != null && !visibilityNode.Visible)
 			{
 				return;
 			}
 
-			SlimDX.Matrix localTransform = transform * visibilityNode.Transform;
+			Matrix localTransform = transform * visibilityNode.Transform;
 
 			foreach (int subMeshIndex in node.SubMeshIndices)
 			{
