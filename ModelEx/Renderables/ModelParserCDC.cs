@@ -90,6 +90,20 @@ namespace ModelEx
 					SlimDX.Matrix.Translation(ref offset, out SlimDX.Matrix transform);
 					group.Transform = transform;
 
+					// Don't cast to SR1Model. Make everything have spheres instead.
+					if (_cdcModel is CDC.SR1Model)
+					{
+						CDC.Sphere sphere = ((CDC.SR1Model)_cdcModel).Spheres[groupIndex];
+
+						group.Sphere.Radius = 0.01f * sphere.radius;
+						group.Sphere.Center = new SlimDX.Vector3
+						{
+							X = 0.01f * sphere.position.x,
+							Y = 0.01f * sphere.position.z,
+							Z = 0.01f * sphere.position.y
+						};
+					}
+
 					Groups.Add(group);
 				}
 			}

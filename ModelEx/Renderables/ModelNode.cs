@@ -8,6 +8,7 @@ namespace ModelEx
 	{
 		public string Name = "";
 		public Matrix Transform = Matrix.Identity;
+		public BoundingSphere Sphere;
 		public bool Visible = true;
 		public List<ModelNode> Nodes { get; } = new List<ModelNode>();
 		public List<int> SubMeshIndices { get; } = new List<int>();
