@@ -29,7 +29,7 @@ namespace ModelEx
 			_boundingSphere = boundingSphere;
 
 			RenderResource resource = RenderManager.Instance.Resources[""];
-			int modelIndex = (int)RenderResourceShapes.Shape.Sphere1;
+			int modelIndex = (int)RenderResourceShapes.Shape.Sphere2;
 			_model = resource.Models[modelIndex];
 		}
 

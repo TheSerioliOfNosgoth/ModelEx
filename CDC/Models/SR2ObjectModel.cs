@@ -33,6 +33,7 @@ namespace CDC
 			_groupCount = 1;
 
 			_trees = new Tree[_groupCount];
+			_spheres = new Sphere[_groupCount];
 		}
 
 		protected override void ReadVertex(BinaryReader reader, int v, ExportOptions options)
@@ -189,6 +190,7 @@ namespace CDC
 
 			_groupCount++;
 			_trees = new Tree[_groupCount];
+			_spheres = new Sphere[_groupCount];
 			for (uint t = 0; t < _groupCount; t++)
 			{
 				_trees[t] = new Tree();

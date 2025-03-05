@@ -27,6 +27,7 @@ namespace CDC
 			_groupCount = 1;
 
 			_trees = new Tree[_groupCount];
+			_spheres = new Sphere[_groupCount];
 		}
 
 		protected override void ReadVertex(BinaryReader reader, int v, ExportOptions options)
