@@ -37,7 +37,7 @@ namespace ModelEx
 		{
 			float radius = _boundingSphere.Radius;
 
-			if (!Visible || radius <= 0)
+			if (!RenderManager.Instance.ShowSpheres || !Visible || radius <= 0)
 			{
 				return;
 			}
