@@ -695,14 +695,6 @@ namespace CDC
 				xMesh.sr1BSPLeafFlags.Add(flags);
 			}
 
-			_polygons[polygonID].material.BSPTreeRootFlags = baseTreeFlags;
-			_polygons[polygonID].material.BSPTreeParentNodeFlags = parentNodeFlags;
-			_polygons[polygonID].material.BSPTreeAllParentNodeFlagsORd = allParentNodeFlagsORd;
-			_polygons[polygonID].material.BSPTreeLeafFlags = flags;
-			_polygons[polygonID].rootBSPTreeID = rootBSPTreeID;
-			_polygons[polygonID].material.BSPRootTreeID = rootBSPTreeID;
-			_polygons[polygonID].BSPNodeID = parentNodeID;
-
 			for (UInt16 p = 0; p < polyCount; p++)
 			{
 				_polygons[polygonID + p].material.BSPTreeRootFlags = baseTreeFlags;
