@@ -25,8 +25,8 @@ namespace ModelEx
 		{
 			if (SubMeshes.Count > 0)
 			{
-				RenderNode(Root, Transform, null, false);
-				RenderNode(Root, Transform, null, true);
+				RenderNode(Root, Matrix.Identity, null, false);
+				RenderNode(Root, Matrix.Identity, null, true);
 			}
 		}
 
@@ -39,14 +39,23 @@ namespace ModelEx
 			}
 		}
 
-		public void RenderNode(ModelNode node, SlimDX.Matrix transform, VisibilityNode visibilityNode, bool isTransparent)
+		public void RenderNode(ModelNode node, Matrix transform, VisibilityNode visibilityNode, bool isTransparent)
 		{
 			if (visibilityNode != null && !visibilityNode.Visible)
 			{
 				return;
 			}
 
-			SlimDX.Matrix localTransform = transform * visibilityNode.Transform;
+			Matrix localTransform;
+			if (visibilityNode == null)
+			{
+				localTransform = node.Transform;
+			}
+			else
+			{
+				localTransform = visibilityNode.Transform;
+			}
+			localTransform *= transform;
 
 			foreach (int subMeshIndex in node.SubMeshIndices)
 			{
@@ -68,9 +77,16 @@ namespace ModelEx
 			int n = 0;
 			foreach (ModelNode child in node.Nodes)
 			{
-				RenderNode(child, localTransform, visibilityNode?.Nodes[n], isTransparent);
+				// Nodes are all in the same space as the instance of the model,
+				// so use transform here rather than localTransform.
+				// Relative positions might be needed as an option later on,
+				// in which case, use localTransform.
+				RenderNode(child, transform, visibilityNode?.Nodes[n], isTransparent);
 				n++;
 			}
+
+			// visibilityNode.Transform is applied inside. Don't do it twice!
+			visibilityNode?.Render(transform);
 		}
 
 		public ModelNode FindNode(string name)

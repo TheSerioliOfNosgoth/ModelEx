@@ -17,6 +17,7 @@ namespace CDC
 		protected Polygon[] _polygons;
 		protected Bone[] _bones;
 		protected Tree[] _trees;
+		protected Sphere[] _spheres;
 		protected Material[] _materials;
 
 		public string Name { get { return _name; } }
@@ -26,6 +27,7 @@ namespace CDC
 		public Geometry ExtraGeometry { get { return _extraGeometry; } }
 		public Bone[] Bones { get { return _bones; } }
 		public Tree[] Groups { get { return _trees; } }
+		public Sphere[] Spheres { get { return _spheres; } }
 		public Material[] Materials { get { return _materials; } }
 		public Platform Platform { get { return _platform; } }
 
@@ -140,6 +142,7 @@ namespace CDC
 			//_materials = new Material[3] { redMaterial, greenMaterial, blueMaterial };
 			_materials = new Material[1] { material };
 			_trees = new Tree[1] { tree };
+			_spheres = new Sphere[1];
 		}
 
 		public string GetTextureName(int materialIndex, ExportOptions options)

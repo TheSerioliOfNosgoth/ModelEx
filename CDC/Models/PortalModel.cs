@@ -17,6 +17,7 @@ namespace CDC
 		protected Polygon[] _polygons;
 		protected Bone[] _bones;
 		protected Tree[] _trees;
+		protected Sphere[] _spheres;
 		protected Material[] _materials;
 
 		public string Name { get { return _name; } }
@@ -26,6 +27,7 @@ namespace CDC
 		public Geometry ExtraGeometry { get { return _extraGeometry; } }
 		public Bone[] Bones { get { return _bones; } }
 		public Tree[] Groups { get { return _trees; } }
+		public Sphere[] Spheres { get { return _spheres; } }
 		public Material[] Materials { get { return _materials; } }
 		public Platform Platform { get { return _platform; } }
 
@@ -138,6 +140,7 @@ namespace CDC
 			_bones = new Bone[0];
 			_materials = new Material[2] { boxMaterial, quadMaterial };
 			_trees = new Tree[1] { tree };
+			_spheres = new Sphere[1];
 		}
 
 		public PortalModel(DataFile dataFile, string modelName, Platform platform, Vector min, Vector max, Vector[] quad)
@@ -249,6 +252,8 @@ namespace CDC
 			_bones = new Bone[0];
 			_materials = new Material[2] { boxMaterial, quadMaterial };
 			_trees = new Tree[1] { tree };
+
+			// TODO - Spheres.
 		}
 
 		public string GetTextureName(int materialIndex, ExportOptions options)

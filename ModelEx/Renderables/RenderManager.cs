@@ -99,6 +99,7 @@ namespace ModelEx
 
 		public Color BackgroundColour = Color.Gray;
 		public bool Wireframe = false;
+		public bool ShowSpheres = false;
 
 		private SortedList<string, Scene> Scenes = new SortedList<string, Scene>();
 		private SortedList<string, Scene> Objects = new SortedList<string, Scene>();

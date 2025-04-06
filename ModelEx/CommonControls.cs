@@ -11,8 +11,10 @@ namespace ModelEx
 		{
 			public int _spectralPercentage = 0;
 			public Color _backgroundColour = Color.Gray;
+			public bool _showSpheres = false;
 			public int SpectralPercentage { get { return _spectralPercentage; } set { _spectralPercentage = value; OnChanged("SpectralPercentage"); } }
 			public Color BackgroundColour { get { return _backgroundColour; } set { _backgroundColour = value; OnChanged("BackgroundColour"); } }
+			public bool ShowSpheres {  get { return _showSpheres; } set { _showSpheres = value; OnChanged("ShowSpheres"); } }
 
 			public event PropertyChangedEventHandler PropertyChanged;
 
@@ -35,6 +37,7 @@ namespace ModelEx
 
 			realmBlendBar.DataBindings.Add("Value", _Bindables, "SpectralPercentage");
 			bgColourPanel.DataBindings.Add("BackColor", _Bindables, "BackgroundColour");
+			showSpheresCheckBox.DataBindings.Add("Checked", _Bindables, "ShowSpheres");
 		}
 
 		private void realmBlendBar_Scroll(object sender, EventArgs e)
@@ -58,6 +61,13 @@ namespace ModelEx
 				_Bindables.BackgroundColour = colorDialog.Color;
 				RenderManager.Instance.BackgroundColour = colorDialog.Color;
 			}
+		}
+
+		private void showSpheresCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			CheckBox checkBox = (CheckBox)sender;
+			RenderManager.Instance.ShowSpheres = checkBox.Checked;
+			_Bindables.ShowSpheres = RenderManager.Instance.ShowSpheres;
 		}
 	}
 }

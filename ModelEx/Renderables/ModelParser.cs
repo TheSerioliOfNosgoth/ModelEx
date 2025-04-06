@@ -53,8 +53,23 @@ namespace ModelEx
 				case RenderResourceShapes.Shape.Octahedron:
 					meshParser.BuildOctahedron(resource);
 					break;
-				case RenderResourceShapes.Shape.Sphere:
-					meshParser.BuildSphere(resource);
+				case RenderResourceShapes.Shape.Sphere0:
+					meshParser.BuildSphere(resource, 1, 1);
+					colorDiffuseA = Color.FromArgb(unchecked((int)0xFF001000));
+					materialA.Diffuse = colorDiffuseA;
+					materialA.BlendMode = 1;
+					break;
+				case RenderResourceShapes.Shape.Sphere1:
+					meshParser.BuildSphere(resource, 1, 2);
+					colorDiffuseA = Color.FromArgb(unchecked((int)0xFF001000));
+					materialA.Diffuse = colorDiffuseA;
+					materialA.BlendMode = 1;
+					break;
+				case RenderResourceShapes.Shape.Sphere2:
+					meshParser.BuildSphere(resource, 1, 3);
+					colorDiffuseA = Color.FromArgb(unchecked((int)0xFF001000));
+					materialA.Diffuse = colorDiffuseA;
+					materialA.BlendMode = 1;
 					break;
 			}
 

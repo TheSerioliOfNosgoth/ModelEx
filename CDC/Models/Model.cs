@@ -13,6 +13,7 @@ namespace CDC
 		public abstract Geometry ExtraGeometry { get; }
 		public abstract Bone[] Bones { get; }
 		public abstract Tree[] Groups { get; }
+		public abstract Sphere[] Spheres { get; }
 		public abstract Material[] Materials { get; }
 		public abstract Platform Platform { get; }
 

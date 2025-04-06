@@ -98,12 +98,14 @@ namespace ModelEx
 				Root.Name = Model.Root.Name;
 				Root.Visible = Model.Root.Visible;
 				Root.Transform = Model.Root.Transform;
+				Root.SetBoundingSphere(Model.Root.Sphere);
 				foreach (ModelNode modelNode in Model.Root.Nodes)
 				{
 					VisibilityNode visibilityNode = new VisibilityNode();
 					visibilityNode.Name = modelNode.Name;
 					visibilityNode.Visible = modelNode.Visible;
 					visibilityNode.Transform = modelNode.Transform;
+					visibilityNode.SetBoundingSphere(modelNode.Sphere);
 					Root.Nodes.Add(visibilityNode);
 				}
 

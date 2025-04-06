@@ -44,6 +44,7 @@ namespace CDC
 			}
 
 			_trees = new Tree[_groupCount];
+			_spheres = new Sphere[_groupCount];
 		}
 
 		protected override void ReadTypeAVertex(BinaryReader reader, int v, ExportOptions options)

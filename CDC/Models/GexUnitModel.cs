@@ -36,6 +36,7 @@ namespace CDC
 			_materialCount = 0;
 
 			_trees = new Tree[_groupCount];
+			_spheres = new Sphere[_groupCount];
 		}
 
 		public override void ReadData(BinaryReader reader, ExportOptions options)

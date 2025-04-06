@@ -15,6 +15,7 @@ namespace CDC
 		Geometry ExtraGeometry { get; }
 		Bone[] Bones { get; }
 		Tree[] Groups { get; }
+		Sphere[] Spheres { get; }
 		Material[] Materials { get; }
 		Platform Platform { get; }
 
