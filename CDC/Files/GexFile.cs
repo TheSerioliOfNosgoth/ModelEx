@@ -100,6 +100,11 @@ namespace CDC
 					break;
 				}
 
+				if (objectAddress == 0)
+				{
+					continue;
+				}
+
 				long oldPos = reader.BaseStream.Position;
 
 				reader.BaseStream.Position = objectAddress + 0x00000024;
@@ -181,7 +186,14 @@ namespace CDC
 		protected override void ResolvePointers(BinaryReader reader, BinaryWriter writer)
 		{
 			UInt32 dataStart = ((reader.ReadUInt32() >> 9) << 11) + 0x00000800;
-			_asset = Asset.Unit;
+			if (reader.ReadUInt32() == 0x00000000)
+			{
+				_asset = Asset.Unit;
+			}
+			else
+			{
+				_asset = Asset.Object;
+			}
 
 			reader.BaseStream.Position = dataStart;
 			writer.BaseStream.Position = 0;
