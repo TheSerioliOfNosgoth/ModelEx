@@ -260,9 +260,21 @@ namespace CDC
 
 			try
 			{
-				if (game == Game.Gex)
+				if (game == Game.Gex2)
 				{
-					GexFile gexFile = new GexFile(dataFileName, platform, options);
+					Gex2File gexFile = new Gex2File(dataFileName, platform, options);
+					if (gexFile.Asset == Asset.Unit && childIndex >= 0)
+					{
+						dataFile = gexFile.Objects[childIndex];
+					}
+					else
+					{
+						dataFile = gexFile;
+					}
+				}
+				else if (game == Game.Gex3)
+				{
+					Gex3File gexFile = new Gex3File(dataFileName, platform, options);
 					if (gexFile.Asset == Asset.Unit && childIndex >= 0)
 					{
 						dataFile = gexFile.Objects[childIndex];

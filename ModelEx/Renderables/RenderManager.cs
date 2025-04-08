@@ -49,7 +49,7 @@ namespace ModelEx
 		public string ProjectFolder = "";
 		public string TexturesFolder = "";
 		public string ObjectListFolder = "";
-		public Game GameType = Game.Gex;
+		public Game GameType = Game.Gex2;
 		public Platform Platform = Platform.PC;
 		public int ChildIndex = -1;
 		public ExportOptions ExportOptions;

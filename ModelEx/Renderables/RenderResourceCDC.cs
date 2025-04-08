@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using GexFile = CDC.GexFile;
+using Gex2File = CDC.Gex2File;
+using Gex3File = CDC.Gex3File;
 using SR1File = CDC.SR1File;
 using SR2File = CDC.SR2File;
 using DefianceFile = CDC.DefianceFile;
@@ -410,7 +411,16 @@ namespace ModelEx
 			{
 				try
 				{
-					TPages tPages = ((GexFile)File).TPages;
+					TPages tPages;
+
+					if (File.Game == CDC.Game.Gex2)
+					{
+						tPages = ((Gex2File)File).TPages;
+					}
+					else
+					{
+						tPages = ((Gex3File)File).TPages;
+					}
 
 					/*foreach (SRModel srModel in File.Models)
 					{

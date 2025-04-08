@@ -16,7 +16,8 @@ namespace CDC
 
 	public enum Game : int
 	{
-		Gex,
+		Gex2,
+		Gex3,
 		SR1,
 		SR2,
 		Defiance,

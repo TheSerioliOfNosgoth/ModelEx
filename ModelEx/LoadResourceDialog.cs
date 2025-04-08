@@ -15,7 +15,7 @@ namespace ModelEx
 		public string ProjectFolder { get; private set; } = "";
 		public string TexturesFolder { get; private set; } = "";
 		public string ObjectListFolder { get; private set; } = "";
-		public CDC.Game SelectedGameType { get; set; } = CDC.Game.Gex;
+		public CDC.Game SelectedGameType { get; set; } = CDC.Game.Gex2;
 		public CDC.Platform SelectedPlatform { get; set; } = CDC.Platform.PC;
 		public bool ClearLoadedFiles { get; set; } = false;
 
@@ -118,6 +118,7 @@ namespace ModelEx
 		{
 			InitializeComponent();
 
+			gameTypeComboBox.Items.Add("Gex 2 Files(*.drm)");
 			gameTypeComboBox.Items.Add("Gex 3 Files(*.drm)");
 			gameTypeComboBox.Items.Add("Soul Reaver 1 Files (*.drm)");
 			gameTypeComboBox.Items.Add("Soul Reaver 2 Files (*.drm)");
@@ -401,7 +402,7 @@ namespace ModelEx
 
 			platformComboBox.Items.Clear();
 
-			if (SelectedGameType == CDC.Game.Gex)
+			if (SelectedGameType == CDC.Game.Gex2 || SelectedGameType == CDC.Game.Gex3)
 			{
 				platformComboBox.Items.Add(new PlatformNode(CDC.Platform.PSX));
 			}
@@ -457,7 +458,8 @@ namespace ModelEx
 					string rootFolderName = "";
 					switch (SelectedGameType)
 					{
-						case CDC.Game.Gex: rootFolderName = "g3"; break;
+						case CDC.Game.Gex2: rootFolderName = "gex3d"; break;
+						case CDC.Game.Gex3: rootFolderName = "g3"; break;
 						case CDC.Game.SR1: rootFolderName = "kain2"; break;
 						case CDC.Game.SR2: rootFolderName = "pcenglish"; break;
 						case CDC.Game.Defiance: rootFolderName = "pcenglish"; break;
@@ -541,7 +543,8 @@ namespace ModelEx
 							}
 							break;
 						}
-						case CDC.Game.Gex:
+						case CDC.Game.Gex2:
+						case CDC.Game.Gex3:
 						case CDC.Game.SR2:
 						case CDC.Game.Defiance:
 						{

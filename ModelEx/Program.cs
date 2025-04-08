@@ -530,7 +530,8 @@ namespace ModelEx
 
 						loadRequest.DataFile = inputFilePath;
 						loadRequest.ExportOptions = options;
-						if (mode == "gex") loadRequest.GameType = CDC.Game.Gex;
+						if (mode == "gex2") loadRequest.GameType = CDC.Game.Gex2;
+						else if (mode == "gex3") loadRequest.GameType = CDC.Game.Gex3;
 						else if (mode == "sr1") loadRequest.GameType = CDC.Game.SR1;
 						else if (mode == "sr2") loadRequest.GameType = CDC.Game.SR2;
 						else if (mode == "defiance") loadRequest.GameType = CDC.Game.Defiance;
@@ -561,7 +562,7 @@ namespace ModelEx
 								loadRequest.TexturesFolder = Path.GetDirectoryName(inputFilePath);
 							}
 						}
-						else if (loadRequest.GameType == CDC.Game.Gex ||
+						else if (loadRequest.GameType == CDC.Game.Gex2 || loadRequest.GameType == CDC.Game.Gex3 ||
 							loadRequest.GameType == CDC.Game.SR2 || loadRequest.GameType == CDC.Game.Defiance)
 						{
 							loadRequest.TexturesFolder = Path.GetDirectoryName(inputFilePath);

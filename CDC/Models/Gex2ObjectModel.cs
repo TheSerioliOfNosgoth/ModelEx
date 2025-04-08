@@ -4,9 +4,9 @@ using TPages = BenLincoln.TheLostWorlds.CDTextures.PSXTextureDictionary;
 
 namespace CDC
 {
-	public class GexObjectModel : GexModel
+	public class Gex2ObjectModel : Gex2Model
 	{
-		public GexObjectModel(BinaryReader reader, DataFile dataFile, UInt32 dataStart, UInt32 modelData, String modelName, Platform ePlatform, UInt32 version, TPages tPages)
+		public Gex2ObjectModel(BinaryReader reader, DataFile dataFile, UInt32 dataStart, UInt32 modelData, String modelName, Platform ePlatform, UInt32 version, TPages tPages)
 			: base(reader, dataFile, dataStart, modelData, modelName, ePlatform, version, tPages)
 		{
 			reader.BaseStream.Position = _modelData;

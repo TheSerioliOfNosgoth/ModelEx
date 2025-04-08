@@ -5,7 +5,7 @@ using TPages = BenLincoln.TheLostWorlds.CDTextures.PSXTextureDictionary;
 
 namespace CDC
 {
-	public class GexFile : DataFile
+	public class Gex3File : DataFile
 	{
 		public const UInt32 RETAIL_VERSION = 0x00000002;
 
@@ -17,18 +17,18 @@ namespace CDC
 		protected DataFile[] _objects;
 		public DataFile[] Objects { get { return _objects; } }
 
-		protected GexFile(String name, ExportOptions options, BinaryReader reader)
+		protected Gex3File(String name, ExportOptions options, BinaryReader reader)
 		{
 			_name = name;
-			_game = Game.Gex;
+			_game = Game.Gex3;
 			_asset = Asset.Object;
 			_dataStart = (UInt32)reader.BaseStream.Position;
 
 			ReadObjectData(reader, options);
 		}
 
-		public GexFile(String dataFileName, Platform platform, ExportOptions options)
-			: base(dataFileName, Game.Gex, platform, options)
+		public Gex3File(String dataFileName, Platform platform, ExportOptions options)
+			: base(dataFileName, Game.Gex3, platform, options)
 		{
 		}
 
@@ -61,7 +61,7 @@ namespace CDC
 				reader.BaseStream.Position = modelData;
 
 				string modelName = _name + "-" + m.ToString();
-				GexObjectModel model = new GexObjectModel(reader, this, _dataStart, modelData, modelName, _platform, _version, _tPages);
+				Gex3ObjectModel model = new Gex3ObjectModel(reader, this, _dataStart, modelData, modelName, _platform, _version, _tPages);
 				model.ReadData(reader, options);
 				_models[m] = model;
 			}
@@ -113,7 +113,7 @@ namespace CDC
 				objectName = Utility.CleanObjectName(objectName);
 
 				reader.BaseStream.Position = objectAddress;
-				GexFile gexObject = new GexFile(objectName, options, reader);
+				Gex3File gexObject = new Gex3File(objectName, options, reader);
 
 				objectNames.Add(objectName);
 				objectList.Add(gexObject);
@@ -178,7 +178,7 @@ namespace CDC
 			reader.BaseStream.Position = _modelStart;
 			uint modelData = reader.ReadUInt32();
 
-			GexUnitModel model = new GexUnitModel(reader, this, _dataStart, modelData, _name, _platform, _version, _tPages);
+			Gex3UnitModel model = new Gex3UnitModel(reader, this, _dataStart, modelData, _name, _platform, _version, _tPages);
 			model.ReadData(reader, options);
 			_models[0] = model;
 		}

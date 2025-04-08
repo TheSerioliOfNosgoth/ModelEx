@@ -5,7 +5,7 @@ using TPages = BenLincoln.TheLostWorlds.CDTextures.PSXTextureDictionary;
 
 namespace CDC
 {
-	public class GexUnitModel : GexModel
+	public class Gex2UnitModel : Gex2Model
 	{
 		protected UInt32 _bspTreeCount;
 		protected UInt32 _bspTreeStart;
@@ -13,7 +13,7 @@ namespace CDC
 		protected UInt32 _vertexColourStart;
 		protected UInt32 _polygonEnd;
 
-		public GexUnitModel(BinaryReader reader, DataFile dataFile, UInt32 dataStart, UInt32 modelData, String modelName, Platform ePlatform, UInt32 version, TPages tPages)
+		public Gex2UnitModel(BinaryReader reader, DataFile dataFile, UInt32 dataStart, UInt32 modelData, String modelName, Platform ePlatform, UInt32 version, TPages tPages)
 			: base(reader, dataFile, dataStart, modelData, modelName, ePlatform, version, tPages)
 		{
 			reader.BaseStream.Position = _modelData;
@@ -21,17 +21,13 @@ namespace CDC
 			_bspTreeCount = 1;
 			_bspTreeStart = reader.ReadUInt32();
 			_groupCount = _bspTreeCount;
-
 			reader.BaseStream.Position += 0x14;
 			_vertexCount = reader.ReadUInt32();
-			_vertexColourCount = reader.ReadUInt32();
 			_polygonCount = reader.ReadUInt32();
-			reader.BaseStream.Position += 0x0C;
+			_vertexColourCount = reader.ReadUInt32();
 			_vertexStart = reader.ReadUInt32();
-			_vertexColourStart = reader.ReadUInt32();
 			_polygonStart = reader.ReadUInt32();
-			UInt32 _otherThing = reader.ReadUInt32(); // Very short. The 0x1B thing.
-			reader.BaseStream.Position += 0x04; // Collision
+			_vertexColourStart = reader.ReadUInt32();
 			_materialStart = reader.ReadUInt32();
 			_materialCount = 0;
 
@@ -55,10 +51,10 @@ namespace CDC
 			_geometry.PositionsRaw = new Vector[_vertexCount];
 			_geometry.PositionsPhys = new Vector[_vertexCount];
 			_geometry.PositionsAltPhys = new Vector[_vertexCount];
-			_geometry.Colours = new UInt32[_vertexColourStart];
-			_geometry.ColoursAlt = new UInt32[_vertexColourStart];
+			_geometry.Colours = new UInt32[_vertexCount];
+			_geometry.ColoursAlt = new UInt32[_vertexCount];
 			ReadVertices(reader, options);
-			ReadVertexColours(reader, options);
+			//ReadVertexColours(reader, options);
 
 			// Get the polygons
 			_polygons = new Polygon[_polygonCount];
@@ -76,7 +72,23 @@ namespace CDC
 			_geometry.PositionsPhys[v] = _geometry.PositionsRaw[v];
 			_geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
 
-			_geometry.Vertices[v].colourID = reader.ReadUInt16();
+			reader.BaseStream.Position += 0x02;
+			uint vColour = reader.ReadUInt32() | 0xFF000000;
+
+			_geometry.Vertices[v].colourID = v;
+
+			if (options.IgnoreVertexColours)
+			{
+				_geometry.Colours[v] = 0xFFFFFFFF;
+			}
+			else
+			{
+				_geometry.Colours[v] = vColour;
+			}
+
+			Utility.FlipRedAndBlue(ref _geometry.Colours[v]);
+
+			_geometry.ColoursAlt[v] = _geometry.Colours[v];
 		}
 
 		protected override void ReadVertices(BinaryReader reader, ExportOptions options)
@@ -125,19 +137,19 @@ namespace CDC
 			_polygons[p].material.colorFactor = 2.0f;
 
 			ushort flags = reader.ReadUInt16();
-			reader.BaseStream.Position += 2;
-
 			_polygons[p].material.polygonFlags = flags;
 
-			UInt16 materialOffset = reader.ReadUInt16();
+			reader.BaseStream.Position += 8;
+			UInt32 materialOffset = reader.ReadUInt32();
 
 			_polygons[p].material.visible = true;
-			if (materialOffset == 0xFFFF)
+			if (materialOffset == 0xFFFFFFFF)
 			{
 				_polygons[p].material.visible = false;
 			}
 
-			if ((flags & 0x0001) == 0x0001)
+			// Signals?
+			if ((flags & 0x8000) == 0x8000)
 			{
 				_polygons[p].material.visible = false;
 			}
@@ -163,7 +175,7 @@ namespace CDC
 
 			if (_polygons[p].material.textureUsed)
 			{
-				UInt32 materialPosition = materialOffset + _materialStart;
+				UInt32 materialPosition = materialOffset;
 
 				reader.BaseStream.Position = materialPosition;
 
@@ -172,14 +184,14 @@ namespace CDC
 
 			Utility.FlipRedAndBlue(ref _polygons[p].material.colour);
 
-			reader.BaseStream.Position = uPolygonPosition + 0x0C;
+			reader.BaseStream.Position = uPolygonPosition + 0x14;
 
-			if ((flags & 0x0400) != 0)
+			/*if ((flags & 0x0400) != 0)
 			{
 				Vertex tempVertex = _polygons[p].v2;
 				_polygons[p].v2 = _polygons[p].v3;
 				_polygons[p].v3 = tempVertex;
-			}
+			}*/
 		}
 
 		protected override void ReadPolygons(BinaryReader reader, ExportOptions options)
@@ -219,7 +231,7 @@ namespace CDC
 				return null;
 			}
 
-			reader.BaseStream.Position = uDataPos + 0x0C;
+			reader.BaseStream.Position = uDataPos + 0x12;
 			bool isLeaf = ((reader.ReadByte() & 0x02) == 0x02);
 			Int32 iSubTreeCount = 2;
 
@@ -255,7 +267,7 @@ namespace CDC
 			}
 			else
 			{
-				reader.BaseStream.Position = uDataPos + 0x10;
+				reader.BaseStream.Position = uDataPos + 0x18;
 
 				UInt32[] auSubTreePositions = new UInt32[2];
 				for (Int32 s = 0; s < iSubTreeCount; s++)
@@ -283,11 +295,10 @@ namespace CDC
 
 		protected virtual void ReadBSPLeaf(BinaryReader reader, List<UInt32> treePolygons, Mesh xMesh)
 		{
-			reader.BaseStream.Position += 0x0D;
-			UInt16 polyCount = reader.ReadByte();
-			reader.BaseStream.Position += 0x02;
+			reader.BaseStream.Position += 0x0C;
 			UInt32 polygonPos = reader.ReadUInt32();
-			UInt32 polygonID = (polygonPos - _polygonStart) / 0x0C;
+			UInt32 polygonID = (polygonPos - _polygonStart) / 0x14;
+			UInt16 polyCount = reader.ReadUInt16();
 
 			for (UInt16 p = 0; p < polyCount; p++)
 			{

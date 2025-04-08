@@ -386,36 +386,45 @@ namespace ModelEx
 				result = false;
 			}
 
-			if (result && loadResourceDialog.SelectedGameType == CDC.Game.Gex)
+			CDC.Game gameType = loadResourceDialog.SelectedGameType;
+
+			if (result &&
+				(gameType == CDC.Game.Gex2 || gameType == CDC.Game.Gex3))
 			{
-				CDC.GexFile gexFile;
-				ObjectSelectWindow objectSelectDlg = new ObjectSelectWindow();
+				CDC.DataFile dataFile = null;
 
 				try
 				{
-					gexFile = new CDC.GexFile(loadResourceDialog.DataFile, loadResourceDialog.SelectedPlatform, new CDC.ExportOptions());
-
-					if (gexFile.Asset == CDC.Asset.Unit)
+					if (gameType == CDC.Game.Gex2)
 					{
-						objectSelectDlg.SetObjectNames(gexFile.ObjectNames);
-
-						if (objectSelectDlg.ShowDialog() != DialogResult.OK)
-						{
-							result = false;
-						}
+						dataFile = new CDC.Gex2File(loadResourceDialog.DataFile, loadResourceDialog.SelectedPlatform, new CDC.ExportOptions());
+					}
+					else if (gameType == CDC.Game.Gex3)
+					{
+						dataFile = new CDC.Gex3File(loadResourceDialog.DataFile, loadResourceDialog.SelectedPlatform, new CDC.ExportOptions());
 					}
 				}
-				catch
+				catch (Exception e)
 				{
 					result = false;
 				}
 
 				if (result)
 				{
-					loadRequest.ChildIndex = objectSelectDlg.SelectedObject;
-				}
+					if (dataFile?.Asset == CDC.Asset.Unit)
+					{
+						ObjectSelectWindow objectSelectDlg = new ObjectSelectWindow();
+						objectSelectDlg.SetObjectNames(dataFile.ObjectNames);
 
-				objectSelectDlg.Dispose();
+						if (objectSelectDlg.ShowDialog() != DialogResult.OK)
+						{
+							result = false;
+						}
+						loadRequest.ChildIndex = objectSelectDlg.SelectedObject;
+
+						objectSelectDlg.Dispose();
+					}
+				}
 			}
 
 			if (result)

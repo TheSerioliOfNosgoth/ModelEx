@@ -6,7 +6,7 @@ using TextureTile = BenLincoln.TheLostWorlds.CDTextures.PSXTextureTile;
 
 namespace CDC
 {
-	public abstract class GexModel : Model
+	public abstract class Gex2Model : Model
 	{
 		#region Normals
 		protected static Int32[,] s_aiNormals =
@@ -299,7 +299,7 @@ namespace CDC
 		public override Material[] Materials { get { return _materials; } }
 		public override Platform Platform { get { return _platform; } }
 
-		protected GexModel(BinaryReader reader, DataFile dataFile, UInt32 dataStart, UInt32 modelData, String modelName, Platform ePlatform, UInt32 version, TPages tPages)
+		protected Gex2Model(BinaryReader reader, DataFile dataFile, UInt32 dataStart, UInt32 modelData, String modelName, Platform ePlatform, UInt32 version, TPages tPages)
 		{
 			_dataFile = dataFile;
 			_name = modelName;

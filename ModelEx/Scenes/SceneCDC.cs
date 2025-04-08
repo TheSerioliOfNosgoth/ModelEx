@@ -91,7 +91,8 @@ namespace ModelEx
 						SlimDX.Vector3 scale = new SlimDX.Vector3(1.0f, 1.0f, 1.0f);
 
 						SlimDX.Quaternion rotation;
-						if (dataFile.Game == CDC.Game.Gex || dataFile.Game == CDC.Game.SR1)
+						if (dataFile.Game == CDC.Game.Gex2 || dataFile.Game == CDC.Game.Gex3 ||
+							dataFile.Game == CDC.Game.SR1)
 						{
 							rotation = SlimDX.Quaternion.RotationYawPitchRoll(
 								-intro.rotation.z, // Yaw - Easy to spot from direction of raziel, enemies, flagall.
