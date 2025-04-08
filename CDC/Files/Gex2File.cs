@@ -7,7 +7,7 @@ namespace CDC
 {
 	public class Gex2File : DataFile
 	{
-		public const UInt32 RETAIL_VERSION = 0x00000002;
+		public const UInt32 RETAIL_VERSION = 0x00000000;
 
 		// ushort tPageMask = 0x001F (x, 0-31) | 0x0010 (y1, 0-1) | 0x0800 (y2, 0-2) | 0x0180 (tp, 0-3)| 0x0060 (abr, 0-3)
 		// ushort clutMask = 0x003F (x, 0-63) | 0xFFC0 (y, 0-1023)
@@ -69,22 +69,7 @@ namespace CDC
 
 		protected override void ReadUnitData(BinaryReader reader, ExportOptions options)
 		{
-			bool validVersion = false;
-
-			if (!validVersion)
-			{
-				reader.BaseStream.Position = _dataStart + 0x08;
-				_version = reader.ReadUInt32();
-				if (_version == RETAIL_VERSION)
-				{
-					validVersion = true;
-				}
-			}
-
-			if (!validVersion)
-			{
-				throw new Exception("Wrong version number for level x");
-			}
+			_version = RETAIL_VERSION;
 
 			// Object Names
 			reader.BaseStream.Position = _dataStart + 0x3C;
