@@ -305,7 +305,7 @@ namespace ModelEx
 
 			SceneCDC.progressLevel = 1;
 
-			renderResource.LoadTextures(loadRequest.TexturesFolder);
+			renderResource.LoadTextures();
 
 			if ((flags & LoadResourceFlags.LoadDebugResource) != 0)
 			{

@@ -58,8 +58,10 @@ namespace ModelEx
 			}
 		}
 
-		public void LoadTextures(string folderName)
+		public void LoadTextures()
 		{
+			string folderName = LoadRequest.TexturesFolder;
+
 			FileShaderResourceViewDictionary.Clear();
 
 			Type currentFileType = File.GetType();
@@ -450,7 +452,8 @@ namespace ModelEx
 
 					bool drawGreyscaleFirst = false;
 					bool quantizeBounds = true;
-					string fileName = Path.Combine(folderName, File.Name + ".vrm");
+					string containerFileName = Path.GetFileNameWithoutExtension(LoadRequest.DataFile);
+					string fileName = Path.Combine(folderName, containerFileName + ".vrm");
 					Gex3PSXTextureFile textureFile = new Gex3PSXTextureFile(fileName);
 					textureFile.BuildTexturesFromPolygonData(tPages, drawGreyscaleFirst, quantizeBounds, ExportOptions);
 

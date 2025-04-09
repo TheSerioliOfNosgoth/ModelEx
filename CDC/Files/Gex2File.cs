@@ -97,11 +97,11 @@ namespace CDC
 				string objectName = new string(reader.ReadChars(8));
 				objectName = Utility.CleanObjectName(objectName);
 
-				//reader.BaseStream.Position = objectAddress;
-				//Gex2File gexObject = new Gex2File(objectName, options, reader);
+				reader.BaseStream.Position = objectAddress;
+				Gex2File gexObject = new Gex2File(objectName, options, reader);
 
 				objectNames.Add(objectName);
-				//objectList.Add(gexObject);
+				objectList.Add(gexObject);
 
 				reader.BaseStream.Position = oldPos;
 			}

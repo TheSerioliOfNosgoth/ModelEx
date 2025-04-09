@@ -54,7 +54,6 @@ namespace CDC
 			_geometry.Colours = new UInt32[_vertexCount];
 			_geometry.ColoursAlt = new UInt32[_vertexCount];
 			ReadVertices(reader, options);
-			//ReadVertexColours(reader, options);
 
 			// Get the polygons
 			_polygons = new Polygon[_polygonCount];
@@ -94,35 +93,6 @@ namespace CDC
 		protected override void ReadVertices(BinaryReader reader, ExportOptions options)
 		{
 			base.ReadVertices(reader, options);
-		}
-
-		protected void ReadVertexColours(BinaryReader reader, ExportOptions options)
-		{
-			if (_vertexColourStart == 0 || _vertexColourCount == 0)
-			{
-				return;
-			}
-
-			reader.BaseStream.Position = _vertexColourStart;
-
-			for (int c = 0; c < _vertexColourCount; c++)
-			{
-				uint vColour = reader.ReadUInt32() | 0xFF000000;
-				if (options.IgnoreVertexColours)
-				{
-					_geometry.Colours[c] = 0xFFFFFFFF;
-				}
-				else
-				{
-					_geometry.Colours[c] = vColour;
-				}
-
-				Utility.FlipRedAndBlue(ref _geometry.Colours[c]);
-
-				_geometry.ColoursAlt[c] = _geometry.Colours[c];
-			}
-
-			return;
 		}
 
 		protected virtual void ReadPolygon(BinaryReader reader, int p, ExportOptions options)

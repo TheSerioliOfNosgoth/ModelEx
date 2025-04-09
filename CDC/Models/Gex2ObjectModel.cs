@@ -10,20 +10,24 @@ namespace CDC
 			: base(reader, dataFile, dataStart, modelData, modelName, ePlatform, version, tPages)
 		{
 			reader.BaseStream.Position = _modelData;
+
 			_vertexCount = reader.ReadUInt16();
 			reader.BaseStream.Position += 0x02;
-			_polygonCount = reader.ReadUInt16();
-			_boneCount = reader.ReadUInt16();
 			_vertexStart = reader.ReadUInt32();
+			reader.BaseStream.Position += 0x08;
+			_polygonCount = reader.ReadUInt16();
+			reader.BaseStream.Position += 0x02;
+			_polygonStart = reader.ReadUInt32();
+			_boneCount = reader.ReadUInt16();
+			reader.BaseStream.Position += 0x02;
+			_boneStart = reader.ReadUInt32();
+			_materialStart = reader.ReadUInt32();
+			_materialCount = 0;
 			_vertexScale.x = 1.0f;
 			_vertexScale.y = 1.0f;
 			_vertexScale.z = 1.0f;
 			// Vertex colours here? Objects have them in Gex?
 			reader.BaseStream.Position += 0x08;
-			_polygonStart = reader.ReadUInt32();
-			_boneStart = reader.ReadUInt32();
-			_materialStart = reader.ReadUInt32();
-			_materialCount = 0;
 			_groupCount = 1;
 
 			_trees = new Tree[_groupCount];
@@ -37,7 +41,7 @@ namespace CDC
 			_geometry.PositionsPhys[v] = _geometry.PositionsRaw[v];
 			_geometry.PositionsAltPhys[v] = _geometry.PositionsPhys[v];
 
-			_geometry.Vertices[v].normalID = reader.ReadUInt16();
+			reader.BaseStream.Position += 0x06;
 		}
 
 		protected override void ReadVertices(BinaryReader reader, ExportOptions options)
@@ -111,7 +115,7 @@ namespace CDC
 			_polygons[p].material = new Material();
 			_polygons[p].material.visible = true;
 			_polygons[p].material.textureUsed = false;
-			reader.ReadByte();
+			reader.BaseStream.Position += 0x01;
 			_polygons[p].material.polygonFlags = reader.ReadByte();
 
 			if ((_polygons[p].material.polygonFlags & 0x0002) == 0x0002)

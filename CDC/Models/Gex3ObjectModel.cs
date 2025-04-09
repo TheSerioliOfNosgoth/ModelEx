@@ -111,7 +111,7 @@ namespace CDC
 			_polygons[p].material = new Material();
 			_polygons[p].material.visible = true;
 			_polygons[p].material.textureUsed = false;
-			reader.ReadByte();
+			reader.BaseStream.Position += 0x01;
 			_polygons[p].material.polygonFlags = reader.ReadByte();
 
 			if ((_polygons[p].material.polygonFlags & 0x0002) == 0x0002)
