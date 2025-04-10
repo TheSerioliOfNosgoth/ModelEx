@@ -201,6 +201,15 @@ namespace CDC
 
 			_trees[0] = ReadBSPTree(reader, treePolygons, _bspTreeStart, _trees[0], xMeshes, xMeshPositions, 0);
 
+			reader.BaseStream.Position = _bspTreeStart;
+
+			Sphere sphere = new Sphere();
+			sphere.position.x = reader.ReadInt16();
+			sphere.position.y = reader.ReadInt16();
+			sphere.position.z = reader.ReadInt16();
+			sphere.radius = reader.ReadUInt16();
+			_spheres[0] = sphere;
+
 			ProcessPolygons(options);
 
 			int currentPosition = 0;

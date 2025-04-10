@@ -482,6 +482,15 @@ namespace CDC
 			if (_version == SR1File.PROTO_19981025_VERSION)
 			{
 				_trees[0] = ReadBSPTree(0, 0.ToString(), reader, treePolygons, _bspTreeStart, _trees[0], meshes, meshPositions, 0, 0, 0, 0);
+
+				reader.BaseStream.Position = _bspTreeStart;
+
+				Sphere sphere = new Sphere();
+				sphere.position.x = reader.ReadInt16();
+				sphere.position.y = reader.ReadInt16();
+				sphere.position.z = reader.ReadInt16();
+				sphere.radius = reader.ReadUInt16();
+				_spheres[0] = sphere;
 			}
 			else
 			{
