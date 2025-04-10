@@ -252,8 +252,7 @@ namespace CDC
 			_bones = new Bone[0];
 			_materials = new Material[2] { boxMaterial, quadMaterial };
 			_trees = new Tree[1] { tree };
-
-			// TODO - Spheres.
+			_spheres = new Sphere[1];
 		}
 
 		public string GetTextureName(int materialIndex, ExportOptions options)

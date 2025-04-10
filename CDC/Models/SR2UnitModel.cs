@@ -157,6 +157,15 @@ namespace CDC
 				{
 					_trees[t].globalOffset = globalOffset;
 				}
+
+				reader.BaseStream.Position = uDataPos;
+
+				Sphere sphere = new Sphere();
+				sphere.position.x = reader.ReadSingle();
+				sphere.position.y = reader.ReadSingle();
+				sphere.position.z = reader.ReadSingle();
+				sphere.radius = reader.ReadSingle();
+				_spheres[t] = sphere;
 			}
 
 			_polygonCount = (UInt32)treePolygons.Count;
